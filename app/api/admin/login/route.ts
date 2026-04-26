@@ -32,8 +32,13 @@ export async function POST(request: Request) {
     const managerPassword = process.env.ADMIN_MANAGER_PASSWORD;
     const adminPassword = process.env.ADMIN_PASSWORD;
 
+    const sessionSecret = process.env.ADMIN_SESSION_SECRET || process.env.NEXTAUTH_SECRET;
+    if (!sessionSecret) {
+      return NextResponse.json({ error: "NEXTAUTH_SECRET не задан на сервере" }, { status: 503 });
+    }
+
     if (!directorPassword && !managerPassword && !adminPassword) {
-      return NextResponse.json({ error: "Админ-доступ не настроен на сервере" }, { status: 503 });
+      return NextResponse.json({ error: "Пароли администратора не заданы на сервере" }, { status: 503 });
     }
 
     let role: "DIRECTOR" | "MANAGER" | "ADMIN" | null = null;
