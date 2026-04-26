@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { SESSION_COOKIE } from '@/lib/auth';
-import { ADMIN_COOKIE, verifyAdminSession } from '@/lib/adminSession';
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -14,23 +13,8 @@ export async function middleware(request: NextRequest) {
     return response;
   };
 
-  // Protect /admin routes
-  if (pathname.startsWith('/admin')) {
-    const token = request.cookies.get(ADMIN_COOKIE)?.value;
-    const session = await verifyAdminSession(token);
-    if (!session && pathname !== '/admin/login') {
-      return withSecurityHeaders(NextResponse.redirect(new URL('/admin/login', request.url)));
-    }
-  }
-
-  // Protect /api/admin routes (except the login endpoint itself)
-  if (pathname.startsWith('/api/admin') && pathname !== '/api/admin/login') {
-    const token = request.cookies.get(ADMIN_COOKIE)?.value;
-    const session = await verifyAdminSession(token);
-    if (!session) {
-      return withSecurityHeaders(NextResponse.json({ error: 'Unauthorized' }, { status: 401 }));
-    }
-  }
+  // /admin routes — protection handled by layout (Node.js runtime, not Edge)
+  // /api/admin routes — protection handled inside each route handler
 
   // Protect /account routes — server-side redirect to login
   if (pathname.startsWith('/account')) {
