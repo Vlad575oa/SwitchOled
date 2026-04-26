@@ -6,7 +6,7 @@ export const FloatingContact = () => {
   return (
     <div className="fixed bottom-20 lg:bottom-8 right-4 lg:right-8 z-[100] flex flex-col gap-3">
       {/* Max Chat Button */}
-      <Link href="https://max.ru/u/79266763488" target="_blank" rel="noopener noreferrer" className="relative w-10 h-10 transition-all duration-500 hover:scale-110 active:scale-90 group">
+      <Link href="https://max.ru/u/79266763488" target="_blank" rel="noopener noreferrer" className="relative w-[38px] h-[38px] transition-all duration-500 hover:scale-110 active:scale-90 group">
         {/* Glow Effect */}
         <div className="absolute inset-0 bg-[#A044FF] rounded-full blur-xl opacity-20 group-hover:opacity-40 transition-opacity" />
         
@@ -24,7 +24,7 @@ export const FloatingContact = () => {
       <Link 
         href="https://t.me/+79266763488" 
         target="_blank"
-        className="relative w-10 h-10 transition-all duration-500 hover:scale-110 active:scale-90 group"
+        className="relative w-[39px] h-[39px] transition-all duration-500 hover:scale-110 active:scale-90 group"
       >
         {/* Glow Effect */}
         <div className="absolute inset-0 bg-[#37BBFE] rounded-full blur-xl opacity-20 group-hover:opacity-40 transition-opacity" />

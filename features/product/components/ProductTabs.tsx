@@ -2,7 +2,7 @@
 
 import { useState, type ReactNode } from "react";
 import {
-  FileText, ListChecks, MessageSquare,
+  FileText, ListChecks,
   Cpu, HardDrive, Monitor, Wifi, Volume2,
   Zap, Shield, Package, Star
 } from "lucide-react";
@@ -77,7 +77,6 @@ function groupAttributes(attrs: Record<string, string>) {
 const TABS = [
   { id: "description", label: "Описание", icon: <FileText size={15} /> },
   { id: "specs",       label: "Характеристики", icon: <ListChecks size={15} /> },
-  { id: "reviews",     label: "Отзывы", icon: <MessageSquare size={15} /> },
 ] as const;
 
 type TabId = typeof TABS[number]["id"];
@@ -187,25 +186,6 @@ export function ProductTabs({ description, attributes, productName }: ProductTab
         </div>
       )}
 
-      {/* ── Reviews (placeholder) ──────────────────────────────────── */}
-      {activeTab === "reviews" && (
-        <div className="animate-in fade-in duration-200">
-          <div className="bg-neutral-50 rounded-3xl p-12 text-center">
-            <div className="flex justify-center gap-1 mb-4">
-              {[1,2,3,4,5].map((s) => (
-                <Star key={s} size={24} className="text-orange-300 fill-orange-200" />
-              ))}
-            </div>
-            <h3 className="text-lg font-black text-secondary mb-2">Отзывов пока нет</h3>
-            <p className="text-neutral-400 font-medium text-sm mb-6">
-              Будьте первым, кто оstavит отзыв о товаре
-            </p>
-            <button className="px-6 py-3 bg-primary text-white font-black rounded-2xl text-sm hover:bg-red-700 transition-all shadow-lg shadow-primary/20">
-              Написать отзыв
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

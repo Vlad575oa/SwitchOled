@@ -114,7 +114,7 @@ export async function Catalog({ category, searchParams, pageSize = 12 }: Catalog
   let errorMsg = "";
   try {
     // On the "all" tab with default sort, prioritize Nintendo products
-    const useNintendoPriority = category === "all" && !sort;
+    const useNintendoPriority = category === "all" && !sort && !q;
     [products, totalCount, categoryData, categoryTree] = await Promise.all([
       useNintendoPriority
         ? getProductsNintendoFirst(where, skip, pageSize)

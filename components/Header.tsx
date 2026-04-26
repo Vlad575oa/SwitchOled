@@ -63,7 +63,7 @@ export const Header = () => {
 
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2.5 group shrink-0">
-          <div className="w-9 h-9 bg-primary rounded-xl flex items-center justify-center shadow-[0_4px_14px_rgba(230,0,18,0.35)] transition-all group-hover:scale-105 active:scale-95 overflow-hidden relative">
+          <div className="hidden lg:flex w-9 h-9 bg-primary rounded-xl items-center justify-center shadow-[0_4px_14px_rgba(230,0,18,0.35)] transition-all group-hover:scale-105 active:scale-95 overflow-hidden relative">
             <span className="text-white font-black text-lg italic leading-none z-10 select-none">G</span>
             <div className="absolute inset-0 bg-gradient-to-tr from-black/25 to-white/10" />
           </div>

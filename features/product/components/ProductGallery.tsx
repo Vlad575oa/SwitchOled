@@ -50,7 +50,7 @@ export function ProductGallery({ images, name }: ProductGalleryProps) {
 
       {/* Main Image */}
       <div
-        className="flex-1 relative bg-white border border-neutral-100 rounded-[24px] md:rounded-[40px] overflow-hidden group h-[300px] sm:h-[380px] md:h-full"
+        className="relative bg-neutral-50 border border-neutral-100 rounded-[24px] md:rounded-[40px] overflow-hidden group h-[320px] sm:h-[380px] md:flex-1 md:h-full"
         onTouchStart={onTouchStart}
         onTouchEnd={onTouchEnd}
       >

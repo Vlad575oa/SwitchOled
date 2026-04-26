@@ -37,12 +37,12 @@ export const Footer = () => {
                                     href={s.href}
                                     target={s.newTab ? "_blank" : undefined}
                                     rel={s.newTab ? "noopener noreferrer" : undefined}
-                                    className={`w-9 h-9 rounded-xl bg-white/5 border border-white/5 flex items-center justify-center transition-all ${s.color} hover:border-white/10 group/soc`}
+                                    className={`w-7 h-7 flex items-center justify-center transition-all hover:scale-110 drop-shadow-sm group/soc`}
                                 >
                                     <img
                                         src={s.icon}
                                         alt={s.id}
-                                        className="w-[18px] h-[18px] object-contain"
+                                        className="w-full h-full object-contain"
                                     />
                                 </Link>
                             ))}

@@ -2,18 +2,18 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, LayoutGrid, Heart, ShoppingCart, User } from "lucide-react";
+import { Home, GitCompare, Heart, ShoppingCart } from "lucide-react";
 import { useCartStore } from "@/features/cart/store/useCartStore";
 import { useWishlistStore } from "@/features/product/store/useWishlistStore";
+import { useCompareStore } from "@/features/product/store/useCompareStore";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
   { icon: Home, label: "Главная", href: "/" },
-  { icon: LayoutGrid, label: "Каталог", href: "/catalog/all" },
+  { icon: GitCompare, label: "Сравнить", href: "/compare" },
   { icon: Heart, label: "Избранное", href: "/wishlist" },
   { icon: ShoppingCart, label: "Корзина", href: "/cart" },
-  { icon: User, label: "Профиль", href: "/account/orders" },
 ];
 
 export const MobileBottomNav = () => {
@@ -21,6 +21,7 @@ export const MobileBottomNav = () => {
   const [mounted, setMounted] = useState(false);
   const cartCount = useCartStore((s) => s.totalItems());
   const wishlistCount = useWishlistStore((s) => s.count());
+  const compareCount = useCompareStore((s) => s.count());
 
   useEffect(() => setMounted(true), []);
 
@@ -31,9 +32,10 @@ export const MobileBottomNav = () => {
         {NAV_ITEMS.map(({ icon: Icon, label, href }) => {
           const isCart = href === "/cart";
           const isWishlist = href === "/wishlist";
+          const isCompare = href === "/compare";
           const isActive = href === "/" ? pathname === "/" : pathname.startsWith(href);
           const badge = mounted
-            ? isCart ? cartCount : isWishlist ? wishlistCount : 0
+            ? isCart ? cartCount : isWishlist ? wishlistCount : isCompare ? compareCount : 0
             : 0;
 
           return (

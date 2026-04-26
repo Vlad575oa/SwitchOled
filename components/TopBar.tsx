@@ -77,14 +77,14 @@ export const TopBar = () => {
               href="https://t.me/+79266763488"
               target="_blank"
               rel="noopener noreferrer"
-              className="w-7 h-7 flex items-center justify-center hover:scale-110 transition-all drop-shadow-sm"
+              className="w-[27px] h-[27px] flex items-center justify-center hover:scale-110 transition-all drop-shadow-sm"
               title="Telegram"
             >
               <TelegramIcon />
             </Link>
             <Link
               href="tel:+79266763488"
-              className="w-7 h-7 flex items-center justify-center hover:scale-110 transition-all drop-shadow-sm"
+              className="w-[26px] h-[26px] flex items-center justify-center hover:scale-110 transition-all drop-shadow-sm"
               title="MAX"
             >
               <MaxIcon />

@@ -102,15 +102,15 @@ export default async function ProductPage({
         <TrackView productId={product.id} />
 
         {/* Product name */}
-        <div className="mb-8">
-          <h1 className="text-3xl lg:text-4xl font-black text-secondary leading-tight mb-4 max-w-4xl">
+        <div className="mb-4">
+          <h1 className="text-xl sm:text-2xl lg:text-4xl font-black text-secondary leading-tight mb-3 max-w-4xl">
             {product.name}
           </h1>
           <ProductMeta productId={product.id} />
         </div>
 
         {/* Main grid: Gallery + Tabs | Purchase */}
-        <div className="flex flex-col lg:flex-row gap-12 mb-20">
+        <div className="flex flex-col lg:flex-row gap-6 mb-12">
           {/* Left */}
           <div className="flex-1 min-w-0">
             <ProductGallery images={product.images} name={product.name} />
