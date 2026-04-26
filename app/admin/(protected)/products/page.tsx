@@ -159,7 +159,7 @@ export default async function ProductsPage({ searchParams }: Props) {
                       <p className="text-sm font-black text-[#111827]">{formatPrice(p.price)}</p>
                     </td>
                     <td className="px-5 py-3">
-                      <span className={`px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-widest ${p.inStock ? "bg-green-100 text-green-700" : "bg-red-100 text-red-600"}`}>
+                      <span className={`px-2.5 py-0.5 rounded-full text-[7px] font-black uppercase tracking-widest whitespace-nowrap ${p.inStock ? "bg-green-100 text-green-700" : "bg-red-100 text-red-600"}`}>
                         {p.inStock ? "В наличии" : "Нет"}
                       </span>
                     </td>
