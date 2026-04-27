@@ -3,6 +3,8 @@ import {
   Smartphone, ShieldCheck, Package, Star, Zap, CheckCircle2
 } from "lucide-react";
 import { Metadata } from "next";
+import { readFile } from "fs/promises";
+import { join } from "path";
 
 export const metadata: Metadata = {
   title: "Доставка и оплата | Gameshop24",
@@ -10,38 +12,14 @@ export const metadata: Metadata = {
   alternates: { canonical: "/delivery" },
 };
 
-const deliveryMethods = [
-  {
-    icon: Zap,
-    label: "Экспресс-курьер",
-    subtitle: "По Москве",
-    time: "В день заказа",
-    price: "500 ₽",
-    free: "Бесплатно от 50 000 ₽",
-    desc: "Заказ до 14:00 — доставим сегодня. Курьер позвонит за 1 час и согласует удобное окно.",
-    accent: true,
-  },
-  {
-    icon: Truck,
-    label: "СДЭК / Boxberry",
-    subtitle: "По всей России",
-    time: "2–7 рабочих дней",
-    price: "от 250 ₽",
-    free: "Бесплатно от 15 000 ₽",
-    desc: "Доставка до двери или до пункта выдачи. Трек-номер — в SMS сразу после отправки.",
-    accent: false,
-  },
-  {
-    icon: MapPin,
-    label: "Самовывоз",
-    subtitle: "Москва, м. Митино",
-    time: "В день заказа",
-    price: "Бесплатно",
-    free: "Ежедневно 10:00–21:00",
-    desc: "Заберите в нашем шоуруме: проверьте консоль на месте и получите подарок при первом визите.",
-    accent: false,
-  },
-];
+async function getDeliveryData(): Promise<Record<string, string>> {
+  try {
+    const raw = await readFile(join(process.cwd(), "content", "pages.json"), "utf-8");
+    return JSON.parse(raw)?.delivery ?? {};
+  } catch {
+    return {};
+  }
+}
 
 const paymentMethods = [
   {
@@ -66,7 +44,42 @@ const paymentMethods = [
   },
 ];
 
-export default function DeliveryPage() {
+export default async function DeliveryPage() {
+  const d = await getDeliveryData();
+
+  const deliveryMethods = [
+    {
+      icon: Zap,
+      label: "Экспресс-курьер",
+      subtitle: "По Москве",
+      time: d.express_time ?? "В день заказа",
+      price: d.express_price ?? "500 ₽",
+      free: d.express_free_from ?? "Бесплатно от 50 000 ₽",
+      desc: d.express_desc ?? "Заказ до 14:00 — доставим сегодня. Курьер позвонит за 1 час и согласует удобное окно.",
+      accent: true,
+    },
+    {
+      icon: Truck,
+      label: "СДЭК / Boxberry",
+      subtitle: "По всей России",
+      time: d.sdek_time ?? "2–7 рабочих дней",
+      price: d.sdek_price ?? "от 250 ₽",
+      free: d.sdek_free_from ?? "Бесплатно от 15 000 ₽",
+      desc: d.sdek_desc ?? "Доставка до двери или до пункта выдачи. Трек-номер — в SMS сразу после отправки.",
+      accent: false,
+    },
+    {
+      icon: MapPin,
+      label: "Самовывоз",
+      subtitle: d.pickup_address ?? "Москва, м. Митино",
+      time: d.pickup_time ?? "В день заказа",
+      price: "Бесплатно",
+      free: d.pickup_hours ?? "Ежедневно 10:00–21:00",
+      desc: d.pickup_desc ?? "Заберите в нашем шоуруме: проверьте консоль на месте и получите подарок при первом визите.",
+      accent: false,
+    },
+  ];
+
   return (
     <div className="bg-white min-h-screen pt-6 pb-28">
       <div className="container max-w-5xl">
@@ -75,14 +88,14 @@ export default function DeliveryPage() {
         <div className="mb-16 space-y-6">
           <div className="inline-flex items-center gap-2 px-5 py-2 bg-primary/10 rounded-full text-primary text-[11px] font-black uppercase tracking-[0.2em]">
             <Truck size={14} />
-            Доставка и оплата
+            {d.title ?? "Доставка и оплата"}
           </div>
           <h1 className="text-6xl md:text-7xl font-black tracking-tighter text-secondary leading-[0.9] uppercase">
             Привезём<br />
             <span className="text-primary">быстро и бережно</span>
           </h1>
           <p className="text-lg text-neutral-400 font-bold max-w-xl leading-relaxed">
-            Каждую консоль упаковываем в двойную коробку. Курьер звонит заранее — вы выбираете удобное время.
+            {d.hero_text ?? "Каждую консоль упаковываем в двойную коробку. Курьер звонит заранее — вы выбираете удобное время."}
           </p>
         </div>
 
@@ -140,7 +153,7 @@ export default function DeliveryPage() {
           <div>
             <h3 className="font-black text-secondary text-lg mb-2">Как мы упаковываем консоли</h3>
             <p className="text-neutral-500 font-medium leading-relaxed">
-              Заводская коробка производителя → пузырчатая плёнка → внешняя транспортировочная коробка с амортизирующим наполнителем. Консоль не сдвинется ни на миллиметр — даже при грубом обращении курьерской службы.
+              {d.packaging_desc ?? "Заводская коробка производителя → пузырчатая плёнка → внешняя транспортировочная коробка с амортизирующим наполнителем. Консоль не сдвинется ни на миллиметр — даже при грубом обращении курьерской службы."}
             </p>
           </div>
         </div>

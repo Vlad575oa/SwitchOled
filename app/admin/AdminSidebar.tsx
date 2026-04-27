@@ -12,6 +12,7 @@ import {
   ExternalLink,
   Layers,
   ChevronRight,
+  Scale,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -22,6 +23,7 @@ const navItems = [
   { label: "Блог", href: "/admin/posts", icon: FileText },
   { label: "FAQ", href: "/admin/faq", icon: HelpCircle },
   { label: "Страницы", href: "/admin/pages", icon: Layers },
+  { label: "Правовые", href: "/admin/legal", icon: Scale },
 ];
 
 export const AdminSidebar = () => {

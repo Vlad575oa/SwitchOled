@@ -21,10 +21,16 @@ export const TopBar = () => {
         {/* Left: Location, Time & Trust Badges */}
         <div className="flex items-center gap-3 sm:gap-6 overflow-hidden">
           <div className="flex items-center gap-3 sm:gap-4 sm:border-r sm:border-[var(--bg-elevated)] sm:pr-6 shrink-0">
-            <div className="flex items-center gap-1.5 text-[var(--text-secondary)]">
-              <MapPin size={13} className="text-secondary shrink-0" />
+            <a
+              href="https://yandex.ru/maps/?text=Москва%2C+Митинская+10%2C+корп.+1"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 text-[var(--text-secondary)] hover:text-primary transition-colors"
+              title="Москва, Митинская 10, корп. 1"
+            >
+              <MapPin size={13} className="text-secondary shrink-0 hover:text-primary transition-colors" />
               <span className="text-[11px] font-black uppercase tracking-wider hidden sm:inline">Москва</span>
-            </div>
+            </a>
             <div className="flex items-center gap-1.5 text-[var(--text-secondary)]">
               <Clock size={13} className="text-secondary shrink-0" />
               <span className="text-[11px] font-black uppercase tracking-wider">09:00 — 21:00</span>
@@ -83,7 +89,9 @@ export const TopBar = () => {
               <TelegramIcon />
             </Link>
             <Link
-              href="tel:+79266763488"
+              href="https://max.ru/u/79266763488"
+              target="_blank"
+              rel="noopener noreferrer"
               className="w-[26px] h-[26px] flex items-center justify-center hover:scale-110 transition-all drop-shadow-sm"
               title="MAX"
             >

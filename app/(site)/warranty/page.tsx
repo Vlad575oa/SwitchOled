@@ -3,6 +3,8 @@ import {
   Package, Clock, MessageSquare, AlertTriangle
 } from "lucide-react";
 import { Metadata } from "next";
+import { readFile } from "fs/promises";
+import { join } from "path";
 
 export const metadata: Metadata = {
   title: "Гарантия и возврат | Gameshop24",
@@ -10,35 +12,20 @@ export const metadata: Metadata = {
   alternates: { canonical: "/warranty" },
 };
 
-const guarantees = [
-  {
-    icon: ShieldCheck,
-    label: "Консоли",
-    period: "12 месяцев",
-    desc: "Официальная сервисная гарантия от нашего авторизованного центра. Заводской брак — бесплатный ремонт или замена.",
-    accent: true,
-  },
-  {
-    icon: Package,
-    label: "Аксессуары",
-    period: "6 месяцев",
-    desc: "Контроллеры, зарядные станции, чехлы. При производственном дефекте — замена в течение 7 рабочих дней.",
-    accent: false,
-  },
-  {
-    icon: CheckCircle2,
-    label: "Игры (диски)",
-    period: "Проверка при получении",
-    desc: "Все диски проверяются перед отправкой. Если повреждение выявлено при получении — меняем сразу.",
-    accent: false,
-  },
-];
+async function getWarrantyData(): Promise<Record<string, string>> {
+  try {
+    const raw = await readFile(join(process.cwd(), "content", "pages.json"), "utf-8");
+    return JSON.parse(raw)?.warranty ?? {};
+  } catch {
+    return {};
+  }
+}
 
 const returnSteps = [
   {
     num: "01",
     title: "Свяжитесь с нами",
-    desc: "Напишите в Telegram 7(926)676-34-88 или на email. Укажите номер заказа и опишите ситуацию.",
+    desc: "Напишите в Telegram или на email. Укажите номер заказа и опишите ситуацию.",
   },
   {
     num: "02",
@@ -71,23 +58,55 @@ const notCoveredItems = [
   "Блокировки аккаунта за нарушение правил платформы",
 ];
 
-export default function WarrantyPage() {
+export default async function WarrantyPage() {
+  const d = await getWarrantyData();
+
+  const warrantyPeriod = d.warranty_period ?? "12 месяцев";
+  const accessoriesPeriod = d.accessories_period ?? "6 месяцев";
+  const returnPeriod = d.return_period ?? "14 дней";
+  const telegramHref = d.telegram ?? "https://t.me/+79266763488";
+  const emailHref = `mailto:${d.email ?? "shop@gameshop24.ru"}`;
+
+  const guarantees = [
+    {
+      icon: ShieldCheck,
+      label: "Консоли",
+      period: warrantyPeriod,
+      desc: d.warranty_desc ?? "Официальная сервисная гарантия от нашего авторизованного центра. Заводской брак — бесплатный ремонт или замена.",
+      accent: true,
+    },
+    {
+      icon: Package,
+      label: "Аксессуары",
+      period: accessoriesPeriod,
+      desc: d.accessories_desc ?? "Контроллеры, зарядные станции, чехлы. При производственном дефекте — замена в течение 7 рабочих дней.",
+      accent: false,
+    },
+    {
+      icon: CheckCircle2,
+      label: "Игры (диски)",
+      period: "Проверка при получении",
+      desc: "Все диски проверяются перед отправкой. Если повреждение выявлено при получении — меняем сразу.",
+      accent: false,
+    },
+  ];
+
   return (
     <div className="bg-white min-h-screen pt-6 pb-24">
       <div className="container max-w-5xl">
 
-        {/* Hero — compact */}
+        {/* Hero */}
         <div className="mb-10 space-y-3">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-primary/10 rounded-full text-primary text-[10px] font-black uppercase tracking-[0.2em]">
             <ShieldCheck size={13} />
-            Гарантия и возврат
+            {d.title ?? "Гарантия и возврат"}
           </div>
           <h1 className="text-4xl md:text-5xl font-black tracking-tighter text-secondary leading-[0.95] uppercase">
             Ваша защита —<br />
             <span className="text-primary">наш приоритет</span>
           </h1>
           <p className="text-base text-neutral-400 font-bold max-w-xl leading-relaxed">
-            Продаём только оригинальную технику и стоим за неё горой. Проблема с заказом? Решим без бюрократии.
+            {d.warranty_text ?? "Продаём только оригинальную технику и стоим за неё горой. Проблема с заказом? Решим без бюрократии."}
           </p>
         </div>
 
@@ -173,7 +192,7 @@ export default function WarrantyPage() {
           <div>
             <h3 className="font-black text-secondary text-lg mb-2">Условия возврата по закону</h3>
             <p className="text-neutral-600 font-medium leading-relaxed text-sm">
-              Товар надлежащего качества принимается к возврату в течение <strong>14 дней</strong> при сохранении товарного вида и оригинальной упаковки (ФЗ «О защите прав потребителей»). Технически сложные товары (консоли) надлежащего качества после активации возврату не подлежат — но мы всегда идём навстречу и найдём решение.
+              {d.return_text ?? `Товар надлежащего качества принимается к возврату в течение ${returnPeriod} при сохранении товарного вида и оригинальной упаковки (ФЗ «О защите прав потребителей»). Технически сложные товары (консоли) надлежащего качества после активации возврату не подлежат — но мы всегда идём навстречу и найдём решение.`}
             </p>
           </div>
         </div>
@@ -186,13 +205,13 @@ export default function WarrantyPage() {
           </div>
           <div className="flex gap-4 shrink-0">
             <a
-              href="https://t.me/+79266763488"
+              href={telegramHref}
               className="px-8 py-4 bg-primary text-white rounded-2xl font-black uppercase tracking-widest text-sm hover:scale-105 active:scale-95 transition-all shadow-xl shadow-primary/20"
             >
               Telegram
             </a>
             <a
-              href="mailto:shop@gameshop24.ru"
+              href={emailHref}
               className="px-8 py-4 bg-white/10 text-white rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-white/20 transition-all border border-white/10"
             >
               Email
