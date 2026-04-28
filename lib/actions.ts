@@ -114,6 +114,7 @@ export async function searchProductsAction(query: string) {
         ...(query && query.length >= 2 ? {
           OR: [
             { name: { contains: query, mode: "insensitive" } },
+            { sku: { contains: query, mode: "insensitive" } },
             { category: { name: { contains: query, mode: "insensitive" } } },
           ],
         } : {}),

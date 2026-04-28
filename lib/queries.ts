@@ -207,6 +207,7 @@ export interface ProductVariantOption {
   slug: string;
   price: number;
   priceOld: number | null;
+  showOtherPaymentPrice: boolean;
   inStock: boolean;
   images: string[];
   memory: string | null;
@@ -318,6 +319,7 @@ export const getProductVariants = cache(async (productId: number) => {
         slug: true,
         price: true,
         priceOld: true,
+        showOtherPaymentPrice: true,
         inStock: true,
         images: true,
         color: true,
@@ -338,6 +340,7 @@ export const getProductVariants = cache(async (productId: number) => {
       slug: item.slug,
       price: item.price,
       priceOld: item.priceOld ?? null,
+      showOtherPaymentPrice: item.showOtherPaymentPrice ?? false,
       inStock: item.inStock,
       images: item.images,
       memory: readAttribute(item.attributes, ATTRIBUTE_MEMORY_KEYS),

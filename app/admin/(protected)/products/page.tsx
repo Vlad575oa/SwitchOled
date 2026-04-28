@@ -1,6 +1,6 @@
 import prisma from "@/lib/prisma";
 import Link from "next/link";
-import { Plus, Pencil, Search, Package } from "lucide-react";
+import { Plus, Pencil, Search, Package, FileSpreadsheet } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
 import { ProductDeleteButton } from "./ProductDeleteButton";
 import { ProductDuplicateButton } from "./ProductDuplicateButton";
@@ -46,7 +46,14 @@ export default async function ProductsPage({ searchParams }: Props) {
 
   const products = await prisma.product.findMany({
     where: {
-      ...(q ? { name: { contains: q, mode: "insensitive" } } : {}),
+      ...(q
+        ? {
+            OR: [
+              { name: { contains: q, mode: "insensitive" } },
+              { sku: { contains: q, mode: "insensitive" } },
+            ],
+          }
+        : {}),
       ...(categorySlug
         ? selectedCategoryIds.length
           ? { categoryId: { in: selectedCategoryIds } }
@@ -64,12 +71,20 @@ export default async function ProductsPage({ searchParams }: Props) {
           <h1 className="text-xl font-black text-[#111827]">Товары</h1>
           <p className="text-xs text-neutral-400 font-bold mt-0.5">{products.length} позиций</p>
         </div>
-        <Link
-          href="/admin/products/new"
-          className="flex items-center gap-2 bg-primary text-white text-xs font-black uppercase tracking-widest px-5 py-2.5 rounded-xl hover:bg-red-700 transition-all shadow-lg shadow-primary/20"
-        >
-          <Plus size={14} /> Добавить
-        </Link>
+        <div className="flex items-center gap-2">
+          <a
+            href="/api/admin/products/export"
+            className="flex items-center gap-2 bg-white border border-neutral-200 text-neutral-700 text-xs font-black uppercase tracking-widest px-4 py-2.5 rounded-xl hover:bg-neutral-50 transition-all"
+          >
+            <FileSpreadsheet size={14} /> Выгрузить в Excel
+          </a>
+          <Link
+            href="/admin/products/new"
+            className="flex items-center gap-2 bg-primary text-white text-xs font-black uppercase tracking-widest px-5 py-2.5 rounded-xl hover:bg-red-700 transition-all shadow-lg shadow-primary/20"
+          >
+            <Plus size={14} /> Добавить
+          </Link>
+        </div>
       </header>
 
       <div className="p-8 space-y-5">
@@ -110,7 +125,7 @@ export default async function ProductsPage({ searchParams }: Props) {
             <input
               name="q"
               defaultValue={q}
-              placeholder="Поиск по названию..."
+              placeholder="Поиск по названию или артикулу..."
               className="w-full pl-9 pr-4 py-2.5 bg-white border border-neutral-200 rounded-xl text-sm font-bold text-[#111827] placeholder:text-neutral-300 outline-none focus:border-primary/30"
             />
           </div>
@@ -150,8 +165,8 @@ export default async function ProductsPage({ searchParams }: Props) {
                         )}
                       </div>
                     </td>
-                    <td className="px-5 py-3">
-                      <p className="text-sm font-black text-[#111827] line-clamp-1 max-w-[260px]">{p.name}</p>
+                    <td className="px-5 py-3 w-[360px]">
+                      <p className="text-xs font-black leading-4 text-[#111827] line-clamp-2 max-w-[340px] break-words">{p.name}</p>
                       <p className="text-[10px] text-neutral-400 font-bold mt-0.5">{p.slug}</p>
                     </td>
                     <td className="px-5 py-3 text-xs font-bold text-neutral-500">{p.category.name}</td>

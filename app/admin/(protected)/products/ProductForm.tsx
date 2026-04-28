@@ -27,6 +27,7 @@ export interface VariantRow {
   memory: string;
   price: string;
   priceOld: string;
+  showOtherPaymentPrice: boolean;
   stock: string;
   inStock: boolean;
   images: string[];
@@ -38,6 +39,7 @@ export interface VariantRow {
 interface SharedForm {
   id?: number;
   name: string;
+  sku: string;
   description: string;
   categoryId: string;
   brand: string;
@@ -70,7 +72,7 @@ const COLOR_ATTR_KEYS = ["Цвет"];
 const MEMORY_ATTR_KEYS = ["Накопитель", "Объём", "Объем"];
 
 const EMPTY_VARIANT: VariantRow = {
-  slug: "", color: "", memory: "", price: "", priceOld: "", stock: "10",
+  slug: "", color: "", memory: "", price: "", priceOld: "", showOtherPaymentPrice: false, stock: "10",
   inStock: true, images: [], newImages: [], newPreviews: [], _deleted: false,
 };
 
@@ -117,6 +119,7 @@ export const ProductForm = ({
 
   const [form, setForm] = useState<SharedForm>({
     name: initial.name ?? "",
+    sku: initial.sku ?? "",
     description: initial.description ?? "",
     categoryId: initial.categoryId ?? "",
     brand: initial.brand ?? "",
@@ -255,9 +258,11 @@ export const ProductForm = ({
         const data = new FormData();
         data.append("name", form.name);
         data.append("description", form.description);
+        data.append("sku", form.sku);
         // Send raw rubles — API handles ×100 conversion
         data.append("price", v.price);
         data.append("priceOld", v.priceOld || String(Math.round(parseFloat(v.price) * 1.13)));
+        data.append("showOtherPaymentPrice", String(v.showOtherPaymentPrice));
         data.append("categoryId", form.categoryId);
         data.append("brand", form.brand);
         data.append("color", v.color);
@@ -400,6 +405,15 @@ export const ProductForm = ({
                 placeholder="Microsoft"
               />
             </div>
+            <div>
+              <label className={labelCls}>Артикул</label>
+              <input
+                className={inputCls}
+                value={form.sku}
+                onChange={(e) => set("sku", e.target.value)}
+                placeholder="NSW-256-WHT"
+              />
+            </div>
           </section>
 
           {/* Variants table */}
@@ -520,6 +534,16 @@ export const ProductForm = ({
                           onChange={(e) => setVariant(realIdx, "priceOld", e.target.value)}
                           placeholder="44059"
                         />
+                        <label className="mt-2 inline-flex items-center gap-2 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={v.showOtherPaymentPrice}
+                            onChange={(e) => setVariant(realIdx, "showOtherPaymentPrice", e.target.checked)}
+                          />
+                          <span className="text-[11px] font-bold text-neutral-500">
+                            Показывать в карточке и в сетке
+                          </span>
+                        </label>
                       </div>
                       <div>
                         <label className={labelCls}>Склад</label>

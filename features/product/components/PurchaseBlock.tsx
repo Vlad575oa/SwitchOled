@@ -12,8 +12,10 @@ interface PurchaseBlockProps {
     id: number;
     name: string;
     slug: string;
+    sku?: string | null;
     price: number;
     priceOld?: number | null;
+    showOtherPaymentPrice?: boolean;
     inStock: boolean;
     brand?: string | null;
     images: string[];
@@ -28,6 +30,7 @@ type VariantCardItem = {
   slug: string;
   price: number;
   priceOld: number | null;
+  showOtherPaymentPrice: boolean;
   inStock: boolean;
   images: string[];
   memory: string | null;
@@ -65,6 +68,7 @@ export function PurchaseBlock({ product, variants = [], categorySlug }: Purchase
           slug: product.slug,
           price: product.price,
           priceOld: product.priceOld ?? null,
+          showOtherPaymentPrice: product.showOtherPaymentPrice ?? false,
           inStock: product.inStock,
           images: product.images,
           memory: null,
@@ -149,7 +153,7 @@ export function PurchaseBlock({ product, variants = [], categorySlug }: Purchase
             </p>
           </div>
           
-          {selectedVariant.priceOld && (
+          {selectedVariant.showOtherPaymentPrice && selectedVariant.priceOld && (
             <div>
               <p className="text-[10px] text-neutral-400 font-bold uppercase mb-1">Другие способы оплаты</p>
               <p className="text-lg font-bold text-neutral-300">
@@ -174,7 +178,7 @@ export function PurchaseBlock({ product, variants = [], categorySlug }: Purchase
 
         {/* Meta info */}
         <div className="flex items-center justify-between py-4 border-t border-neutral-50 mb-4">
-           <span className="text-xs font-bold text-neutral-400">Артикул: L0{product.id + 4000}</span>
+           <span className="text-xs font-bold text-neutral-400">Артикул: {product.sku || `L0${product.id + 4000}`}</span>
            {product.brand && (
              <div className="flex items-center gap-2 opacity-50 grayscale hover:grayscale-0 transition-all">
                 <span className="text-[10px] font-black uppercase text-secondary">{product.brand}</span>

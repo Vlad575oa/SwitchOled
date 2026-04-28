@@ -30,9 +30,11 @@ export async function PUT(request: Request, { params }: { params: { id: string }
 
     const name = fd.get("name") as string;
     const description = fd.get("description") as string;
+    const sku = ((fd.get("sku") as string) || "").trim() || null;
     const price = Math.round(parseFloat(fd.get("price") as string) * 100);
     const priceOldRaw = fd.get("priceOld") as string;
     const priceOld = priceOldRaw ? Math.round(parseFloat(priceOldRaw) * 100) : null;
+    const showOtherPaymentPrice = fd.get("showOtherPaymentPrice") === "true";
     const categoryId = parseInt(fd.get("categoryId") as string);
     const brand = (fd.get("brand") as string) || null;
     const color = (fd.get("color") as string) || null;
@@ -80,7 +82,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
     const product = await prisma.product.update({
       where: { id },
       data: {
-        name, description, price, priceOld, categoryId,
+        name, description, sku, price, priceOld, showOtherPaymentPrice, categoryId,
         brand, color, inStock, isNew, isSale, stock,
         images, attributes, metaTitle, metaDesc,
         slug,

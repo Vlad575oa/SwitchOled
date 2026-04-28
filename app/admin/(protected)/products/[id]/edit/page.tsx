@@ -60,6 +60,7 @@ export default async function EditProductPage({ params }: { params: { id: string
       memory,
       price: String(priceRub),
       priceOld: String(priceOldRub),
+      showOtherPaymentPrice: s.showOtherPaymentPrice ?? false,
       stock: String(s.stock),
       inStock: s.inStock,
       images: s.images,
@@ -81,6 +82,7 @@ export default async function EditProductPage({ params }: { params: { id: string
       initial={{
         id: product.id,
         name: product.name,
+        sku: product.sku ?? `L0${product.id + 4000}`,
         description: product.description ?? "",
         categoryId: String(product.categoryId),
         brand: product.brand ?? "",

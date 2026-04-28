@@ -21,9 +21,11 @@ model Product {
   id          Int         @id @default(autoincrement())
   name        String
   slug        String      @unique
+  sku         String?
   description String?
   price       Int
   priceOld    Int?
+  showOtherPaymentPrice Boolean @default(false)
   images      String[]
   inStock     Boolean     @default(true)
   isNew       Boolean     @default(false)

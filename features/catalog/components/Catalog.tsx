@@ -48,7 +48,12 @@ export async function Catalog({ category, searchParams, pageSize = 12 }: Catalog
         ],
       });
     } else {
-      andConditions.push({ name: { contains: q.trim(), mode: "insensitive" } });
+      andConditions.push({
+        OR: [
+          { name: { contains: q.trim(), mode: "insensitive" } },
+          { sku: { contains: q.trim(), mode: "insensitive" } },
+        ],
+      });
     }
   }
 

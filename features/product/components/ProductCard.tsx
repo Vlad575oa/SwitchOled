@@ -16,8 +16,10 @@ interface ProductCardProps {
     id: number;
     name: string;
     slug: string;
+    sku?: string | null;
     price: number;
     priceOld?: number | null;
+    showOtherPaymentPrice?: boolean;
     images: string[];
     isNew?: boolean;
     isSale?: boolean;
@@ -30,7 +32,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const router = useRouter();
   const productUrl = `/catalog/${product.category?.slug || "any"}/${product.slug}`;
-  const paymentMethodsPrice = Math.round(product.price * 1.13);
+  const paymentMethodsPrice = product.priceOld ?? Math.round(product.price * 1.13);
 
   const inWishlist = useWishlistStore((s) => s.has(product.id));
   const toggleWishlist = useWishlistStore((s) => s.toggle);
@@ -131,13 +133,17 @@ export const ProductCard = ({ product }: ProductCardProps) => {
           <p className="text-lg font-black text-secondary leading-none my-1">
             {formatPrice(product.price)}
           </p>
-          <div className="flex items-center gap-1 mt-0.5">
-            <p className="text-[10px] text-neutral-400 font-bold">Другие способы оплаты</p>
-            <Info size={10} className="text-neutral-300" />
-          </div>
-          <p className="text-xs font-bold text-neutral-400 mt-0.5">
-            {formatPrice(paymentMethodsPrice)}
-          </p>
+          {product.showOtherPaymentPrice && (
+            <>
+              <div className="flex items-center gap-1 mt-0.5">
+                <p className="text-[10px] text-neutral-400 font-bold">Другие способы оплаты</p>
+                <Info size={10} className="text-neutral-300" />
+              </div>
+              <p className="text-xs font-bold text-neutral-400 mt-0.5">
+                {formatPrice(paymentMethodsPrice)}
+              </p>
+            </>
+          )}
         </div>
 
         {/* Stock */}
