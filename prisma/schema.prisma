@@ -41,6 +41,7 @@ model Product {
   stock       Int         @default(10)
   isVisible   Boolean     @default(true)
   orderItems  OrderItem[]
+  wishlistItems WishlistItem[]
   category    Category    @relation(fields: [categoryId], references: [id])
 
   @@index([slug])
@@ -68,6 +69,7 @@ model OrderItem {
   id                Int     @id @default(autoincrement())
   orderId           Int
   productId         Int
+  product_name_at_purchase String
   quantity          Int
   price_at_purchase Int
   order             Order   @relation(fields: [orderId], references: [id])
@@ -116,9 +118,23 @@ model User {
   Account       Account[]
   orders        Order[]
   sessions      Session[]
+  wishlistItems WishlistItem[]
 
   @@index([email])
   @@index([phone])
+}
+
+model WishlistItem {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  productId Int
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, productId])
+  @@index([userId, createdAt])
+  @@index([productId])
 }
 
 model Session {

@@ -26,6 +26,8 @@ export const Header = () => {
   const totalItems = useCartStore((state) => state.totalItems());
   const clearCart = useCartStore((s) => s.clearCart);
   const wishlistCount = useWishlistStore((s) => s.count());
+  const wishlistSynced = useWishlistStore((s) => s.synced);
+  const syncWishlist = useWishlistStore((s) => s.syncWithAccount);
   const clearWishlist = useWishlistStore((s) => s.clear);
   const compareCount = useCompareStore((s) => s.count());
   const clearCompare = useCompareStore((s) => s.clear);
@@ -35,6 +37,11 @@ export const Header = () => {
     setMounted(true);
     fetch("/api/auth/me").then((r) => r.json()).then(setUser).catch(() => {});
   }, []);
+
+  useEffect(() => {
+    if (!mounted || !user?.id || wishlistSynced) return;
+    void syncWishlist();
+  }, [mounted, user?.id, wishlistSynced, syncWishlist]);
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {

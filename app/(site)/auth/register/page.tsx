@@ -18,8 +18,16 @@ export default function RegisterPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const set = (key: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement>) =>
-    setForm((prev) => ({ ...prev, [key]: e.target.value }));
+  const setField = (key: keyof typeof form, value: string) =>
+    setForm((prev) => ({ ...prev, [key]: value }));
+
+  const normalizePhoneInput = (raw: string) => {
+    const trimmed = raw.trim();
+    if (!trimmed) return "";
+    const hasPlus = trimmed.startsWith("+");
+    const digits = trimmed.replace(/\D/g, "").slice(0, 15);
+    return hasPlus ? `+${digits}` : digits;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,8 +36,8 @@ export default function RegisterPage() {
     if (!form.email && !form.phone) {
       return setError("Укажите email или номер телефона");
     }
-    if (form.password.length < 6) {
-      return setError("Пароль должен содержать не менее 6 символов");
+    if (form.password.length < 8) {
+      return setError("Пароль должен содержать не менее 8 символов");
     }
     if (form.password !== form.confirm) {
       return setError("Пароли не совпадают");
@@ -122,7 +130,7 @@ export default function RegisterPage() {
               label="Имя"
               placeholder="Ваше имя"
               value={form.name}
-              onChange={set("name")}
+              onChange={(e) => setField("name", e.target.value)}
               hint="необязательно"
             />
 
@@ -131,7 +139,7 @@ export default function RegisterPage() {
               type="email"
               placeholder="name@example.com"
               value={form.email}
-              onChange={set("email")}
+              onChange={(e) => setField("email", e.target.value)}
               hint="или телефон ниже"
             />
 
@@ -140,7 +148,7 @@ export default function RegisterPage() {
               type="tel"
               placeholder="+7 (999) 000-00-00"
               value={form.phone}
-              onChange={set("phone")}
+              onChange={(e) => setField("phone", normalizePhoneInput(e.target.value))}
               hint="или email выше"
             />
 
@@ -152,8 +160,8 @@ export default function RegisterPage() {
                 <input
                   type={showPassword ? "text" : "password"}
                   value={form.password}
-                  onChange={set("password")}
-                  placeholder="Минимум 6 символов"
+                  onChange={(e) => setField("password", e.target.value)}
+                  placeholder="Минимум 8 символов"
                   required
                   className="w-full px-5 py-4 pr-12 bg-neutral-50 border border-neutral-100 focus:border-primary/30 focus:bg-white rounded-2xl text-sm font-medium outline-none transition-all placeholder:text-neutral-300"
                 />
@@ -172,7 +180,7 @@ export default function RegisterPage() {
               type="password"
               placeholder="••••••••"
               value={form.confirm}
-              onChange={set("confirm")}
+              onChange={(e) => setField("confirm", e.target.value)}
               required
             />
 

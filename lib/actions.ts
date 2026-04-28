@@ -70,6 +70,7 @@ export async function createOrderAction(input: CreateOrderInput): Promise<Action
         const product = productMap.get(item.productId)!;
         return {
           productId: item.productId,
+          product_name_at_purchase: product.name,
           quantity: item.quantity,
           price_at_purchase: product.price,
         };

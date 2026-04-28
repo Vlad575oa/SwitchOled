@@ -20,10 +20,32 @@ export async function GET() {
     const orders = await prisma.order.findMany({
       where: { userId: session.userId },
       orderBy: { createdAt: "desc" },
-      include: { items: true },
+      include: {
+        items: {
+          select: {
+            id: true,
+            quantity: true,
+            price_at_purchase: true,
+            product_name_at_purchase: true,
+          },
+        },
+      },
     });
 
-    return NextResponse.json(orders);
+    const normalized = orders.map((order) => ({
+      id: order.id,
+      createdAt: order.createdAt,
+      status: order.status,
+      totalAmount: order.totalAmount,
+      items: order.items.map((item) => ({
+        id: item.id,
+        quantity: item.quantity,
+        price: item.price_at_purchase,
+        productName: item.product_name_at_purchase,
+      })),
+    }));
+
+    return NextResponse.json(normalized);
   } catch {
     return NextResponse.json([]);
   }

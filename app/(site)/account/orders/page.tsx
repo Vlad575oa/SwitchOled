@@ -101,8 +101,14 @@ export default function OrdersPage() {
                 <div className="space-y-2 mb-4">
                   {order.items?.map((item) => (
                     <div key={item.id} className="flex justify-between items-center">
-                      <span className="text-sm font-bold text-neutral-500 truncate max-w-[200px]">{item.productName} × {item.quantity}</span>
-                      <span className="text-sm font-black text-secondary">{formatPrice(item.price * item.quantity)}</span>
+                      <div className="max-w-[220px]">
+                        <span className="block text-sm font-bold text-neutral-500 truncate">{item.productName}</span>
+                        <span className="text-[11px] font-bold text-neutral-400">Количество: {item.quantity}</span>
+                      </div>
+                      <div className="text-right">
+                        <span className="block text-xs font-bold text-neutral-400">Цена покупки</span>
+                        <span className="text-sm font-black text-secondary">{formatPrice(item.price)}</span>
+                      </div>
                     </div>
                   ))}
                 </div>
