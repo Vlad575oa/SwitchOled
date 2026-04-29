@@ -3,15 +3,11 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowRight, Eye, EyeOff, Mail, Phone } from "lucide-react";
-import { cn } from "@/lib/utils";
-
-type LoginMode = "email" | "phone";
+import { ArrowRight, Eye, EyeOff } from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
-  const [mode, setMode] = useState<LoginMode>("email");
-  const [identifier, setIdentifier] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
@@ -26,7 +22,7 @@ export default function LoginPage() {
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ identifier, password }),
+        body: JSON.stringify({ email, password }),
       });
       const data = await res.json();
 
@@ -70,35 +66,16 @@ export default function LoginPage() {
             </Link>
           </div>
 
-          {/* Mode toggle */}
-          <div className="flex bg-neutral-50 rounded-2xl p-1 mb-6">
-            {(["email", "phone"] as LoginMode[]).map((m) => (
-              <button
-                key={m}
-                onClick={() => { setMode(m); setIdentifier(""); }}
-                className={cn(
-                  "flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-bold transition-all",
-                  mode === m
-                    ? "bg-white text-secondary shadow-sm"
-                    : "text-neutral-400 hover:text-secondary"
-                )}
-              >
-                {m === "email" ? <Mail size={15} /> : <Phone size={15} />}
-                {m === "email" ? "Email" : "Телефон"}
-              </button>
-            ))}
-          </div>
-
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="text-[10px] font-black uppercase tracking-widest text-neutral-400 ml-1 mb-2 block">
-                {mode === "email" ? "Email адрес" : "Номер телефона"}
+                Email адрес
               </label>
               <input
-                type={mode === "email" ? "email" : "tel"}
-                value={identifier}
-                onChange={(e) => setIdentifier(e.target.value)}
-                placeholder={mode === "email" ? "name@example.com" : "+7 (999) 000-00-00"}
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="name@example.com"
                 required
                 autoFocus
                 className="w-full px-5 py-4 bg-neutral-50 border border-neutral-100 focus:border-primary/30 focus:bg-white rounded-2xl text-sm font-medium outline-none transition-all placeholder:text-neutral-300"
@@ -136,7 +113,7 @@ export default function LoginPage() {
 
             <button
               type="submit"
-              disabled={loading || !identifier || !password}
+              disabled={loading || !email || !password}
               className="w-full py-4 bg-primary text-white font-black rounded-2xl flex items-center justify-center gap-2 hover:bg-red-700 hover:shadow-lg hover:shadow-primary/20 active:scale-[0.98] transition-all disabled:opacity-50 disabled:scale-100 mt-2"
             >
               {loading ? (

@@ -3,17 +3,17 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowRight, Eye, EyeOff } from "lucide-react";
+import { ArrowRight, Check, Eye, EyeOff } from "lucide-react";
 
 export default function RegisterPage() {
   const router = useRouter();
   const [form, setForm] = useState({
     name: "",
     email: "",
-    phone: "",
     password: "",
     confirm: "",
   });
+  const [consent, setConsent] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -21,26 +21,21 @@ export default function RegisterPage() {
   const setField = (key: keyof typeof form, value: string) =>
     setForm((prev) => ({ ...prev, [key]: value }));
 
-  const normalizePhoneInput = (raw: string) => {
-    const trimmed = raw.trim();
-    if (!trimmed) return "";
-    const hasPlus = trimmed.startsWith("+");
-    const digits = trimmed.replace(/\D/g, "").slice(0, 15);
-    return hasPlus ? `+${digits}` : digits;
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
-    if (!form.email && !form.phone) {
-      return setError("Укажите email или номер телефона");
+    if (!form.email) {
+      return setError("Укажите email");
     }
     if (form.password.length < 8) {
       return setError("Пароль должен содержать не менее 8 символов");
     }
     if (form.password !== form.confirm) {
       return setError("Пароли не совпадают");
+    }
+    if (!consent) {
+      return setError("Подтвердите согласие на обработку персональных данных");
     }
 
     setLoading(true);
@@ -51,8 +46,8 @@ export default function RegisterPage() {
         body: JSON.stringify({
           name: form.name || undefined,
           email: form.email || undefined,
-          phone: form.phone || undefined,
           password: form.password,
+          consent,
         }),
       });
       const data = await res.json();
@@ -140,16 +135,7 @@ export default function RegisterPage() {
               placeholder="name@example.com"
               value={form.email}
               onChange={(e) => setField("email", e.target.value)}
-              hint="или телефон ниже"
-            />
-
-            <Field
-              label="Телефон"
-              type="tel"
-              placeholder="+7 (999) 000-00-00"
-              value={form.phone}
-              onChange={(e) => setField("phone", normalizePhoneInput(e.target.value))}
-              hint="или email выше"
+              required
             />
 
             <div>
@@ -184,6 +170,32 @@ export default function RegisterPage() {
               required
             />
 
+            <label className="flex items-start gap-3 rounded-2xl border border-neutral-100 bg-neutral-50 p-3 cursor-pointer select-none">
+              <input
+                type="checkbox"
+                checked={consent}
+                onChange={(e) => setConsent(e.target.checked)}
+                className="sr-only"
+              />
+              <span
+                className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md border transition-colors ${
+                  consent
+                    ? "border-primary bg-primary text-white"
+                    : "border-neutral-300 bg-white text-transparent"
+                }`}
+                aria-hidden="true"
+              >
+                <Check size={16} strokeWidth={3} />
+              </span>
+              <span className="text-xs leading-relaxed text-neutral-600 font-medium">
+                Я даю свое согласие на обработку персональных данных в соответствии с{" "}
+                <Link href="/legal/privacy" className="font-bold text-primary hover:underline">
+                  Политикой конфиденциальности
+                </Link>
+                .
+              </span>
+            </label>
+
             {error && (
               <div className="bg-red-50 border border-red-100 text-red-500 text-xs font-bold py-3 px-4 rounded-2xl">
                 {error}
@@ -192,7 +204,7 @@ export default function RegisterPage() {
 
             <button
               type="submit"
-              disabled={loading || !form.password || !form.confirm}
+              disabled={loading || !form.password || !form.confirm || !consent}
               className="w-full py-4 bg-primary text-white font-black rounded-2xl flex items-center justify-center gap-2 hover:bg-red-700 hover:shadow-lg hover:shadow-primary/20 active:scale-[0.98] transition-all disabled:opacity-50 disabled:scale-100 mt-2"
             >
               {loading ? (

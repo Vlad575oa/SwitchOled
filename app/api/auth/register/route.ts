@@ -12,12 +12,11 @@ import { buildRateLimitKey, rateLimit } from "@/lib/rateLimit";
 
 const RegisterSchema = z.object({
   name: z.string().trim().min(2).max(80).optional().or(z.literal("")),
-  email: z.string().trim().toLowerCase().email().max(120).optional().or(z.literal("")),
-  phone: z.string().trim().min(10).max(24).optional().or(z.literal("")),
+  email: z.string().trim().toLowerCase().email().max(120),
   password: z.string().min(8).max(128),
-}).refine((d) => Boolean(d.email) || Boolean(d.phone), {
-  message: "Необходимо указать email или телефон",
-  path: ["email"],
+  consent: z.literal(true, {
+    errorMap: () => ({ message: "Необходимо согласие на обработку персональных данных" }),
+  }),
 });
 
 export async function POST(request: Request) {
@@ -30,32 +29,16 @@ export async function POST(request: Request) {
     if (!parsed.success) {
       return NextResponse.json({ error: parsed.error.issues[0]?.message || "Некорректные данные" }, { status: 400 });
     }
-    const { name, email, phone, password } = parsed.data;
-    const normalizedEmail = email ? email.toLowerCase() : null;
-    const normalizedPhone = phone ? phone.replace(/\D/g, "") : null;
-    if (normalizedPhone && (normalizedPhone.length < 10 || normalizedPhone.length > 15)) {
-      return NextResponse.json({ error: "Некорректный номер телефона" }, { status: 400 });
-    }
+    const { name, email, password } = parsed.data;
+    const normalizedEmail = email.toLowerCase();
 
     // Check uniqueness
-    if (normalizedEmail) {
-      const existing = await prisma.user.findUnique({ where: { email: normalizedEmail } });
-      if (existing) {
-        return NextResponse.json(
-          { error: "Пользователь с таким email уже существует" },
-          { status: 409 }
-        );
-      }
-    }
-
-    if (normalizedPhone) {
-      const existing = await prisma.user.findUnique({ where: { phone: normalizedPhone } });
-      if (existing) {
-        return NextResponse.json(
-          { error: "Пользователь с таким телефоном уже существует" },
-          { status: 409 }
-        );
-      }
+    const existing = await prisma.user.findUnique({ where: { email: normalizedEmail } });
+    if (existing) {
+      return NextResponse.json(
+        { error: "Пользователь с таким email уже существует" },
+        { status: 409 }
+      );
     }
 
     const { hash, salt } = hashPassword(password);
@@ -64,7 +47,6 @@ export async function POST(request: Request) {
       data: {
         name: name || null,
         email: normalizedEmail,
-        phone: normalizedPhone,
         passwordHash: hash,
         passwordSalt: salt,
       },

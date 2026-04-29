@@ -3,6 +3,8 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { Suspense } from "react";
 import { Toaster } from "sonner";
+import YandexMetrika from "@/components/YandexMetrika";
+import MessengerExitNotice from "@/components/MessengerExitNotice";
 
 const inter = Inter({ subsets: ["latin", "cyrillic"] });
 
@@ -151,6 +153,8 @@ export default function RootLayout({
       </head>
       <body className={`${inter.className} bg-[var(--bg-base)] text-[var(--text-primary)] antialiased min-h-screen`}>
         {children}
+        <MessengerExitNotice />
+        <YandexMetrika />
         <Toaster position="bottom-right" richColors closeButton />
       </body>
     </html>

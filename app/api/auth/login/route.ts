@@ -11,7 +11,7 @@ import {
 import { buildRateLimitKey, rateLimit } from "@/lib/rateLimit";
 
 const LoginSchema = z.object({
-  identifier: z.string().trim().min(3).max(120),
+  email: z.string().trim().toLowerCase().email().max(120),
   password: z.string().min(8).max(128),
 });
 
@@ -26,17 +26,10 @@ export async function POST(request: Request) {
     if (!parsed.success) {
       return NextResponse.json({ error: "Заполните все поля" }, { status: 400 });
     }
-    const { identifier, password } = parsed.data;
-
-    // Determine if identifier is email or phone
-    const isEmail = identifier.includes("@");
-    const normalized = isEmail ? identifier.toLowerCase() : identifier.replace(/\D/g, "");
-    if (!isEmail && (normalized.length < 10 || normalized.length > 15)) {
-      return NextResponse.json({ error: "Неверный логин или пароль" }, { status: 401 });
-    }
+    const { email, password } = parsed.data;
 
     const user = await prisma.user.findFirst({
-      where: isEmail ? { email: normalized } : { phone: normalized },
+      where: { email },
     });
 
     if (!user || !user.passwordHash || !user.passwordSalt) {
