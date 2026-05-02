@@ -7,23 +7,25 @@ function normalizeSlug(s: string) {
 }
 
 async function resolveBrandFromCategory(categoryId: number) {
-  let current = await prisma.category.findUnique({
+  let current: { id: number; name: string; parentId: number | null } | null = await prisma.category.findUnique({
     where: { id: categoryId },
     select: { id: true, name: true, parentId: true },
   });
 
   if (!current) return null;
 
-  while (current.parentId) {
+  while (current) {
+    if (current.parentId == null) break;
+    const parentId: number = current.parentId;
     const parent = await prisma.category.findUnique({
-      where: { id: current.parentId },
+      where: { id: parentId },
       select: { id: true, name: true, parentId: true },
     });
     if (!parent) break;
     current = parent;
   }
 
-  return current.name;
+  return current?.name ?? null;
 }
 
 export async function GET() {
