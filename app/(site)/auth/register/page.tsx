@@ -5,6 +5,45 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowRight, Check, Eye, EyeOff } from "lucide-react";
 
+type RegisterFieldProps = {
+  label: string;
+  type?: string;
+  placeholder: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  required?: boolean;
+  hint?: string;
+};
+
+function RegisterField({
+  label,
+  type = "text",
+  placeholder,
+  value,
+  onChange,
+  required,
+  hint,
+}: RegisterFieldProps) {
+  return (
+    <div>
+      <div className="flex items-baseline justify-between mb-2">
+        <label className="text-[10px] font-black uppercase tracking-widest text-neutral-400 ml-1">
+          {label}
+        </label>
+        {hint && <span className="text-[10px] text-neutral-300 font-medium">{hint}</span>}
+      </div>
+      <input
+        type={type}
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        required={required}
+        className="w-full px-5 py-4 bg-neutral-50 border border-neutral-100 focus:border-primary/30 focus:bg-white rounded-2xl text-sm font-medium outline-none transition-all placeholder:text-neutral-300"
+      />
+    </div>
+  );
+}
+
 export default function RegisterPage() {
   const router = useRouter();
   const [form, setForm] = useState({
@@ -65,41 +104,6 @@ export default function RegisterPage() {
     }
   };
 
-  const Field = ({
-    label,
-    type = "text",
-    placeholder,
-    value,
-    onChange,
-    required,
-    hint,
-  }: {
-    label: string;
-    type?: string;
-    placeholder: string;
-    value: string;
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    required?: boolean;
-    hint?: string;
-  }) => (
-    <div>
-      <div className="flex items-baseline justify-between mb-2">
-        <label className="text-[10px] font-black uppercase tracking-widest text-neutral-400 ml-1">
-          {label}
-        </label>
-        {hint && <span className="text-[10px] text-neutral-300 font-medium">{hint}</span>}
-      </div>
-      <input
-        type={type}
-        value={value}
-        onChange={onChange}
-        placeholder={placeholder}
-        required={required}
-        className="w-full px-5 py-4 bg-neutral-50 border border-neutral-100 focus:border-primary/30 focus:bg-white rounded-2xl text-sm font-medium outline-none transition-all placeholder:text-neutral-300"
-      />
-    </div>
-  );
-
   return (
     <div className="min-h-[80vh] flex items-center justify-center py-16 px-4">
       <div className="w-full max-w-md">
@@ -121,7 +125,7 @@ export default function RegisterPage() {
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            <Field
+            <RegisterField
               label="Имя"
               placeholder="Ваше имя"
               value={form.name}
@@ -129,7 +133,7 @@ export default function RegisterPage() {
               hint="необязательно"
             />
 
-            <Field
+            <RegisterField
               label="Email"
               type="email"
               placeholder="name@example.com"
@@ -161,7 +165,7 @@ export default function RegisterPage() {
               </div>
             </div>
 
-            <Field
+            <RegisterField
               label="Повтор пароля"
               type="password"
               placeholder="••••••••"
