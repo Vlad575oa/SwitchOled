@@ -2,6 +2,9 @@ import prisma from "@/lib/prisma";
 import { formatPrice } from "@/lib/utils";
 import { ShoppingBag } from "lucide-react";
 import { OrderStatusSelect } from "./OrderStatusSelect";
+import { OrderDeleteButton } from "./OrderDeleteButton";
+import { cookies } from "next/headers";
+import { ADMIN_COOKIE, verifyAdminSession } from "@/lib/adminSession";
 
 export const dynamic = "force-dynamic";
 
@@ -13,6 +16,9 @@ const STATUS_MAP: Record<string, { label: string; cls: string }> = {
 };
 
 export default async function OrdersPage() {
+  const session = await verifyAdminSession(cookies().get(ADMIN_COOKIE)?.value);
+  const canDeleteOrders = session?.r !== "MANAGER";
+
   const orders = await prisma.order.findMany({
     include: { items: { include: { product: { select: { name: true } } } } },
     orderBy: { createdAt: "desc" },
@@ -30,7 +36,7 @@ export default async function OrdersPage() {
           <table className="w-full text-left">
             <thead>
               <tr className="border-b border-neutral-100">
-                {["#", "Клиент", "Телефон", "Адрес", "Товары", "Сумма", "Статус", "Дата"].map((h) => (
+                {["#", "Клиент", "Телефон", "Адрес", "Товары", "Сумма", "Статус", "Дата", ""].map((h) => (
                   <th key={h} className="px-5 py-3.5 text-[9px] font-black uppercase tracking-widest text-neutral-400">{h}</th>
                 ))}
               </tr>
@@ -38,7 +44,7 @@ export default async function OrdersPage() {
             <tbody>
               {orders.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="px-5 py-20 text-center">
+                  <td colSpan={9} className="px-5 py-20 text-center">
                     <ShoppingBag size={40} className="mx-auto mb-3 text-neutral-200" />
                     <p className="text-neutral-400 font-bold text-sm">Заказов пока нет</p>
                   </td>
@@ -67,6 +73,13 @@ export default async function OrdersPage() {
                       </td>
                       <td className="px-5 py-4 text-xs font-bold text-neutral-400">
                         {new Date(order.createdAt).toLocaleDateString("ru-RU")}
+                      </td>
+                      <td className="px-5 py-4">
+                        {canDeleteOrders ? (
+                          <div className="flex items-center justify-end">
+                            <OrderDeleteButton orderId={order.id} />
+                          </div>
+                        ) : null}
                       </td>
                     </tr>
                   );

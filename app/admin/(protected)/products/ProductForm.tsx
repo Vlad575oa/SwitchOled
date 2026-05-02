@@ -135,6 +135,7 @@ export const ProductForm = ({
   const [saving, setSaving] = useState(false);
   const [showSEO, setShowSEO] = useState(false);
   const [error, setError] = useState("");
+  const [slugErrors, setSlugErrors] = useState<Record<number, string>>({});
 
   const variantFileRef = useRef<HTMLInputElement>(null);
   const currentVariantIdx = useRef<number>(-1);
@@ -155,8 +156,17 @@ export const ProductForm = ({
       p.map((v, i) => (i === idx ? { ...v, _deleted: true } : v))
     );
   };
-  const setVariant = (idx: number, key: keyof VariantRow, val: any) =>
+  const setVariant = (idx: number, key: keyof VariantRow, val: any) => {
     setVariants((p) => p.map((v, i) => (i === idx ? { ...v, [key]: val } : v)));
+    if (key === "slug") {
+      setSlugErrors((prev) => {
+        if (!(idx in prev)) return prev;
+        const next = { ...prev };
+        delete next[idx];
+        return next;
+      });
+    }
+  };
 
   const openImagePicker = (idx: number) => {
     currentVariantIdx.current = idx;
@@ -234,6 +244,7 @@ export const ProductForm = ({
 
     setSaving(true);
     setError("");
+    setSlugErrors({});
 
     const sharedAttrsBase = attrs.filter(
       (a) =>
@@ -250,6 +261,7 @@ export const ProductForm = ({
 
       // Create/update active variants
       for (const v of active) {
+        const variantIdx = variants.indexOf(v);
         const variantAttrs = [
           ...sharedAttrsBase,
           ...(v.color ? [{ key: "Цвет", value: v.color }] : []),
@@ -284,6 +296,9 @@ export const ProductForm = ({
           });
           if (!res.ok) {
             const d = await res.json();
+            if ((d.error ?? "").toLowerCase().includes("slug") && variantIdx >= 0) {
+              setSlugErrors((prev) => ({ ...prev, [variantIdx]: d.error ?? "Этот slug уже занят" }));
+            }
             throw new Error(d.error ?? "Ошибка обновления");
           }
         } else {
@@ -294,6 +309,9 @@ export const ProductForm = ({
           });
           if (!res.ok) {
             const d = await res.json();
+            if ((d.error ?? "").toLowerCase().includes("slug") && variantIdx >= 0) {
+              setSlugErrors((prev) => ({ ...prev, [variantIdx]: d.error ?? "Этот slug уже занят" }));
+            }
             throw new Error(d.error ?? "Ошибка создания");
           }
         }
@@ -456,11 +474,14 @@ export const ProductForm = ({
                     <div>
                       <label className={labelCls}>Slug (URL) *</label>
                       <input
-                        className={inputCls}
+                        className={`${inputCls} ${slugErrors[realIdx] ? "border-red-300 bg-red-50 focus:border-red-400" : ""}`}
                         value={v.slug}
                         onChange={(e) => setVariant(realIdx, "slug", normalizeSlug(e.target.value))}
                         placeholder="sony-playstation-5-pro-2tb"
                       />
+                      {slugErrors[realIdx] && (
+                        <p className="text-[10px] text-red-500 font-bold mt-1">{slugErrors[realIdx]}</p>
+                      )}
                       <p className="text-[10px] text-neutral-400 font-bold mt-1">
                         /catalog/…/<span className="text-neutral-600">{normalizeSlug(v.slug) || "slug"}</span>
                       </p>
