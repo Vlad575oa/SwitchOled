@@ -1,7 +1,5 @@
 import { NextResponse } from "next/server";
 import { createOrderAction } from "@/lib/actions";
-import { yookassa } from "@/lib/yookassa";
-import prisma from "@/lib/prisma";
 import { z } from "zod";
 import { buildRateLimitKey, rateLimit } from "@/lib/rateLimit";
 
@@ -44,28 +42,16 @@ export async function POST(req: Request) {
 
     const order = result.data;
 
-    // 2. Create Payment in Yookassa
-    const payment = await yookassa.createPayment(
-      order.totalAmount / 100,
-      `Заказ №${order.id} в Gameshop24`,
-      `${process.env.NEXT_PUBLIC_API_URL}/success?orderId=${order.id}`
-    );
-
-    // 3. Update Order with paymentId
-    await prisma.order.update({
-      where: { id: order.id },
-      data: { paymentId: payment.id },
-    });
-
+    // Cash checkout flow: no payment gateway redirect.
     return NextResponse.json({
       success: true,
       data: {
-        confirmationUrl: payment.confirmation.confirmation_url,
+        confirmationUrl: `/success?orderId=${order.id}`,
         orderId: order.id,
       },
     });
   } catch (error: any) {
     console.error("Checkout API Error:", error.message);
-    return NextResponse.json({ success: false, error: "Failed to process order" }, { status: 500 });
+    return NextResponse.json({ success: false, error: "Ошибка при создании заказа. Попробуйте ещё раз." }, { status: 500 });
   }
 }

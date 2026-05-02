@@ -52,8 +52,9 @@ export default function CheckoutPage() {
       });
 
       const result = await response.json();
-      if (result.confirmationUrl) {
-        window.location.href = result.confirmationUrl;
+      const confirmationUrl = result?.data?.confirmationUrl;
+      if (confirmationUrl) {
+        window.location.href = confirmationUrl;
       } else {
         setSubmitError("Ошибка при создании заказа. Попробуйте ещё раз.");
       }
@@ -187,11 +188,11 @@ export default function CheckoutPage() {
               disabled={loading}
               className="w-full h-16 rounded-2xl bg-white text-secondary hover:bg-neutral-100 disabled:bg-neutral-800 disabled:text-neutral-600"
             >
-              {loading ? "Обработка..." : "Перейти к оплате"}
+              {loading ? "Обработка..." : "Завершить оформление"}
             </Button>
 
             <p className="text-[10px] text-neutral-500 font-bold text-center mt-6 uppercase tracking-wider">
-              Оплата производится через защищенный шлюз ЮKassa
+              Оплата наличными при получении
             </p>
           </div>
         </div>

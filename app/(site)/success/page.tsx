@@ -20,7 +20,7 @@ export default function SuccessPage() {
       </div>
       <h1 className="text-4xl font-black text-secondary mb-4">Спасибо за заказ!</h1>
       <p className="text-neutral-500 mb-10 max-w-md mx-auto">
-        Ваш заказ успешно оплачен. Мы свяжемся с вами в ближайшее время для уточнения деталей доставки.
+        Ваш заказ успешно оформлен. Мы свяжемся с вами в ближайшее время для уточнения деталей доставки.
       </p>
       <div className="flex justify-center gap-4">
         <Link href="/">
