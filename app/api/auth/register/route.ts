@@ -1,14 +1,14 @@
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
 import prisma from "@/lib/prisma";
 import { z } from "zod";
 import {
   hashPassword,
-  generateSessionToken,
-  getSessionExpiry,
-  SESSION_COOKIE,
 } from "@/lib/auth";
 import { buildRateLimitKey, rateLimit } from "@/lib/rateLimit";
+import {
+  createEmailVerificationToken,
+  sendVerificationEmail,
+} from "@/lib/emailVerification";
 
 const RegisterSchema = z.object({
   name: z.string().trim().min(2).max(80).optional().or(z.literal("")),
@@ -35,10 +35,19 @@ export async function POST(request: Request) {
     // Check uniqueness
     const existing = await prisma.user.findUnique({ where: { email: normalizedEmail } });
     if (existing) {
-      return NextResponse.json(
-        { error: "Пользователь с таким email уже существует" },
-        { status: 409 }
-      );
+      if (existing.emailVerified) {
+        return NextResponse.json(
+          { error: "Пользователь с таким email уже существует" },
+          { status: 409 }
+        );
+      }
+
+      const token = await createEmailVerificationToken(normalizedEmail);
+      await sendVerificationEmail(normalizedEmail, token);
+      return NextResponse.json({
+        success: true,
+        message: "Письмо с подтверждением отправлено повторно",
+      });
     }
 
     const { hash, salt } = hashPassword(password);
@@ -52,28 +61,13 @@ export async function POST(request: Request) {
       },
     });
 
-    // Create session immediately after registration
-    const token = generateSessionToken();
-    await prisma.session.create({
-      data: {
-        id: token,
-        sessionToken: token,
-        userId: user.id,
-        expires: getSessionExpiry(),
-      },
-    });
-
-    cookies().set(SESSION_COOKIE, token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      maxAge: 60 * 60 * 24 * 30,
-      path: "/",
-    });
+    const token = await createEmailVerificationToken(normalizedEmail);
+    await sendVerificationEmail(normalizedEmail, token);
 
     return NextResponse.json({
       success: true,
       user: { id: user.id, name: user.name, email: user.email },
+      message: "Регистрация завершена. Проверьте почту для подтверждения email.",
     });
   } catch (error) {
     console.error("[register]", error);

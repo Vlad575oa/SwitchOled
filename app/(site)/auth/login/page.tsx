@@ -11,12 +11,16 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
+  const [resendMessage, setResendMessage] = useState("");
+  const [resendLoading, setResendLoading] = useState(false);
   const [loading, setLoading] = useState(false);
+  const needsEmailVerification = error === "Подтвердите email перед входом в аккаунт";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError("");
+    setResendMessage("");
 
     try {
       const res = await fetch("/api/auth/login", {
@@ -36,6 +40,33 @@ export default function LoginPage() {
       setError("Ошибка соединения с сервером");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleResendVerification = async () => {
+    if (!email) {
+      setResendMessage("Введите email, чтобы отправить письмо повторно");
+      return;
+    }
+
+    setResendLoading(true);
+    setResendMessage("");
+    try {
+      const res = await fetch("/api/auth/resend-verification", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setResendMessage("Письмо отправлено. Проверьте входящие и папку Спам.");
+      } else {
+        setResendMessage(data.error || "Не удалось отправить письмо");
+      }
+    } catch {
+      setResendMessage("Ошибка соединения с сервером");
+    } finally {
+      setResendLoading(false);
     }
   };
 
@@ -108,6 +139,22 @@ export default function LoginPage() {
             {error && (
               <div className="bg-red-50 border border-red-100 text-red-500 text-xs font-bold py-3 px-4 rounded-2xl">
                 {error}
+              </div>
+            )}
+
+            {needsEmailVerification && (
+              <div className="space-y-2">
+                <button
+                  type="button"
+                  onClick={handleResendVerification}
+                  disabled={resendLoading || !email}
+                  className="w-full py-3 border border-primary/20 text-primary bg-primary/5 font-black rounded-2xl hover:bg-primary/10 transition-colors disabled:opacity-50"
+                >
+                  {resendLoading ? "Отправляем..." : "Отправить письмо повторно"}
+                </button>
+                {resendMessage && (
+                  <p className="text-xs font-bold text-neutral-500 px-1">{resendMessage}</p>
+                )}
               </div>
             )}
 

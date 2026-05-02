@@ -39,6 +39,13 @@ export async function POST(request: Request) {
       );
     }
 
+    if (!user.emailVerified) {
+      return NextResponse.json(
+        { error: "Подтвердите email перед входом в аккаунт" },
+        { status: 403 }
+      );
+    }
+
     const valid = verifyPassword(password, user.passwordHash, user.passwordSalt);
     if (!valid) {
       return NextResponse.json(

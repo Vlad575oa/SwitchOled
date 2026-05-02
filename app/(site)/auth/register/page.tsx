@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowRight, Check, Eye, EyeOff } from "lucide-react";
 
@@ -45,7 +44,6 @@ function RegisterField({
 }
 
 export default function RegisterPage() {
-  const router = useRouter();
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -55,6 +53,7 @@ export default function RegisterPage() {
   const [consent, setConsent] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
+  const [successEmail, setSuccessEmail] = useState("");
   const [loading, setLoading] = useState(false);
 
   const setField = (key: keyof typeof form, value: string) =>
@@ -92,8 +91,7 @@ export default function RegisterPage() {
       const data = await res.json();
 
       if (res.ok) {
-        router.push("/");
-        router.refresh();
+        setSuccessEmail(form.email);
       } else {
         setError(data.error || "Ошибка регистрации");
       }
@@ -103,6 +101,26 @@ export default function RegisterPage() {
       setLoading(false);
     }
   };
+
+  if (successEmail) {
+    return (
+      <div className="min-h-[80vh] flex items-center justify-center py-16 px-4">
+        <div className="w-full max-w-md bg-white rounded-[32px] border border-neutral-100 p-8 shadow-sm">
+          <h1 className="text-2xl font-black text-secondary mb-3">Проверьте вашу почту</h1>
+          <p className="text-sm text-neutral-500 font-medium leading-relaxed mb-6">
+            Мы отправили письмо с подтверждением на <span className="font-black text-secondary">{successEmail}</span>.
+            После подтверждения вы сможете войти в аккаунт.
+          </p>
+          <Link
+            href="/auth/login"
+            className="inline-flex items-center justify-center w-full py-4 bg-primary text-white font-black rounded-2xl hover:bg-red-700 transition-colors"
+          >
+            Перейти ко входу
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center py-16 px-4">
