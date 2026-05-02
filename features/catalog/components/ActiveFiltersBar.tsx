@@ -23,6 +23,7 @@ export const ActiveFiltersBar = () => {
   const priceMin = searchParams.get("priceMin");
   const priceMax = searchParams.get("priceMax");
   const colors = searchParams.get("color")?.split(",").filter(Boolean) ?? [];
+  const memories = searchParams.get("memory")?.split(",").filter(Boolean) ?? [];
   const statuses = searchParams.get("status")?.split(",").filter(Boolean) ?? [];
 
   const removeParam = (key: string, value?: string) => {
@@ -47,6 +48,9 @@ export const ActiveFiltersBar = () => {
   if (priceMax) chips.push({ label: `до ${Number(priceMax).toLocaleString("ru-RU")} ₽`, onRemove: () => removeParam("priceMax") });
   colors.forEach((c) =>
     chips.push({ label: COLOR_LABELS[c] ?? c, onRemove: () => removeParam("color", c) })
+  );
+  memories.forEach((m) =>
+    chips.push({ label: m, onRemove: () => removeParam("memory", m) })
   );
   statuses.forEach((s) =>
     chips.push({ label: STATUS_LABELS[s] ?? s, onRemove: () => removeParam("status", s) })

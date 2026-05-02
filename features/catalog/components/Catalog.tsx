@@ -5,6 +5,7 @@ import {
   getCategoryBySlug,
   getCategoryTree,
   getCategoryDescendantSlugsBySlug,
+  getCatalogVariantFilters,
 } from "@/lib/queries";
 import { ProductCard } from "@/features/product/components/ProductCard";
 import { FilterSidebar } from "@/features/catalog/components/FilterSidebar";
@@ -22,7 +23,7 @@ interface CatalogProps {
 }
 
 export async function Catalog({ category, searchParams, pageSize = 12 }: CatalogProps) {
-  const { q, priceMin, priceMax, color, status, sort, page = "1" } = searchParams;
+  const { q, priceMin, priceMax, color, memory, status, sort, page = "1" } = searchParams;
   const skip = (parseInt(page) - 1) * pageSize;
   let categorySlugs =
     category !== "all" ? await getCategoryDescendantSlugsBySlug(category) : [];
@@ -73,6 +74,19 @@ export async function Catalog({ category, searchParams, pageSize = 12 }: Catalog
     });
   }
 
+  if (memory) {
+    const memoryValues = memory.split(",").filter(Boolean);
+    if (memoryValues.length) {
+      andConditions.push({
+        OR: memoryValues.flatMap((value) => [
+          { attributes: { path: ["Накопитель"], string_contains: value } },
+          { attributes: { path: ["Объём"], string_contains: value } },
+          { attributes: { path: ["Объем"], string_contains: value } },
+        ]),
+      });
+    }
+  }
+
   if (status) {
     const statusValues = status.split(",").filter(Boolean);
     const wantsInStock = statusValues.includes("inStock");
@@ -114,13 +128,14 @@ export async function Catalog({ category, searchParams, pageSize = 12 }: Catalog
   let totalCount = 0;
   let categoryData: { name: string } | null = { name: "Весь каталог" };
   let categoryTree: Awaited<ReturnType<typeof getCategoryTree>> = [];
+  let availableVariantFilters: { colors: string[]; memories: string[] } = { colors: [], memories: [] };
   let dbError = false;
 
   let errorMsg = "";
   try {
     // On the "all" tab with default sort, prioritize Nintendo products
     const useNintendoPriority = category === "all" && !sort && !q;
-    [products, totalCount, categoryData, categoryTree] = await Promise.all([
+    [products, totalCount, categoryData, categoryTree, availableVariantFilters] = await Promise.all([
       useNintendoPriority
         ? getProductsNintendoFirst(where, skip, pageSize)
         : getProducts(where, orderBy, skip, pageSize),
@@ -129,6 +144,9 @@ export async function Catalog({ category, searchParams, pageSize = 12 }: Catalog
         ? getCategoryBySlug(category)
         : Promise.resolve({ name: "Весь каталог" }),
       getCategoryTree(),
+      category === "nintendo-switch-oled"
+        ? getCatalogVariantFilters(categorySlugs.length ? categorySlugs : [category])
+        : Promise.resolve({ colors: [], memories: [] }),
     ]);
   } catch (err: any) {
     dbError = true;
@@ -164,6 +182,8 @@ export async function Catalog({ category, searchParams, pageSize = 12 }: Catalog
           currentCategory={category}
           totalCount={totalCount}
           categoryTree={categoryTree}
+          availableColors={availableVariantFilters.colors}
+          availableMemories={availableVariantFilters.memories}
         />
       </aside>
 
@@ -185,6 +205,8 @@ export async function Catalog({ category, searchParams, pageSize = 12 }: Catalog
                 totalCount={totalCount}
                 categoryTree={categoryTree}
                 activeFilterCount={activeFilterCount}
+                availableColors={availableVariantFilters.colors}
+                availableMemories={availableVariantFilters.memories}
               />
             </div>
             <SortingSelect />

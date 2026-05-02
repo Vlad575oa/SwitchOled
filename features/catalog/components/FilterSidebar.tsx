@@ -135,13 +135,22 @@ interface FilterSidebarProps {
   currentCategory: string;
   totalCount: number;
   categoryTree: any[];
+  availableColors: string[];
+  availableMemories: string[];
 }
 
-export const FilterSidebar = ({ currentCategory, totalCount, categoryTree }: FilterSidebarProps) => {
+export const FilterSidebar = ({
+  currentCategory,
+  totalCount,
+  categoryTree,
+  availableColors,
+  availableMemories,
+}: FilterSidebarProps) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
 
+  const isSwitchOledCategory = currentCategory === "nintendo-switch-oled";
 
   const categoryFilterSections = CATEGORY_FILTERS[currentCategory] ?? [];
 
@@ -152,6 +161,9 @@ export const FilterSidebar = ({ currentCategory, totalCount, categoryTree }: Fil
   const [priceMaxInput, setPriceMaxInput] = useState(searchParams.get("priceMax") ?? "");
   const [colors, setColors] = useState<string[]>(
     searchParams.get("color")?.split(",").filter(Boolean) ?? []
+  );
+  const [memories, setMemories] = useState<string[]>(
+    searchParams.get("memory")?.split(",").filter(Boolean) ?? []
   );
   const [statuses, setStatuses] = useState<string[]>(
     searchParams.get("status")?.split(",").filter(Boolean) ?? []
@@ -212,6 +224,7 @@ export const FilterSidebar = ({ currentCategory, totalCount, categoryTree }: Fil
         priceMin,
         priceMax,
         colors,
+        memories,
         statuses,
         attrValues
       });
@@ -223,12 +236,13 @@ export const FilterSidebar = ({ currentCategory, totalCount, categoryTree }: Fil
 
     const timer = setTimeout(updateCount, 600);
     return () => clearTimeout(timer);
-  }, [currentCategory, priceMin, priceMax, colors, statuses, attrValues]);
+  }, [currentCategory, priceMin, priceMax, colors, memories, statuses, attrValues]);
 
   const hasActiveFilters =
     priceMin > 0 ||
     priceMax < MAX_PRICE ||
     colors.length > 0 ||
+    memories.length > 0 ||
     statuses.length > 0 ||
     Object.values(attrValues).some((v) => v.length > 0);
 
@@ -249,6 +263,7 @@ export const FilterSidebar = ({ currentCategory, totalCount, categoryTree }: Fil
       priceMin: priceMin > 0 ? String(priceMin) : null,
       priceMax: priceMax < MAX_PRICE ? String(priceMax) : null,
       color: colors.length ? colors.join(",") : null,
+      memory: memories.length ? memories.join(",") : null,
       status: statuses.length ? statuses.join(",") : null,
     };
     for (const section of categoryFilterSections) {
@@ -262,6 +277,7 @@ export const FilterSidebar = ({ currentCategory, totalCount, categoryTree }: Fil
     setPriceMin(0);
     setPriceMax(MAX_PRICE);
     setColors([]);
+    setMemories([]);
     setStatuses([]);
     const cleared: Record<string, string[]> = {};
     for (const section of categoryFilterSections) {
@@ -427,6 +443,24 @@ export const FilterSidebar = ({ currentCategory, totalCount, categoryTree }: Fil
         </FilterSection>
       ))}
 
+      {isSwitchOledCategory && availableMemories.length > 0 && (
+        <FilterSection
+          title="Память"
+          id="memory"
+          isOpen={openSections.memory ?? false}
+          onToggle={() => toggleSection("memory")}
+        >
+          {availableMemories.map((memoryValue) => (
+            <CheckboxOption
+              key={memoryValue}
+              label={memoryValue}
+              checked={memories.includes(memoryValue)}
+              onChange={() => toggleValue(memories, setMemories, memoryValue)}
+            />
+          ))}
+        </FilterSection>
+      )}
+
       {/* ── Цвет ── */}
       <FilterSection
         title="Цвет"
@@ -434,7 +468,10 @@ export const FilterSidebar = ({ currentCategory, totalCount, categoryTree }: Fil
         isOpen={openSections.color}
         onToggle={() => toggleSection("color")}
       >
-        {COLOR_OPTIONS.map(({ label, value, hex }) => (
+        {(isSwitchOledCategory && availableColors.length > 0
+          ? availableColors.map((value) => ({ label: value, value, hex: undefined }))
+          : COLOR_OPTIONS
+        ).map(({ label, value, hex }) => (
           <CheckboxOption
             key={value}
             label={label}

@@ -69,11 +69,9 @@ export default async function AddVariantPage({ params }: { params: { id: string 
       sourceProductName={source.name}
       initialAttrs={sharedAttrs}
       initial={{
-        name: source.name,
         sku: source.sku ?? `L0${source.id + 4000}`,
         description: source.description ?? "",
         categoryId: String(source.categoryId),
-        brand: source.brand ?? "",
         isNew: source.isNew,
         isSale: source.isSale,
         metaTitle: "",

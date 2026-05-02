@@ -12,12 +12,14 @@ import { ADMIN_COOKIE, verifyAdminSession } from "@/lib/adminSession";
 export const dynamic = "force-dynamic";
 
 interface Props {
-  searchParams: { q?: string; category?: string };
+  searchParams: { q?: string; category?: string; sort?: string; visibility?: string };
 }
 
 export default async function ProductsPage({ searchParams }: Props) {
   const q = searchParams.q ?? "";
   const categorySlug = searchParams.category ?? "";
+  const sort = searchParams.sort ?? "newest";
+  const visibility = searchParams.visibility ?? "all";
   const session = await verifyAdminSession(cookies().get(ADMIN_COOKIE)?.value);
   const canDeleteProducts = session?.r !== "MANAGER";
   const categories = await prisma.category.findMany({ orderBy: { name: "asc" } });
@@ -44,6 +46,13 @@ export default async function ProductsPage({ searchParams }: Props) {
     }
   }
 
+  const orderBy =
+    sort === "price-asc"
+      ? ({ price: "asc" } as const)
+      : sort === "price-desc"
+        ? ({ price: "desc" } as const)
+        : ({ createdAt: "desc" } as const);
+
   const products = await prisma.product.findMany({
     where: {
       ...(q
@@ -59,9 +68,14 @@ export default async function ProductsPage({ searchParams }: Props) {
           ? { categoryId: { in: selectedCategoryIds } }
           : { category: { slug: categorySlug } }
         : {}),
+      ...(visibility === "shown"
+        ? { isVisible: { not: false } }
+        : visibility === "hidden"
+          ? { isVisible: false }
+          : {}),
     },
     include: { category: true },
-    orderBy: { createdAt: "desc" },
+    orderBy,
   });
 
   return (
@@ -105,7 +119,7 @@ export default async function ProductsPage({ searchParams }: Props) {
           {categories.map((cat) => (
             <Link
               key={cat.id}
-              href={`/admin/products?category=${cat.slug}${q ? `&q=${q}` : ""}`}
+              href={`/admin/products?category=${cat.slug}${q ? `&q=${q}` : ""}${sort !== "newest" ? `&sort=${sort}` : ""}${visibility !== "all" ? `&visibility=${visibility}` : ""}`}
               className={cn(
                 "px-4 py-2 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all",
                 categorySlug === cat.slug
@@ -119,7 +133,7 @@ export default async function ProductsPage({ searchParams }: Props) {
         </div>
 
         {/* Filters */}
-        <form method="get" className="flex gap-3">
+        <form method="get" className="flex gap-3 items-center">
           <div className="flex-1 relative">
             <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
             <input
@@ -129,6 +143,24 @@ export default async function ProductsPage({ searchParams }: Props) {
               className="w-full pl-9 pr-4 py-2.5 bg-white border border-neutral-200 rounded-xl text-sm font-bold text-[#111827] placeholder:text-neutral-300 outline-none focus:border-primary/30"
             />
           </div>
+          <select
+            name="sort"
+            defaultValue={sort}
+            className="px-3 py-2.5 bg-white border border-neutral-200 rounded-xl text-xs font-black text-[#111827] outline-none focus:border-primary/30"
+          >
+            <option value="newest">Сначала новые</option>
+            <option value="price-asc">Цена: по возрастанию</option>
+            <option value="price-desc">Цена: по убыванию</option>
+          </select>
+          <select
+            name="visibility"
+            defaultValue={visibility}
+            className="px-3 py-2.5 bg-white border border-neutral-200 rounded-xl text-xs font-black text-[#111827] outline-none focus:border-primary/30"
+          >
+            <option value="all">Все товары</option>
+            <option value="shown">Только показанные</option>
+            <option value="hidden">Только скрытые</option>
+          </select>
           {categorySlug && <input type="hidden" name="category" value={categorySlug} />}
           <button type="submit" className="px-5 py-2.5 bg-[#111827] text-white text-xs font-black rounded-xl hover:bg-neutral-800 transition-all">
             Найти

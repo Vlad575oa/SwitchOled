@@ -11,6 +11,7 @@ const BUNDLE_MARKERS = [
   "hogwarts", "zelda", "mario", "spider",
 ];
 const MEMORY_KEYS = ["Накопитель", "Объём", "Объем"];
+const VARIANT_GROUP_KEY = "__variantGroupId";
 
 const isBase = (name: string, slug: string) => {
   const src = `${name} ${slug}`.toLowerCase();
@@ -27,11 +28,21 @@ export default async function EditProductPage({ params }: { params: { id: string
   if (!product) notFound();
 
   const rawAttrs = (product.attributes as Record<string, string>) ?? {};
+  const variantGroupId = rawAttrs[VARIANT_GROUP_KEY] ?? null;
   const platform = rawAttrs["Платформа"] ?? null;
 
   // Load siblings for variant table
   let siblings: typeof product[] = [product];
-  if (platform) {
+  if (variantGroupId) {
+    const pool = await prisma.product.findMany({
+      where: {
+        attributes: { path: [VARIANT_GROUP_KEY], equals: variantGroupId },
+        isVisible: { not: false },
+      },
+      orderBy: { price: "asc" },
+    });
+    if (pool.length > 0) siblings = pool;
+  } else if (platform) {
     const pool = await prisma.product.findMany({
       where: {
         categoryId: product.categoryId,
@@ -82,11 +93,9 @@ export default async function EditProductPage({ params }: { params: { id: string
       initialAttrs={sharedAttrs}
       initial={{
         id: product.id,
-        name: product.name,
         sku: product.sku ?? `L0${product.id + 4000}`,
         description: product.description ?? "",
         categoryId: String(product.categoryId),
-        brand: product.brand ?? "",
         isNew: product.isNew,
         isSale: product.isSale,
         metaTitle: product.metaTitle ?? "",

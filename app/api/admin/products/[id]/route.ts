@@ -8,6 +8,26 @@ function normalizeSlug(s: string) {
   return s.toLowerCase().replace(/[^a-z0-9-]/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, "");
 }
 
+async function resolveBrandFromCategory(categoryId: number) {
+  let current = await prisma.category.findUnique({
+    where: { id: categoryId },
+    select: { id: true, name: true, parentId: true },
+  });
+
+  if (!current) return null;
+
+  while (current.parentId) {
+    const parent = await prisma.category.findUnique({
+      where: { id: current.parentId },
+      select: { id: true, name: true, parentId: true },
+    });
+    if (!parent) break;
+    current = parent;
+  }
+
+  return current.name;
+}
+
 export async function GET(_: Request, { params }: { params: { id: string } }) {
   const session = await verifyAdminSession(cookies().get(ADMIN_COOKIE)?.value);
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -36,7 +56,6 @@ export async function PUT(request: Request, { params }: { params: { id: string }
     const priceOld = priceOldRaw ? Math.round(parseFloat(priceOldRaw) * 100) : null;
     const showOtherPaymentPrice = fd.get("showOtherPaymentPrice") === "true";
     const categoryId = parseInt(fd.get("categoryId") as string);
-    const brand = (fd.get("brand") as string) || null;
     const color = (fd.get("color") as string) || null;
     const inStock = fd.get("inStock") === "true";
     const isNew = fd.get("isNew") === "true";
@@ -60,6 +79,13 @@ export async function PUT(request: Request, { params }: { params: { id: string }
     if (childCount > 0) {
       return NextResponse.json(
         { error: "Для выбранной категории нужно указать подкатегорию" },
+        { status: 400 }
+      );
+    }
+    const brand = await resolveBrandFromCategory(categoryId);
+    if (!brand) {
+      return NextResponse.json(
+        { error: "Не удалось определить бренд по выбранной категории" },
         { status: 400 }
       );
     }

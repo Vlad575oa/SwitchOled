@@ -190,6 +190,51 @@ export const getProductsCount = cache(async (where: Prisma.ProductWhereInput) =>
   );
 });
 
+export interface CatalogVariantFilters {
+  colors: string[];
+  memories: string[];
+}
+
+export const getCatalogVariantFilters = cache(async (categorySlugs: string[]) => {
+  return safeQuery(async () => {
+    if (!categorySlugs.length) {
+      return { colors: [], memories: [] } as CatalogVariantFilters;
+    }
+
+    const rows = await prisma.product.findMany({
+      where: {
+        AND: [
+          VISIBLE,
+          { inStock: true },
+          { category: { slug: { in: categorySlugs } } },
+        ],
+      },
+      select: {
+        color: true,
+        attributes: true,
+      },
+    });
+
+    const colorSet = new Set<string>();
+    const memorySet = new Set<string>();
+
+    for (const row of rows) {
+      const colorValue = normalizeColor(
+        readAttribute(row.attributes, ATTRIBUTE_COLOR_KEYS) ?? row.color ?? null
+      );
+      if (colorValue) colorSet.add(colorValue);
+
+      const memoryValue = readAttribute(row.attributes, ATTRIBUTE_MEMORY_KEYS);
+      if (memoryValue) memorySet.add(memoryValue);
+    }
+
+    return {
+      colors: Array.from(colorSet),
+      memories: Array.from(memorySet),
+    } as CatalogVariantFilters;
+  }, { colors: [], memories: [] } as CatalogVariantFilters);
+});
+
 export const getOrdersCount = cache(async () => {
   return safeQuery(() => prisma.order.count(), 0);
 });

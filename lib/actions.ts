@@ -3,6 +3,8 @@
 import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
+const VARIANT_GROUP_KEY = "__variantGroupId";
+
 interface OrderItemInput {
   productId: number;
   quantity: number;
@@ -154,15 +156,21 @@ export async function duplicateProductAction(id: number): Promise<ActionResponse
     // Generate unique slug
     const suffix = Math.random().toString(36).substring(2, 6);
     const newSlug = `${original.slug}-copy-${suffix}`;
+    const variantGroupId = `vg_${Date.now().toString(36)}_${Math.random().toString(36).substring(2, 8)}`;
 
     // Create duplicate (excluding ID and timestamps)
     const { id: _, createdAt, updatedAt, ...rest } = original as any;
+    const originalAttrs = (original.attributes ?? {}) as Record<string, unknown>;
 
     const duplicate = await prisma.product.create({
       data: {
         ...rest,
         slug: newSlug,
         name: `${original.name} (Копия)`,
+        attributes: {
+          ...originalAttrs,
+          [VARIANT_GROUP_KEY]: variantGroupId,
+        },
       },
     });
 

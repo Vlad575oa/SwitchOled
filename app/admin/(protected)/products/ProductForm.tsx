@@ -39,11 +39,9 @@ export interface VariantRow {
 
 interface SharedForm {
   id?: number;
-  name: string;
   sku: string;
   description: string;
   categoryId: string;
-  brand: string;
   isNew: boolean;
   isSale: boolean;
   metaTitle: string;
@@ -119,11 +117,9 @@ export const ProductForm = ({
     : [];
 
   const [form, setForm] = useState<SharedForm>({
-    name: initial.name ?? "",
     sku: initial.sku ?? "",
     description: initial.description ?? "",
     categoryId: initial.categoryId ?? "",
-    brand: initial.brand ?? "",
     isNew: initial.isNew ?? false,
     isSale: initial.isSale ?? false,
     metaTitle: initial.metaTitle ?? "",
@@ -269,7 +265,6 @@ export const ProductForm = ({
         data.append("priceOld", v.priceOld || String(Math.round(parseFloat(v.price) * 1.13)));
         data.append("showOtherPaymentPrice", String(v.showOtherPaymentPrice));
         data.append("categoryId", form.categoryId);
-        data.append("brand", form.brand);
         data.append("color", v.color);
         data.append("inStock", String(v.inStock));
         data.append("isNew", String(form.isNew));
@@ -314,6 +309,11 @@ export const ProductForm = ({
   };
 
   const activeVariants = variants.filter((v) => !v._deleted);
+  const pageTitle = isEdit
+    ? activeVariants[0]?.name || "Редактирование товара"
+    : isVariant
+      ? "Добавить вариант"
+      : "Добавить товар";
 
   return (
     <div className="min-h-screen bg-[#F4F5F7]">
@@ -331,7 +331,7 @@ export const ProductForm = ({
               Товары / {isEdit ? "Редактирование" : isVariant ? "Новый вариант" : "Новый товар"}
             </p>
             <h1 className="text-lg font-black text-[#111827] leading-tight">
-              {isEdit ? form.name || "—" : isVariant ? "Добавить вариант" : "Добавить товар"}
+              {pageTitle}
             </h1>
           </div>
         </div>
@@ -383,15 +383,6 @@ export const ProductForm = ({
               <Info size={15} className="text-primary" /> Основная информация
             </h2>
             <div>
-              <label className={labelCls}>Название товара *</label>
-              <input
-                className={inputCls}
-                value={form.name}
-                onChange={(e) => set("name", e.target.value)}
-                placeholder="Xbox Series S"
-              />
-            </div>
-            <div>
               <label className={labelCls}>Описание</label>
               <textarea
                 className={`${inputCls} resize-none`}
@@ -399,15 +390,6 @@ export const ProductForm = ({
                 value={form.description}
                 onChange={(e) => set("description", e.target.value)}
                 placeholder="Полное описание товара..."
-              />
-            </div>
-            <div>
-              <label className={labelCls}>Бренд</label>
-              <input
-                className={inputCls}
-                value={form.brand}
-                onChange={(e) => set("brand", e.target.value)}
-                placeholder="Microsoft"
               />
             </div>
             <div>

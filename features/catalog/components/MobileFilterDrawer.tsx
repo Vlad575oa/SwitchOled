@@ -9,9 +9,18 @@ interface Props {
   totalCount: number;
   categoryTree: any;
   activeFilterCount: number;
+  availableColors: string[];
+  availableMemories: string[];
 }
 
-export const MobileFilterDrawer = ({ currentCategory, totalCount, categoryTree, activeFilterCount }: Props) => {
+export const MobileFilterDrawer = ({
+  currentCategory,
+  totalCount,
+  categoryTree,
+  activeFilterCount,
+  availableColors,
+  availableMemories,
+}: Props) => {
   const [open, setOpen] = useState(false);
 
   return (
@@ -54,6 +63,8 @@ export const MobileFilterDrawer = ({ currentCategory, totalCount, categoryTree, 
                 currentCategory={currentCategory}
                 totalCount={totalCount}
                 categoryTree={categoryTree}
+                availableColors={availableColors}
+                availableMemories={availableMemories}
               />
             </div>
           </div>

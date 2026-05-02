@@ -9,12 +9,13 @@ interface FilterParams {
   priceMin?: number;
   priceMax?: number;
   colors?: string[];
+  memories?: string[];
   statuses?: string[];
   attrValues?: Record<string, string[]>;
 }
 
 export async function getFilteredProductsCountAction(params: FilterParams) {
-  const { category, priceMin, priceMax, colors, statuses, attrValues } = params;
+  const { category, priceMin, priceMax, colors, memories, statuses, attrValues } = params;
 
   try {
     const andConditions: Prisma.ProductWhereInput[] = [];
@@ -41,6 +42,16 @@ export async function getFilteredProductsCountAction(params: FilterParams) {
 
     if (colors && colors.length > 0) {
       andConditions.push({ color: colors.length === 1 ? colors[0] : { in: colors } });
+    }
+
+    if (memories && memories.length > 0) {
+      andConditions.push({
+        OR: memories.flatMap((value) => ([
+          { attributes: { path: ["Накопитель"], string_contains: value } },
+          { attributes: { path: ["Объём"], string_contains: value } },
+          { attributes: { path: ["Объем"], string_contains: value } },
+        ])),
+      });
     }
 
     if (statuses && statuses.length > 0) {
