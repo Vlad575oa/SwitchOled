@@ -2,6 +2,9 @@ import { NextResponse } from "next/server";
 import { createOrderAction } from "@/lib/actions";
 import { z } from "zod";
 import { buildRateLimitKey, rateLimit } from "@/lib/rateLimit";
+import { cookies } from "next/headers";
+import prisma from "@/lib/prisma";
+import { SESSION_COOKIE } from "@/lib/auth";
 
 const CheckoutSchema = z.object({
   name: z.string().trim().min(2).max(80),
@@ -24,12 +27,25 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: false, error: "Некорректные данные заказа" }, { status: 400 });
     }
     const { name, phone, address, items } = parsed.data;
+    const sessionToken = cookies().get(SESSION_COOKIE)?.value;
+    let userId: number | null = null;
+
+    if (sessionToken) {
+      const session = await prisma.session.findUnique({
+        where: { id: sessionToken },
+        select: { userId: true, expires: true },
+      });
+      if (session && session.expires > new Date()) {
+        userId = session.userId;
+      }
+    }
 
     // 1. Create Order via transaction-safe Action
     const result = await createOrderAction({
       name,
       phone,
       address,
+      userId,
       items: items.map((item) => ({
         productId: item.id,
         quantity: item.quantity,

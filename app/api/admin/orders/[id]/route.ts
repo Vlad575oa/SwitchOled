@@ -27,6 +27,11 @@ export async function PUT(request: Request, { params }: { params: { id: string }
 
 export async function DELETE(_: Request, { params }: { params: { id: string } }) {
   try {
+    const orderId = parseInt(params.id);
+    if (!Number.isInteger(orderId) || orderId <= 0) {
+      return NextResponse.json({ error: "Некорректный ID заказа" }, { status: 400 });
+    }
+
     const session = await verifyAdminSession(cookies().get(ADMIN_COOKIE)?.value);
     if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -38,7 +43,10 @@ export async function DELETE(_: Request, { params }: { params: { id: string } })
       );
     }
 
-    await prisma.order.delete({ where: { id: parseInt(params.id) } });
+    await prisma.$transaction([
+      prisma.orderItem.deleteMany({ where: { orderId } }),
+      prisma.order.delete({ where: { id: orderId } }),
+    ]);
     return NextResponse.json({ success: true });
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });

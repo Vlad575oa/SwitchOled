@@ -11,9 +11,17 @@ export const OrderDeleteButton = ({ orderId }: { orderId: number }) => {
   const handleDelete = async () => {
     if (!confirm(`Удалить заказ #${orderId}?`)) return;
     setLoading(true);
-    await fetch(`/api/admin/orders/${orderId}`, { method: "DELETE" });
-    router.refresh();
-    setLoading(false);
+    try {
+      const res = await fetch(`/api/admin/orders/${orderId}`, { method: "DELETE" });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        alert(data?.error || "Не удалось удалить заказ");
+        return;
+      }
+      router.refresh();
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

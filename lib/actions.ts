@@ -15,6 +15,7 @@ interface CreateOrderInput {
   phone: string;
   address: string;
   items: OrderItemInput[];
+  userId?: number | null;
 }
 
 export type ActionResponse<T> =
@@ -90,6 +91,7 @@ export async function createOrderAction(input: CreateOrderInput): Promise<Action
           address: input.address,
           totalAmount: serverTotal,
           status: "pending",
+          userId: input.userId ?? null,
           items: {
             create: orderItems,
           },
