@@ -102,10 +102,7 @@ export default function CartPage() {
                 <span>Товары ({totalItems()})</span>
                 <span>{formatPrice(totalPrice())}</span>
               </div>
-              <div className="flex justify-between text-neutral-500 font-bold">
-                <span>Доставка</span>
-                <span className="text-primary uppercase text-xs tracking-widest">Бесплатно</span>
-              </div>
+
               <div className="pt-4 border-t border-neutral-200 flex justify-between">
                 <span className="text-lg font-black text-secondary">К оплате</span>
                 <span className="text-2xl font-black text-primary">
@@ -126,14 +123,6 @@ export default function CartPage() {
             </p>
           </div>
 
-          <div className="bg-green-50/50 border border-green-100 p-6 rounded-3xl flex gap-4">
-            <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
-              <span className="text-white text-lg font-black">!</span>
-            </div>
-            <p className="text-xs font-bold text-green-800 leading-normal">
-              Поздравляем! Ваш заказ попадает под акцию <span className="underline">Бесплатная доставка</span>
-            </p>
-          </div>
         </div>
       </div>
     </main>
