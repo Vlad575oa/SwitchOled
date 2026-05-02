@@ -98,7 +98,7 @@ export const Footer = () => {
                                     <Phone size={13} className="text-neutral-400 group-hover/item:text-primary transition-colors" />
                                 </div>
                                 <div>
-                                    <p className="text-[12px] font-black text-white">7(926)676-34-88</p>
+                                    <p className="text-[16px] font-black text-white">7(926)676-34-88</p>
                                     <p className="text-[9px] font-bold text-neutral-500 uppercase tracking-widest">09:00 — 21:00</p>
                                 </div>
                             </Link>

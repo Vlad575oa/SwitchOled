@@ -28,7 +28,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
     const id = parseInt(params.id);
     const fd = await request.formData();
 
-    const name = fd.get("name") as string;
+    const name = ((fd.get("name") as string) || "").trim();
     const description = fd.get("description") as string;
     const sku = ((fd.get("sku") as string) || "").trim() || null;
     const price = Math.round(parseFloat(fd.get("price") as string) * 100);
@@ -65,6 +65,9 @@ export async function PUT(request: Request, { params }: { params: { id: string }
     }
 
     const slug = normalizeSlug(slugRaw);
+    if (!name) {
+      return NextResponse.json({ error: "Название варианта обязательно" }, { status: 400 });
+    }
     if (!slug) {
       return NextResponse.json({ error: "Slug обязателен" }, { status: 400 });
     }

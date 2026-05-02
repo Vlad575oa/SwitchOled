@@ -30,6 +30,7 @@ export default async function AddVariantPage({ params }: { params: { id: string 
   const initialVariants: Omit<VariantRow, "_deleted">[] = [
     {
       id: source.id,
+      name: source.name,
       slug: source.slug,
       color,
       memory,
@@ -43,6 +44,7 @@ export default async function AddVariantPage({ params }: { params: { id: string 
       newPreviews: [],
     },
     {
+      name: `${source.name} (новый вариант)`,
       slug: "",
       color: "",
       memory: "",

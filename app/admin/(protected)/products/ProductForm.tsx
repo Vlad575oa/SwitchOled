@@ -22,6 +22,7 @@ interface Attribute {
 
 export interface VariantRow {
   id?: number;
+  name: string;
   slug: string;
   color: string;
   memory: string;
@@ -72,7 +73,7 @@ const COLOR_ATTR_KEYS = ["Цвет"];
 const MEMORY_ATTR_KEYS = ["Накопитель", "Объём", "Объем"];
 
 const EMPTY_VARIANT: VariantRow = {
-  slug: "", color: "", memory: "", price: "", priceOld: "", showOtherPaymentPrice: false, stock: "10",
+  name: "", slug: "", color: "", memory: "", price: "", priceOld: "", showOtherPaymentPrice: false, stock: "10",
   inStock: true, images: [], newImages: [], newPreviews: [], _deleted: false,
 };
 
@@ -208,8 +209,8 @@ export const ProductForm = ({
     );
 
   const handleSubmit = async () => {
-    if (!form.name || !form.categoryId) {
-      setError("Заполните название и категорию");
+    if (!form.categoryId) {
+      setError("Заполните категорию");
       return;
     }
     const active = variants.filter((v) => !v._deleted);
@@ -219,6 +220,10 @@ export const ProductForm = ({
     }
     if (active.some((v) => !v.price)) {
       setError("Укажите цену для всех вариантов");
+      return;
+    }
+    if (active.some((v) => !v.name.trim())) {
+      setError("Название варианта обязательно для каждого варианта");
       return;
     }
     if (active.some((v) => !normalizeSlug(v.slug))) {
@@ -256,7 +261,7 @@ export const ProductForm = ({
         ];
 
         const data = new FormData();
-        data.append("name", form.name);
+        data.append("name", v.name.trim());
         data.append("description", form.description);
         data.append("sku", form.sku);
         // Send raw rubles — API handles ×100 conversion
@@ -452,6 +457,17 @@ export const ProductForm = ({
                           <Trash2 size={12} />
                         </button>
                       )}
+                    </div>
+
+                    {/* Slug */}
+                    <div>
+                      <label className={labelCls}>Название варианта *</label>
+                      <input
+                        className={inputCls}
+                        value={v.name}
+                        onChange={(e) => setVariant(realIdx, "name", e.target.value)}
+                        placeholder="Nintendo Switch OLED 64GB White"
+                      />
                     </div>
 
                     {/* Slug */}

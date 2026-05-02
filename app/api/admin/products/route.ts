@@ -18,7 +18,7 @@ export async function POST(request: Request) {
   try {
     const fd = await request.formData();
 
-    const name = fd.get("name") as string;
+    const name = ((fd.get("name") as string) || "").trim();
     const description = fd.get("description") as string;
     const sku = ((fd.get("sku") as string) || "").trim() || null;
     const price = Math.round(parseFloat(fd.get("price") as string) * 100);
@@ -50,6 +50,9 @@ export async function POST(request: Request) {
     }
 
     const slugRaw = (fd.get("slug") as string) || "";
+    if (!name) {
+      return NextResponse.json({ error: "Название варианта обязательно" }, { status: 400 });
+    }
     if (!slugRaw.trim()) {
       return NextResponse.json({ error: "Slug обязателен" }, { status: 400 });
     }

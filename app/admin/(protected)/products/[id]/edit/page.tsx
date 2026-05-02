@@ -55,6 +55,7 @@ export default async function EditProductPage({ params }: { params: { id: string
     const priceOldRub = s.priceOld ? s.priceOld / 100 : Math.round(priceRub * 1.13);
     return {
       id: s.id,
+      name: s.name,
       slug: s.slug,
       color,
       memory,
