@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
-export default function VerifyEmailPage() {
+function VerifyEmailContent() {
   const params = useSearchParams();
   const token = useMemo(() => params.get("token") || "", [params]);
   const [status, setStatus] = useState<"loading" | "success" | "error">("loading");
@@ -70,5 +70,24 @@ export default function VerifyEmailPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function VerifyEmailPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-[80vh] flex items-center justify-center py-16 px-4">
+          <div className="w-full max-w-md bg-white rounded-[32px] border border-neutral-100 p-8 shadow-sm">
+            <h1 className="text-2xl font-black text-secondary mb-3">Подтверждение email</h1>
+            <p className="text-sm text-neutral-500 font-medium leading-relaxed mb-6">
+              Загружаем страницу подтверждения...
+            </p>
+          </div>
+        </div>
+      }
+    >
+      <VerifyEmailContent />
+    </Suspense>
   );
 }
