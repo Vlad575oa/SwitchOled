@@ -108,12 +108,14 @@ const SECTIONS = [
         fields: [
           { key: "title", label: "Заголовок страницы (метка)", type: "input" },
           { key: "hero_text", label: "Подзаголовок героя", type: "textarea" },
+          { key: "show_guarantees", label: "Показывать нижний блок гарантий", type: "checkbox" },
         ],
       },
       {
         key: "delivery_express",
         label: "⚡ Экспресс-курьер (по Москве)",
         fields: [
+          { key: "show_express", label: "Показывать блок", type: "checkbox" },
           { key: "express_price", label: "Цена (напр. «500 ₽»)", type: "input" },
           { key: "express_free_from", label: "Бесплатно от (напр. «Бесплатно от 50 000 ₽»)", type: "input" },
           { key: "express_time", label: "Срок (напр. «В день заказа»)", type: "input" },
@@ -124,6 +126,7 @@ const SECTIONS = [
         key: "delivery_sdek",
         label: "🚚 СДЭК / Boxberry (по России)",
         fields: [
+          { key: "show_sdek", label: "Показывать блок", type: "checkbox" },
           { key: "sdek_price", label: "Цена (напр. «от 250 ₽»)", type: "input" },
           { key: "sdek_free_from", label: "Бесплатно от", type: "input" },
           { key: "sdek_time", label: "Срок (напр. «2–7 рабочих дней»)", type: "input" },
@@ -134,6 +137,7 @@ const SECTIONS = [
         key: "delivery_pickup",
         label: "📍 Самовывоз",
         fields: [
+          { key: "show_pickup", label: "Показывать блок", type: "checkbox" },
           { key: "pickup_address", label: "Адрес / метро (напр. «Москва, м. Митино»)", type: "input" },
           { key: "pickup_time", label: "Срок готовности", type: "input" },
           { key: "pickup_hours", label: "Часы работы шоурума", type: "input" },
@@ -144,7 +148,24 @@ const SECTIONS = [
         key: "delivery_packaging",
         label: "📦 Упаковка",
         fields: [
+          { key: "show_packaging", label: "Показывать блок", type: "checkbox" },
           { key: "packaging_desc", label: "Описание упаковки", type: "textarea" },
+        ],
+      },
+      {
+        key: "delivery_payments",
+        label: "💳 Способы оплаты",
+        fields: [
+          { key: "show_payments", label: "Показывать блок", type: "checkbox" },
+          { key: "payments_title", label: "Заголовок секции", type: "input" },
+          { key: "payments_1_title", label: "Карточка 1 — заголовок", type: "input" },
+          { key: "payments_1_desc", label: "Карточка 1 — описание", type: "textarea" },
+          { key: "payments_2_title", label: "Карточка 2 — заголовок", type: "input" },
+          { key: "payments_2_desc", label: "Карточка 2 — описание", type: "textarea" },
+          { key: "payments_3_title", label: "Карточка 3 — заголовок", type: "input" },
+          { key: "payments_3_desc", label: "Карточка 3 — описание", type: "textarea" },
+          { key: "payments_4_title", label: "Карточка 4 — заголовок", type: "input" },
+          { key: "payments_4_desc", label: "Карточка 4 — описание", type: "textarea" },
         ],
       },
     ],
@@ -291,20 +312,35 @@ export default function PagesPage() {
 
   const renderField = (sectionKey: string, field: { key: string; label: string; type: string }) => (
     <div key={field.key}>
-      <label className={labelCls}>{field.label}</label>
-      {field.type === "textarea" ? (
+      {field.type === "checkbox" ? (
+        <label className="flex items-center gap-3 rounded-xl border border-neutral-200 bg-white px-4 py-3 cursor-pointer">
+          <input
+            type="checkbox"
+            className="h-4 w-4 accent-[#e60012]"
+            checked={(data[sectionKey]?.[field.key] ?? "true") === "true"}
+            onChange={(e) => setField(sectionKey, field.key, String(e.target.checked))}
+          />
+          <span className="text-sm font-black text-[#111827]">{field.label}</span>
+        </label>
+      ) : field.type === "textarea" ? (
+        <>
+          <label className={labelCls}>{field.label}</label>
         <textarea
           className={`${inputCls} resize-none`}
           rows={4}
           value={data[sectionKey]?.[field.key] ?? ""}
           onChange={(e) => setField(sectionKey, field.key, e.target.value)}
         />
+        </>
       ) : (
+        <>
+          <label className={labelCls}>{field.label}</label>
         <input
           className={inputCls}
           value={data[sectionKey]?.[field.key] ?? ""}
           onChange={(e) => setField(sectionKey, field.key, e.target.value)}
         />
+        </>
       )}
     </div>
   );

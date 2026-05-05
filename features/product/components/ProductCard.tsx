@@ -26,9 +26,10 @@ interface ProductCardProps {
     inStock?: boolean;
     category?: { slug: string; name?: string };
   };
+  eagerImage?: boolean;
 }
 
-export const ProductCard = ({ product }: ProductCardProps) => {
+export const ProductCard = ({ product, eagerImage = false }: ProductCardProps) => {
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const router = useRouter();
   const productUrl = `/catalog/${product.category?.slug || "any"}/${product.slug}`;
@@ -80,7 +81,9 @@ export const ProductCard = ({ product }: ProductCardProps) => {
             alt={product.name}
             fill
             sizes="(max-width: 640px) 46vw, (max-width: 1024px) 30vw, 18vw"
-            quality={72}
+            quality={68}
+            loading={eagerImage ? "eager" : "lazy"}
+            fetchPriority={eagerImage ? "high" : "auto"}
             className="object-contain p-1 transition-transform duration-500 group-hover:scale-105 pointer-events-none"
           />
         </div>

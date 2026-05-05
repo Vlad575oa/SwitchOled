@@ -218,8 +218,12 @@ export async function Catalog({ category, searchParams, pageSize = 12 }: Catalog
         {products.length > 0 ? (
           <>
             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
-              {products.map((product) => (
-                <ProductCard key={product.id} product={product} />
+              {products.map((product, idx) => (
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  eagerImage={idx < 4}
+                />
               ))}
             </div>
             <Pagination totalPages={totalPages} />

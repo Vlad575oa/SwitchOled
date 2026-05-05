@@ -21,6 +21,8 @@ async function getDeliveryData(): Promise<Record<string, string>> {
   }
 }
 
+const isEnabled = (value?: string) => value !== "false";
+
 const paymentMethods = [
   {
     icon: CreditCard,
@@ -49,6 +51,7 @@ export default async function DeliveryPage() {
 
   const deliveryMethods = [
     {
+      visible: isEnabled(d.show_express),
       icon: Zap,
       label: "Экспресс-курьер",
       subtitle: "По Москве",
@@ -59,6 +62,7 @@ export default async function DeliveryPage() {
       accent: true,
     },
     {
+      visible: isEnabled(d.show_sdek),
       icon: Truck,
       label: "СДЭК / Boxberry",
       subtitle: "По всей России",
@@ -69,6 +73,7 @@ export default async function DeliveryPage() {
       accent: false,
     },
     {
+      visible: isEnabled(d.show_pickup),
       icon: MapPin,
       label: "Самовывоз",
       subtitle: d.pickup_address ?? "Москва, м. Митино",
@@ -77,6 +82,29 @@ export default async function DeliveryPage() {
       free: d.pickup_hours ?? "Ежедневно 10:00–21:00",
       desc: d.pickup_desc ?? "Заберите в нашем шоуруме: проверьте консоль на месте и получите подарок при первом визите.",
       accent: false,
+    },
+  ].filter((item) => item.visible);
+
+  const paymentMethods = [
+    {
+      icon: CreditCard,
+      label: d.payments_1_title ?? "Банковская карта",
+      desc: d.payments_1_desc ?? "Visa, Mastercard, МИР. SSL-шифрование, 3D Secure. Скидка 3% при онлайн-оплате.",
+    },
+    {
+      icon: Smartphone,
+      label: d.payments_2_title ?? "СБП",
+      desc: d.payments_2_desc ?? "Оплата по QR-коду или номеру телефона. Мгновенно, без комиссии.",
+    },
+    {
+      icon: Banknote,
+      label: d.payments_3_title ?? "Наличные / карта курьеру",
+      desc: d.payments_3_desc ?? "Принимаем при получении в Москве и через СДЭК в большинстве городов.",
+    },
+    {
+      icon: Star,
+      label: d.payments_4_title ?? "Рассрочка 0%",
+      desc: d.payments_4_desc ?? "На 3, 6 и 12 месяцев через Тинькофф и Сбер. Решение за 2 минуты без визита в банк.",
     },
   ];
 
@@ -100,103 +128,111 @@ export default async function DeliveryPage() {
         </div>
 
         {/* Delivery methods */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-16">
-          {deliveryMethods.map((m) => {
-            const Icon = m.icon;
-            return (
-              <div
-                key={m.label}
-                className={`rounded-[32px] p-8 flex flex-col gap-5 ${
-                  m.accent
-                    ? "bg-secondary text-white"
-                    : "bg-neutral-50 border border-neutral-100"
-                }`}
-              >
+        {deliveryMethods.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-16">
+            {deliveryMethods.map((m) => {
+              const Icon = m.icon;
+              return (
                 <div
-                  className={`w-14 h-14 rounded-[18px] flex items-center justify-center ${
-                    m.accent ? "bg-white/15" : "bg-white shadow-sm"
+                  key={m.label}
+                  className={`rounded-[32px] p-8 flex flex-col gap-5 ${
+                    m.accent
+                      ? "bg-secondary text-white"
+                      : "bg-neutral-50 border border-neutral-100"
                   }`}
                 >
-                  <Icon size={24} className={m.accent ? "text-white" : "text-primary"} />
-                </div>
-                <div>
-                  <p className={`text-[10px] font-black uppercase tracking-widest mb-1 ${m.accent ? "text-white/50" : "text-neutral-400"}`}>
-                    {m.subtitle}
+                  <div
+                    className={`w-14 h-14 rounded-[18px] flex items-center justify-center ${
+                      m.accent ? "bg-white/15" : "bg-white shadow-sm"
+                    }`}
+                  >
+                    <Icon size={24} className={m.accent ? "text-white" : "text-primary"} />
+                  </div>
+                  <div>
+                    <p className={`text-[10px] font-black uppercase tracking-widest mb-1 ${m.accent ? "text-white/50" : "text-neutral-400"}`}>
+                      {m.subtitle}
+                    </p>
+                    <h3 className={`text-xl font-black ${m.accent ? "text-white" : "text-secondary"}`}>
+                      {m.label}
+                    </h3>
+                  </div>
+                  <p className={`text-sm leading-relaxed font-medium ${m.accent ? "text-white/70" : "text-neutral-500"}`}>
+                    {m.desc}
                   </p>
-                  <h3 className={`text-xl font-black ${m.accent ? "text-white" : "text-secondary"}`}>
-                    {m.label}
-                  </h3>
-                </div>
-                <p className={`text-sm leading-relaxed font-medium ${m.accent ? "text-white/70" : "text-neutral-500"}`}>
-                  {m.desc}
-                </p>
-                <div className={`mt-auto pt-5 border-t ${m.accent ? "border-white/10" : "border-neutral-100"} flex justify-between items-end`}>
-                  <div>
-                    <p className={`text-2xl font-black ${m.accent ? "text-white" : "text-secondary"}`}>{m.price}</p>
-                    <p className={`text-xs font-bold ${m.accent ? "text-white/50" : "text-neutral-400"}`}>{m.free}</p>
-                  </div>
-                  <div className={`flex items-center gap-1.5 text-xs font-black uppercase tracking-widest ${m.accent ? "text-white/60" : "text-neutral-400"}`}>
-                    <Clock size={12} />
-                    {m.time}
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Packaging note */}
-        <div className="bg-primary/5 border border-primary/10 rounded-[28px] p-8 flex items-start gap-6 mb-16">
-          <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0">
-            <Package size={22} className="text-primary" />
-          </div>
-          <div>
-            <h3 className="font-black text-secondary text-lg mb-2">Как мы упаковываем консоли</h3>
-            <p className="text-neutral-500 font-medium leading-relaxed">
-              {d.packaging_desc ?? "Заводская коробка производителя → пузырчатая плёнка → внешняя транспортировочная коробка с амортизирующим наполнителем. Консоль не сдвинется ни на миллиметр — даже при грубом обращении курьерской службы."}
-            </p>
-          </div>
-        </div>
-
-        {/* Payment */}
-        <div className="mb-16">
-          <h2 className="text-3xl font-black text-secondary uppercase tracking-tighter mb-8">
-            Способы оплаты
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {paymentMethods.map((p) => {
-              const Icon = p.icon;
-              return (
-                <div key={p.label} className="bg-neutral-50 rounded-[24px] p-7 flex gap-5 items-start hover:bg-white hover:shadow-lg hover:shadow-neutral-200/50 border border-transparent hover:border-neutral-100 transition-all duration-300">
-                  <div className="w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center shrink-0">
-                    <Icon size={20} className="text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="font-black text-secondary mb-1">{p.label}</h3>
-                    <p className="text-sm text-neutral-500 font-medium leading-relaxed">{p.desc}</p>
+                  <div className={`mt-auto pt-5 border-t ${m.accent ? "border-white/10" : "border-neutral-100"} flex justify-between items-end`}>
+                    <div>
+                      <p className={`text-2xl font-black ${m.accent ? "text-white" : "text-secondary"}`}>{m.price}</p>
+                      <p className={`text-xs font-bold ${m.accent ? "text-white/50" : "text-neutral-400"}`}>{m.free}</p>
+                    </div>
+                    <div className={`flex items-center gap-1.5 text-xs font-black uppercase tracking-widest ${m.accent ? "text-white/60" : "text-neutral-400"}`}>
+                      <Clock size={12} />
+                      {m.time}
+                    </div>
                   </div>
                 </div>
               );
             })}
           </div>
-        </div>
+        )}
+
+        {/* Packaging note */}
+        {isEnabled(d.show_packaging) && (
+          <div className="bg-primary/5 border border-primary/10 rounded-[28px] p-8 flex items-start gap-6 mb-16">
+            <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0">
+              <Package size={22} className="text-primary" />
+            </div>
+            <div>
+              <h3 className="font-black text-secondary text-lg mb-2">Как мы упаковываем консоли</h3>
+              <p className="text-neutral-500 font-medium leading-relaxed">
+                {d.packaging_desc ?? "Заводская коробка производителя → пузырчатая плёнка → внешняя транспортировочная коробка с амортизирующим наполнителем. Консоль не сдвинется ни на миллиметр — даже при грубом обращении курьерской службы."}
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Payment */}
+        {isEnabled(d.show_payments) && (
+          <div className="mb-16">
+            <h2 className="text-3xl font-black text-secondary uppercase tracking-tighter mb-8">
+              {d.payments_title ?? "Способы оплаты"}
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {paymentMethods.map((p) => {
+                const Icon = p.icon;
+                return (
+                  <div key={p.label} className="bg-neutral-50 rounded-[24px] p-7 flex gap-5 items-start hover:bg-white hover:shadow-lg hover:shadow-neutral-200/50 border border-transparent hover:border-neutral-100 transition-all duration-300">
+                    <div className="w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center shrink-0">
+                      <Icon size={20} className="text-primary" />
+                    </div>
+                    <div>
+                      <h3 className="font-black text-secondary mb-1">{p.label}</h3>
+                      <p className="text-sm text-neutral-500 font-medium leading-relaxed">{p.desc}</p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {/* Bottom guarantee strip */}
-        <div className="bg-secondary rounded-[32px] p-10 grid grid-cols-1 sm:grid-cols-3 gap-6 text-center">
-          {[
-            { icon: ShieldCheck, text: "Официальный чек с каждым заказом" },
-            { icon: CheckCircle2, text: "Проверка целостности при курьере" },
-            { icon: Clock, text: "Поддержка заказа 24/7 в Telegram" },
-          ].map((item) => {
-            const Icon = item.icon;
-            return (
-              <div key={item.text} className="flex flex-col items-center gap-3">
-                <Icon size={28} className="text-primary" />
-                <p className="text-white font-bold text-sm leading-snug">{item.text}</p>
-              </div>
-            );
-          })}
-        </div>
+        {isEnabled(d.show_guarantees) && (
+          <div className="bg-secondary rounded-[32px] p-10 grid grid-cols-1 sm:grid-cols-3 gap-6 text-center">
+            {[
+              { icon: ShieldCheck, text: "Официальный чек с каждым заказом" },
+              { icon: CheckCircle2, text: "Проверка целостности при курьере" },
+              { icon: Clock, text: "Поддержка заказа 24/7 в Telegram" },
+            ].map((item) => {
+              const Icon = item.icon;
+              return (
+                <div key={item.text} className="flex flex-col items-center gap-3">
+                  <Icon size={28} className="text-primary" />
+                  <p className="text-white font-bold text-sm leading-snug">{item.text}</p>
+                </div>
+              );
+            })}
+          </div>
+        )}
 
       </div>
     </div>
