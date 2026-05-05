@@ -2,6 +2,22 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { SESSION_COOKIE } from '@/lib/auth';
 
+const LEGACY_GONE_PATHS = new Set([
+  '/company',
+  '/company/',
+  '/info',
+  '/info/',
+  '/license',
+  '/license/',
+  '/policy',
+  '/policy/',
+]);
+
+const LEGACY_GONE_PREFIXES = [
+  '/catalog/mashini_motocikli_tehnika-17',
+  '/catalog/lego-11',
+];
+
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
@@ -12,6 +28,16 @@ export async function middleware(request: NextRequest) {
     response.headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
     return response;
   };
+
+  const isLegacyGone =
+    LEGACY_GONE_PATHS.has(pathname) ||
+    LEGACY_GONE_PREFIXES.some((prefix) => pathname.startsWith(prefix));
+
+  if (isLegacyGone) {
+    const response = new NextResponse('Gone', { status: 410 });
+    response.headers.set('Cache-Control', 'public, max-age=86400');
+    return withSecurityHeaders(response);
+  }
 
   // /admin routes — protection handled by layout (Node.js runtime, not Edge)
   // /api/admin routes — protection handled inside each route handler
@@ -28,5 +54,8 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/admin/:path*', '/api/admin/:path*', '/account/:path*'],
+  matcher: [
+    '/account/:path*',
+    '/((?!_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|.*\\.(?:svg|png|jpg|jpeg|webp|gif|ico|css|js|woff|woff2)$).*)',
+  ],
 };

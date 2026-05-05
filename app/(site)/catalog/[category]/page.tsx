@@ -1,4 +1,4 @@
-import { getCategoryBySlug } from "@/lib/queries";
+import { getCategoryBySlug, getCategoryDescendantSlugsBySlug, getProductsCount } from "@/lib/queries";
 import { Catalog } from "@/features/catalog/components/Catalog";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -13,6 +13,16 @@ export async function generateMetadata({
   params: { category: string };
 }): Promise<Metadata> {
   const category = await getCategoryBySlug(params.category);
+  const categorySlugs =
+    params.category !== "all" ? await getCategoryDescendantSlugsBySlug(params.category) : [];
+  const visibleProductsCount =
+    params.category === "all"
+      ? await getProductsCount({})
+      : await getProductsCount({
+          category: {
+            slug: categorySlugs.length ? { in: categorySlugs } : params.category,
+          },
+        });
   const title = category
     ? `${category.name} — Купить недорого в Gameshop24`
     : "Каталог игровых консолей | Gameshop24";
@@ -24,6 +34,10 @@ export async function generateMetadata({
     description,
     alternates: {
       canonical: `${baseUrl}/catalog/${params.category}`,
+    },
+    robots: {
+      index: visibleProductsCount > 0,
+      follow: true,
     },
     openGraph: {
       title,

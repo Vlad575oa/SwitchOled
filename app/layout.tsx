@@ -1,12 +1,8 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
-import { Suspense } from "react";
 import { Toaster } from "sonner";
 import YandexMetrika from "@/components/YandexMetrika";
 import MessengerExitNotice from "@/components/MessengerExitNotice";
-
-const inter = Inter({ subsets: ["latin", "cyrillic"] });
 
 const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://gameshop24.ru";
 
@@ -43,9 +39,9 @@ export const metadata: Metadata = {
     description: "Лучший выбор PlayStation, Xbox и Nintendo с доставкой по всей России.",
   },
   icons: {
-    icon: "/favicon.svg",
-    shortcut: "/favicon.svg",
-    apple: "/favicon.svg",
+    icon: "/favicon.svg?v=20260505",
+    shortcut: "/favicon.svg?v=20260505",
+    apple: "/favicon.svg?v=20260505",
   },
   robots: {
     index: true,
@@ -70,7 +66,7 @@ const organizationSchema = {
       "url": baseUrl,
       "logo": {
         "@type": "ImageObject",
-        "url": `${baseUrl}/favicon.svg`,
+        "url": `${baseUrl}/favicon.svg?v=20260505`,
         "width": 512,
         "height": 512,
       },
@@ -116,7 +112,7 @@ const organizationSchema = {
       "url": baseUrl,
       "telephone": "7(926)676-34-88",
       "priceRange": "₽₽₽",
-      "image": `${baseUrl}/favicon.svg`,
+      "image": `${baseUrl}/favicon.svg?v=20260505`,
       "address": {
         "@type": "PostalAddress",
         "streetAddress": "ул. Митинская, д. 10, корп. 1",
@@ -146,12 +142,16 @@ export default function RootLayout({
   return (
     <html lang="ru">
       <head>
+        <link rel="preconnect" href="https://s3.ru1.storage.beget.cloud" crossOrigin="" />
+        <link rel="dns-prefetch" href="//s3.ru1.storage.beget.cloud" />
+        <link rel="icon" href="/favicon.svg?v=20260505" type="image/svg+xml" sizes="any" />
+        <link rel="shortcut icon" href="/favicon.svg?v=20260505" type="image/svg+xml" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
         />
       </head>
-      <body className={`${inter.className} bg-[var(--bg-base)] text-[var(--text-primary)] antialiased min-h-screen`}>
+      <body className="bg-[var(--bg-base)] text-[var(--text-primary)] antialiased min-h-screen">
         {children}
         <MessengerExitNotice />
         <YandexMetrika />

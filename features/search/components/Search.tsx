@@ -22,6 +22,7 @@ export const Search = () => {
   const [results, setResults] = useState<any[]>([]);
   const [popularItems, setPopularItems] = useState<any[]>(POPULAR_ITEMS);
   const [isLoading, setIsLoading] = useState(false);
+  const [popularLoaded, setPopularLoaded] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
@@ -33,20 +34,22 @@ export const Search = () => {
   };
 
   useEffect(() => {
+    if (!isOpen || popularLoaded) return;
+
     const fetchPopular = async () => {
       try {
-        const res = await fetch("/api/products/recent?ids=1,2,3"); // Just a placeholder, better logic below
-        // Actually, let's fetch real "New" products for popular section
         const data = await searchProductsAction(""); // I'll update the action to return defaults if empty
         if (data && data.length > 0) {
           setPopularItems(data.slice(0, 3));
         }
       } catch (e) {
         console.error("Failed to fetch popular items", e);
+      } finally {
+        setPopularLoaded(true);
       }
     };
     fetchPopular();
-  }, []);
+  }, [isOpen, popularLoaded]);
 
   useEffect(() => {
     const handleSearch = async () => {
@@ -160,7 +163,14 @@ export const Search = () => {
                     className="flex items-center gap-4 p-2.5 rounded-2xl hover:bg-neutral-50 transition-all group"
                   >
                     <div className="w-11 h-11 relative rounded-xl overflow-hidden bg-neutral-100 shrink-0 border border-neutral-100">
-                      <Image src={item.image || (item.images && item.images[0]) || ""} alt={item.name} fill className="object-cover" />
+                      <Image
+                        src={item.image || (item.images && item.images[0]) || ""}
+                        alt={item.name}
+                        fill
+                        sizes="44px"
+                        quality={65}
+                        className="object-cover"
+                      />
                     </div>
                     <div className="flex-1 min-w-0">
                       <h4 className="text-sm font-bold text-secondary group-hover:text-primary transition-colors truncate">{item.name}</h4>

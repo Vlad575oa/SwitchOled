@@ -6,13 +6,19 @@ export const dynamic = "force-dynamic";
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://gameshop24.ru";
 
-  // Get all products
+  // Only expose products that are actually visible on the storefront.
   const products = await prisma.product.findMany({
+    where: { isVisible: { not: false } },
     select: { slug: true, updatedAt: true, category: { select: { slug: true } } }
   });
 
-  // Get all categories
+  // Only include categories that currently have visible products.
   const categories = await prisma.category.findMany({
+    where: {
+      products: {
+        some: { isVisible: { not: false } },
+      },
+    },
     select: { slug: true }
   });
 
@@ -45,7 +51,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const staticPages = [
     { url: baseUrl, lastModified: new Date(), changeFrequency: 'daily' as const, priority: 1.0 },
-    { url: `${baseUrl}/catalog`, lastModified: new Date(), changeFrequency: 'daily' as const, priority: 0.9 },
+    { url: `${baseUrl}/catalog/all`, lastModified: new Date(), changeFrequency: 'daily' as const, priority: 0.9 },
     { url: `${baseUrl}/blog`, lastModified: new Date(), changeFrequency: 'daily' as const, priority: 0.8 },
     { url: `${baseUrl}/contacts`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.5 },
     { url: `${baseUrl}/faq`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.6 },

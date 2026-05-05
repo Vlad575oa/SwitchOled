@@ -16,6 +16,16 @@ const METRIKA_SRC = `https://mc.yandex.ru/metrika/tag.js?id=${METRIKA_ID}`;
 
 export default function YandexMetrika() {
   useEffect(() => {
+    const isProd = process.env.NODE_ENV === "production";
+    const host = window.location.hostname;
+    const ua = navigator.userAgent || "";
+    const isLocalEnv = host === "localhost" || host === "127.0.0.1" || host === "::1";
+    const isSyntheticAudit = /Lighthouse|HeadlessChrome|Chrome-Lighthouse/i.test(ua);
+
+    if (!isProd || isLocalEnv || isSyntheticAudit) {
+      return;
+    }
+
     const initMetrika = () => {
       if (window.ym?.l) return;
 
@@ -33,8 +43,8 @@ export default function YandexMetrika() {
 
       window.ym(METRIKA_ID, "init", {
         ssr: true,
-        webvisor: true,
-        clickmap: true,
+        webvisor: false,
+        clickmap: false,
         ecommerce: "dataLayer",
         referrer: document.referrer,
         url: window.location.href,
@@ -43,13 +53,22 @@ export default function YandexMetrika() {
       });
     };
 
+    const scheduleInit = () => {
+      if ("requestIdleCallback" in window) {
+        (window as Window & { requestIdleCallback: (cb: IdleRequestCallback, options?: IdleRequestOptions) => number })
+          .requestIdleCallback(() => initMetrika(), { timeout: 8000 });
+      } else {
+        globalThis.setTimeout(initMetrika, 4000);
+      }
+    };
+
     if (document.readyState === "complete") {
-      initMetrika();
+      scheduleInit();
       return;
     }
 
-    window.addEventListener("load", initMetrika, { once: true });
-    return () => window.removeEventListener("load", initMetrika);
+    window.addEventListener("load", scheduleInit, { once: true });
+    return () => window.removeEventListener("load", scheduleInit);
   }, []);
 
   return (

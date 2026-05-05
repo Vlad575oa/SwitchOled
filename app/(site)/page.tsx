@@ -33,7 +33,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
 
 
       <div id="catalog" className="mb-20 scroll-mt-24">
-        <Catalog category="all" searchParams={searchParams} pageSize={12} />
+        <Catalog category="all" searchParams={searchParams} pageSize={8} />
       </div>
 
       <ExpertInsights />

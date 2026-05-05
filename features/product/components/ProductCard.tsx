@@ -79,6 +79,8 @@ export const ProductCard = ({ product }: ProductCardProps) => {
             src={product.images[activeImageIndex] || "/placeholder.jpg"}
             alt={product.name}
             fill
+            sizes="(max-width: 640px) 46vw, (max-width: 1024px) 30vw, 18vw"
+            quality={72}
             className="object-contain p-1 transition-transform duration-500 group-hover:scale-105 pointer-events-none"
           />
         </div>

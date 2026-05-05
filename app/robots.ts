@@ -15,6 +15,12 @@ export default function robots(): MetadataRoute.Robots {
           "/checkout",
           "/auth",
           "/success",
+          "/company",
+          "/info",
+          "/license",
+          "/policy",
+          "/catalog/mashini_motocikli_tehnika-17",
+          "/catalog/lego-11",
           "/*?*", // Disallow query parameters for SEO
         ],
       },
