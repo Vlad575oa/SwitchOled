@@ -6,6 +6,8 @@ import { Metadata } from "next";
 import { readFile } from "fs/promises";
 import { join } from "path";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Доставка и оплата | Gameshop24",
   description: "Доставка по Москве в день заказа. СДЭК, Boxberry, самовывоз. Оплата картой, СБП, наличными и в рассрочку 0%.",
