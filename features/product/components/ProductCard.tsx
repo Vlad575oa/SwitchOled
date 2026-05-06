@@ -80,8 +80,8 @@ export const ProductCard = ({ product, eagerImage = false }: ProductCardProps) =
             src={product.images[activeImageIndex] || "/placeholder.jpg"}
             alt={product.name}
             fill
-            sizes="(max-width: 640px) 46vw, (max-width: 1024px) 30vw, 18vw"
-            quality={68}
+            sizes="(max-width: 640px) 46vw, (max-width: 1024px) 30vw, (max-width: 1280px) 22vw, 16vw"
+            quality={55}
             loading={eagerImage ? "eager" : "lazy"}
             fetchPriority={eagerImage ? "high" : "auto"}
             className="object-contain p-1 transition-transform duration-500 group-hover:scale-105 pointer-events-none"

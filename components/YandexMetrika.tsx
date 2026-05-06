@@ -20,7 +20,7 @@ export default function YandexMetrika() {
     const host = window.location.hostname;
     const ua = navigator.userAgent || "";
     const isLocalEnv = host === "localhost" || host === "127.0.0.1" || host === "::1";
-    const isSyntheticAudit = /Lighthouse|HeadlessChrome|Chrome-Lighthouse/i.test(ua);
+    const isSyntheticAudit = /Lighthouse|HeadlessChrome|HeadlessChromium|Chrome-Lighthouse/i.test(ua);
 
     if (!isProd || isLocalEnv || isSyntheticAudit) {
       return;

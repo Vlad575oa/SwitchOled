@@ -5,6 +5,8 @@ const nextConfig = {
   images: {
     formats: ['image/avif', 'image/webp'],
     minimumCacheTTL: 2678400,
+    imageSizes: [64, 128, 256, 384, 512],
+    deviceSizes: [640, 828, 1080, 1200, 1920],
     remotePatterns: [
       {
         protocol: 'https',
@@ -32,6 +34,18 @@ const nextConfig = {
         source: '/api/:path*',
         headers: [
           { key: 'Cache-Control', value: 'no-store' },
+        ],
+      },
+      {
+        source: '/_next/static/:path*',
+        headers: [
+          { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
+        ],
+      },
+      {
+        source: '/icons/:path*',
+        headers: [
+          { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
         ],
       },
     ];

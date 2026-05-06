@@ -222,7 +222,7 @@ export async function Catalog({ category, searchParams, pageSize = 12 }: Catalog
                 <ProductCard
                   key={product.id}
                   product={product}
-                  eagerImage={idx < 4}
+                  eagerImage={idx < 2}
                 />
               ))}
             </div>
