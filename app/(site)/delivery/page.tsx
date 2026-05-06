@@ -23,29 +23,6 @@ async function getDeliveryData(): Promise<Record<string, string>> {
 
 const isEnabled = (value?: string) => value !== "false";
 
-const paymentMethods = [
-  {
-    icon: CreditCard,
-    label: "Банковская карта",
-    desc: "Visa, Mastercard, МИР. SSL-шифрование, 3D Secure. Скидка 3% при онлайн-оплате.",
-  },
-  {
-    icon: Smartphone,
-    label: "СБП",
-    desc: "Оплата по QR-коду или номеру телефона. Мгновенно, без комиссии.",
-  },
-  {
-    icon: Banknote,
-    label: "Наличные / карта курьеру",
-    desc: "Принимаем при получении в Москве и через СДЭК в большинстве городов.",
-  },
-  {
-    icon: Star,
-    label: "Рассрочка 0%",
-    desc: "На 3, 6 и 12 месяцев через Тинькофф и Сбер. Решение за 2 минуты без визита в банк.",
-  },
-];
-
 export default async function DeliveryPage() {
   const d = await getDeliveryData();
 
@@ -212,6 +189,16 @@ export default async function DeliveryPage() {
                 );
               })}
             </div>
+            {(d.payments_conditions_title || d.payments_conditions_text) && (
+              <div className="mt-5 rounded-[20px] border border-neutral-200 bg-white p-6">
+                <h3 className="text-sm font-black uppercase tracking-wider text-secondary mb-2">
+                  {d.payments_conditions_title ?? "Условия оплаты"}
+                </h3>
+                <p className="text-sm text-neutral-500 font-medium leading-relaxed">
+                  {d.payments_conditions_text}
+                </p>
+              </div>
+            )}
           </div>
         )}
 

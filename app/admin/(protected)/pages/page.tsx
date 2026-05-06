@@ -166,6 +166,8 @@ const SECTIONS = [
           { key: "payments_3_desc", label: "Карточка 3 — описание", type: "textarea" },
           { key: "payments_4_title", label: "Карточка 4 — заголовок", type: "input" },
           { key: "payments_4_desc", label: "Карточка 4 — описание", type: "textarea" },
+          { key: "payments_conditions_title", label: "Условия оплаты — заголовок", type: "input" },
+          { key: "payments_conditions_text", label: "Условия оплаты — текст", type: "textarea" },
         ],
       },
     ],
