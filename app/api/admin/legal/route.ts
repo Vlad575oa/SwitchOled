@@ -3,6 +3,7 @@ import { readFile, writeFile } from "fs/promises";
 import { join } from "path";
 import { cookies } from "next/headers";
 import { ADMIN_COOKIE, verifyAdminSession } from "@/lib/adminSession";
+import { revalidatePath } from "next/cache";
 
 const LEGAL_DIR = join(process.cwd(), "content", "legal");
 const SLUGS = ["offer", "privacy", "terms", "cookies"] as const;
@@ -40,6 +41,7 @@ export async function PUT(request: Request) {
           JSON.stringify(body[slug], null, 2),
           "utf-8"
         );
+        revalidatePath(`/legal/${slug}`);
       }
     }
     return NextResponse.json({ success: true });

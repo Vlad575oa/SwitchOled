@@ -3,6 +3,8 @@ import fs from "fs";
 import path from "path";
 import { Metadata } from "next";
 
+export const dynamic = "force-dynamic";
+
 interface LegalPageProps {
   params: {
     slug: string;

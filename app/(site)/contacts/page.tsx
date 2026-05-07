@@ -3,6 +3,8 @@ import { readFile } from "fs/promises";
 import { join } from "path";
 import ContactsClient from "./ContactsClient";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Контакты | Gameshop24",
   description: "Свяжитесь с нами в Telegram, по телефону или email. Среднее время ответа — 15 минут.",

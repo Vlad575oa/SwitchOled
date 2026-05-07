@@ -6,6 +6,8 @@ import { Metadata } from "next";
 import { readFile } from "fs/promises";
 import { join } from "path";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Гарантия и возврат | Gameshop24",
   description: "Гарантия 12 месяцев на консоли. Возврат в течение 14 дней. Бесплатный сервис при заводском браке.",
