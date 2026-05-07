@@ -6,15 +6,33 @@ import { FloatingContact } from "@/components/FloatingContact";
 import { MobileBottomNav } from "@/components/MobileBottomNav";
 import { Suspense } from "react";
 import { CookieBanner } from "@/components/CookieBanner";
+import { readFile } from "fs/promises";
+import { join } from "path";
 
-export default function SiteLayout({
+const getWorkingHours = async () => {
+  try {
+    const raw = await readFile(join(process.cwd(), "content", "pages.json"), "utf-8");
+    const parsed = JSON.parse(raw);
+    const contacts = (parsed?.contacts ?? {}) as Record<string, string>;
+    const weekdays = (contacts.hours_weekdays ?? "").trim();
+    const weekends = (contacts.hours_weekends ?? "").trim();
+    if (weekdays && weekends) return `Пн–Пт ${weekdays} · Сб–Вс ${weekends}`;
+    return weekdays || weekends || "09:00 — 21:00";
+  } catch {
+    return "09:00 — 21:00";
+  }
+};
+
+export default async function SiteLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const workingHours = await getWorkingHours();
+
   return (
     <>
-      <TopBar />
+      <TopBar workingHours={workingHours} />
       <Header />
       <Suspense fallback={null}>
         <QuickFilters />
@@ -23,7 +41,7 @@ export default function SiteLayout({
         {children}
       </main>
       <div className="h-14 lg:hidden" />
-      <Footer />
+      <Footer workingHours={workingHours} />
       <FloatingContact />
       <MobileBottomNav />
       <CookieBanner />

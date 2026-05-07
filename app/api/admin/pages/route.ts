@@ -3,6 +3,7 @@ import { readFile, writeFile } from "fs/promises";
 import { join } from "path";
 import { cookies } from "next/headers";
 import { ADMIN_COOKIE, verifyAdminSession } from "@/lib/adminSession";
+import { revalidatePath } from "next/cache";
 
 const PAGES_FILE = join(process.cwd(), "content", "pages.json");
 
@@ -25,6 +26,11 @@ export async function PUT(request: Request) {
   try {
     const body = await request.json();
     await writeFile(PAGES_FILE, JSON.stringify(body, null, 2), "utf-8");
+    revalidatePath("/", "layout");
+    revalidatePath("/contacts");
+    revalidatePath("/delivery");
+    revalidatePath("/about");
+    revalidatePath("/warranty");
     return NextResponse.json({ success: true });
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });

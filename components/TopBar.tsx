@@ -14,7 +14,7 @@ const MaxIcon = () => (
 );
 
 
-export const TopBar = () => {
+export const TopBar = ({ workingHours = "09:00 — 21:00" }: { workingHours?: string }) => {
   return (
     <div className="bg-[var(--bg-surface)] border-b border-[var(--bg-elevated)] transition-colors">
       <div className="container px-4 h-10 flex items-center justify-between gap-2 sm:gap-4">
@@ -33,7 +33,7 @@ export const TopBar = () => {
             </a>
             <div className="flex items-center gap-1.5 text-[var(--text-secondary)]">
               <Clock size={13} className="text-secondary shrink-0" />
-              <span className="text-[11px] font-black uppercase tracking-wider">09:00 — 21:00</span>
+              <span className="text-[11px] font-black uppercase tracking-wider">{workingHours}</span>
             </div>
           </div>
 

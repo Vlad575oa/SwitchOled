@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Phone, Mail, MapPin } from "lucide-react";
 
-export const Footer = () => {
+export const Footer = ({ workingHours = "09:00 — 21:00" }: { workingHours?: string }) => {
     const currentYear = new Date().getFullYear();
 
     return (
@@ -99,7 +99,7 @@ export const Footer = () => {
                                 </div>
                                 <div>
                                     <p className="text-[16px] font-black text-white">7(926)676-34-88</p>
-                                    <p className="text-[9px] font-bold text-neutral-500 uppercase tracking-widest">09:00 — 21:00</p>
+                                    <p className="text-[9px] font-bold text-neutral-500 uppercase tracking-widest">{workingHours}</p>
                                 </div>
                             </Link>
                             <Link href="mailto:shop@gameshop24.ru" className="flex items-center gap-3 group/item">
