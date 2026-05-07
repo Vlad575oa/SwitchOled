@@ -32,6 +32,7 @@ export default async function AddVariantPage({ params }: { params: { id: string 
       id: source.id,
       name: source.name,
       slug: source.slug,
+      sku: source.sku ?? "",
       color,
       memory,
       price: String(priceRub),
@@ -46,6 +47,7 @@ export default async function AddVariantPage({ params }: { params: { id: string 
     {
       name: `${source.name} (новый вариант)`,
       slug: "",
+      sku: "",
       color: "",
       memory: "",
       price: "",
@@ -69,7 +71,6 @@ export default async function AddVariantPage({ params }: { params: { id: string 
       sourceProductName={source.name}
       initialAttrs={sharedAttrs}
       initial={{
-        sku: source.sku ?? `L0${source.id + 4000}`,
         description: source.description ?? "",
         categoryId: String(source.categoryId),
         isNew: source.isNew,

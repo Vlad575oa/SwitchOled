@@ -24,6 +24,7 @@ export interface VariantRow {
   id?: number;
   name: string;
   slug: string;
+  sku: string;
   color: string;
   memory: string;
   price: string;
@@ -39,7 +40,6 @@ export interface VariantRow {
 
 interface SharedForm {
   id?: number;
-  sku: string;
   description: string;
   categoryId: string;
   isNew: boolean;
@@ -71,7 +71,7 @@ const COLOR_ATTR_KEYS = ["Цвет"];
 const MEMORY_ATTR_KEYS = ["Накопитель", "Объём", "Объем"];
 
 const EMPTY_VARIANT: VariantRow = {
-  name: "", slug: "", color: "", memory: "", price: "", priceOld: "", showOtherPaymentPrice: false, stock: "10",
+  name: "", slug: "", sku: "", color: "", memory: "", price: "", priceOld: "", showOtherPaymentPrice: false, stock: "10",
   inStock: true, images: [], newImages: [], newPreviews: [], _deleted: false,
 };
 
@@ -117,7 +117,6 @@ export const ProductForm = ({
     : [];
 
   const [form, setForm] = useState<SharedForm>({
-    sku: initial.sku ?? "",
     description: initial.description ?? "",
     categoryId: initial.categoryId ?? "",
     isNew: initial.isNew ?? false,
@@ -271,7 +270,7 @@ export const ProductForm = ({
         const data = new FormData();
         data.append("name", v.name.trim());
         data.append("description", form.description);
-        data.append("sku", form.sku);
+        data.append("sku", v.sku.trim());
         // Send raw rubles — API handles ×100 conversion
         data.append("price", v.price);
         data.append("priceOld", v.priceOld || String(Math.round(parseFloat(v.price) * 1.13)));
@@ -410,15 +409,6 @@ export const ProductForm = ({
                 placeholder="Полное описание товара..."
               />
             </div>
-            <div>
-              <label className={labelCls}>Артикул</label>
-              <input
-                className={inputCls}
-                value={form.sku}
-                onChange={(e) => set("sku", e.target.value)}
-                placeholder="NSW-256-WHT"
-              />
-            </div>
           </section>
 
           {/* Variants table */}
@@ -485,6 +475,16 @@ export const ProductForm = ({
                       <p className="text-[10px] text-neutral-400 font-bold mt-1">
                         /catalog/…/<span className="text-neutral-600">{normalizeSlug(v.slug) || "slug"}</span>
                       </p>
+                    </div>
+
+                    <div>
+                      <label className={labelCls}>Артикул варианта</label>
+                      <input
+                        className={inputCls}
+                        value={v.sku}
+                        onChange={(e) => setVariant(realIdx, "sku", e.target.value)}
+                        placeholder={`L0${(v.id ?? 0) + 4000}`}
+                      />
                     </div>
 
                     {/* Color + Memory */}

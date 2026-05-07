@@ -28,6 +28,7 @@ type VariantCardItem = {
   id: number;
   name: string;
   slug: string;
+  sku: string | null;
   price: number;
   priceOld: number | null;
   showOtherPaymentPrice: boolean;
@@ -66,6 +67,7 @@ export function PurchaseBlock({ product, variants = [], categorySlug }: Purchase
           id: product.id,
           name: product.name,
           slug: product.slug,
+          sku: product.sku ?? null,
           price: product.price,
           priceOld: product.priceOld ?? null,
           showOtherPaymentPrice: product.showOtherPaymentPrice ?? false,
@@ -178,7 +180,7 @@ export function PurchaseBlock({ product, variants = [], categorySlug }: Purchase
 
         {/* Meta info */}
         <div className="flex items-center justify-between py-4 border-t border-neutral-50 mb-4">
-           <span className="text-xs font-bold text-neutral-400">Артикул: {product.sku || `L0${product.id + 4000}`}</span>
+           <span className="text-xs font-bold text-neutral-400">Артикул: {selectedVariant.sku || product.sku || `L0${selectedVariant.id + 4000}`}</span>
            {product.brand && (
              <div className="flex items-center gap-2 opacity-50 grayscale hover:grayscale-0 transition-all">
                 <span className="text-[10px] font-black uppercase text-secondary">{product.brand}</span>

@@ -68,6 +68,7 @@ export default async function EditProductPage({ params }: { params: { id: string
       id: s.id,
       name: s.name,
       slug: s.slug,
+      sku: s.sku ?? "",
       color,
       memory,
       price: String(priceRub),
@@ -93,7 +94,6 @@ export default async function EditProductPage({ params }: { params: { id: string
       initialAttrs={sharedAttrs}
       initial={{
         id: product.id,
-        sku: product.sku ?? `L0${product.id + 4000}`,
         description: product.description ?? "",
         categoryId: String(product.categoryId),
         isNew: product.isNew,

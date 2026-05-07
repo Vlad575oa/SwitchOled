@@ -250,6 +250,7 @@ export interface ProductVariantOption {
   id: number;
   name: string;
   slug: string;
+  sku: string | null;
   price: number;
   priceOld: number | null;
   showOtherPaymentPrice: boolean;
@@ -362,6 +363,7 @@ export const getProductVariants = cache(async (productId: number) => {
         id: true,
         name: true,
         slug: true,
+        sku: true,
         price: true,
         priceOld: true,
         showOtherPaymentPrice: true,
@@ -383,6 +385,7 @@ export const getProductVariants = cache(async (productId: number) => {
       id: item.id,
       name: item.name,
       slug: item.slug,
+      sku: item.sku,
       price: item.price,
       priceOld: item.priceOld ?? null,
       showOtherPaymentPrice: item.showOtherPaymentPrice ?? false,
