@@ -3,7 +3,7 @@
 import { ReactNode } from "react";
 
 const MAX_DESKTOP_URL = "https://web.max.ru/245465430";
-const MAX_MOBILE_DEEPLINK = "max://max.ru/u/79266763488";
+const MAX_MOBILE_DEEPLINK = "max://u/245465430";
 
 const isMobileDevice = () => {
   if (typeof navigator === "undefined") return false;
