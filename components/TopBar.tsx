@@ -1,16 +1,12 @@
 import Link from "next/link";
 import { MapPin, Clock, ShieldCheck, Award } from "lucide-react";
 
-const WhatsAppIcon = () => (
-  <img src="/icons/whatsapp-svgrepo-com.svg" alt="WhatsApp" className="w-full h-full object-contain" />
-);
-
-const TelegramIcon = () => (
-  <img src="/icons/telegram-svgrepo-com.svg" alt="Telegram" className="w-full h-full object-contain" />
-);
-
 const MaxIcon = () => (
   <img src="/icons/logotip-messendzhera-max.svg" alt="MAX" className="w-full h-full object-contain overflow-hidden rounded-full" />
+);
+
+const WhatsAppIcon = () => (
+  <img src="/icons/whatsapp-svgrepo-com.svg" alt="WhatsApp" className="w-full h-full object-contain" />
 );
 
 
@@ -80,16 +76,7 @@ export const TopBar = ({ workingHours = "09:00 — 21:00" }: { workingHours?: st
               <WhatsAppIcon />
             </Link>
             <Link
-              href="https://t.me/+79266763488"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-[27px] h-[27px] flex items-center justify-center hover:scale-110 transition-all drop-shadow-sm"
-              title="Telegram"
-            >
-              <TelegramIcon />
-            </Link>
-            <Link
-              href="https://max.ru/u/79266763488"
+              href="https://web.max.ru/245465430"
               target="_blank"
               rel="noopener noreferrer"
               className="w-[26px] h-[26px] flex items-center justify-center hover:scale-110 transition-all drop-shadow-sm"

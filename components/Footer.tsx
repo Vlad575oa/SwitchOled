@@ -28,9 +28,8 @@ export const Footer = ({ workingHours = "09:00 — 21:00" }: { workingHours?: st
                         </p>
                         <div className="flex items-center gap-2.5">
                             {[
-                                { icon: "/icons/telegram-svgrepo-com.svg", color: "hover:bg-[#26A5E4]/20", id: "tg", href: "https://t.me/+79266763488", newTab: true },
                                 { icon: "/icons/whatsapp-svgrepo-com.svg", color: "hover:bg-[#25D366]/20", id: "wa", href: "https://wa.me/79266763488", newTab: true },
-                                { icon: "/icons/logotip-messendzhera-max.svg", color: "hover:bg-white/20", id: "max", href: "https://max.ru/u/79266763488", newTab: true },
+                                { icon: "/icons/logotip-messendzhera-max.svg", color: "hover:bg-white/20", id: "max", href: "https://web.max.ru/245465430", newTab: true },
                             ].map((s) => (
                                 <Link
                                     key={s.id}
@@ -144,15 +143,6 @@ export const Footer = ({ workingHours = "09:00 — 21:00" }: { workingHours?: st
                         <p className="text-[10px] font-black text-neutral-700 uppercase tracking-widest">
                             © {currentYear} Gameshop24
                         </p>
-                        <Link
-                            href="https://t.me/vlad557"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center gap-1.5 grayscale opacity-30 hover:grayscale-0 hover:opacity-100 transition-all group"
-                        >
-                            <span className="text-[9px] font-black text-neutral-500 uppercase tracking-[.3em] group-hover:text-neutral-400">Build</span>
-                            <div className="bg-primary px-2 py-0.5 rounded text-[9px] font-black text-white italic">VD</div>
-                        </Link>
                     </div>
                 </div>
             </div>

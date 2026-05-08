@@ -20,7 +20,7 @@ export default async function OrdersPage() {
   const canDeleteOrders = session?.r !== "MANAGER";
 
   const orders = await prisma.order.findMany({
-    include: { items: { include: { product: { select: { name: true } } } } },
+    include: { items: { include: { product: { select: { name: true, sku: true } } } } },
     orderBy: { createdAt: "desc" },
   });
 
@@ -61,9 +61,16 @@ export default async function OrdersPage() {
                       <td className="px-5 py-4">
                         <div className="space-y-0.5">
                           {order.items.map((item) => (
-                            <p key={item.id} className="text-[10px] font-bold text-neutral-500 line-clamp-1">
-                              {item.product.name} × {item.quantity}
-                            </p>
+                            <div key={item.id} className="space-y-0">
+                              <p className="text-[10px] font-bold text-neutral-500 line-clamp-1">
+                                {item.product.name} × {item.quantity}
+                              </p>
+                              {item.product.sku && (
+                                <p className="text-[9px] font-bold text-neutral-300">
+                                  Арт: {item.product.sku}
+                                </p>
+                              )}
+                            </div>
                           ))}
                         </div>
                       </td>
