@@ -132,9 +132,18 @@ export async function PATCH(request: Request, { params }: { params: { id: string
 
   try {
     const id = parseInt(params.id);
-    const { isVisible } = await request.json();
-    const product = await prisma.product.update({ where: { id }, data: { isVisible } });
-    return NextResponse.json({ success: true, isVisible: product.isVisible });
+    const body = await request.json();
+    const data: { isVisible?: boolean; inStock?: boolean } = {};
+
+    if (typeof body?.isVisible === "boolean") data.isVisible = body.isVisible;
+    if (typeof body?.inStock === "boolean") data.inStock = body.inStock;
+
+    if (!("isVisible" in data) && !("inStock" in data)) {
+      return NextResponse.json({ error: "No valid fields to update" }, { status: 400 });
+    }
+
+    const product = await prisma.product.update({ where: { id }, data });
+    return NextResponse.json({ success: true, isVisible: product.isVisible, inStock: product.inStock });
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }

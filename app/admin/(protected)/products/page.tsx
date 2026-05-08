@@ -5,6 +5,7 @@ import { formatPrice } from "@/lib/utils";
 import { ProductDeleteButton } from "./ProductDeleteButton";
 import { ProductDuplicateButton } from "./ProductDuplicateButton";
 import { ProductHideButton } from "./ProductHideButton";
+import { ProductStockToggleButton } from "./ProductStockToggleButton";
 import { cn } from "@/lib/utils";
 import { cookies } from "next/headers";
 import { ADMIN_COOKIE, verifyAdminSession } from "@/lib/adminSession";
@@ -206,9 +207,7 @@ export default async function ProductsPage({ searchParams }: Props) {
                       <p className="text-sm font-black text-[#111827]">{formatPrice(p.price)}</p>
                     </td>
                     <td className="px-5 py-3">
-                      <span className={`px-2.5 py-0.5 rounded-full text-[7px] font-black uppercase tracking-widest whitespace-nowrap ${p.inStock ? "bg-green-100 text-green-700" : "bg-red-100 text-red-600"}`}>
-                        {p.inStock ? "В наличии" : "Нет"}
-                      </span>
+                      <ProductStockToggleButton productId={p.id} inStock={p.inStock !== false} />
                     </td>
                     <td className="px-5 py-3">
                       <div className="flex items-center gap-2 justify-end">

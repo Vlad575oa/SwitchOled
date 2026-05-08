@@ -156,7 +156,7 @@ export const ProductCard = ({ product, eagerImage = false }: ProductCardProps) =
           {product.inStock !== false ? (
             <span className="text-[9px] font-black uppercase tracking-wider text-green-500">● В наличии</span>
           ) : (
-            <span className="text-[9px] font-black uppercase tracking-wider text-orange-400">● Под заказ</span>
+            <span className="text-[9px] font-black uppercase tracking-wider text-neutral-400">● Нет в наличии</span>
           )}
         </div>
 
