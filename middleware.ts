@@ -39,6 +39,11 @@ export async function middleware(request: NextRequest) {
     return withSecurityHeaders(response);
   }
 
+  // /catalog → /catalog/all (bare catalog path returns 404)
+  if (pathname === '/catalog' || pathname === '/catalog/') {
+    return withSecurityHeaders(NextResponse.redirect(new URL('/catalog/all', request.url), 301));
+  }
+
   // /admin routes — protection handled by layout (Node.js runtime, not Edge)
   // /api/admin routes — protection handled inside each route handler
 

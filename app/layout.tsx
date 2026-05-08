@@ -32,11 +32,13 @@ export const metadata: Metadata = {
     siteName: "Gameshop24",
     locale: "ru_RU",
     type: "website",
+    images: [{ url: `${baseUrl}/og-default.jpg`, width: 1200, height: 630, alt: "Gameshop24 — магазин игровых консолей" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "Gameshop24 | Магазин игровых консолей",
     description: "Лучший выбор PlayStation, Xbox и Nintendo с доставкой по всей России.",
+    images: [`${baseUrl}/og-default.jpg`],
   },
   icons: {
     icon: "/favicon.svg?v=20260505",

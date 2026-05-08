@@ -15,9 +15,7 @@ const getWorkingHours = async () => {
     const parsed = JSON.parse(raw);
     const contacts = (parsed?.contacts ?? {}) as Record<string, string>;
     const weekdays = (contacts.hours_weekdays ?? "").trim();
-    const weekends = (contacts.hours_weekends ?? "").trim();
-    if (weekdays && weekends) return `Пн–Пт ${weekdays} · Сб–Вс ${weekends}`;
-    return weekdays || weekends || "09:00 — 21:00";
+    return weekdays || "09:00 — 21:00";
   } catch {
     return "09:00 — 21:00";
   }

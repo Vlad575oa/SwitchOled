@@ -201,8 +201,7 @@ const SECTIONS = [
         key: "contacts_hours",
         label: "🕐 График работы",
         fields: [
-          { key: "hours_weekdays", label: "Пн–Пт (напр. «10:00 — 21:00»)", type: "input" },
-          { key: "hours_weekends", label: "Сб–Вс (напр. «11:00 — 20:00»)", type: "input" },
+          { key: "hours_weekdays", label: "Время работы (напр. «10:00 — 21:00»)", type: "input" },
         ],
       },
       {

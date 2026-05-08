@@ -2,7 +2,7 @@ import prisma from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import { format } from "date-fns";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 3600;
 import { ru } from "date-fns/locale";
 import { ArrowLeft, Clock, User, Share2, Bookmark, MessageCircle, ChevronRight } from "lucide-react";
 import Link from "next/link";
@@ -55,9 +55,9 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
     "datePublished": post.createdAt.toISOString(),
     "dateModified": post.updatedAt.toISOString(),
     "author": {
-      "@type": "Organization",
-      "name": "Nintendo Media Team",
-      "url": baseUrl,
+      "@type": "Person",
+      "name": "Редакция Gameshop24",
+      "url": `${baseUrl}/about`,
     },
     "publisher": {
       "@type": "Organization",
@@ -66,12 +66,24 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
       "logo": {
         "@type": "ImageObject",
         "url": `${baseUrl}/favicon.svg`,
+        "width": 512,
+        "height": 512,
       },
     },
     "mainEntityOfPage": {
       "@type": "WebPage",
       "@id": `${baseUrl}/blog/${post.slug}`,
     },
+  };
+
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Главная", "item": baseUrl },
+      { "@type": "ListItem", "position": 2, "name": "Блог", "item": `${baseUrl}/blog` },
+      { "@type": "ListItem", "position": 3, "name": post.title, "item": `${baseUrl}/blog/${post.slug}` },
+    ],
   };
 
   const relatedPosts = await prisma.post.findMany({
@@ -88,6 +100,10 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
       <div className="container">
         <div className="max-w-4xl mx-auto px-4 sm:px-0">

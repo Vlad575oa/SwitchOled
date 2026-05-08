@@ -67,7 +67,19 @@ export default async function ProductPage({
       availability: product.inStock
         ? "https://schema.org/InStock"
         : "https://schema.org/OutOfStock",
+      seller: { "@type": "Organization", name: "Gameshop24", url: baseUrl },
     },
+  };
+
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Главная", item: baseUrl },
+      { "@type": "ListItem", position: 2, name: "Каталог", item: `${baseUrl}/catalog/all` },
+      { "@type": "ListItem", position: 3, name: product.category.name, item: `${baseUrl}/catalog/${product.category.slug}` },
+      { "@type": "ListItem", position: 4, name: product.name, item: `${baseUrl}/catalog/${product.category.slug}/${product.slug}` },
+    ],
   };
 
   return (
@@ -76,6 +88,10 @@ export default async function ProductPage({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
         />
 
         {/* Breadcrumbs */}

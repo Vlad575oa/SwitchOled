@@ -4,7 +4,7 @@ import { ArrowRight, User, Clock } from "lucide-react";
 import { format } from "date-fns";
 import { Metadata } from "next";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 1800;
 
 export const metadata: Metadata = {
   title: "Блог игромана | Новости, обзоры и гайды | Gameshop24",
@@ -51,8 +51,33 @@ export default async function BlogPage({
 
   const categories = ["Все", "Обзоры", "Гайды", "Новости", "Слухи"];
 
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://gameshop24.ru";
+  const blogListSchema = {
+    "@context": "https://schema.org",
+    "@type": "Blog",
+    "name": "Блог Gameshop24",
+    "url": `${baseUrl}/blog`,
+    "description": "Новости, обзоры и гайды из мира Nintendo, PlayStation и Xbox",
+    "publisher": {
+      "@type": "Organization",
+      "name": "Gameshop24",
+      "url": baseUrl,
+    },
+    "blogPost": posts.slice(0, 10).map((post) => ({
+      "@type": "BlogPosting",
+      "headline": post.title,
+      "url": `${baseUrl}/blog/${post.slug}`,
+      "datePublished": post.createdAt.toISOString(),
+      "image": post.image || "",
+    })),
+  };
+
   return (
     <div className="bg-[#fcfcfd] min-h-screen pt-6 pb-20">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(blogListSchema) }}
+      />
       <div className="container">
 
         {/* Page title */}

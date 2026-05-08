@@ -12,7 +12,6 @@ interface ContactsData {
   address?: string;
   telegram?: string;
   hours_weekdays?: string;
-  hours_weekends?: string;
   company_name?: string;
   full_name?: string;
   inn?: string;
@@ -43,7 +42,6 @@ export default function ContactsClient({ data }: { data: ContactsData }) {
   const telegramHref = data.telegram ?? "https://t.me/+79266763488";
   const phoneHref = `tel:+${phone.replace(/\D/g, "")}`;
   const hoursWeekdays = data.hours_weekdays ?? "10:00 — 21:00";
-  const hoursWeekends = data.hours_weekends ?? "11:00 — 20:00";
 
   const channels = [
     {
@@ -59,7 +57,7 @@ export default function ContactsClient({ data }: { data: ContactsData }) {
       icon: Phone,
       label: "Телефон",
       value: phone,
-      sub: `Пн–Пт, ${hoursWeekdays}`,
+      sub: hoursWeekdays,
       badge: "Бесплатно",
       href: phoneHref,
       accent: false,
@@ -261,8 +259,7 @@ export default function ContactsClient({ data }: { data: ContactsData }) {
               </div>
               <div className="space-y-3">
                 {[
-                  { day: "Пн — Пт", hours: hoursWeekdays },
-                  { day: "Сб — Вс", hours: hoursWeekends },
+                  { day: "Время работы", hours: hoursWeekdays },
                   { day: "Telegram / чат", hours: "24 / 7" },
                 ].map((row) => (
                   <div key={row.day} className="flex justify-between items-center py-2 border-b border-neutral-100 last:border-0">
