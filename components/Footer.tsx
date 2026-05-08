@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { Phone, Mail, MapPin } from "lucide-react";
+import { MaxContactLink } from "./MaxContactLink";
 
 export const Footer = ({ workingHours = "09:00 — 21:00" }: { workingHours?: string }) => {
     const currentYear = new Date().getFullYear();
@@ -27,24 +28,28 @@ export const Footer = ({ workingHours = "09:00 — 21:00" }: { workingHours?: st
                             Премиальный магазин игровых консолей и аксессуаров. Только оригинальные товары с гарантией.
                         </p>
                         <div className="flex items-center gap-2.5">
-                            {[
-                                { icon: "/icons/whatsapp-svgrepo-com.svg", color: "hover:bg-[#25D366]/20", id: "wa", href: "https://wa.me/79266763488", newTab: true },
-                                { icon: "/icons/logotip-messendzhera-max.svg", color: "hover:bg-white/20", id: "max", href: "https://web.max.ru/245465430", newTab: true },
-                            ].map((s) => (
-                                <Link
-                                    key={s.id}
-                                    href={s.href}
-                                    target={s.newTab ? "_blank" : undefined}
-                                    rel={s.newTab ? "noopener noreferrer" : undefined}
-                                    className={`w-7 h-7 flex items-center justify-center transition-all hover:scale-110 drop-shadow-sm group/soc`}
-                                >
-                                    <img
-                                        src={s.icon}
-                                        alt={s.id}
-                                        className="w-full h-full object-contain"
-                                    />
-                                </Link>
-                            ))}
+                            <Link
+                                href="https://wa.me/79266763488"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="w-7 h-7 flex items-center justify-center transition-all hover:scale-110 drop-shadow-sm group/soc"
+                            >
+                                <img
+                                    src="/icons/whatsapp-svgrepo-com.svg"
+                                    alt="wa"
+                                    className="w-full h-full object-contain"
+                                />
+                            </Link>
+                            <MaxContactLink
+                                className="w-7 h-7 flex items-center justify-center transition-all hover:scale-110 drop-shadow-sm group/soc"
+                                title="MAX"
+                            >
+                                <img
+                                    src="/icons/logotip-messendzhera-max.svg"
+                                    alt="max"
+                                    className="w-full h-full object-contain"
+                                />
+                            </MaxContactLink>
                         </div>
                     </div>
 

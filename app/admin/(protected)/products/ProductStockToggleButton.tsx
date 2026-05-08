@@ -41,7 +41,7 @@ export function ProductStockToggleButton({ productId, inStock }: { productId: nu
           !isInStock ? "bg-neutral-200 text-neutral-600" : "text-neutral-400 hover:text-neutral-600"
         }`}
       >
-        Нет в наличии
+        Под заказ
       </button>
     </div>
   );

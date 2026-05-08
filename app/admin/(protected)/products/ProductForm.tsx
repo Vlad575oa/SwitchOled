@@ -436,9 +436,16 @@ export const ProductForm = ({
                   >
                     {/* Row header */}
                     <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-black uppercase tracking-widest text-neutral-400">
-                        Вариант {displayIdx + 1}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] font-black uppercase tracking-widest text-neutral-400">
+                          Вариант {displayIdx + 1}
+                        </span>
+                        {!v.inStock && (
+                          <span className="text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full bg-neutral-200 text-neutral-500">
+                            Под заказ
+                          </span>
+                        )}
+                      </div>
                       {activeVariants.length > 1 && (
                         <button
                           onClick={() => deleteVariant(realIdx)}
@@ -574,18 +581,6 @@ export const ProductForm = ({
                         />
                       </div>
                     </div>
-
-                    {/* InStock toggle */}
-                    <label className="flex items-center justify-between cursor-pointer">
-                      <span className="text-sm font-bold text-neutral-600">В наличии</span>
-                      <button
-                        type="button"
-                        onClick={() => setVariant(realIdx, "inStock", !v.inStock)}
-                        className={`w-11 h-6 rounded-full transition-all relative ${v.inStock ? "bg-primary" : "bg-neutral-200"}`}
-                      >
-                        <span className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-all ${v.inStock ? "left-[22px]" : "left-0.5"}`} />
-                      </button>
-                    </label>
 
                     {/* Images */}
                     <div>

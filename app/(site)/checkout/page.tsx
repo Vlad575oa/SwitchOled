@@ -13,6 +13,7 @@ interface CheckoutFormData {
   name: string;
   phone: string;
   address: string;
+  consent: boolean;
 }
 
 export default function CheckoutPage() {
@@ -122,6 +123,24 @@ export default function CheckoutPage() {
                 placeholder="Город, улица, дом, квартира"
               />
               {errors.address && <p className="text-xs font-bold text-red-500 mt-1">{errors.address.message}</p>}
+            </div>
+
+            {/* Consent */}
+            <div>
+              <label className="flex items-start gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  {...register("consent", { required: "Необходимо дать согласие на обработку персональных данных" })}
+                  className="mt-0.5 w-5 h-5 rounded border-neutral-300 accent-primary flex-shrink-0 cursor-pointer"
+                />
+                <span className="text-sm font-medium text-neutral-600 leading-snug">
+                  Я даю своё согласие на обработку персональных данных в соответствии с{" "}
+                  <Link href="/privacy" className="text-primary underline underline-offset-2 hover:no-underline">
+                    Политикой конфиденциальности
+                  </Link>
+                </span>
+              </label>
+              {errors.consent && <p className="text-xs font-bold text-red-500 mt-1">{errors.consent.message}</p>}
             </div>
 
             {/* Promo code */}

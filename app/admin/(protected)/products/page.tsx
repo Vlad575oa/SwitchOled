@@ -201,6 +201,9 @@ export default async function ProductsPage({ searchParams }: Props) {
                     <td className="px-5 py-3 w-[360px]">
                       <p className="text-xs font-black leading-4 text-[#111827] line-clamp-2 max-w-[340px] break-words">{p.name}</p>
                       <p className="text-[10px] text-neutral-400 font-bold mt-0.5">{p.slug}</p>
+                      {p.sku ? (
+                        <p className="text-[10px] text-neutral-400 font-bold">Артикул: {p.sku}</p>
+                      ) : null}
                     </td>
                     <td className="px-5 py-3 text-xs font-bold text-neutral-500">{p.category.name}</td>
                     <td className="px-5 py-3">

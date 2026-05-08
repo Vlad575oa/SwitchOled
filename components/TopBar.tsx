@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { MapPin, Clock, ShieldCheck, Award } from "lucide-react";
+import { MaxContactLink } from "./MaxContactLink";
 
 const MaxIcon = () => (
   <img src="/icons/logotip-messendzhera-max.svg" alt="MAX" className="w-full h-full object-contain overflow-hidden rounded-full" />
@@ -75,15 +76,12 @@ export const TopBar = ({ workingHours = "09:00 — 21:00" }: { workingHours?: st
             >
               <WhatsAppIcon />
             </Link>
-            <Link
-              href="https://web.max.ru/245465430"
-              target="_blank"
-              rel="noopener noreferrer"
+            <MaxContactLink
               className="w-[26px] h-[26px] flex items-center justify-center hover:scale-110 transition-all drop-shadow-sm"
               title="MAX"
             >
               <MaxIcon />
-            </Link>
+            </MaxContactLink>
           </div>
         </div>
       </div>

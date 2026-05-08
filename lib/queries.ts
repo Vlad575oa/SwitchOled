@@ -119,7 +119,7 @@ export const getProducts = cache(async (
   return safeQuery(
     () => prisma.product.findMany({
       where: { AND: [VISIBLE, where] },
-      orderBy,
+      orderBy: [{ inStock: "desc" }, orderBy],
       skip,
       take,
       include: { category: true },
@@ -138,11 +138,12 @@ export const getProductsNintendoFirst = cache(async (
     const results = await prisma.$queryRaw<any[]>`
       SELECT p.*,
         c.id as "cat_id", c.name as "cat_name", c.slug as "cat_slug",
-        CASE WHEN c.slug ILIKE '%nintendo%' OR c.slug ILIKE '%switch%' THEN 0 ELSE 1 END as priority
+        CASE WHEN c.slug ILIKE '%nintendo%' OR c.slug ILIKE '%switch%' THEN 0 ELSE 1 END as priority,
+        CASE WHEN p."inStock" = true THEN 0 ELSE 1 END as stock_priority
       FROM "Product" p
       JOIN "Category" c ON p."categoryId" = c.id
       WHERE p."isVisible" IS DISTINCT FROM false
-      ORDER BY priority ASC, p."createdAt" DESC
+      ORDER BY priority ASC, stock_priority ASC, p."createdAt" DESC
       LIMIT ${take} OFFSET ${skip}
     `;
     return results.map((r: any) => ({
