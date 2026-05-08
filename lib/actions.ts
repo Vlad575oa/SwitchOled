@@ -46,7 +46,7 @@ export async function createOrderAction(input: CreateOrderInput): Promise<Action
       // 1. Check stock and visibility for all items
       for (const item of normalizedItems) {
         const product = productMap.get(item.productId);
-        if (!product || product.isVisible === false || product.inStock === false || product.stock < item.quantity) {
+        if (!product || product.isVisible === false) {
           throw new Error(`Товар "${product?.name || "ID " + item.productId}" недоступен`);
         }
       }
