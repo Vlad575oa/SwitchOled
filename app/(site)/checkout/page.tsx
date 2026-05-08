@@ -135,7 +135,7 @@ export default function CheckoutPage() {
                 />
                 <span className="text-sm font-medium text-neutral-600 leading-snug">
                   Я даю своё согласие на обработку персональных данных в соответствии с{" "}
-                  <Link href="/privacy" className="text-primary underline underline-offset-2 hover:no-underline">
+                  <Link href="/legal/privacy" className="text-primary underline underline-offset-2 hover:no-underline">
                     Политикой конфиденциальности
                   </Link>
                 </span>
