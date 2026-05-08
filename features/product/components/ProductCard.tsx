@@ -156,7 +156,7 @@ export const ProductCard = ({ product, eagerImage = false }: ProductCardProps) =
           {product.inStock !== false ? (
             <span className="text-[9px] font-black uppercase tracking-wider text-green-500">● В наличии</span>
           ) : (
-            <span className="text-[9px] font-black uppercase tracking-wider text-neutral-400">● Нет в наличии</span>
+            <span className="text-[9px] font-black uppercase tracking-wider text-neutral-400">● Под заказ</span>
           )}
         </div>
 
@@ -208,6 +208,7 @@ export const ProductCard = ({ product, eagerImage = false }: ProductCardProps) =
                 price: product.price,
                 image: product.images[0] || "/placeholder.jpg",
                 quantity: 1,
+                inStock: product.inStock !== false,
               });
               toast.success("Добавлено в корзину", { description: product.name, duration: 2000 });
             }}

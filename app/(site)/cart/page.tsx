@@ -51,9 +51,14 @@ export default function CartPage() {
                   <Link href={`/catalog/any/${item.slug}`} className="text-lg font-bold text-secondary hover:text-primary transition-colors line-clamp-1">
                     {item.name}
                   </Link>
-                  <p className="text-sm font-bold text-primary mt-1">
-                    {formatPrice(item.price)}
-                  </p>
+                  <div className="flex items-center gap-2 mt-1">
+                    <p className="text-sm font-bold text-primary">{formatPrice(item.price)}</p>
+                    {item.inStock !== false ? (
+                      <span className="text-[9px] font-black uppercase tracking-wider text-green-500">● В наличии</span>
+                    ) : (
+                      <span className="text-[9px] font-black uppercase tracking-wider text-neutral-400">● Под заказ</span>
+                    )}
+                  </div>
                 </div>
 
                 <div className="flex items-center gap-6">

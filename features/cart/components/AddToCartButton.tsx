@@ -13,6 +13,7 @@ interface AddToCartButtonProps {
     slug: string;
     price: number;
     images: string[];
+    inStock?: boolean;
   };
   className?: string;
 }
@@ -29,6 +30,7 @@ export const AddToCartButton = ({ product, className }: AddToCartButtonProps) =>
       price: product.price,
       image: product.images?.[0] || "/placeholder.jpg",
       quantity: 1,
+      inStock: product.inStock !== false,
     });
     
     setIsAdded(true);

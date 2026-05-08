@@ -13,6 +13,7 @@ interface MobileStickyCartProps {
     slug: string;
     price: number;
     images: string[];
+    inStock?: boolean;
   };
 }
 
@@ -28,6 +29,7 @@ export function MobileStickyCart({ product }: MobileStickyCartProps) {
       price: product.price,
       image: product.images?.[0] || "/placeholder.jpg",
       quantity: 1,
+      inStock: product.inStock !== false,
     });
     toast.success("Добавлено в корзину", { description: product.name, duration: 2000 });
     setAdded(true);
