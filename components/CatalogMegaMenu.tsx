@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { X } from "lucide-react";
 
 interface SubLink {
@@ -17,6 +17,12 @@ interface PlatformGroup {
   color: string;
   links: SubLink[];
 }
+
+// Extract category slug from href (ignores query params)
+const hrefToSlug = (href: string): string => {
+  const path = href.split("?")[0]; // strip query
+  return path.replace("/catalog/", "");
+};
 
 const PLATFORMS: PlatformGroup[][] = [
   // Column 1 — PlayStation
@@ -126,6 +132,14 @@ interface CatalogMegaMenuProps {
 
 export function CatalogMegaMenu({ onClose }: CatalogMegaMenuProps) {
   const ref = useRef<HTMLDivElement>(null);
+  const [availableSlugs, setAvailableSlugs] = useState<Set<string> | null>(null);
+
+  useEffect(() => {
+    fetch("/api/catalog-slugs")
+      .then((r) => r.json())
+      .then((slugs: string[]) => setAvailableSlugs(new Set(slugs)))
+      .catch(() => setAvailableSlugs(null)); // on error show everything
+  }, []);
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -140,6 +154,23 @@ export function CatalogMegaMenu({ onClose }: CatalogMegaMenuProps) {
     document.addEventListener("keydown", handler);
     return () => document.removeEventListener("keydown", handler);
   }, [onClose]);
+
+  // Filter a group's sub-links to only those whose category has products
+  const filterLinks = (links: SubLink[]): SubLink[] => {
+    if (!availableSlugs) return links;
+    return links.filter((l) => availableSlugs.has(hrefToSlug(l.href)));
+  };
+
+  // A group is visible if it has at least one visible sub-link OR its own slug has products
+  const isGroupVisible = (group: PlatformGroup): boolean => {
+    if (!availableSlugs) return true;
+    const ownSlug = hrefToSlug(group.href);
+    if (availableSlugs.has(ownSlug)) return true;
+    return filterLinks(group.links).length > 0;
+  };
+
+  // Filter columns to only those with at least one visible group
+  const visibleColumns = PLATFORMS.map((col) => col.filter(isGroupVisible)).filter((col) => col.length > 0);
 
   return (
     <>
@@ -162,50 +193,53 @@ export function CatalogMegaMenu({ onClose }: CatalogMegaMenuProps) {
               <X size={14} />
             </button>
 
-            <div className="grid grid-cols-4 gap-8">
-              {PLATFORMS.map((column, colIdx) => (
+            <div className={`grid gap-8 grid-cols-${Math.min(visibleColumns.length, 4) || 4}`}>
+              {visibleColumns.map((column, colIdx) => (
                 <div
                   key={colIdx}
-                  className={`space-y-8 ${column.some((group) => group.href === "/catalog/nintendo") ? "bg-red-50/40 rounded-2xl p-4 -m-4 border border-red-100/60" : ""}`}
+                  className="space-y-8"
                 >
-                  {column.map((group) => (
-                    <div key={group.title}>
-                      {/* Platform Header */}
-                      <Link
-                        href={group.href}
-                        onClick={onClose}
-                        className="flex items-center gap-2.5 mb-3 group"
-                      >
-                        <div className={`w-8 h-8 rounded-xl flex items-center justify-center text-sm ${group.color}`}>
-                          {group.emoji}
-                        </div>
-                        <span className="font-black text-[13px] text-secondary group-hover:text-primary transition-colors">
-                          {group.title}
-                        </span>
-                      </Link>
+                  {column.map((group) => {
+                    const visibleLinks = filterLinks(group.links);
+                    return (
+                      <div key={group.title}>
+                        {/* Platform Header */}
+                        <Link
+                          href={group.href}
+                          onClick={onClose}
+                          className="flex items-center gap-2.5 mb-3 group"
+                        >
+                          <div className={`w-8 h-8 rounded-xl flex items-center justify-center text-sm ${group.color}`}>
+                            {group.emoji}
+                          </div>
+                          <span className="font-black text-[13px] text-secondary group-hover:text-primary transition-colors">
+                            {group.title}
+                          </span>
+                        </Link>
 
-                      {/* Subcategory links */}
-                      <ul className="space-y-1.5 pl-1">
-                        {group.links.map((link) => (
-                          <li key={link.label}>
-                            <Link
-                              href={link.href}
-                              onClick={onClose}
-                              className="flex items-center gap-2 text-[12px] font-bold text-neutral-400 hover:text-primary transition-colors"
-                            >
-                              <span className="w-1 h-1 rounded-full bg-neutral-200 shrink-0" />
-                              {link.label}
-                              {link.badge && (
-                                <span className="ml-1 px-1.5 py-0.5 bg-primary text-white text-[8px] font-black rounded-full uppercase tracking-wide">
-                                  {link.badge}
-                                </span>
-                              )}
-                            </Link>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
+                        {/* Subcategory links */}
+                        <ul className="space-y-1.5 pl-1">
+                          {visibleLinks.map((link) => (
+                            <li key={link.label}>
+                              <Link
+                                href={link.href}
+                                onClick={onClose}
+                                className="flex items-center gap-2 text-[12px] font-bold text-neutral-400 hover:text-primary transition-colors"
+                              >
+                                <span className="w-1 h-1 rounded-full bg-neutral-200 shrink-0" />
+                                {link.label}
+                                {link.badge && (
+                                  <span className="ml-1 px-1.5 py-0.5 bg-primary text-white text-[8px] font-black rounded-full uppercase tracking-wide">
+                                    {link.badge}
+                                  </span>
+                                )}
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    );
+                  })}
                 </div>
               ))}
             </div>
