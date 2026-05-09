@@ -1,33 +1,28 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useRef, useState, useEffect } from "react";
 import { ChevronRight, ChevronLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { ALL_QUICK_LINKS, type QuickLink } from "@/lib/constants/quickLinks";
 
+interface QuickFiltersProps {
+  enabledSlugs?: string[];
+}
 
+export const QuickFilters = ({ enabledSlugs }: QuickFiltersProps) => {
+  const links: QuickLink[] = enabledSlugs && enabledSlugs.length > 0
+    ? (ALL_QUICK_LINKS.filter((l) => enabledSlugs.includes(l.slug)) as QuickLink[])
+    : (ALL_QUICK_LINKS as unknown as QuickLink[]);
 
-const QUICK_LINKS = [
-  { label: "Все товары",        href: "/catalog/all",                  slug: "all" },
-  { label: "Nintendo",          href: "/catalog/nintendo",             slug: "nintendo" },
-  { label: "Nintendo Switch 2", href: "/catalog/nintendo-switch-2",    slug: "nintendo-switch-2" },
-  { label: "Nintendo Switch",   href: "/catalog/nintendo-switch",      slug: "nintendo-switch" },
-  { label: "PlayStation",       href: "/catalog/playstation",          slug: "playstation" },
-  { label: "Xbox",              href: "/catalog/xbox",                 slug: "xbox" },
-  { label: "Геймпады",          href: "/catalog/gamepads",             slug: "gamepads" },
-  { label: "Аксессуары",        href: "/catalog/accessories",          slug: "accessories" },
-];
-
-export const QuickFilters = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollRight, setCanScrollRight] = useState(false);
   const [canScrollLeft, setCanScrollLeft]   = useState(false);
   const [isDragging, setIsDragging]         = useState(false);
   const [startX, setStartX]                 = useState(0);
   const [scrollLeft, setScrollLeft]         = useState(0);
-  const pathname     = usePathname();
-  const searchParams = useSearchParams();
+  const pathname = usePathname();
 
   const checkScroll = () => {
     const el = scrollRef.current;
@@ -58,12 +53,7 @@ export const QuickFilters = () => {
   const scroll = (dir: "left" | "right") =>
     scrollRef.current?.scrollBy({ left: dir === "left" ? -400 : 400, behavior: "smooth" });
 
-
-
-  // Active detection for regular links — match slug only (no query confusion)
-  const isLinkActive = (item: typeof QUICK_LINKS[0]) => {
-    return pathname === `/catalog/${item.slug}`;
-  };
+  const isLinkActive = (item: QuickLink) => pathname === `/catalog/${item.slug}`;
 
   const fadeCls = "absolute top-0 bottom-0 z-10 w-16 pointer-events-none flex items-center";
 
@@ -86,14 +76,11 @@ export const QuickFilters = () => {
           onMouseMove={onMouseMove}
           className={cn("container flex items-center gap-1 overflow-x-auto no-scrollbar py-2 px-4 scroll-smooth", isDragging ? "cursor-grabbing select-none" : "cursor-default")}
         >
-
-
-          {/* Category links — active = bold + underline dot, NOT red */}
-          {QUICK_LINKS.map((item) => {
+          {links.map((item) => {
             const active = isLinkActive(item);
             return (
               <Link
-                key={item.label}
+                key={item.slug}
                 href={item.href}
                 className={cn(
                   "relative text-[12px] whitespace-nowrap px-2.5 py-1.5 rounded-lg transition-all shrink-0 active:scale-95",

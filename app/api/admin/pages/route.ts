@@ -31,6 +31,8 @@ export async function PUT(request: Request) {
     revalidatePath("/delivery");
     revalidatePath("/about");
     revalidatePath("/warranty");
+    revalidatePath("/catalog/all");
+    revalidatePath("/catalog");
     return NextResponse.json({ success: true });
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });

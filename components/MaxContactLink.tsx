@@ -2,11 +2,11 @@
 
 import { ReactNode } from "react";
 
-const MAX_WEB_URL = "https://web.max.ru/245465430";
+const MAX_WEB_URL = "https://max.ru/u/f9LHodD0cOJQaSenuFWGazoHqG8RNEoO3xSyNKPTXj1s3tyqlHkFoF5UzUo";
 // maxim:// — официальная URI-схема приложения MAX (бывший ICQ New)
-const MAX_DEEPLINK_ANDROID = "maxim://u/245465430";
+const MAX_DEEPLINK_ANDROID = "maxim://u/f9LHodD0cOJQaSenuFWGazoHqG8RNEoO3xSyNKPTXj1s3tyqlHkFoF5UzUo";
 // На iOS MAX регистрирует схему max://
-const MAX_DEEPLINK_IOS = "max://u/245465430";
+const MAX_DEEPLINK_IOS = "max://u/f9LHodD0cOJQaSenuFWGazoHqG8RNEoO3xSyNKPTXj1s3tyqlHkFoF5UzUo";
 
 interface MaxContactLinkProps {
   children: ReactNode;

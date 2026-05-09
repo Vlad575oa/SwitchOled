@@ -13,7 +13,8 @@ import { BlogShareBar } from "@/components/BlogShareBar";
 const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || "https://gameshop24.ru").replace("://www.", "://");
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-  const post = await prisma.post.findUnique({ where: { slug: params.slug } });
+  const slug = decodeURIComponent(params.slug);
+  const post = await prisma.post.findUnique({ where: { slug } });
   if (!post) return {};
 
   const title = `${post.metaTitle || post.title} | Блог Gameshop24`;
@@ -23,7 +24,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     title,
     description,
     alternates: {
-      canonical: `${baseUrl}/blog/${params.slug}`
+      canonical: `${baseUrl}/blog/${slug}`
     },
     openGraph: {
       title,
@@ -42,7 +43,8 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 }
 
 export default async function BlogPostPage({ params }: { params: { slug: string } }) {
-  const post = await prisma.post.findUnique({ where: { slug: params.slug } });
+  const slug = decodeURIComponent(params.slug);
+  const post = await prisma.post.findUnique({ where: { slug } });
 
   if (!post) notFound();
 

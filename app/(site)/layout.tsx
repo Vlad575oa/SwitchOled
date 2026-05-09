@@ -26,15 +26,19 @@ const CookieBanner = dynamic(
   { ssr: false }
 );
 
-const getWorkingHours = async () => {
+const getSiteConfig = async () => {
   try {
     const raw = await readFile(join(process.cwd(), "content", "pages.json"), "utf-8");
     const parsed = JSON.parse(raw);
     const contacts = (parsed?.contacts ?? {}) as Record<string, string>;
     const weekdays = (contacts.hours_weekdays ?? "").trim();
-    return weekdays || CONTACTS.workingHours;
+    const workingHours = weekdays || CONTACTS.workingHours;
+    const enabledSlugs: string[] = Array.isArray(parsed?.home?.quick_filter_slugs)
+      ? parsed.home.quick_filter_slugs
+      : [];
+    return { workingHours, enabledSlugs };
   } catch {
-    return CONTACTS.workingHours;
+    return { workingHours: CONTACTS.workingHours, enabledSlugs: [] };
   }
 };
 
@@ -43,7 +47,7 @@ export default async function SiteLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const workingHours = await getWorkingHours();
+  const { workingHours, enabledSlugs } = await getSiteConfig();
   const currentYear = new Date().getFullYear();
 
   return (
@@ -51,7 +55,7 @@ export default async function SiteLayout({
       <TopBar workingHours={workingHours} />
       <Header />
       <Suspense fallback={null}>
-        <QuickFilters />
+        <QuickFilters enabledSlugs={enabledSlugs} />
       </Suspense>
       <main className="flex-grow">
         {children}

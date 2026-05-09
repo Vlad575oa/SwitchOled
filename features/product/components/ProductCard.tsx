@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { ShoppingCart, Heart, Scale, Info } from "lucide-react";
@@ -31,6 +31,7 @@ interface ProductCardProps {
 
 export const ProductCard = ({ product, eagerImage = false }: ProductCardProps) => {
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [mounted, setMounted] = useState(false);
   const router = useRouter();
   const productUrl = `/catalog/${product.category?.slug || "any"}/${product.slug}`;
   const paymentMethodsPrice = product.priceOld ?? Math.round(product.price * 1.13);
@@ -43,6 +44,13 @@ export const ProductCard = ({ product, eagerImage = false }: ProductCardProps) =
   const addToCart = useCartStore((s) => s.addItem);
 
   const imagesCount = product.images.length;
+  const hydratedInWishlist = mounted && inWishlist;
+  const hydratedInCompare = mounted && inCompare;
+  const hydratedCompareFull = mounted && compareFull;
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const goToProduct = useCallback(() => router.push(productUrl), [productUrl, router]);
 
@@ -170,12 +178,12 @@ export const ProductCard = ({ product, eagerImage = false }: ProductCardProps) =
           {/* Compare */}
           <button
             onClick={(e) => { e.stopPropagation(); toggleCompare(product.id); }}
-            title={inCompare ? "Убрать из сравнения" : compareFull ? "Список сравнения заполнен (макс. 4)" : "Добавить к сравнению"}
+            title={hydratedInCompare ? "Убрать из сравнения" : hydratedCompareFull ? "Список сравнения заполнен (макс. 4)" : "Добавить к сравнению"}
             className={cn(
               "w-10 h-10 rounded-2xl flex items-center justify-center border transition-all active:scale-90",
-              inCompare
+              hydratedInCompare
                 ? "bg-blue-500 text-white border-blue-500 shadow-md shadow-blue-500/20"
-                : compareFull
+                : hydratedCompareFull
                 ? "bg-neutral-100 text-neutral-300 border-transparent cursor-not-allowed"
                 : "bg-neutral-50 text-neutral-400 hover:text-blue-500 hover:bg-blue-50 hover:border-blue-100 border-transparent"
             )}
@@ -186,10 +194,10 @@ export const ProductCard = ({ product, eagerImage = false }: ProductCardProps) =
           {/* Wishlist */}
           <button
             onClick={(e) => { e.stopPropagation(); toggleWishlist(product.id); }}
-            title={inWishlist ? "Убрать из избранного" : "Добавить в избранное"}
+            title={hydratedInWishlist ? "Убрать из избранного" : "Добавить в избранное"}
             className={cn(
               "w-10 h-10 rounded-2xl flex items-center justify-center border transition-all active:scale-90",
-              inWishlist
+              hydratedInWishlist
                 ? "bg-red-500 text-white border-red-500 shadow-md shadow-red-500/20"
                 : "bg-neutral-50 text-neutral-400 hover:text-red-500 hover:bg-red-50 hover:border-red-100 border-transparent"
             )}

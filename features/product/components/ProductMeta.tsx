@@ -32,9 +32,9 @@ export function ProductMeta({ productId }: ProductMetaProps) {
     return () => document.removeEventListener("mousedown", handleOutside);
   }, []);
 
-  const currentUrl = useMemo(() => {
-    if (typeof window === "undefined") return "";
-    return window.location.href;
+  const [currentUrl, setCurrentUrl] = useState("");
+  useEffect(() => {
+    setCurrentUrl(window.location.href);
   }, []);
 
   const telegramShareUrl = useMemo(() => {

@@ -7,6 +7,7 @@ import {
   getCategoryDescendantSlugsBySlug,
   getCatalogVariantFilters,
 } from "@/lib/queries";
+import { Suspense } from "react";
 import { ProductCard } from "@/features/product/components/ProductCard";
 import { FilterSidebar } from "@/features/catalog/components/FilterSidebar";
 import { MobileFilterDrawer } from "@/features/catalog/components/MobileFilterDrawer";
@@ -178,13 +179,15 @@ export async function Catalog({ category, searchParams, pageSize = 12 }: Catalog
     <div className="flex flex-col lg:flex-row gap-12">
       {/* Sidebar — desktop only */}
       <aside className="hidden lg:block w-[280px] flex-shrink-0">
-        <FilterSidebar
-          currentCategory={category}
-          totalCount={totalCount}
-          categoryTree={categoryTree}
-          availableColors={availableVariantFilters.colors}
-          availableMemories={availableVariantFilters.memories}
-        />
+        <Suspense fallback={null}>
+          <FilterSidebar
+            currentCategory={category}
+            totalCount={totalCount}
+            categoryTree={categoryTree}
+            availableColors={availableVariantFilters.colors}
+            availableMemories={availableVariantFilters.memories}
+          />
+        </Suspense>
       </aside>
 
       {/* Content */}
@@ -200,20 +203,26 @@ export async function Catalog({ category, searchParams, pageSize = 12 }: Catalog
           </div>
           <div className="flex items-center gap-2 w-full sm:w-auto">
             <div className="lg:hidden">
-              <MobileFilterDrawer
-                currentCategory={category}
-                totalCount={totalCount}
-                categoryTree={categoryTree}
-                activeFilterCount={activeFilterCount}
-                availableColors={availableVariantFilters.colors}
-                availableMemories={availableVariantFilters.memories}
-              />
+              <Suspense fallback={null}>
+                <MobileFilterDrawer
+                  currentCategory={category}
+                  totalCount={totalCount}
+                  categoryTree={categoryTree}
+                  activeFilterCount={activeFilterCount}
+                  availableColors={availableVariantFilters.colors}
+                  availableMemories={availableVariantFilters.memories}
+                />
+              </Suspense>
             </div>
-            <SortingSelect />
+            <Suspense fallback={null}>
+              <SortingSelect />
+            </Suspense>
           </div>
         </div>
 
-        <ActiveFiltersBar />
+        <Suspense fallback={null}>
+          <ActiveFiltersBar />
+        </Suspense>
 
         {products.length > 0 ? (
           <>
@@ -226,7 +235,9 @@ export async function Catalog({ category, searchParams, pageSize = 12 }: Catalog
                 />
               ))}
             </div>
-            <Pagination totalPages={totalPages} />
+            <Suspense fallback={null}>
+              <Pagination totalPages={totalPages} />
+            </Suspense>
           </>
         ) : (
           <div className="bg-neutral-50 rounded-[32px] py-32 text-center">
