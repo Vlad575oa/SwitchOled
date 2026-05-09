@@ -13,7 +13,7 @@ import { ADMIN_COOKIE, verifyAdminSession } from "@/lib/adminSession";
 export const dynamic = "force-dynamic";
 
 interface Props {
-  searchParams: { q?: string; category?: string; sort?: string; visibility?: string };
+  searchParams: { q?: string; category?: string; sort?: string; visibility?: string; stock?: string };
 }
 
 export default async function ProductsPage({ searchParams }: Props) {
@@ -21,6 +21,7 @@ export default async function ProductsPage({ searchParams }: Props) {
   const categorySlug = searchParams.category ?? "";
   const sort = searchParams.sort ?? "newest";
   const visibility = searchParams.visibility ?? "all";
+  const stock = searchParams.stock ?? "all";
   const session = await verifyAdminSession(cookies().get(ADMIN_COOKIE)?.value);
   const canDeleteProducts = session?.r !== "MANAGER";
   const categories = await prisma.category.findMany({ orderBy: { name: "asc" } });
@@ -74,6 +75,11 @@ export default async function ProductsPage({ searchParams }: Props) {
         : visibility === "hidden"
           ? { isVisible: false }
           : {}),
+      ...(stock === "inStock"
+        ? { inStock: true }
+        : stock === "outOfStock"
+          ? { inStock: false }
+          : {}),
     },
     include: { category: true },
     orderBy,
@@ -120,7 +126,7 @@ export default async function ProductsPage({ searchParams }: Props) {
           {categories.map((cat) => (
             <Link
               key={cat.id}
-              href={`/admin/products?category=${cat.slug}${q ? `&q=${q}` : ""}${sort !== "newest" ? `&sort=${sort}` : ""}${visibility !== "all" ? `&visibility=${visibility}` : ""}`}
+              href={`/admin/products?category=${cat.slug}${q ? `&q=${q}` : ""}${sort !== "newest" ? `&sort=${sort}` : ""}${visibility !== "all" ? `&visibility=${visibility}` : ""}${stock !== "all" ? `&stock=${stock}` : ""}`}
               className={cn(
                 "px-4 py-2 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all",
                 categorySlug === cat.slug
@@ -161,6 +167,15 @@ export default async function ProductsPage({ searchParams }: Props) {
             <option value="all">Все товары</option>
             <option value="shown">Только показанные</option>
             <option value="hidden">Только скрытые</option>
+          </select>
+          <select
+            name="stock"
+            defaultValue={stock}
+            className="px-3 py-2.5 bg-white border border-neutral-200 rounded-xl text-xs font-black text-[#111827] outline-none focus:border-primary/30"
+          >
+            <option value="all">Любое наличие</option>
+            <option value="inStock">В наличии</option>
+            <option value="outOfStock">Под заказ</option>
           </select>
           {categorySlug && <input type="hidden" name="category" value={categorySlug} />}
           <button type="submit" className="px-5 py-2.5 bg-[#111827] text-white text-xs font-black rounded-xl hover:bg-neutral-800 transition-all">
