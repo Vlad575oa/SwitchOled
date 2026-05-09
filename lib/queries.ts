@@ -21,14 +21,53 @@ export const getCategories = cache(async () => {
 });
 
 export const getCategoryTree = cache(async () => {
-  return safeQuery(
-    () => prisma.category.findMany({
-      include: { children: { include: { children: true } } },
+  return safeQuery(async () => {
+    const allCats = await prisma.category.findMany({
+      include: {
+        children: {
+          include: {
+            children: {
+              include: { _count: { select: { products: { where: VISIBLE } } } },
+            },
+            _count: { select: { products: { where: VISIBLE } } },
+          },
+        },
+        _count: { select: { products: { where: VISIBLE } } },
+      },
       where: { parentId: null },
       orderBy: { name: "asc" },
-    }),
-    []
-  );
+    });
+
+    // Keep only categories that have at least one visible product (direct or in descendants)
+    return allCats
+      .map((root) => ({
+        ...root,
+        children: root.children
+          .map((child) => ({
+            ...child,
+            children: child.children.filter((gc) => gc._count.products > 0),
+          }))
+          .filter((child) =>
+            child._count.products > 0 || child.children.some((gc) => gc._count.products > 0)
+          ),
+      }))
+      .filter((root) =>
+        root._count.products > 0 ||
+        root.children.some(
+          (child) => child._count.products > 0 || child.children.some((gc) => gc._count.products > 0)
+        )
+      );
+  }, []);
+});
+
+export const getCategorySlugsWithProducts = cache(async (): Promise<string[]> => {
+  return safeQuery(async () => {
+    const cats = await prisma.category.findMany({
+      where: { products: { some: VISIBLE } },
+      select: { slug: true },
+    });
+    return cats.map((c) => c.slug);
+  }, []);
 });
 
 export const getCategoryBySlug = cache(async (slug: string) => {

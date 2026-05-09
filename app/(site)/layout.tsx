@@ -4,6 +4,8 @@ import { Suspense } from "react";
 import { readFile } from "fs/promises";
 import { join } from "path";
 import { CONTACTS } from "@/lib/constants/contacts";
+import { getCategorySlugsWithProducts } from "@/lib/queries";
+import { ALL_QUICK_LINKS } from "@/lib/constants/quickLinks";
 import dynamic from "next/dynamic";
 
 const Header = dynamic(() => import("@/components/Header").then((m) => m.Header), {
@@ -50,12 +52,18 @@ export default async function SiteLayout({
   const { workingHours, enabledSlugs } = await getSiteConfig();
   const currentYear = new Date().getFullYear();
 
+  // Filter QuickFilters: only slugs enabled by admin AND have at least one product
+  // "all" is always shown if enabled (it's not a real category slug in DB)
+  const slugsWithProducts = await getCategorySlugsWithProducts();
+  const activeQuickSlugs = (enabledSlugs.length > 0 ? enabledSlugs : ALL_QUICK_LINKS.map((l) => l.slug))
+    .filter((slug) => slug === "all" || slugsWithProducts.includes(slug));
+
   return (
     <>
       <TopBar workingHours={workingHours} />
       <Header />
       <Suspense fallback={null}>
-        <QuickFilters enabledSlugs={enabledSlugs} />
+        <QuickFilters enabledSlugs={activeQuickSlugs} />
       </Suspense>
       <main className="flex-grow">
         {children}

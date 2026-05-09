@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Save, Layers, Phone, Truck, ShieldCheck, Info, ChevronDown } from "lucide-react";
+import { Save, Layers, Phone, Truck, ShieldCheck, Info, ChevronDown, Home } from "lucide-react";
+import { ALL_QUICK_LINKS } from "@/lib/constants/quickLinks";
 
 const inputCls = "w-full px-4 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-sm font-bold text-[#111827] placeholder:text-neutral-300 outline-none focus:bg-white focus:border-primary/30 transition-all";
 const labelCls = "block text-[10px] font-black uppercase tracking-widest text-neutral-400 mb-1.5";
@@ -88,6 +89,13 @@ const ABOUT_GROUPS = [
 ];
 
 const SECTIONS = [
+  {
+    key: "home",
+    label: "Главная",
+    icon: Home,
+    previewUrl: "/",
+    isHome: true,
+  },
   {
     key: "about",
     label: "О компании",
@@ -271,11 +279,11 @@ const SECTIONS = [
 ];
 
 export default function PagesPage() {
-  const [data, setData] = useState<Record<string, Record<string, string>>>({});
+  const [data, setData] = useState<Record<string, any>>({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState<string | null>(null);
   const [saved, setSaved] = useState<string | null>(null);
-  const [activeSection, setActiveSection] = useState("about");
+  const [activeSection, setActiveSection] = useState("home");
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({ hero: true });
 
   useEffect(() => {
@@ -284,6 +292,20 @@ export default function PagesPage() {
       .then((d) => { setData(d); setLoading(false); })
       .catch(() => setLoading(false));
   }, []);
+
+  const toggleQuickSlug = (slug: string) => {
+    const current: string[] = Array.isArray(data?.home?.quick_filter_slugs)
+      ? data.home.quick_filter_slugs
+      : ALL_QUICK_LINKS.map((l) => l.slug);
+    const next = current.includes(slug)
+      ? current.filter((s) => s !== slug)
+      : [...current, slug];
+    setData((p: any) => ({ ...p, home: { ...(p.home ?? {}), quick_filter_slugs: next } }));
+  };
+
+  const enabledSlugs: string[] = Array.isArray(data?.home?.quick_filter_slugs)
+    ? data.home.quick_filter_slugs
+    : ALL_QUICK_LINKS.map((l) => l.slug);
 
   const setField = (section: string, key: string, val: string) =>
     setData((p) => ({ ...p, [section]: { ...(p[section] ?? {}), [key]: val } }));
@@ -429,11 +451,56 @@ export default function PagesPage() {
               </button>
             </div>
 
-            {/* О компании: accordion groups */}
-            {section.isAbout ? (
+            {/* Главная: быстрые фильтры */}
+            {(section as any).isHome ? (
+              <div className="p-6 space-y-5">
+                <div>
+                  <p className="text-sm font-black text-[#111827] mb-1">Быстрые фильтры (строка под поиском)</p>
+                  <p className="text-xs text-neutral-400 font-medium mb-4">Выберите категории, которые отображаются в строке быстрых фильтров. Снимите галочку — категория исчезнет.</p>
+                  <div className="space-y-2">
+                    {ALL_QUICK_LINKS.map((link) => {
+                      const enabled = enabledSlugs.includes(link.slug);
+                      return (
+                        <label
+                          key={link.slug}
+                          className={`flex items-center gap-4 px-4 py-3.5 rounded-xl border cursor-pointer transition-all select-none ${
+                            enabled ? "bg-primary/5 border-primary/20" : "bg-neutral-50 border-neutral-100 hover:bg-neutral-100"
+                          }`}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={enabled}
+                            onChange={() => toggleQuickSlug(link.slug)}
+                            className="w-4 h-4 accent-primary rounded"
+                          />
+                          <div className="flex-1">
+                            <p className={`text-sm font-black ${enabled ? "text-[#111827]" : "text-neutral-400"}`}>{link.label}</p>
+                            <p className="text-[11px] text-neutral-400 font-medium mt-0.5">{link.href}</p>
+                          </div>
+                        </label>
+                      );
+                    })}
+                  </div>
+                </div>
+                {/* Preview */}
+                <div>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-neutral-400 mb-2">Предпросмотр строки</p>
+                  <div className="bg-neutral-50 rounded-xl px-4 py-3 flex items-center gap-1 flex-wrap border border-neutral-100">
+                    {ALL_QUICK_LINKS.filter((l) => enabledSlugs.includes(l.slug)).length === 0 ? (
+                      <span className="text-xs text-neutral-400 font-medium">Нет выбранных — отобразятся все</span>
+                    ) : (
+                      ALL_QUICK_LINKS.filter((l) => enabledSlugs.includes(l.slug)).map((link, i) => (
+                        <span key={link.slug} className={`text-[12px] whitespace-nowrap px-2.5 py-1.5 rounded-lg ${i === 0 ? "font-black text-[#111827]" : "font-bold text-neutral-400"}`}>
+                          {link.label}
+                        </span>
+                      ))
+                    )}
+                  </div>
+                </div>
+              </div>
+            ) : section.isAbout ? (
               renderGroups("about", ABOUT_GROUPS)
             ) : section.groups ? (
-              /* Sections with groups (delivery, contacts, warranty) */
               renderGroups(section.key, section.groups)
             ) : null}
           </div>

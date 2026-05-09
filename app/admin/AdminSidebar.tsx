@@ -13,13 +13,11 @@ import {
   Layers,
   ChevronRight,
   Scale,
-  Home,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
   { label: "Дашборд", href: "/admin", icon: LayoutDashboard, exact: true },
-  { label: "Главная", href: "/admin/home", icon: Home },
   { label: "Товары", href: "/admin/products", icon: Package },
   { label: "Заказы", href: "/admin/orders", icon: ShoppingBag },
   { label: "Блог", href: "/admin/posts", icon: FileText },
