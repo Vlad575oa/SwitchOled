@@ -145,7 +145,7 @@ export async function Catalog({ category, searchParams, pageSize = 12 }: Catalog
         ? getCategoryBySlug(category)
         : Promise.resolve({ name: "Весь каталог" }),
       getCategoryTree(),
-      category === "nintendo-switch-oled"
+      category.startsWith("nintendo")
         ? getCatalogVariantFilters(categorySlugs.length ? categorySlugs : [category])
         : Promise.resolve({ colors: [], memories: [] }),
     ]);

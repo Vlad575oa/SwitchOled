@@ -11,11 +11,22 @@ import { getFilteredProductsCountAction } from "../actions";
 
 const MAX_PRICE = 200000;
 
-const COLOR_OPTIONS = [
-  { label: "Белый", value: "White", hex: "#FFFFFF" },
-  { label: "Чёрный", value: "Black", hex: "#1A1A1A" },
-  { label: "Синий", value: "Blue", hex: "#2563EB" },
-];
+// Map Russian color names → hex for swatches
+const COLOR_HEX: Record<string, string> = {
+  "Белый":       "#F5F5F5",
+  "Чёрный":      "#1A1A1A",
+  "Синий":       "#2563EB",
+  "Красный":     "#DC2626",
+  "Жёлтый":      "#EAB308",
+  "Зелёный":     "#16A34A",
+  "Серый":       "#9CA3AF",
+  "Розовый":     "#F472B6",
+  "Бирюзовый":   "#06B6D4",
+  "Коралловый":  "#FB7185",
+  "Фиолетовый":  "#7C3AED",
+  "Золотой":     "#CA8A04",
+  "Серебристый": "#CBD5E1",
+};
 
 const STATUS_OPTIONS = [
   { label: "В наличии", value: "inStock" },
@@ -150,7 +161,7 @@ export const FilterSidebar = ({
   const searchParams = useSearchParams();
   const pathname = usePathname();
 
-  const isSwitchOledCategory = currentCategory === "nintendo-switch-oled";
+  const isNintendoCategory = currentCategory.startsWith("nintendo");
 
   const categoryFilterSections = CATEGORY_FILTERS[currentCategory] ?? [];
 
@@ -443,7 +454,7 @@ export const FilterSidebar = ({
         </FilterSection>
       ))}
 
-      {isSwitchOledCategory && availableMemories.length > 0 && (
+      {isNintendoCategory && availableMemories.length > 0 && (
         <FilterSection
           title="Память"
           id="memory"
@@ -462,25 +473,47 @@ export const FilterSidebar = ({
       )}
 
       {/* ── Цвет ── */}
-      <FilterSection
-        title="Цвет"
-        id="color"
-        isOpen={openSections.color}
-        onToggle={() => toggleSection("color")}
-      >
-        {(isSwitchOledCategory && availableColors.length > 0
-          ? availableColors.map((value) => ({ label: value, value, hex: undefined }))
-          : COLOR_OPTIONS
-        ).map(({ label, value, hex }) => (
-          <CheckboxOption
-            key={value}
-            label={label}
-            checked={colors.includes(value)}
-            onChange={() => toggleValue(colors, setColors, value)}
-            colorHex={hex}
-          />
-        ))}
-      </FilterSection>
+      {(isNintendoCategory ? availableColors : []).length > 0 && (
+        <FilterSection
+          title="Цвет"
+          id="color"
+          isOpen={openSections.color}
+          onToggle={() => toggleSection("color")}
+        >
+          <div className="flex flex-wrap gap-2 px-1">
+            {availableColors.map((colorName) => {
+              const hex = COLOR_HEX[colorName] ?? "#D1D5DB";
+              const isSelected = colors.includes(colorName);
+              return (
+                <button
+                  key={colorName}
+                  title={colorName}
+                  onClick={() => toggleValue(colors, setColors, colorName)}
+                  className={cn(
+                    "w-7 h-7 rounded-full border-2 transition-all hover:scale-110 active:scale-95 relative",
+                    isSelected
+                      ? "border-primary ring-2 ring-primary/30 scale-110"
+                      : "border-white shadow-sm hover:border-neutral-300"
+                  )}
+                  style={{ backgroundColor: hex }}
+                >
+                  {colorName === "Белый" && (
+                    <span className="absolute inset-0 rounded-full border border-neutral-200" />
+                  )}
+                  {isSelected && (
+                    <span className="absolute inset-0 flex items-center justify-center">
+                      <span className={cn(
+                        "w-2 h-2 rounded-full",
+                        colorName === "Белый" || colorName === "Жёлтый" ? "bg-neutral-600" : "bg-white"
+                      )} />
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </FilterSection>
+      )}
 
       {/* ── Статус ── */}
       <FilterSection
