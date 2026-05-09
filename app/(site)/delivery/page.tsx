@@ -36,7 +36,7 @@ export default async function DeliveryPage() {
       subtitle: "По Москве",
       time: d.express_time ?? "В день заказа",
       price: d.express_price ?? "500 ₽",
-      free: d.express_free_from ?? "Бесплатно от 50 000 ₽",
+      free: d.express_free_from ?? "Без фиксированного порога",
       desc: d.express_desc ?? "Заказ до 14:00 — доставим сегодня. Курьер позвонит за 1 час и согласует удобное окно.",
       accent: true,
     },
@@ -47,7 +47,7 @@ export default async function DeliveryPage() {
       subtitle: "По всей России",
       time: d.sdek_time ?? "2–7 рабочих дней",
       price: d.sdek_price ?? "от 250 ₽",
-      free: d.sdek_free_from ?? "Бесплатно от 15 000 ₽",
+      free: d.sdek_free_from ?? "Точная стоимость при оформлении",
       desc: d.sdek_desc ?? "Доставка до двери или до пункта выдачи. Трек-номер — в SMS сразу после отправки.",
       accent: false,
     },
@@ -210,7 +210,7 @@ export default async function DeliveryPage() {
             {[
               { icon: ShieldCheck, text: "Официальный чек с каждым заказом" },
               { icon: CheckCircle2, text: "Проверка целостности при курьере" },
-              { icon: Clock, text: "Поддержка заказа 24/7 в Telegram" },
+              { icon: Clock, text: "Поддержка заказа 24/7 в MAX" },
             ].map((item) => {
               const Icon = item.icon;
               return (

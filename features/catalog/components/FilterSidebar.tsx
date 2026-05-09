@@ -6,7 +6,6 @@ import { ChevronDown, X, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PriceRangeSlider } from "./PriceRangeSlider";
 import { motion, AnimatePresence } from "framer-motion";
-import { CATEGORY_FILTERS } from "../config/categoryFilters";
 import { getFilteredProductsCountAction } from "../actions";
 
 const MAX_PRICE = 200000;
@@ -161,10 +160,6 @@ export const FilterSidebar = ({
   const searchParams = useSearchParams();
   const pathname = usePathname();
 
-  const isNintendoCategory = currentCategory.startsWith("nintendo");
-
-  const categoryFilterSections = CATEGORY_FILTERS[currentCategory] ?? [];
-
   // ── Common filter state ────────────────────────────────────────────────────
   const [priceMin, setPriceMin] = useState(Number(searchParams.get("priceMin") ?? 0));
   const [priceMax, setPriceMax] = useState(Number(searchParams.get("priceMax") ?? MAX_PRICE));
@@ -180,30 +175,18 @@ export const FilterSidebar = ({
     searchParams.get("status")?.split(",").filter(Boolean) ?? []
   );
 
-  // ── Category-specific filter state (keyed by paramKey) ────────────────────
-  const [attrValues, setAttrValues] = useState<Record<string, string[]>>(() => {
-    const init: Record<string, string[]> = {};
-    for (const section of categoryFilterSections) {
-      init[section.paramKey] = searchParams.get(section.paramKey)?.split(",").filter(Boolean) ?? [];
-    }
-    return init;
-  });
-
   // ── Live Count State ──────────────────────────────────────────────────────
   const [liveCount, setLiveCount] = useState(totalCount);
   const [isCounting, setIsCounting] = useState(false);
 
   // ── Open/close sections ────────────────────────────────────────────────────
-  const defaultOpen: Record<string, boolean> = {
+  const [openSections, setOpenSections] = useState<Record<string, boolean>>({
     category: true,
     price: true,
     color: false,
+    memory: false,
     status: false,
-  };
-  for (const section of categoryFilterSections) {
-    defaultOpen[section.id] = ["ps_model", "xbox_model", "ns_model"].includes(section.id);
-  }
-  const [openSections, setOpenSections] = useState<Record<string, boolean>>(defaultOpen);
+  });
   const [collapsedRootCategories, setCollapsedRootCategories] = useState<Record<number, boolean>>({});
 
   const toggleSection = (id: string) =>
@@ -213,18 +196,6 @@ export const FilterSidebar = ({
 
   const toggleValue = (arr: string[], setArr: (v: string[]) => void, value: string) =>
     setArr(arr.includes(value) ? arr.filter((v) => v !== value) : [...arr, value]);
-
-  const toggleAttr = (paramKey: string, value: string) => {
-    setAttrValues((prev) => {
-      const current = prev[paramKey] ?? [];
-      return {
-        ...prev,
-        [paramKey]: current.includes(value)
-          ? current.filter((v) => v !== value)
-          : [...current, value],
-      };
-    });
-  };
 
   // ─── Debounced Count Logic ────────────────────────────────────────────────
   useEffect(() => {
@@ -237,7 +208,6 @@ export const FilterSidebar = ({
         colors,
         memories,
         statuses,
-        attrValues
       });
       if (res.success && typeof res.count === 'number') {
         setLiveCount(res.count);
@@ -247,15 +217,14 @@ export const FilterSidebar = ({
 
     const timer = setTimeout(updateCount, 600);
     return () => clearTimeout(timer);
-  }, [currentCategory, priceMin, priceMax, colors, memories, statuses, attrValues]);
+  }, [currentCategory, priceMin, priceMax, colors, memories, statuses]);
 
   const hasActiveFilters =
     priceMin > 0 ||
     priceMax < MAX_PRICE ||
     colors.length > 0 ||
     memories.length > 0 ||
-    statuses.length > 0 ||
-    Object.values(attrValues).some((v) => v.length > 0);
+    statuses.length > 0;
 
   const createQueryString = useCallback(
     (params: Record<string, string | null>) => {
@@ -277,10 +246,6 @@ export const FilterSidebar = ({
       memory: memories.length ? memories.join(",") : null,
       status: statuses.length ? statuses.join(",") : null,
     };
-    for (const section of categoryFilterSections) {
-      const vals = attrValues[section.paramKey] ?? [];
-      params[section.paramKey] = vals.length ? vals.join(",") : null;
-    }
     router.push(`${pathname}?${createQueryString(params)}`);
   };
 
@@ -290,11 +255,6 @@ export const FilterSidebar = ({
     setColors([]);
     setMemories([]);
     setStatuses([]);
-    const cleared: Record<string, string[]> = {};
-    for (const section of categoryFilterSections) {
-      cleared[section.paramKey] = [];
-    }
-    setAttrValues(cleared);
     router.push(pathname);
   };
 
@@ -434,27 +394,7 @@ export const FilterSidebar = ({
         </div>
       </FilterSection>
 
-      {/* ── Category-specific attribute sections ── */}
-      {categoryFilterSections.map((section) => (
-        <FilterSection
-          key={section.id}
-          title={section.title}
-          id={section.id}
-          isOpen={openSections[section.id] ?? false}
-          onToggle={() => toggleSection(section.id)}
-        >
-          {section.options.map(({ label, value }) => (
-            <CheckboxOption
-              key={value}
-              label={label}
-              checked={(attrValues[section.paramKey] ?? []).includes(value)}
-              onChange={() => toggleAttr(section.paramKey, value)}
-            />
-          ))}
-        </FilterSection>
-      ))}
-
-      {isNintendoCategory && availableMemories.length > 0 && (
+      {availableMemories.length > 0 && (
         <FilterSection
           title="Память"
           id="memory"
@@ -473,7 +413,7 @@ export const FilterSidebar = ({
       )}
 
       {/* ── Цвет ── */}
-      {(isNintendoCategory ? availableColors : []).length > 0 && (
+      {availableColors.length > 0 && (
         <FilterSection
           title="Цвет"
           id="color"

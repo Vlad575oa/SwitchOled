@@ -49,12 +49,12 @@ export default async function FAQPage() {
                 Всё ещё нужна помощь? <br />Мы на связи 24/7.
               </h3>
               <p className="text-neutral-400 font-bold max-w-md">
-                Наши специалисты ответят в течение 5 минут в Telegram.
+                Наши специалисты ответят в течение 5 минут в MAX.
               </p>
             </div>
             <div className="flex flex-wrap justify-center md:justify-end gap-5">
               <button className="px-9 py-4 bg-primary text-white rounded-2xl font-black uppercase tracking-widest text-sm hover:scale-105 active:scale-95 transition-all shadow-xl shadow-primary/20">
-                Telegram Bot
+                MAX Чат
               </button>
               <button className="px-9 py-4 bg-white/10 text-white rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-white/20 transition-all border border-white/10">
                 Позвонить

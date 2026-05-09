@@ -182,3 +182,24 @@ model ContactMessage {
   message   String
   createdAt DateTime @default(now())
 }
+
+model ChatSession {
+  id         String        @id @default(cuid())
+  visitorId  String
+  name       String?
+  email      String?
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+  isResolved Boolean       @default(false)
+  messages   ChatMessage[]
+}
+
+model ChatMessage {
+  id        String      @id @default(cuid())
+  sessionId String
+  session   ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  content   String
+  sender    String      // "USER" | "ADMIN"
+  createdAt DateTime    @default(now())
+  isRead    Boolean     @default(false)
+}

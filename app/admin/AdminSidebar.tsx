@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import {
   LayoutDashboard,
   Package,
@@ -13,6 +14,7 @@ import {
   Layers,
   ChevronRight,
   Scale,
+  MessageSquare,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -22,6 +24,7 @@ const navItems = [
   { label: "Заказы", href: "/admin/orders", icon: ShoppingBag },
   { label: "Блог", href: "/admin/posts", icon: FileText },
   { label: "FAQ", href: "/admin/faq", icon: HelpCircle },
+  { label: "Чат", href: "/admin/chat", icon: MessageSquare, badge: true },
   { label: "Страницы", href: "/admin/pages", icon: Layers },
   { label: "Правовые", href: "/admin/legal", icon: Scale },
 ];
@@ -29,6 +32,7 @@ const navItems = [
 export const AdminSidebar = () => {
   const pathname = usePathname();
   const router = useRouter();
+  const [unreadCount, setUnreadCount] = useState(0);
 
   const isActive = (item: { href: string; exact?: boolean }) =>
     item.exact ? pathname === item.href : pathname.startsWith(item.href);
@@ -37,6 +41,22 @@ export const AdminSidebar = () => {
     await fetch("/api/admin/logout", { method: "POST" });
     router.push("/admin/login");
   };
+
+  useEffect(() => {
+    const fetchUnread = async () => {
+      try {
+        const res = await fetch("/api/admin/chat/sessions");
+        if (res.ok) {
+          const data = await res.json();
+          const total = data.reduce((acc: number, s: { unreadCount: number }) => acc + s.unreadCount, 0);
+          setUnreadCount(total);
+        }
+      } catch {}
+    };
+    fetchUnread();
+    const interval = setInterval(fetchUnread, 60000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <aside className="w-[240px] min-h-screen bg-[#111827] flex flex-col flex-shrink-0">
@@ -75,7 +95,12 @@ export const AdminSidebar = () => {
               )}
             />
             <span className="flex-1">{item.label}</span>
-            {isActive(item) && <ChevronRight size={12} className="text-neutral-500" />}
+            {item.badge && unreadCount > 0 && (
+              <span className="w-5 h-5 rounded-full bg-primary text-white text-[9px] font-black flex items-center justify-center">
+                {unreadCount > 99 ? "99+" : unreadCount}
+              </span>
+            )}
+            {isActive(item) && !(item.badge && unreadCount > 0) && <ChevronRight size={12} className="text-neutral-500" />}
           </Link>
         ))}
       </nav>

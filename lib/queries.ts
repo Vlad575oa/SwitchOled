@@ -250,16 +250,16 @@ export interface CatalogVariantFilters {
 
 export const getCatalogVariantFilters = cache(async (categorySlugs: string[]) => {
   return safeQuery(async () => {
-    if (!categorySlugs.length) {
-      return { colors: [], memories: [] } as CatalogVariantFilters;
-    }
+    const categoryFilter = categorySlugs.length
+      ? { category: { slug: { in: categorySlugs } } }
+      : {};
 
     const rows = await prisma.product.findMany({
       where: {
         AND: [
           VISIBLE,
           { inStock: true },
-          { category: { slug: { in: categorySlugs } } },
+          categoryFilter,
         ],
       },
       select: {

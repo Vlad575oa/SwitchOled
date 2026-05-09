@@ -40,18 +40,18 @@ export default function ContactsClient({ data }: { data: ContactsData }) {
   const phone = data.phone ?? CONTACTS.phoneDisplay;
   const email = data.email ?? CONTACTS.email;
   const address = data.address ?? CONTACTS.address;
-  const telegramHref = data.telegram ?? "https://t.me/+79266763488";
+  const maxHref = data.telegram ?? "https://max.ru/u/f9LHodD0cOJQaSenuFWGazoHqG8RNEoO3xSyNKPTXj1s3tyqlHkFoF5UzUo";
   const phoneHref = `tel:+${phone.replace(/\D/g, "")}`;
   const hoursWeekdays = data.hours_weekdays ?? "10:00 — 21:00";
 
   const channels = [
     {
       icon: MessageCircle,
-      label: "Telegram",
+      label: "MAX",
       value: phone,
       sub: "Ответ до 15 минут",
       badge: "24/7",
-      href: telegramHref,
+      href: maxHref,
       accent: true,
     },
     {
@@ -280,7 +280,7 @@ export default function ContactsClient({ data }: { data: ContactsData }) {
               <div className="space-y-3">
                 {[
                   { day: "Время работы", hours: hoursWeekdays },
-                  { day: "Telegram / чат", hours: "24 / 7" },
+                  { day: "MAX / чат", hours: "24 / 7" },
                 ].map((row) => (
                   <div key={row.day} className="flex justify-between items-center py-2 border-b border-neutral-100 last:border-0">
                     <span className="text-sm font-bold text-neutral-500">{row.day}</span>

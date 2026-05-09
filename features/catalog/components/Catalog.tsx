@@ -145,9 +145,7 @@ export async function Catalog({ category, searchParams, pageSize = 12 }: Catalog
         ? getCategoryBySlug(category)
         : Promise.resolve({ name: "Весь каталог" }),
       getCategoryTree(),
-      category.startsWith("nintendo")
-        ? getCatalogVariantFilters(categorySlugs.length ? categorySlugs : [category])
-        : Promise.resolve({ colors: [], memories: [] }),
+      getCatalogVariantFilters(categorySlugs.length ? categorySlugs : category !== "all" ? [category] : []),
     ]);
   } catch (err: any) {
     dbError = true;

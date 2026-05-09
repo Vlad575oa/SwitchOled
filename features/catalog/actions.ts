@@ -2,7 +2,6 @@
 
 import prisma from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
-import { CATEGORY_FILTERS } from "./config/categoryFilters";
 
 interface FilterParams {
   category: string;
@@ -11,11 +10,10 @@ interface FilterParams {
   colors?: string[];
   memories?: string[];
   statuses?: string[];
-  attrValues?: Record<string, string[]>;
 }
 
 export async function getFilteredProductsCountAction(params: FilterParams) {
-  const { category, priceMin, priceMax, colors, memories, statuses, attrValues } = params;
+  const { category, priceMin, priceMax, colors, memories, statuses } = params;
 
   try {
     const andConditions: Prisma.ProductWhereInput[] = [];
@@ -59,18 +57,6 @@ export async function getFilteredProductsCountAction(params: FilterParams) {
       const wantsOnOrder = statuses.includes("onOrder");
       if (wantsInStock && !wantsOnOrder) andConditions.push({ inStock: true });
       if (wantsOnOrder && !wantsInStock) andConditions.push({ inStock: false });
-    }
-
-    if (attrValues && Object.keys(attrValues).length > 0) {
-      const categoryFilterSections = CATEGORY_FILTERS[category] ?? [];
-      for (const section of categoryFilterSections) {
-        const values = attrValues[section.paramKey];
-        if (!values || !values.length) continue;
-        const attrKey = section.paramKey.replace("attr_", "");
-        andConditions.push({
-          OR: values.map((v) => ({ attributes: { path: [attrKey], string_contains: v } })),
-        });
-      }
     }
 
     const where: Prisma.ProductWhereInput =

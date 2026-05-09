@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Контакты | Gameshop24",
-  description: "Свяжитесь с нами в Telegram, по телефону или email. Среднее время ответа — 15 минут.",
+  description: "Свяжитесь с нами в MAX, по телефону или email. Среднее время ответа — 15 минут.",
   alternates: { canonical: "/contacts" },
 };
 

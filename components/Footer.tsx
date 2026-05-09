@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 import { Phone, Mail, MapPin } from "lucide-react";
 import { MaxContactLink } from "./MaxContactLink";
@@ -85,9 +83,6 @@ export const Footer = ({ workingHours = "09:00 — 21:00", currentYear }: Footer
                                     { name: "О компании", href: "/about" },
                                     { name: "Блог", href: "/blog" },
                                     { name: "Доставка и оплата", href: "/delivery" },
-                                    { name: "Оплата", href: "/payment" },
-                                    { name: "Возврат", href: "/refund" },
-                                    { name: "Отзывы", href: "/reviews" },
                                     { name: "Гарантия", href: "/warranty" },
                                     { name: "FAQ", href: "/faq" },
                                 ].map((item) => (

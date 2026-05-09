@@ -27,6 +27,10 @@ const CookieBanner = dynamic(
   () => import("@/components/CookieBanner").then((m) => m.CookieBanner),
   { ssr: false }
 );
+const ChatWidget = dynamic(
+  () => import("@/components/ChatWidget").then((m) => m.ChatWidget),
+  { ssr: false }
+);
 
 const getSiteConfig = async () => {
   try {
@@ -73,6 +77,7 @@ export default async function SiteLayout({
       <FloatingContact />
       <MobileBottomNav />
       <CookieBanner />
+      <ChatWidget />
     </>
   );
 }

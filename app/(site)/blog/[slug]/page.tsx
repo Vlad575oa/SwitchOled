@@ -246,9 +246,6 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
               </div>
               <div className="flex flex-wrap gap-2">
                 <Link href="/delivery" className="text-xs font-black text-primary hover:underline">Доставка</Link>
-                <Link href="/payment" className="text-xs font-black text-primary hover:underline">Оплата</Link>
-                <Link href="/refund" className="text-xs font-black text-primary hover:underline">Возврат</Link>
-                <Link href="/reviews" className="text-xs font-black text-primary hover:underline">Отзывы</Link>
               </div>
             </div>
           )}

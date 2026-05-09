@@ -27,7 +27,7 @@ const returnSteps = [
   {
     num: "01",
     title: "Свяжитесь с нами",
-    desc: "Напишите в Telegram или на email. Укажите номер заказа и опишите ситуацию.",
+    desc: "Напишите в MAX или на email. Укажите номер заказа и опишите ситуацию.",
   },
   {
     num: "02",
@@ -66,7 +66,7 @@ export default async function WarrantyPage() {
   const warrantyPeriod = d.warranty_period ?? "12 месяцев";
   const accessoriesPeriod = d.accessories_period ?? "6 месяцев";
   const returnPeriod = d.return_period ?? "14 дней";
-  const telegramHref = d.telegram ?? "https://t.me/+79266763488";
+  const maxHref = d.telegram ?? "https://max.ru/u/f9LHodD0cOJQaSenuFWGazoHqG8RNEoO3xSyNKPTXj1s3tyqlHkFoF5UzUo";
   const emailHref = `mailto:${d.email ?? "shop@gameshop24.ru"}`;
 
   const guarantees = [
@@ -203,14 +203,14 @@ export default async function WarrantyPage() {
         <div className="bg-secondary rounded-[32px] p-10 flex flex-col md:flex-row items-center justify-between gap-8">
           <div className="space-y-2">
             <h3 className="text-2xl font-black text-white">Есть вопрос по гарантии?</h3>
-            <p className="text-neutral-400 font-bold">Ответим в Telegram за 5 минут, ежедневно 24/7.</p>
+            <p className="text-neutral-400 font-bold">Ответим в MAX за 5 минут, ежедневно 24/7.</p>
           </div>
           <div className="flex gap-4 shrink-0">
             <a
-              href={telegramHref}
+              href={maxHref}
               className="px-8 py-4 bg-primary text-white rounded-2xl font-black uppercase tracking-widest text-sm hover:scale-105 active:scale-95 transition-all shadow-xl shadow-primary/20"
             >
-              Telegram
+              MAX
             </a>
             <a
               href={emailHref}

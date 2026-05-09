@@ -1,0 +1,36 @@
+import { NextResponse } from "next/server";
+import prisma from "@/lib/prisma";
+import { cookies } from "next/headers";
+import { ADMIN_COOKIE, verifyAdminSession } from "@/lib/adminSession";
+
+export const dynamic = "force-dynamic";
+
+export async function GET() {
+  const cookieStore = await cookies();
+  const session = await verifyAdminSession(cookieStore.get(ADMIN_COOKIE)?.value);
+  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const sessions = await prisma.chatSession.findMany({
+    orderBy: { updatedAt: "desc" },
+    include: {
+      messages: {
+        orderBy: { createdAt: "desc" },
+        take: 1,
+      },
+      _count: {
+        select: { messages: { where: { sender: "USER", isRead: false } } },
+      },
+    },
+  });
+
+  return NextResponse.json(sessions.map((s) => ({
+    id: s.id,
+    visitorId: s.visitorId,
+    name: s.name,
+    email: s.email,
+    isResolved: s.isResolved,
+    updatedAt: s.updatedAt,
+    lastMessage: s.messages[0] ?? null,
+    unreadCount: s._count.messages,
+  })));
+}
