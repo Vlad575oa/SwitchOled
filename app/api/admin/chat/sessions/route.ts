@@ -6,8 +6,7 @@ import { ADMIN_COOKIE, verifyAdminSession } from "@/lib/adminSession";
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  const cookieStore = await cookies();
-  const session = await verifyAdminSession(cookieStore.get(ADMIN_COOKIE)?.value);
+  const session = await verifyAdminSession(cookies().get(ADMIN_COOKIE)?.value);
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const sessions = await prisma.chatSession.findMany({
