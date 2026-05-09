@@ -5,6 +5,7 @@ import {
   MessageCircle, Phone, Mail, MapPin, Clock,
   Send, Building2, CheckCircle2
 } from "lucide-react";
+import { CONTACTS } from "@/lib/constants/contacts";
 
 interface ContactsData {
   phone?: string;
@@ -36,9 +37,9 @@ export default function ContactsClient({ data }: { data: ContactsData }) {
   const [error, setError] = useState<string | null>(null);
   const [form, setForm] = useState({ name: "", email: "", topic: "", message: "" });
 
-  const phone = data.phone ?? "7(926)676-34-88";
-  const email = data.email ?? "shop@gameshop24.ru";
-  const address = data.address ?? "Москва, ул. Примерная, д. 1";
+  const phone = data.phone ?? CONTACTS.phoneDisplay;
+  const email = data.email ?? CONTACTS.email;
+  const address = data.address ?? CONTACTS.address;
   const telegramHref = data.telegram ?? "https://t.me/+79266763488";
   const phoneHref = `tel:+${phone.replace(/\D/g, "")}`;
   const hoursWeekdays = data.hours_weekdays ?? "10:00 — 21:00";
@@ -77,7 +78,7 @@ export default function ContactsClient({ data }: { data: ContactsData }) {
       value: address,
       sub: "м. Митино, 5 мин пешком",
       badge: "Самовывоз",
-      href: "#map",
+      href: CONTACTS.yandexMapsUrl,
       accent: false,
     },
   ];
@@ -164,6 +165,25 @@ export default function ContactsClient({ data }: { data: ContactsData }) {
               </a>
             );
           })}
+        </div>
+
+        <div className="mb-10 flex flex-wrap gap-3">
+          <a
+            href={CONTACTS.yandexMapsUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-5 py-3 bg-neutral-900 text-white rounded-xl text-xs font-black uppercase tracking-wider"
+          >
+            Открыть в Яндекс Картах
+          </a>
+          <a
+            href={CONTACTS.twoGisUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-5 py-3 bg-neutral-100 text-secondary rounded-xl text-xs font-black uppercase tracking-wider"
+          >
+            Открыть в 2ГИС
+          </a>
         </div>
 
         {/* Form + hours */}

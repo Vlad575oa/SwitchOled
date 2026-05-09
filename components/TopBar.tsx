@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { MapPin, Clock, ShieldCheck, Award } from "lucide-react";
 import { MaxContactLink } from "./MaxContactLink";
+import { CONTACTS } from "@/lib/constants/contacts";
 
 const MaxIcon = () => (
   <img src="/icons/logotip-messendzhera-max.svg" alt="MAX" className="w-full h-full object-contain overflow-hidden rounded-full" />
@@ -19,11 +20,11 @@ export const TopBar = ({ workingHours = "09:00 — 21:00" }: { workingHours?: st
         <div className="flex items-center gap-3 sm:gap-6 overflow-hidden">
           <div className="flex items-center gap-3 sm:gap-4 sm:border-r sm:border-[var(--bg-elevated)] sm:pr-6 shrink-0">
             <a
-              href="https://yandex.ru/maps/?text=Москва%2C+Митинская+10%2C+корп.+1"
+              href={CONTACTS.yandexMapsUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-1.5 text-[var(--text-secondary)] hover:text-primary transition-colors"
-              title="Москва, Митинская 10, корп. 1"
+              title={CONTACTS.address}
             >
               <MapPin size={13} className="text-secondary shrink-0 hover:text-primary transition-colors" />
               <span className="text-[11px] font-black uppercase tracking-wider hidden sm:inline">Москва</span>
@@ -56,19 +57,19 @@ export const TopBar = ({ workingHours = "09:00 — 21:00" }: { workingHours?: st
         {/* Right */}
         <div className="flex items-center gap-2 sm:gap-4 shrink-0">
           <a
-            href="tel:+79266763488"
+            href={`tel:${CONTACTS.phoneHref}`}
             className="text-[11px] font-black text-[var(--text-primary)] hover:text-primary transition-colors tracking-widest uppercase hidden sm:inline"
           >
-            7(926)676-34-88
+            {CONTACTS.phoneDisplay}
           </a>
           {/* Mobile: phone icon link */}
-          <a href="tel:+79266763488" className="sm:hidden flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary" aria-label="Позвонить">
+          <a href={`tel:${CONTACTS.phoneHref}`} className="sm:hidden flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary" aria-label="Позвонить">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-4 h-4"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.8a19.79 19.79 0 01-3.07-8.7A2 2 0 012 .86h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 8.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
           </a>
 
           <div className="flex items-center gap-1.5 sm:gap-2">
             <Link
-              href="https://wa.me/79266763488"
+              href={`https://wa.me/${CONTACTS.phoneHref.replace("+", "")}`}
               target="_blank"
               rel="noopener noreferrer"
               className="w-7 h-7 flex items-center justify-center hover:scale-110 transition-all drop-shadow-sm"

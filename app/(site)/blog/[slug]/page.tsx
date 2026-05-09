@@ -10,7 +10,7 @@ import { Metadata } from "next";
 import { marked } from "marked";
 import { BlogShareBar } from "@/components/BlogShareBar";
 
-const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://gameshop24.ru";
+const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || "https://gameshop24.ru").replace("://www.", "://");
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const post = await prisma.post.findUnique({ where: { slug: params.slug } });
@@ -93,6 +93,13 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
     },
     take: 3,
     orderBy: { createdAt: 'desc' }
+  });
+
+  const relatedProducts = await prisma.product.findMany({
+    where: { isVisible: { not: false }, inStock: true },
+    take: 4,
+    orderBy: { updatedAt: "desc" },
+    include: { category: true },
   });
 
   return (
@@ -219,6 +226,30 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
               url={`${baseUrl}/blog/${post.slug}`}
             />
           </footer>
+
+          {relatedProducts.length > 0 && (
+            <div className="mt-14 space-y-6">
+              <h4 className="text-lg font-black text-secondary uppercase tracking-tight">Рекомендуемые товары по теме</h4>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {relatedProducts.map((product) => (
+                  <Link
+                    key={product.id}
+                    href={`/catalog/${product.category.slug}/${product.slug}`}
+                    className="border border-neutral-100 rounded-xl p-4 hover:border-neutral-300 transition-colors"
+                  >
+                    <p className="text-sm font-black text-secondary line-clamp-2">{product.name}</p>
+                    <p className="text-xs text-neutral-400 mt-1">{product.category.name}</p>
+                  </Link>
+                ))}
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <Link href="/delivery" className="text-xs font-black text-primary hover:underline">Доставка</Link>
+                <Link href="/payment" className="text-xs font-black text-primary hover:underline">Оплата</Link>
+                <Link href="/refund" className="text-xs font-black text-primary hover:underline">Возврат</Link>
+                <Link href="/reviews" className="text-xs font-black text-primary hover:underline">Отзывы</Link>
+              </div>
+            </div>
+          )}
 
           {/* Related Material */}
           {relatedPosts.length > 0 && (

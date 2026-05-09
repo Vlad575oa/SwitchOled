@@ -1,7 +1,7 @@
 import { MetadataRoute } from "next";
 
 export default function robots(): MetadataRoute.Robots {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://gameshop24.ru";
+  const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || "https://gameshop24.ru").replace("://www.", "://");
 
   return {
     rules: [
@@ -18,9 +18,9 @@ export default function robots(): MetadataRoute.Robots {
           "/company",
           "/info",
           "/license",
-          "/policy",
           "/catalog/mashini_motocikli_tehnika-17",
           "/catalog/lego-11",
+          "/*copy*",
           "/*?*", // Disallow query parameters for SEO
         ],
       },

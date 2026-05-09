@@ -9,8 +9,6 @@ const LEGACY_GONE_PATHS = new Set([
   '/info/',
   '/license',
   '/license/',
-  '/policy',
-  '/policy/',
 ]);
 
 const LEGACY_GONE_PREFIXES = [
@@ -19,7 +17,7 @@ const LEGACY_GONE_PREFIXES = [
 ];
 
 export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+  const { pathname, hostname, search } = request.nextUrl;
 
   const withSecurityHeaders = (response: NextResponse) => {
     response.headers.set("X-Frame-Options", "DENY");
@@ -28,6 +26,32 @@ export async function middleware(request: NextRequest) {
     response.headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
     return response;
   };
+
+  if (hostname === "www.gameshop24.ru") {
+    const target = new URL(`https://gameshop24.ru${pathname}${search}`);
+    return withSecurityHeaders(NextResponse.redirect(target, 301));
+  }
+
+  if (pathname.startsWith("/catalog/") && pathname.includes("copy")) {
+    try {
+      const url = new URL("/api/seo/resolve-copy", request.url);
+      url.searchParams.set("path", pathname);
+      const res = await fetch(url.toString(), { cache: "no-store" });
+      if (res.ok) {
+        const data = (await res.json()) as { targetUrl?: string | null };
+        if (data.targetUrl) {
+          return withSecurityHeaders(NextResponse.redirect(new URL(data.targetUrl), 301));
+        }
+      }
+      const response = new NextResponse('Gone', { status: 410 });
+      response.headers.set('Cache-Control', 'public, max-age=86400');
+      return withSecurityHeaders(response);
+    } catch {
+      const response = new NextResponse('Gone', { status: 410 });
+      response.headers.set('Cache-Control', 'public, max-age=86400');
+      return withSecurityHeaders(response);
+    }
+  }
 
   const isLegacyGone =
     LEGACY_GONE_PATHS.has(pathname) ||
@@ -61,6 +85,6 @@ export async function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     '/account/:path*',
-    '/((?!_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|.*\\.(?:svg|png|jpg|jpeg|webp|gif|ico|css|js|woff|woff2)$).*)',
+    '/((?!api|_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|sitemaps/|.*\\.(?:svg|png|jpg|jpeg|webp|gif|ico|css|js|woff|woff2)$).*)',
   ],
 };

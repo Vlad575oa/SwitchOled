@@ -3,10 +3,14 @@
 import Link from "next/link";
 import { Phone, Mail, MapPin } from "lucide-react";
 import { MaxContactLink } from "./MaxContactLink";
+import { CONTACTS } from "@/lib/constants/contacts";
 
-export const Footer = ({ workingHours = "09:00 — 21:00" }: { workingHours?: string }) => {
-    const currentYear = new Date().getFullYear();
+interface FooterProps {
+    workingHours?: string;
+    currentYear: number;
+}
 
+export const Footer = ({ workingHours = "09:00 — 21:00", currentYear }: FooterProps) => {
     return (
         <footer className="bg-[#2c2c30] text-white pt-12 pb-6 border-t border-white/[0.06] relative overflow-hidden">
             <div className="absolute top-0 left-1/4 w-80 h-80 bg-primary/5 blur-[120px] rounded-full -translate-y-1/2 pointer-events-none" />
@@ -29,7 +33,7 @@ export const Footer = ({ workingHours = "09:00 — 21:00" }: { workingHours?: st
                         </p>
                         <div className="flex items-center gap-2.5">
                             <Link
-                                href="https://wa.me/79266763488"
+                                href={`https://wa.me/${CONTACTS.phoneHref.replace("+", "")}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="w-7 h-7 flex items-center justify-center transition-all hover:scale-110 drop-shadow-sm group/soc"
@@ -77,13 +81,16 @@ export const Footer = ({ workingHours = "09:00 — 21:00" }: { workingHours?: st
                     <div>
                         <h4 className="text-[9px] font-black uppercase tracking-[0.2em] text-primary mb-4">Информация</h4>
                         <ul className="space-y-2">
-                            {[
-                                { name: "О компании", href: "/about" },
-                                { name: "Блог", href: "/blog" },
-                                { name: "Доставка и оплата", href: "/delivery" },
-                                { name: "Гарантия", href: "/warranty" },
-                                { name: "FAQ", href: "/faq" },
-                            ].map((item) => (
+                                {[
+                                    { name: "О компании", href: "/about" },
+                                    { name: "Блог", href: "/blog" },
+                                    { name: "Доставка и оплата", href: "/delivery" },
+                                    { name: "Оплата", href: "/payment" },
+                                    { name: "Возврат", href: "/refund" },
+                                    { name: "Отзывы", href: "/reviews" },
+                                    { name: "Гарантия", href: "/warranty" },
+                                    { name: "FAQ", href: "/faq" },
+                                ].map((item) => (
                                 <li key={item.name}>
                                     <Link href={item.href} className="text-[12px] font-bold text-neutral-400 hover:text-white hover:translate-x-1 transition-all inline-block">
                                         {item.name}
@@ -97,21 +104,21 @@ export const Footer = ({ workingHours = "09:00 — 21:00" }: { workingHours?: st
                     <div>
                         <h4 className="text-[9px] font-black uppercase tracking-[0.2em] text-primary mb-4">Контакты</h4>
                         <div className="space-y-3">
-                            <Link href="tel:+79266763488" className="flex items-center gap-3 group/item">
+                            <Link href={`tel:${CONTACTS.phoneHref}`} className="flex items-center gap-3 group/item">
                                 <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center shrink-0 group-hover/item:bg-primary/20 transition-colors">
                                     <Phone size={13} className="text-neutral-400 group-hover/item:text-primary transition-colors" />
                                 </div>
                                 <div>
-                                    <p className="text-[16px] font-black text-white">7(926)676-34-88</p>
+                                    <p className="text-[16px] font-black text-white">{CONTACTS.phoneDisplay}</p>
                                     <p className="text-[9px] font-bold text-neutral-500 uppercase tracking-widest">{workingHours}</p>
                                 </div>
                             </Link>
-                            <Link href="mailto:shop@gameshop24.ru" className="flex items-center gap-3 group/item">
+                            <Link href={`mailto:${CONTACTS.email}`} className="flex items-center gap-3 group/item">
                                 <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center shrink-0 group-hover/item:bg-primary/20 transition-colors">
                                     <Mail size={13} className="text-neutral-400 group-hover/item:text-primary transition-colors" />
                                 </div>
                                 <div>
-                                    <p className="text-[12px] font-black text-white">shop@gameshop24.ru</p>
+                                    <p className="text-[12px] font-black text-white">{CONTACTS.email}</p>
                                     <p className="text-[9px] font-bold text-neutral-500 uppercase tracking-widest">Email</p>
                                 </div>
                             </Link>
@@ -120,7 +127,7 @@ export const Footer = ({ workingHours = "09:00 — 21:00" }: { workingHours?: st
                                     <MapPin size={13} className="text-neutral-400" />
                                 </div>
                                 <div>
-                                    <p className="text-[12px] font-black text-white">Москва, Митинская 10, корп. 1</p>
+                                    <p className="text-[12px] font-black text-white">{CONTACTS.address}</p>
                                     <p className="text-[9px] font-bold text-neutral-500 uppercase tracking-widest">Шоурум</p>
                                 </div>
                             </div>
@@ -131,13 +138,14 @@ export const Footer = ({ workingHours = "09:00 — 21:00" }: { workingHours?: st
                 {/* Bottom */}
                 <div className="pt-6 border-t border-white/5">
                     <div className="flex flex-wrap gap-x-6 gap-y-2 mb-4">
-                        {[
-                            { name: "Публичная оферта", href: "/legal/offer" },
-                            { name: "Конфиденциальность", href: "/legal/privacy" },
-                            { name: "Условия использования", href: "/legal/terms" },
-                            { name: "Файлы Cookie", href: "/legal/cookies" },
-                            { name: "Контакты", href: "/contacts" },
-                        ].map((link) => (
+                            {[
+                                { name: "Публичная оферта", href: "/legal/offer" },
+                                { name: "Конфиденциальность", href: "/legal/privacy" },
+                                { name: "Условия использования", href: "/legal/terms" },
+                                { name: "Файлы Cookie", href: "/legal/cookies" },
+                                { name: "Политика", href: "/policy" },
+                                { name: "Контакты", href: "/contacts" },
+                            ].map((link) => (
                             <Link key={link.name} href={link.href} className="text-[10px] font-bold text-neutral-600 hover:text-neutral-400 transition-colors uppercase tracking-widest">
                                 {link.name}
                             </Link>

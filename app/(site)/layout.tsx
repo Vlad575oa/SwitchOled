@@ -1,13 +1,30 @@
 import { TopBar } from "@/components/TopBar";
-import { Header } from "@/components/Header";
-import { QuickFilters } from "@/components/QuickFilters";
 import { Footer } from "@/components/Footer";
-import { FloatingContact } from "@/components/FloatingContact";
-import { MobileBottomNav } from "@/components/MobileBottomNav";
 import { Suspense } from "react";
-import { CookieBanner } from "@/components/CookieBanner";
 import { readFile } from "fs/promises";
 import { join } from "path";
+import { CONTACTS } from "@/lib/constants/contacts";
+import dynamic from "next/dynamic";
+
+const Header = dynamic(() => import("@/components/Header").then((m) => m.Header), {
+  ssr: false,
+});
+const QuickFilters = dynamic(
+  () => import("@/components/QuickFilters").then((m) => m.QuickFilters),
+  { ssr: false }
+);
+const FloatingContact = dynamic(
+  () => import("@/components/FloatingContact").then((m) => m.FloatingContact),
+  { ssr: false }
+);
+const MobileBottomNav = dynamic(
+  () => import("@/components/MobileBottomNav").then((m) => m.MobileBottomNav),
+  { ssr: false }
+);
+const CookieBanner = dynamic(
+  () => import("@/components/CookieBanner").then((m) => m.CookieBanner),
+  { ssr: false }
+);
 
 const getWorkingHours = async () => {
   try {
@@ -15,9 +32,9 @@ const getWorkingHours = async () => {
     const parsed = JSON.parse(raw);
     const contacts = (parsed?.contacts ?? {}) as Record<string, string>;
     const weekdays = (contacts.hours_weekdays ?? "").trim();
-    return weekdays || "09:00 — 21:00";
+    return weekdays || CONTACTS.workingHours;
   } catch {
-    return "09:00 — 21:00";
+    return CONTACTS.workingHours;
   }
 };
 
@@ -27,6 +44,7 @@ export default async function SiteLayout({
   children: React.ReactNode;
 }) {
   const workingHours = await getWorkingHours();
+  const currentYear = new Date().getFullYear();
 
   return (
     <>
@@ -39,7 +57,7 @@ export default async function SiteLayout({
         {children}
       </main>
       <div className="h-14 lg:hidden" />
-      <Footer workingHours={workingHours} />
+      <Footer workingHours={workingHours} currentYear={currentYear} />
       <FloatingContact />
       <MobileBottomNav />
       <CookieBanner />

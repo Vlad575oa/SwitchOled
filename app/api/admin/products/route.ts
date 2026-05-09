@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { uploadImagesToS3 } from "@/lib/s3";
+import { buildProductMetaDescription, buildProductMetaTitle } from "@/lib/seo";
 
 function normalizeSlug(s: string) {
   return s.toLowerCase().replace(/[^a-z0-9-]/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, "");
@@ -53,8 +54,8 @@ export async function POST(request: Request) {
     const isNew = fd.get("isNew") === "true";
     const isSale = fd.get("isSale") === "true";
     const stock = parseInt(fd.get("stock") as string) || 10;
-    const metaTitle = (fd.get("metaTitle") as string) || null;
-    const metaDesc = (fd.get("metaDesc") as string) || null;
+    const inputMetaTitle = ((fd.get("metaTitle") as string) || "").trim();
+    const inputMetaDesc = ((fd.get("metaDesc") as string) || "").trim();
     const attrsRaw = fd.get("attributes") as string;
     const attributesList: { key: string; value: string }[] = attrsRaw ? JSON.parse(attrsRaw) : [];
     const attributes = Object.fromEntries(attributesList.map((a) => [a.key, a.value]));
@@ -76,6 +77,10 @@ export async function POST(request: Request) {
         { status: 400 }
       );
     }
+    const category = await prisma.category.findUnique({
+      where: { id: categoryId },
+      select: { name: true },
+    });
 
     const slugRaw = (fd.get("slug") as string) || "";
     if (!name) {
@@ -92,6 +97,15 @@ export async function POST(request: Request) {
         { status: 400 }
       );
     }
+
+    const metaTitle = inputMetaTitle || buildProductMetaTitle(name);
+    const metaDesc =
+      inputMetaDesc ||
+      buildProductMetaDescription({
+        name,
+        categoryName: category?.name ?? null,
+        sourceDescription: description ?? "",
+      });
 
     const product = await prisma.product.create({
       data: {

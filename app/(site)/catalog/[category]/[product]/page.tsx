@@ -12,8 +12,9 @@ import { MobileStickyCart } from "@/features/product/components/MobileStickyCart
 import { RelatedProducts } from "@/features/product/components/RelatedProducts";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
+import { buildProductMetaDescription, buildProductMetaTitle } from "@/lib/seo";
 
-const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://gameshop24.ru";
+const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || "https://gameshop24.ru").replace("://www.", "://");
 
 export const revalidate = 1800;
 
@@ -25,11 +26,14 @@ export async function generateMetadata({
   const product = await getProductBySlug(params.product);
   if (!product) return { title: "Товар не найден" };
 
-  const title = product.metaTitle || `${product.name} — Купить в Gameshop24`;
+  const title = product.metaTitle?.trim() || buildProductMetaTitle(product.name);
   const description =
-    product.metaDesc ||
-    product.description?.replace(/<[^>]*>/g, "").slice(0, 160) ||
-    `Закажите ${product.name} по выгодной цене с доставкой по всей России. Официальная гарантия и сервис.`;
+    product.metaDesc?.trim() ||
+    buildProductMetaDescription({
+      name: product.name,
+      categoryName: product.category?.name ?? null,
+      sourceDescription: product.description ?? "",
+    });
 
   return {
     title,
@@ -146,8 +150,29 @@ export default async function ProductPage({
             </div>
           </aside>
         </div>
+        <section className="mb-10 rounded-2xl border border-neutral-100 bg-white p-6">
+          <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em] mb-2">Полезно перед покупкой</p>
+          <div className="flex flex-wrap gap-2">
+            {[
+              { href: "/delivery", label: "Доставка" },
+              { href: "/payment", label: "Оплата" },
+              { href: "/refund", label: "Возврат" },
+              { href: "/warranty", label: "Гарантия" },
+              { href: "/reviews", label: "Отзывы" },
+            ].map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="px-3 py-2 rounded-lg bg-neutral-100 text-secondary text-xs font-black uppercase tracking-wide hover:bg-neutral-200 transition-colors"
+              >
+                {item.label}
+              </Link>
+            ))}
+          </div>
+        </section>
+
         {/* Related products */}
-        <RelatedProducts categorySlug={product.category.slug} excludeId={product.id} />
+        <RelatedProducts categorySlug={product.category.slug} excludeId={product.id} limit={6} />
 
         {/* Sticky mobile add-to-cart */}
         <MobileStickyCart product={product} />

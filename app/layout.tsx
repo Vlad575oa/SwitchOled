@@ -1,10 +1,17 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Toaster } from "sonner";
-import YandexMetrika from "@/components/YandexMetrika";
-import MessengerExitNotice from "@/components/MessengerExitNotice";
+import { CONTACTS } from "@/lib/constants/contacts";
+import dynamic from "next/dynamic";
 
-const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://gameshop24.ru";
+const YandexMetrika = dynamic(() => import("@/components/YandexMetrika"), {
+  ssr: false,
+});
+const MessengerExitNotice = dynamic(() => import("@/components/MessengerExitNotice"), {
+  ssr: false,
+});
+
+const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || "https://gameshop24.ru").replace("://www.", "://");
 
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
@@ -74,7 +81,7 @@ const organizationSchema = {
       },
       "contactPoint": {
         "@type": "ContactPoint",
-        "telephone": "7(926)676-34-88",
+        "telephone": CONTACTS.phoneDisplay,
         "contactType": "customer service",
         "hoursAvailable": "Mo-Su 10:00-21:00",
         "areaServed": "RU",
@@ -82,14 +89,16 @@ const organizationSchema = {
       },
       "address": {
         "@type": "PostalAddress",
-        "streetAddress": "ул. Митинская, д. 10, корп. 1",
-        "addressLocality": "Москва",
+        "streetAddress": CONTACTS.address,
+        "addressLocality": CONTACTS.city,
         "postalCode": "125430",
         "addressCountry": "RU",
       },
       "sameAs": [
         "https://t.me/+79266763488",
         "https://wa.me/79266763488",
+        CONTACTS.yandexBusinessUrl,
+        CONTACTS.twoGisUrl,
       ],
     },
     {
@@ -112,13 +121,13 @@ const organizationSchema = {
       "@id": `${baseUrl}/#localbusiness`,
       "name": "Gameshop24",
       "url": baseUrl,
-      "telephone": "7(926)676-34-88",
+      "telephone": CONTACTS.phoneDisplay,
       "priceRange": "₽₽₽",
       "image": `${baseUrl}/favicon.svg?v=20260505`,
       "address": {
         "@type": "PostalAddress",
-        "streetAddress": "ул. Митинская, д. 10, корп. 1",
-        "addressLocality": "Москва",
+        "streetAddress": CONTACTS.address,
+        "addressLocality": CONTACTS.city,
         "addressCountry": "RU",
       },
       "openingHoursSpecification": {

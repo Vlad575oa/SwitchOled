@@ -17,6 +17,9 @@ export default function SitemapInfoPage() {
       links: [
         { name: "О компании", href: "/about" },
         { name: "Доставка и оплата", href: "/delivery" },
+        { name: "Оплата", href: "/payment" },
+        { name: "Возврат и обмен", href: "/refund" },
+        { name: "Отзывы", href: "/reviews" },
         { name: "Гарантия", href: "/warranty" },
         { name: "Контакты", href: "/contacts" },
       ]
@@ -28,6 +31,7 @@ export default function SitemapInfoPage() {
         { name: "Политика конфиденциальности", href: "/legal/privacy" },
         { name: "Условия использования", href: "/legal/terms" },
         { name: "Файлы Cookie", href: "/legal/cookies" },
+        { name: "Политика", href: "/policy" },
       ]
     }
   ];

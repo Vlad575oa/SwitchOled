@@ -3,6 +3,7 @@ import prisma from "@/lib/prisma";
 import { cookies } from "next/headers";
 import { ADMIN_COOKIE, verifyAdminSession } from "@/lib/adminSession";
 import { uploadImagesToS3 } from "@/lib/s3";
+import { buildProductMetaDescription, buildProductMetaTitle } from "@/lib/seo";
 
 function normalizeSlug(s: string) {
   return s.toLowerCase().replace(/[^a-z0-9-]/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, "");
@@ -63,8 +64,8 @@ export async function PUT(request: Request, { params }: { params: { id: string }
     const isNew = fd.get("isNew") === "true";
     const isSale = fd.get("isSale") === "true";
     const stock = parseInt(fd.get("stock") as string) || 10;
-    const metaTitle = (fd.get("metaTitle") as string) || null;
-    const metaDesc = (fd.get("metaDesc") as string) || null;
+    const inputMetaTitle = ((fd.get("metaTitle") as string) || "").trim();
+    const inputMetaDesc = ((fd.get("metaDesc") as string) || "").trim();
     const slugRaw = (fd.get("slug") as string) || "";
     const attrsRaw = fd.get("attributes") as string;
     const attributesList: { key: string; value: string }[] = attrsRaw ? JSON.parse(attrsRaw) : [];
@@ -91,6 +92,10 @@ export async function PUT(request: Request, { params }: { params: { id: string }
         { status: 400 }
       );
     }
+    const category = await prisma.category.findUnique({
+      where: { id: categoryId },
+      select: { name: true },
+    });
 
     const slug = normalizeSlug(slugRaw);
     if (!name) {
@@ -109,6 +114,15 @@ export async function PUT(request: Request, { params }: { params: { id: string }
         { status: 400 }
       );
     }
+
+    const metaTitle = inputMetaTitle || buildProductMetaTitle(name);
+    const metaDesc =
+      inputMetaDesc ||
+      buildProductMetaDescription({
+        name,
+        categoryName: category?.name ?? null,
+        sourceDescription: description ?? "",
+      });
 
     const product = await prisma.product.update({
       where: { id },

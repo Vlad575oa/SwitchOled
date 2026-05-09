@@ -8,6 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "seed": "npx tsx prisma/seed.ts",
+    "seo:top30-meta": "npx tsx scripts/generate-top30-meta.ts",
+    "seo:top30-meta:dry": "npx tsx scripts/generate-top30-meta.ts --dry-run",
     "postinstall": "prisma generate"
   },
   "prisma": {
