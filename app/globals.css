@@ -118,3 +118,25 @@ body {
 
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Mobile table overflow fix for blog article content */
+@media (max-width: 767px) {
+  .article-prose table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .article-prose table thead,
+  .article-prose table tbody,
+  .article-prose table tr {
+    white-space: nowrap;
+  }
+
+  .article-prose table th,
+  .article-prose table td {
+    min-width: 150px;
+  }
+}

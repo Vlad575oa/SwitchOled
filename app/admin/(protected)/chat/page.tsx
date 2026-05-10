@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { formatDistanceToNow } from "date-fns";
 import { ru } from "date-fns/locale";
-import { Send, CheckCircle, Circle, MessageSquare } from "lucide-react";
+import { Send, CheckCircle, Circle, MessageSquare, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface ChatSessionItem {
@@ -81,6 +81,17 @@ export default function AdminChatPage() {
     setSending(false);
   };
 
+  const handleDelete = async (sessionId: string) => {
+    if (!confirm("Удалить диалог? Все сообщения будут удалены.")) return;
+    await fetch("/api/admin/chat/delete", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ sessionId }),
+    });
+    if (selectedId === sessionId) setSelectedId(null);
+    await fetchSessions();
+  };
+
   const handleResolve = async (sessionId: string, current: boolean) => {
     await fetch("/api/admin/chat/resolve", {
       method: "POST",
@@ -135,13 +146,16 @@ export default function AdminChatPage() {
               </div>
             ) : (
               filteredSessions.map((s) => (
-                <button
+                <div
                   key={s.id}
-                  onClick={() => setSelectedId(s.id)}
                   className={cn(
-                    "w-full text-left px-4 py-3.5 border-b border-neutral-50 transition-all hover:bg-neutral-50",
+                    "relative group/session border-b border-neutral-50 transition-all hover:bg-neutral-50",
                     selectedId === s.id ? "bg-primary/5 border-l-2 border-l-primary" : ""
                   )}
+                >
+                <button
+                  onClick={() => setSelectedId(s.id)}
+                  className="w-full text-left px-4 py-3.5"
                 >
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex items-center gap-2 min-w-0">
@@ -170,6 +184,14 @@ export default function AdminChatPage() {
                     </div>
                   </div>
                 </button>
+                <button
+                  onClick={(e) => { e.stopPropagation(); handleDelete(s.id); }}
+                  title="Удалить диалог"
+                  className="absolute top-2 right-2 w-6 h-6 rounded-lg bg-red-50 border border-red-100 text-red-400 hover:bg-red-100 hover:text-red-600 flex items-center justify-center transition-all"
+                >
+                  <Trash2 size={11} />
+                </button>
+                </div>
               ))
             )}
           </div>

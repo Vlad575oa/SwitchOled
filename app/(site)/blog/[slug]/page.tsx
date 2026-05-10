@@ -178,6 +178,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
         <div className="max-w-3xl mx-auto px-4 sm:px-0">
           {/* Content with Custom Prose */}
           <div className="
+            article-prose
             prose prose-neutral max-w-none text-base leading-relaxed
 
             prose-h2:text-2xl prose-h2:font-black prose-h2:text-secondary
