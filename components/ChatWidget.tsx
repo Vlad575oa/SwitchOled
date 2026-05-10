@@ -218,7 +218,12 @@ export function ChatWidget() {
                 <input
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && handleSend()}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && !e.nativeEvent.isComposing) {
+                      e.preventDefault();
+                      handleSend();
+                    }
+                  }}
                   placeholder="Ваше сообщение..."
                   className="flex-1 px-4 py-2.5 bg-neutral-50 border border-neutral-100 rounded-2xl text-sm font-bold text-[#111827] placeholder:text-neutral-300 outline-none focus:border-primary/30 focus:bg-white transition-all"
                 />

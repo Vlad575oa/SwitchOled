@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { formatDistanceToNow } from "date-fns";
 import { ru } from "date-fns/locale";
-import { Send, CheckCircle, Circle, MessageSquare, Trash2 } from "lucide-react";
+import { Send, CheckCircle, Circle, MessageSquare, Trash2, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface ChatSessionItem {
@@ -33,6 +33,8 @@ export default function AdminChatPage() {
   const [reply, setReply] = useState("");
   const [sending, setSending] = useState(false);
   const [filter, setFilter] = useState<"all" | "unread" | "resolved">("all");
+  const [checkedIds, setCheckedIds] = useState<Set<string>>(new Set());
+  const [deletingBulk, setDeletingBulk] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -89,6 +91,26 @@ export default function AdminChatPage() {
       body: JSON.stringify({ sessionId }),
     });
     if (selectedId === sessionId) setSelectedId(null);
+    setCheckedIds((prev) => { const next = new Set(prev); next.delete(sessionId); return next; });
+    await fetchSessions();
+  };
+
+  const handleBulkDelete = async () => {
+    if (checkedIds.size === 0) return;
+    if (!confirm(`Удалить ${checkedIds.size} диалог(ов)? Все сообщения будут удалены.`)) return;
+    setDeletingBulk(true);
+    await Promise.all(
+      Array.from(checkedIds).map((id) =>
+        fetch("/api/admin/chat/delete", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ sessionId: id }),
+        })
+      )
+    );
+    if (selectedId && checkedIds.has(selectedId)) setSelectedId(null);
+    setCheckedIds(new Set());
+    setDeletingBulk(false);
     await fetchSessions();
   };
 
@@ -106,6 +128,35 @@ export default function AdminChatPage() {
     if (filter === "resolved") return s.isResolved;
     return true;
   });
+
+  const allChecked =
+    filteredSessions.length > 0 &&
+    filteredSessions.every((s) => checkedIds.has(s.id));
+
+  const toggleCheckAll = () => {
+    if (allChecked) {
+      setCheckedIds((prev) => {
+        const next = new Set(prev);
+        filteredSessions.forEach((s) => next.delete(s.id));
+        return next;
+      });
+    } else {
+      setCheckedIds((prev) => {
+        const next = new Set(prev);
+        filteredSessions.forEach((s) => next.add(s.id));
+        return next;
+      });
+    }
+  };
+
+  const toggleCheck = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setCheckedIds((prev) => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+  };
 
   const totalUnread = sessions.reduce((acc, s) => acc + s.unreadCount, 0);
   const selected = sessions.find((s) => s.id === selectedId);
@@ -138,6 +189,36 @@ export default function AdminChatPage() {
             ))}
           </div>
 
+          {/* Bulk action bar */}
+          {filteredSessions.length > 0 && (
+            <div className="flex items-center justify-between px-4 py-2 border-b border-neutral-100 bg-neutral-50/60">
+              {/* Select all checkbox */}
+              <label className="flex items-center gap-2 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={allChecked}
+                  onChange={toggleCheckAll}
+                  className="w-3.5 h-3.5 accent-[#111827] cursor-pointer"
+                />
+                <span className="text-[11px] font-black text-neutral-400 uppercase tracking-widest">
+                  {allChecked ? "Снять все" : "Выбрать все"}
+                </span>
+              </label>
+
+              {/* Delete selected button */}
+              {checkedIds.size > 0 && (
+                <button
+                  onClick={handleBulkDelete}
+                  disabled={deletingBulk}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-500 text-white text-[11px] font-black hover:bg-red-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm shadow-red-200"
+                >
+                  <Trash2 size={11} />
+                  Удалить ({checkedIds.size})
+                </button>
+              )}
+            </div>
+          )}
+
           <div className="flex-1 overflow-y-auto">
             {filteredSessions.length === 0 ? (
               <div className="py-16 text-center text-neutral-300">
@@ -149,48 +230,59 @@ export default function AdminChatPage() {
                 <div
                   key={s.id}
                   className={cn(
-                    "relative group/session border-b border-neutral-50 transition-all hover:bg-neutral-50",
-                    selectedId === s.id ? "bg-primary/5 border-l-2 border-l-primary" : ""
+                    "relative group/session border-b border-neutral-50 transition-all hover:bg-neutral-50 flex items-stretch",
+                    selectedId === s.id ? "bg-primary/5 border-l-2 border-l-primary" : "",
+                    checkedIds.has(s.id) ? "bg-red-50/40" : ""
                   )}
                 >
-                <button
-                  onClick={() => setSelectedId(s.id)}
-                  className="w-full text-left px-4 py-3.5"
-                >
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="flex items-center gap-2 min-w-0">
-                      <div className="w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center text-xs font-black text-neutral-400 flex-shrink-0">
-                        {(s.name ?? s.visitorId.slice(0, 2)).toUpperCase().slice(0, 2)}
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-xs font-black text-[#111827] truncate">{s.name ?? `Гость ${s.visitorId.slice(0, 8)}`}</p>
-                        <p className="text-[10px] text-neutral-400 font-bold truncate mt-0.5">
-                          {s.lastMessage?.content ?? "Нет сообщений"}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex flex-col items-end gap-1 flex-shrink-0">
-                      <p className="text-[9px] text-neutral-300 font-bold whitespace-nowrap">
-                        {formatDistanceToNow(new Date(s.updatedAt), { locale: ru, addSuffix: true })}
-                      </p>
-                      {s.unreadCount > 0 && (
-                        <span className="w-5 h-5 rounded-full bg-primary text-white text-[9px] font-black flex items-center justify-center">
-                          {s.unreadCount}
-                        </span>
-                      )}
-                      {s.isResolved && (
-                        <CheckCircle size={12} className="text-green-400" />
-                      )}
-                    </div>
+                  {/* Checkbox column */}
+                  <div
+                    className="flex items-center justify-center px-3 cursor-pointer flex-shrink-0"
+                    onClick={(e) => toggleCheck(s.id, e)}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={checkedIds.has(s.id)}
+                      onChange={() => {}}
+                      onClick={(e) => toggleCheck(s.id, e)}
+                      className="w-3.5 h-3.5 accent-red-500 cursor-pointer"
+                    />
                   </div>
-                </button>
-                <button
-                  onClick={(e) => { e.stopPropagation(); handleDelete(s.id); }}
-                  title="Удалить диалог"
-                  className="absolute top-2 right-2 w-6 h-6 rounded-lg bg-red-50 border border-red-100 text-red-400 hover:bg-red-100 hover:text-red-600 flex items-center justify-center transition-all"
-                >
-                  <Trash2 size={11} />
-                </button>
+
+                  {/* Session info button */}
+                  <button
+                    onClick={() => setSelectedId(s.id)}
+                    className="flex-1 text-left pr-10 py-3.5"
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <div className="w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center text-xs font-black text-neutral-400 flex-shrink-0">
+                          {(s.name ?? s.visitorId.slice(0, 2)).toUpperCase().slice(0, 2)}
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-xs font-black text-[#111827] truncate">{s.name ?? `Гость ${s.visitorId.slice(0, 8)}`}</p>
+                          <p className="text-[10px] text-neutral-400 font-bold truncate mt-0.5">
+                            {s.lastMessage?.content ?? "Нет сообщений"}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex flex-col items-end gap-1 flex-shrink-0">
+                        <p className="text-[9px] text-neutral-300 font-bold whitespace-nowrap">
+                          {formatDistanceToNow(new Date(s.updatedAt), { locale: ru, addSuffix: true })}
+                        </p>
+                        {s.unreadCount > 0 && (
+                          <span className="w-5 h-5 rounded-full bg-primary text-white text-[9px] font-black flex items-center justify-center">
+                            {s.unreadCount}
+                          </span>
+                        )}
+                        {s.isResolved && (
+                          <CheckCircle size={12} className="text-green-400" />
+                        )}
+                      </div>
+                    </div>
+                  </button>
+
+
                 </div>
               ))
             )}
