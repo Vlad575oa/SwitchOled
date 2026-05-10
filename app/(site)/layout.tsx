@@ -7,6 +7,7 @@ import { CONTACTS } from "@/lib/constants/contacts";
 import { getCategorySlugsWithProducts } from "@/lib/queries";
 import { ALL_QUICK_LINKS } from "@/lib/constants/quickLinks";
 import dynamic from "next/dynamic";
+import { DeferredRender } from "@/components/DeferredRender";
 
 const Header = dynamic(() => import("@/components/Header").then((m) => m.Header), {
   ssr: false,
@@ -76,8 +77,12 @@ export default async function SiteLayout({
       <Footer workingHours={workingHours} currentYear={currentYear} />
 
       <MobileBottomNav />
-      <CookieBanner />
-      <ChatWidget />
+      <DeferredRender delayMs={3000}>
+        <CookieBanner />
+      </DeferredRender>
+      <DeferredRender delayMs={4000}>
+        <ChatWidget />
+      </DeferredRender>
     </>
   );
 }

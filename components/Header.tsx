@@ -6,10 +6,19 @@ import { useCompareStore } from "@/features/product/store/useCompareStore";
 import { ShoppingCart, Menu, User, LogOut, Package, Heart, Scale } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { Search } from "@/features/search/components/Search";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { CatalogMegaMenu } from "./CatalogMegaMenu";
+import dynamic from "next/dynamic";
+
+const Search = dynamic(
+  () => import("@/features/search/components/Search").then((m) => m.Search),
+  { ssr: false }
+);
+
+const CatalogMegaMenu = dynamic(
+  () => import("./CatalogMegaMenu").then((m) => m.CatalogMegaMenu),
+  { ssr: false }
+);
 
 interface CurrentUser {
   id: number;

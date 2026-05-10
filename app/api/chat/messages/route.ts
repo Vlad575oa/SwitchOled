@@ -34,6 +34,9 @@ export async function POST(req: Request) {
 
   const session = await prisma.chatSession.findUnique({ where: { id: sessionId } });
   if (!session) return NextResponse.json({ error: "Session not found" }, { status: 404 });
+  if (!session.name?.trim()) {
+    return NextResponse.json({ error: "name required before messaging" }, { status: 400 });
+  }
 
   const existingCount = await prisma.chatMessage.count({ where: { sessionId, sender: "USER" } });
   const isFirst = existingCount === 0;

@@ -1,10 +1,5 @@
 import { Catalog } from "@/features/catalog/components/Catalog";
-import { Hero } from "@/features/home/components/Hero";
-import { QualityBadges } from "@/features/home/components/QualityBadges";
-import { CategoryGrid } from "@/features/home/components/CategoryGrid";
-import { AboutSection } from "@/features/home/components/AboutSection";
 import { ExpertInsights } from "@/features/home/components/ExpertInsights";
-import { FinalCta } from "@/features/home/components/FinalCta";
 import loadDynamic from "next/dynamic";
 import { Metadata } from "next";
 

@@ -25,6 +25,15 @@ function getVisitorId(): string {
   return id;
 }
 
+function getSavedSessionId(): string | null {
+  if (typeof window === "undefined") return null;
+  return localStorage.getItem("chat_session_id");
+}
+
+function saveSessionId(id: string) {
+  localStorage.setItem("chat_session_id", id);
+}
+
 export function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [sessionId, setSessionId] = useState<string | null>(null);
@@ -47,6 +56,7 @@ export function ChatWidget() {
     if (res.ok) {
       const { sessionId: sid } = await res.json();
       setSessionId(sid);
+      saveSessionId(sid);
       return sid as string;
     }
     return null;
@@ -71,19 +81,19 @@ export function ChatWidget() {
     }
   }, []);
 
-  // Init session on mount (to detect unread)
+  // On mount: restore existing session from localStorage WITHOUT creating a new one.
+  // A new session is only created when the user submits their name (first real interaction).
   useEffect(() => {
-    const init = async () => {
-      const saved = localStorage.getItem("chat_name");
-      const sid = await initSession(saved ?? undefined);
-      if (sid) {
-        const msgs = await fetchMessages(sid);
-        const adminMsgs = msgs.filter((m) => m.sender === "ADMIN").length;
-        setLastSeenCount(adminMsgs);
-      }
+    const restore = async () => {
+      const sid = getSavedSessionId();
+      if (!sid) return; // never interacted — don't create a session
+      setSessionId(sid);
+      const msgs = await fetchMessages(sid);
+      const adminMsgs = msgs.filter((m) => m.sender === "ADMIN").length;
+      setLastSeenCount(adminMsgs);
     };
-    init();
-  }, [initSession, fetchMessages]);
+    restore();
+  }, [fetchMessages]);
 
   // Poll when open
   useEffect(() => {
@@ -121,24 +131,33 @@ export function ChatWidget() {
     if (isOpen) messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isOpen]);
 
-  const handleNameSubmit = async () => {
+  const handleNameSubmit = () => {
     if (!name.trim()) return;
     localStorage.setItem("chat_name", name.trim());
     setNameSubmitted(true);
-    await initSession(name.trim());
+    // Сессия создаётся только при отправке первого сообщения, не здесь
   };
 
   const handleSend = async () => {
-    if (!input.trim() || sending || !sessionId) return;
+    if (!input.trim() || sending) return;
     setSending(true);
+
+    // Создаём сессию при первом сообщении, если её ещё нет
+    let sid = sessionId;
+    if (!sid) {
+      const savedName = localStorage.getItem("chat_name") ?? undefined;
+      sid = await initSession(savedName);
+      if (!sid) { setSending(false); return; }
+    }
+
     const res = await fetch("/api/chat/messages", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ sessionId, content: input.trim() }),
+      body: JSON.stringify({ sessionId: sid, content: input.trim() }),
     });
     if (res.ok) {
       setInput("");
-      await fetchMessages(sessionId);
+      await fetchMessages(sid);
     }
     setSending(false);
   };

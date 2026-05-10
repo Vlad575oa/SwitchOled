@@ -10,6 +10,12 @@ export async function GET() {
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const sessions = await prisma.chatSession.findMany({
+    where: {
+      AND: [
+        { name: { not: null } },
+        { name: { not: "" } },
+      ],
+    },
     orderBy: { updatedAt: "desc" },
     include: {
       messages: {
