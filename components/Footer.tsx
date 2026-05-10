@@ -29,7 +29,7 @@ export const Footer = ({ workingHours = "09:00 — 21:00", currentYear }: Footer
                         <p className="text-neutral-500 text-[12px] font-medium leading-relaxed max-w-xs">
                             Премиальный магазин игровых консолей и аксессуаров. Только оригинальные товары с гарантией.
                         </p>
-                        <div className="flex items-center gap-2.5">
+                        <div className="flex items-center gap-5">
                             <Link
                                 href={`https://wa.me/${CONTACTS.phoneHref.replace("+", "")}`}
                                 target="_blank"

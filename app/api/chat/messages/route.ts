@@ -2,16 +2,15 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 
 async function notifyMax(sessionId: string, content: string, name: string | null) {
-  const webhookUrl = process.env.MAX_CHAT_WEBHOOK_URL;
-  if (!webhookUrl) return;
+  const token = process.env.MAX_BOT_TOKEN;
+  const chatId = process.env.MAX_BOT_CHAT_ID;
+  if (!token || !chatId) return;
+  const text = `💬 Новое сообщение в чате\n👤 ${name ?? "Гость"}\n\n${content}`;
   try {
-    await fetch(webhookUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        text: `💬 Новое сообщение в чате\n👤 ${name ?? "Гость"}\n\n${content}\n\nhttps://gameshop24.ru/admin/chat/${sessionId}`,
-      }),
-    });
+    await fetch(
+      `https://botapi.max.ru/sendMessage?access_token=${token}&chat_id=${chatId}&text=${encodeURIComponent(text)}`,
+      { method: "POST" }
+    );
   } catch {}
 }
 

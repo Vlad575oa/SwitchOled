@@ -58,7 +58,7 @@ export default function AdminChatPage() {
   useEffect(() => {
     if (!selectedId) return;
     fetchMessages(selectedId);
-    const interval = setInterval(() => fetchMessages(selectedId), 20000);
+    const interval = setInterval(() => fetchMessages(selectedId), 10000);
     return () => clearInterval(interval);
   }, [selectedId, fetchMessages]);
 

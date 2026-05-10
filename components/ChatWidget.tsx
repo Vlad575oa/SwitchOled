@@ -92,7 +92,7 @@ export function ChatWidget() {
       const msgs = await fetchMessages(sessionId);
       const adminCount = msgs.filter((m) => m.sender === "ADMIN").length;
       if (adminCount > lastSeenCount) setHasUnread(false);
-    }, 20000);
+    }, 10000);
     return () => clearInterval(interval);
   }, [isOpen, sessionId, fetchMessages, lastSeenCount]);
 

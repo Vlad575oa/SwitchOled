@@ -74,7 +74,7 @@ export default async function SiteLayout({
       </main>
       <div className="h-14 lg:hidden" />
       <Footer workingHours={workingHours} currentYear={currentYear} />
-      <FloatingContact />
+
       <MobileBottomNav />
       <CookieBanner />
       <ChatWidget />
