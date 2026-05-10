@@ -144,7 +144,7 @@ export function ChatWidget() {
   };
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">
+    <div className="fixed bottom-20 sm:bottom-6 right-4 sm:right-6 z-50 flex flex-col items-end gap-3">
       {/* Chat popup */}
       {isOpen && (
         <div className="w-[360px] bg-white rounded-3xl shadow-2xl shadow-black/20 border border-neutral-100 flex flex-col overflow-hidden" style={{ height: "480px" }}>

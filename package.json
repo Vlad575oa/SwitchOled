@@ -10,6 +10,10 @@
     "seed": "npx tsx prisma/seed.ts",
     "seo:top30-meta": "npx tsx scripts/generate-top30-meta.ts",
     "seo:top30-meta:dry": "npx tsx scripts/generate-top30-meta.ts --dry-run",
+    "s3:compress": "node scripts/compress-s3-images.mjs",
+    "s3:convert-webp": "node scripts/convert-s3-jpg-png-to-webp.mjs",
+    "s3:migrate": "node scripts/migrate-igroray-to-s3.mjs",
+    "s3:upload": "node scripts/upload-images-to-s3.mjs",
     "postinstall": "prisma generate"
   },
   "prisma": {

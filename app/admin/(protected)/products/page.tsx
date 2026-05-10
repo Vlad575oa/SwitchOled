@@ -5,7 +5,6 @@ import { formatPrice } from "@/lib/utils";
 import { ProductDeleteButton } from "./ProductDeleteButton";
 import { ProductDuplicateButton } from "./ProductDuplicateButton";
 import { ProductHideButton } from "./ProductHideButton";
-import { ProductStockToggleButton } from "./ProductStockToggleButton";
 import { cn } from "@/lib/utils";
 import { cookies } from "next/headers";
 import { ADMIN_COOKIE, verifyAdminSession } from "@/lib/adminSession";
@@ -188,7 +187,7 @@ export default async function ProductsPage({ searchParams }: Props) {
           <table className="w-full text-left">
             <thead>
               <tr className="border-b border-neutral-100">
-                {["Фото", "Название", "Категория", "Цена", "Наличие", ""].map((h) => (
+                {["Фото", "Название", "Категория", "Цена", ""].map((h) => (
                   <th key={h} className="px-5 py-3.5 text-[9px] font-black uppercase tracking-widest text-neutral-400">{h}</th>
                 ))}
               </tr>
@@ -196,7 +195,7 @@ export default async function ProductsPage({ searchParams }: Props) {
             <tbody>
               {products.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-5 py-20 text-center">
+                  <td colSpan={5} className="px-5 py-20 text-center">
                     <Package size={40} className="mx-auto mb-3 text-neutral-200" />
                     <p className="text-neutral-400 font-bold text-sm">Товаров не найдено</p>
                   </td>
@@ -223,9 +222,6 @@ export default async function ProductsPage({ searchParams }: Props) {
                     <td className="px-5 py-3 text-xs font-bold text-neutral-500">{p.category.name}</td>
                     <td className="px-5 py-3">
                       <p className="text-sm font-black text-[#111827]">{formatPrice(p.price)}</p>
-                    </td>
-                    <td className="px-5 py-3">
-                      <ProductStockToggleButton productId={p.id} inStock={p.inStock !== false} />
                     </td>
                     <td className="px-5 py-3">
                       <div className="flex items-center gap-2 justify-end">

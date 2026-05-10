@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import {
   LayoutDashboard,
   Package,
@@ -33,6 +33,7 @@ export const AdminSidebar = () => {
   const pathname = usePathname();
   const router = useRouter();
   const [unreadCount, setUnreadCount] = useState(0);
+  const [mounted, setMounted] = useState(false);
 
   const isActive = (item: { href: string; exact?: boolean }) =>
     item.exact ? pathname === item.href : pathname.startsWith(item.href);
@@ -41,6 +42,8 @@ export const AdminSidebar = () => {
     await fetch("/api/admin/logout", { method: "POST" });
     router.push("/admin/login");
   };
+
+  useEffect(() => { setMounted(true); }, []);
 
   useEffect(() => {
     const fetchUnread = async () => {
@@ -95,7 +98,7 @@ export const AdminSidebar = () => {
               )}
             />
             <span className="flex-1">{item.label}</span>
-            {item.badge && unreadCount > 0 && (
+            {mounted && item.badge && unreadCount > 0 && (
               <span className="w-5 h-5 rounded-full bg-primary text-white text-[9px] font-black flex items-center justify-center">
                 {unreadCount > 99 ? "99+" : unreadCount}
               </span>

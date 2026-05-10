@@ -155,9 +155,10 @@ export async function duplicateProductAction(id: number): Promise<ActionResponse
       throw new Error("Товар не найден");
     }
 
-    // Generate unique slug
+    // Generate unique slug (strip any existing -copy-xxxx suffix first)
+    const baseSlug = original.slug.replace(/-copy-[a-z0-9]+$/, "");
     const suffix = Math.random().toString(36).substring(2, 6);
-    const newSlug = `${original.slug}-copy-${suffix}`;
+    const newSlug = `${baseSlug}-copy-${suffix}`;
     const variantGroupId = `vg_${Date.now().toString(36)}_${Math.random().toString(36).substring(2, 8)}`;
 
     // Create duplicate (excluding ID and timestamps)
