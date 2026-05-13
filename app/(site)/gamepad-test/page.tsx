@@ -187,7 +187,7 @@ function DriftCanvas({
         touched.add(`${gx}:${gy}`);
       }
       ctx.fillStyle = "rgba(147, 197, 253, 0.35)";
-      for (const key of touched) {
+      for (const key of Array.from(touched)) {
         const [gx, gy] = key.split(":").map(Number);
         ctx.fillRect(gx * cell, gy * cell, cell, cell);
       }
