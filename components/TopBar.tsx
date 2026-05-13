@@ -11,6 +11,10 @@ const WhatsAppIcon = () => (
   <img src="/icons/whatsapp-svgrepo-com.svg" alt="WhatsApp" className="w-full h-full object-contain" />
 );
 
+const TelegramIcon = () => (
+  <img src="/icons/telegram-svgrepo-com.svg" alt="Telegram" className="w-full h-full object-contain" />
+);
+
 
 export const TopBar = ({ workingHours = "09:00 — 21:00" }: { workingHours?: string }) => {
   return (
@@ -51,6 +55,18 @@ export const TopBar = ({ workingHours = "09:00 — 21:00" }: { workingHours?: st
               <Award size={12} className="shrink-0" />
               <span className="text-[9px] font-black uppercase tracking-tight">Гарантия 1 год</span>
             </div>
+            <Link
+              href="/delivery"
+              className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-50/60 text-emerald-700 border border-emerald-100/70 hover:bg-emerald-100/70 transition-all active:scale-95"
+            >
+              <span className="text-[9px] font-black uppercase tracking-tight">Доставка</span>
+            </Link>
+            <Link
+              href="/gamepad-test"
+              className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-violet-50/60 text-violet-700 border border-violet-100/70 hover:bg-violet-100/70 transition-all active:scale-95"
+            >
+              <span className="text-[9px] font-black uppercase tracking-tight">Тест геймпада</span>
+            </Link>
           </div>
         </div>
 
@@ -58,7 +74,7 @@ export const TopBar = ({ workingHours = "09:00 — 21:00" }: { workingHours?: st
         <div className="flex items-center gap-2 sm:gap-4 shrink-0">
           <a
             href={`tel:${CONTACTS.phoneHref}`}
-            className="text-[11px] font-black text-[var(--text-primary)] hover:text-primary transition-colors tracking-widest uppercase hidden sm:inline"
+            className="text-[14px] font-black text-[var(--text-primary)] hover:text-primary transition-colors tracking-widest uppercase hidden sm:inline"
           >
             {CONTACTS.phoneDisplay}
           </a>
@@ -68,6 +84,15 @@ export const TopBar = ({ workingHours = "09:00 — 21:00" }: { workingHours?: st
           </a>
 
           <div className="flex items-center gap-1.5 sm:gap-2">
+            <a
+              href={CONTACTS.telegramUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-7 h-7 flex items-center justify-center hover:scale-110 transition-all drop-shadow-sm"
+              title="Telegram"
+            >
+              <TelegramIcon />
+            </a>
             <Link
               href={`https://wa.me/${CONTACTS.phoneHref.replace("+", "")}`}
               target="_blank"

@@ -45,3 +45,4 @@ next-env.d.ts
 /prisma/seed.js
 /Sony PlayStation 5 Pro
 
+.gstack/

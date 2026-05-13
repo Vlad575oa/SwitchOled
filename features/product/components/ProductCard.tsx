@@ -81,7 +81,7 @@ export const ProductCard = ({ product, eagerImage = false }: ProductCardProps) =
       </div>
 
       {/* Image area */}
-      <div className="relative aspect-[4/3] mb-3 px-2">
+      <div className="relative aspect-[16/11] mb-3 px-2">
         {/* Photo */}
         <div className="relative w-full h-full">
           <Image
@@ -169,7 +169,7 @@ export const ProductCard = ({ product, eagerImage = false }: ProductCardProps) =
         </div>
 
         {/* Title */}
-        <p className="text-[10px] font-bold text-secondary leading-[1.3] line-clamp-2 mb-4 flex-1">
+        <p className="text-[11px] font-bold text-secondary leading-[1.3] line-clamp-2 mb-4 flex-1">
           {product.name}
         </p>
 

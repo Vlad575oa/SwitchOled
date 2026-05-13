@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowRight, User, Clock } from "lucide-react";
 import { format } from "date-fns";
 import { Metadata } from "next";
+import { HomePageLink } from "@/components/HomePageLink";
 
 export const revalidate = 1800;
 
@@ -82,6 +83,9 @@ export default async function BlogPage({
 
         {/* Page title */}
         <div className="mb-10">
+          <div className="mb-6">
+            <HomePageLink />
+          </div>
           <h1 className="text-5xl md:text-6xl font-black tracking-tighter text-secondary uppercase leading-[0.9] mb-3">
             Блог <span className="text-primary">игромана</span>
           </h1>

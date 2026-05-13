@@ -5,8 +5,8 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { readFile } from "fs/promises";
-import { join } from "path";
+import { getPageContent } from "@/lib/getPageContent";
+import { HomePageLink } from "@/components/HomePageLink";
 
 export const dynamic = "force-dynamic";
 
@@ -16,23 +16,13 @@ export const metadata: Metadata = {
   alternates: { canonical: "/about" },
 };
 
-// ── Load content from pages.json (server-side, SSG-compatible) ─────────────
-async function getAboutData(): Promise<Record<string, string>> {
-  try {
-    const raw = await readFile(join(process.cwd(), "content", "pages.json"), "utf-8");
-    return JSON.parse(raw)?.about ?? {};
-  } catch {
-    return {};
-  }
-}
-
 // Static icon map for stats
 const STAT_ICONS = [Trophy, Users, Star, Zap, ShieldCheck, Award, Truck];
 
 const VALUES_ICONS = [ShieldCheck, Heart, Truck, Users];
 
 export default async function AboutPage() {
-  const d = await getAboutData();
+  const d = await getPageContent("about");
 
   // ── Build dynamic data arrays ────────────────────────────────────
   const stats = [
@@ -59,6 +49,9 @@ export default async function AboutPage() {
 
         {/* ── HERO ───────────────────────────────────────────────── */}
         <div className="mb-32">
+          <div className="mb-8">
+            <HomePageLink />
+          </div>
           {/* Top Metadata */}
           <div className="flex items-center gap-4 mb-8">
             <div className="h-px w-12 bg-primary/30" />

@@ -283,6 +283,7 @@ export default function PagesPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState<string | null>(null);
   const [saved, setSaved] = useState<string | null>(null);
+  const [saveError, setSaveError] = useState<string | null>(null);
   const [activeSection, setActiveSection] = useState("home");
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({ hero: true });
 
@@ -315,14 +316,25 @@ export default function PagesPage() {
 
   const saveSection = async (sectionKey: string) => {
     setSaving(sectionKey);
-    await fetch("/api/admin/pages", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
-    setSaving(null);
-    setSaved(sectionKey);
-    setTimeout(() => setSaved(null), 2000);
+    setSaveError(null);
+    try {
+      const res = await fetch("/api/admin/pages", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        setSaveError(err?.error ?? `Ошибка ${res.status}`);
+      } else {
+        setSaved(sectionKey);
+        setTimeout(() => setSaved(null), 2000);
+      }
+    } catch {
+      setSaveError("Нет соединения с сервером");
+    } finally {
+      setSaving(null);
+    }
   };
 
   if (loading) return (
@@ -441,14 +453,19 @@ export default function PagesPage() {
                 <section.icon size={16} className="text-primary" />
                 <h2 className="text-sm font-black text-[#111827]">Страница: {section.label}</h2>
               </div>
-              <button
-                onClick={() => saveSection(section.key)}
-                disabled={saving === section.key}
-                className="flex items-center gap-2 px-5 py-2 bg-primary text-white text-xs font-black rounded-xl hover:bg-red-700 transition-all shadow-lg shadow-primary/20 disabled:opacity-60"
-              >
-                <Save size={13} />
-                {saving === section.key ? "Сохранение..." : saved === section.key ? "Сохранено ✓" : "Сохранить"}
-              </button>
+              <div className="flex flex-col items-end gap-1">
+                <button
+                  onClick={() => saveSection(section.key)}
+                  disabled={saving === section.key}
+                  className={`flex items-center gap-2 px-5 py-2 text-white text-xs font-black rounded-xl transition-all shadow-lg disabled:opacity-60 ${saveError ? "bg-red-500 shadow-red-200" : "bg-primary hover:bg-red-700 shadow-primary/20"}`}
+                >
+                  <Save size={13} />
+                  {saving === section.key ? "Сохранение..." : saved === section.key ? "Сохранено ✓" : "Сохранить"}
+                </button>
+                {saveError && (
+                  <span className="text-[10px] font-bold text-red-500">{saveError}</span>
+                )}
+              </div>
             </div>
 
             {/* Главная: быстрые фильтры */}

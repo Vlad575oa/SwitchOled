@@ -30,6 +30,18 @@ export const Footer = ({ workingHours = "09:00 — 21:00", currentYear }: Footer
                             Премиальный магазин игровых консолей и аксессуаров. Только оригинальные товары с гарантией.
                         </p>
                         <div className="flex items-center gap-5">
+                            <a
+                                href={CONTACTS.telegramUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="w-7 h-7 flex items-center justify-center transition-all hover:scale-110 drop-shadow-sm group/soc"
+                            >
+                                <img
+                                    src="/icons/telegram-svgrepo-com.svg"
+                                    alt="telegram"
+                                    className="w-full h-full object-contain"
+                                />
+                            </a>
                             <Link
                                 href={`https://wa.me/${CONTACTS.phoneHref.replace("+", "")}`}
                                 target="_blank"

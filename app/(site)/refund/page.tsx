@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import { HomePageLink } from "@/components/HomePageLink";
 
 export const metadata: Metadata = {
   title: "Возврат и обмен | Gameshop24",
@@ -10,6 +11,9 @@ export default function RefundPage() {
   return (
     <div className="bg-white min-h-screen pt-10 pb-24">
       <div className="container max-w-4xl">
+        <div className="mb-6">
+          <HomePageLink />
+        </div>
         <h1 className="text-4xl font-black text-secondary mb-6 uppercase">Возврат и обмен</h1>
         <div className="space-y-4 text-neutral-600 font-medium leading-relaxed">
           <p>Если товар оказался с заводским дефектом, мы организуем проверку и предложим ремонт, обмен или возврат средств.</p>
@@ -20,4 +24,3 @@ export default function RefundPage() {
     </div>
   );
 }
-

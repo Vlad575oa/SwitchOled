@@ -1,6 +1,5 @@
 import { Metadata } from "next";
-import { readFile } from "fs/promises";
-import { join } from "path";
+import { getPageContent } from "@/lib/getPageContent";
 import ContactsClient from "./ContactsClient";
 
 export const dynamic = "force-dynamic";
@@ -11,16 +10,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/contacts" },
 };
 
-async function getContactsData(): Promise<Record<string, string>> {
-  try {
-    const raw = await readFile(join(process.cwd(), "content", "pages.json"), "utf-8");
-    return JSON.parse(raw)?.contacts ?? {};
-  } catch {
-    return {};
-  }
-}
-
 export default async function ContactsPage() {
-  const data = await getContactsData();
+  const data = await getPageContent("contacts");
   return <ContactsClient data={data} />;
 }

@@ -1,9 +1,8 @@
 import { TopBar } from "@/components/TopBar";
 import { Footer } from "@/components/Footer";
 import { Suspense } from "react";
-import { readFile } from "fs/promises";
-import { join } from "path";
 import { CONTACTS } from "@/lib/constants/contacts";
+import { getPageContent } from "@/lib/getPageContent";
 import { getCategorySlugsWithProducts } from "@/lib/queries";
 import { ALL_QUICK_LINKS } from "@/lib/constants/quickLinks";
 import dynamic from "next/dynamic";
@@ -35,13 +34,14 @@ const ChatWidget = dynamic(
 
 const getSiteConfig = async () => {
   try {
-    const raw = await readFile(join(process.cwd(), "content", "pages.json"), "utf-8");
-    const parsed = JSON.parse(raw);
-    const contacts = (parsed?.contacts ?? {}) as Record<string, string>;
+    const [contacts, home] = await Promise.all([
+      getPageContent("contacts"),
+      getPageContent("home"),
+    ]);
     const weekdays = (contacts.hours_weekdays ?? "").trim();
     const workingHours = weekdays || CONTACTS.workingHours;
-    const enabledSlugs: string[] = Array.isArray(parsed?.home?.quick_filter_slugs)
-      ? parsed.home.quick_filter_slugs
+    const enabledSlugs: string[] = Array.isArray((home as any).quick_filter_slugs)
+      ? (home as any).quick_filter_slugs
       : [];
     return { workingHours, enabledSlugs };
   } catch {

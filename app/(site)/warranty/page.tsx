@@ -3,8 +3,8 @@ import {
   Package, Clock, MessageSquare, AlertTriangle
 } from "lucide-react";
 import { Metadata } from "next";
-import { readFile } from "fs/promises";
-import { join } from "path";
+import { getPageContent } from "@/lib/getPageContent";
+import { HomePageLink } from "@/components/HomePageLink";
 
 export const dynamic = "force-dynamic";
 
@@ -13,15 +13,6 @@ export const metadata: Metadata = {
   description: "Гарантия 12 месяцев на консоли. Возврат в течение 14 дней. Бесплатный сервис при заводском браке.",
   alternates: { canonical: "/warranty" },
 };
-
-async function getWarrantyData(): Promise<Record<string, string>> {
-  try {
-    const raw = await readFile(join(process.cwd(), "content", "pages.json"), "utf-8");
-    return JSON.parse(raw)?.warranty ?? {};
-  } catch {
-    return {};
-  }
-}
 
 const returnSteps = [
   {
@@ -61,7 +52,7 @@ const notCoveredItems = [
 ];
 
 export default async function WarrantyPage() {
-  const d = await getWarrantyData();
+  const d = await getPageContent("warranty");
 
   const warrantyPeriod = d.warranty_period ?? "12 месяцев";
   const accessoriesPeriod = d.accessories_period ?? "6 месяцев";
@@ -99,6 +90,7 @@ export default async function WarrantyPage() {
 
         {/* Hero */}
         <div className="mb-10 space-y-3">
+          <HomePageLink />
           <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-primary/10 rounded-full text-primary text-[10px] font-black uppercase tracking-[0.2em]">
             <ShieldCheck size={13} />
             {d.title ?? "Гарантия и возврат"}

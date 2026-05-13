@@ -1,6 +1,7 @@
 import prisma from "@/lib/prisma";
 import FAQClient from "@/components/FAQClient";
 import { Metadata } from "next";
+import { HomePageLink } from "@/components/HomePageLink";
 
 export const dynamic = "force-dynamic";
 
@@ -35,6 +36,9 @@ export default async function FAQPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
       <div className="container">
+        <div className="mb-6">
+          <HomePageLink />
+        </div>
 
 
         {/* Categories + Accordion (client) */}

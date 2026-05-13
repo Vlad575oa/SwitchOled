@@ -21,9 +21,15 @@ interface CatalogProps {
   category: string;
   searchParams: Record<string, string | undefined>;
   pageSize?: number;
+  gridClassName?: string;
 }
 
-export async function Catalog({ category, searchParams, pageSize = 12 }: CatalogProps) {
+export async function Catalog({
+  category,
+  searchParams,
+  pageSize = 12,
+  gridClassName = "grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4",
+}: CatalogProps) {
   const { q, priceMin, priceMax, color, memory, status, sort, page = "1" } = searchParams;
   const skip = (parseInt(page) - 1) * pageSize;
   let categorySlugs =
@@ -224,7 +230,7 @@ export async function Catalog({ category, searchParams, pageSize = 12 }: Catalog
 
         {products.length > 0 ? (
           <>
-            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
+            <div className={gridClassName}>
               {products.map((product, idx) => (
                 <ProductCard
                   key={product.id}

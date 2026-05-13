@@ -71,7 +71,7 @@ export const Header = () => {
   };
 
   const iconBtn = "flex flex-col items-center justify-center w-12 h-12 rounded-xl hover:bg-white/[0.07] transition-all group relative";
-  const iconLabel = "text-[7.5px] font-black text-white/30 uppercase tracking-wide mt-1 group-hover:text-white/60 transition-colors text-center";
+  const iconLabel = "text-[9px] font-black text-white uppercase tracking-wide mt-1 transition-colors text-center";
 
   return (
     <header className="sticky top-0 z-50 h-[68px] flex items-center bg-[#2c2c30] border-b border-white/[0.07] relative" style={{ boxShadow: "0 2px 12px rgba(0,0,0,0.25)" }}>
@@ -114,14 +114,14 @@ export const Header = () => {
         </div>
 
         {/* Icons */}
-        <div className="flex items-center gap-1.5 shrink-0">
+        <div className="flex items-center gap-3 shrink-0">
 
           {/* Auth */}
           <div className="relative" ref={menuRef}>
             {mounted && user ? (
               <button onClick={() => setUserMenuOpen(!userMenuOpen)} className={iconBtn}>
                 <div className="relative">
-                  <User size={18} className="text-white/50 group-hover:text-white transition-colors" />
+                  <User size={18} className="text-white transition-colors" />
                   <div className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-green-400 rounded-full ring-2 ring-[#2c2c30]" />
                 </div>
                 <span className={iconLabel}>{user.name?.split(" ")[0] ?? "Профиль"}</span>
@@ -153,7 +153,7 @@ export const Header = () => {
               </button>
             ) : (
               <Link href="/auth/login" className={iconBtn}>
-                <User size={18} className="text-white/50 group-hover:text-white transition-colors" />
+                <User size={18} className="text-white transition-colors" />
                 <span className={iconLabel}>Войти</span>
               </Link>
             )}
@@ -162,7 +162,7 @@ export const Header = () => {
           {/* Wishlist */}
           <Link href="/wishlist" className={cn(iconBtn, "hidden sm:flex")}>
             <div className="relative">
-              <Heart size={18} className={cn("transition-colors", mounted && wishlistCount > 0 ? "text-red-400 fill-red-400" : "text-white/50 group-hover:text-white")} />
+              <Heart size={18} className={cn("transition-colors", mounted && wishlistCount > 0 ? "text-red-400 fill-red-400" : "text-white")} />
               {mounted && wishlistCount > 0 && (
                 <span className="absolute -top-1.5 -right-2 bg-red-500 text-white text-[8px] font-black min-w-[14px] h-[14px] px-1 rounded-full ring-2 ring-[#2c2c30] flex items-center justify-center">
                   {wishlistCount}
@@ -173,9 +173,9 @@ export const Header = () => {
           </Link>
 
           {/* Compare */}
-          <Link href="/compare" className={cn(iconBtn, "hidden sm:flex")}>
+          <Link href="/compare" className={cn(iconBtn, "hidden sm:flex ml-2")}>
             <div className="relative">
-              <Scale size={18} className={cn("transition-colors", mounted && compareCount > 0 ? "text-blue-400" : "text-white/50 group-hover:text-white")} />
+              <Scale size={18} className={cn("transition-colors", mounted && compareCount > 0 ? "text-blue-400" : "text-white")} />
               {mounted && compareCount > 0 && (
                 <span className="absolute -top-1.5 -right-2 bg-blue-500 text-white text-[8px] font-black min-w-[14px] h-[14px] px-1 rounded-full ring-2 ring-[#2c2c30] flex items-center justify-center">
                   {compareCount}
@@ -188,7 +188,7 @@ export const Header = () => {
           {/* Cart */}
           <Link href="/cart" className={cn(iconBtn, "ml-1 bg-primary/10 border border-primary/20 hover:bg-primary/20 hover:border-primary/35")}>
             <div className="relative">
-              <ShoppingCart size={18} className={cn("transition-colors", mounted && totalItems > 0 ? "text-primary" : "text-white/50 group-hover:text-primary")} />
+              <ShoppingCart size={18} className={cn("transition-colors", mounted && totalItems > 0 ? "text-primary" : "text-white")} />
               {mounted && totalItems > 0 && (
                 <span className="absolute -top-1.5 -right-2 bg-primary text-white text-[8px] font-black min-w-[14px] h-[14px] px-1 rounded-full ring-2 ring-[#2c2c30] shadow-lg shadow-primary/30 flex items-center justify-center">
                   {totalItems}

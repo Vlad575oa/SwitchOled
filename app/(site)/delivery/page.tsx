@@ -3,8 +3,8 @@ import {
   Smartphone, ShieldCheck, Package, Star, Zap, CheckCircle2
 } from "lucide-react";
 import { Metadata } from "next";
-import { readFile } from "fs/promises";
-import { join } from "path";
+import { getPageContent } from "@/lib/getPageContent";
+import { HomePageLink } from "@/components/HomePageLink";
 
 export const dynamic = "force-dynamic";
 
@@ -14,19 +14,10 @@ export const metadata: Metadata = {
   alternates: { canonical: "/delivery" },
 };
 
-async function getDeliveryData(): Promise<Record<string, string>> {
-  try {
-    const raw = await readFile(join(process.cwd(), "content", "pages.json"), "utf-8");
-    return JSON.parse(raw)?.delivery ?? {};
-  } catch {
-    return {};
-  }
-}
-
 const isEnabled = (value?: string) => value !== "false";
 
 export default async function DeliveryPage() {
-  const d = await getDeliveryData();
+  const d = await getPageContent("delivery");
 
   const deliveryMethods = [
     {
@@ -93,6 +84,7 @@ export default async function DeliveryPage() {
 
         {/* Hero */}
         <div className="mb-16 space-y-6">
+          <HomePageLink />
           <div className="inline-flex items-center gap-2 px-5 py-2 bg-primary/10 rounded-full text-primary text-[11px] font-black uppercase tracking-[0.2em]">
             <Truck size={14} />
             {d.title ?? "Доставка и оплата"}

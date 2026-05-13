@@ -10,6 +10,7 @@ const RecentlyViewed = loadDynamic(
   { ssr: false }
 );
 
+
 export const metadata: Metadata = {
   title: "Gameshop24 | Премиальный магазин консолей и игр",
   description: "Официальные консоли, редкие аксессуары и экспертные обзоры. Gameshop24 — твой проводник в мир премиального гейминга 2026.",
@@ -26,9 +27,13 @@ export default async function HomePage({ searchParams }: HomePageProps) {
   return (
     <main className="container pt-6 pb-20">
 
-
       <div id="catalog" className="mb-20 scroll-mt-24">
-        <Catalog category="all" searchParams={searchParams} pageSize={8} />
+        <Catalog
+          category="all"
+          searchParams={searchParams}
+          pageSize={8}
+          gridClassName="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-3 sm:gap-4"
+        />
       </div>
 
       <ExpertInsights />
