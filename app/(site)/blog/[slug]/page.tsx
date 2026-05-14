@@ -9,12 +9,18 @@ import Link from "next/link";
 import { Metadata } from "next";
 import { marked } from "marked";
 import { BlogShareBar } from "@/components/BlogShareBar";
+import { Prisma } from "@prisma/client";
 
 const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || "https://gameshop24.ru").replace("://www.", "://");
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const slug = decodeURIComponent(params.slug);
-  const post = await prisma.post.findUnique({ where: { slug } });
+  let post: Awaited<ReturnType<typeof prisma.post.findUnique>> = null;
+  try {
+    post = await prisma.post.findUnique({ where: { slug } });
+  } catch (error) {
+    console.error("BLOG metadata query error:", error);
+  }
   if (!post) return {};
 
   const title = `${post.metaTitle || post.title} | Блог Gameshop24`;
@@ -43,8 +49,14 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 }
 
 export default async function BlogPostPage({ params }: { params: { slug: string } }) {
+  type ProductWithCategory = Prisma.ProductGetPayload<{ include: { category: true } }>;
   const slug = decodeURIComponent(params.slug);
-  const post = await prisma.post.findUnique({ where: { slug } });
+  let post: Awaited<ReturnType<typeof prisma.post.findUnique>> = null;
+  try {
+    post = await prisma.post.findUnique({ where: { slug } });
+  } catch (error) {
+    console.error("BLOG post query error:", error);
+  }
 
   if (!post) notFound();
 
@@ -88,21 +100,28 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
     ],
   };
 
-  const relatedPosts = await prisma.post.findMany({
-    where: { 
-      isPublished: true,
-      NOT: { id: post.id }
-    },
-    take: 3,
-    orderBy: { createdAt: 'desc' }
-  });
-
-  const relatedProducts = await prisma.product.findMany({
-    where: { isVisible: { not: false }, inStock: true },
-    take: 4,
-    orderBy: { updatedAt: "desc" },
-    include: { category: true },
-  });
+  let relatedPosts: Awaited<ReturnType<typeof prisma.post.findMany>> = [];
+  let relatedProducts: ProductWithCategory[] = [];
+  try {
+    [relatedPosts, relatedProducts] = await Promise.all([
+      prisma.post.findMany({
+        where: {
+          isPublished: true,
+          NOT: { id: post.id },
+        },
+        take: 3,
+        orderBy: { createdAt: 'desc' },
+      }),
+      prisma.product.findMany({
+        where: { isVisible: { not: false }, inStock: true },
+        take: 4,
+        orderBy: { updatedAt: "desc" },
+        include: { category: true },
+      }),
+    ]);
+  } catch (error) {
+    console.error("BLOG related data query error:", error);
+  }
 
   return (
     <article className="bg-[#fcfcfd] min-h-screen pt-6 pb-20">

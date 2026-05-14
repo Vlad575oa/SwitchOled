@@ -4,11 +4,8 @@ import { SESSION_COOKIE } from '@/lib/auth';
 
 const LEGACY_GONE_PATHS = new Set([
   '/company',
-  '/company/',
   '/info',
-  '/info/',
   '/license',
-  '/license/',
 ]);
 
 const LEGACY_GONE_PREFIXES = [
@@ -18,6 +15,9 @@ const LEGACY_GONE_PREFIXES = [
 
 export async function middleware(request: NextRequest) {
   const { pathname, hostname, search } = request.nextUrl;
+  const normalizedPath =
+    pathname.length > 1 && pathname.endsWith("/") ? pathname.replace(/\/+$/, "") : pathname;
+  const canonicalOrigin = hostname === "www.gameshop24.ru" ? "https://gameshop24.ru" : request.nextUrl.origin;
 
   const withSecurityHeaders = (response: NextResponse) => {
     response.headers.set("X-Frame-Options", "DENY");
@@ -27,15 +27,10 @@ export async function middleware(request: NextRequest) {
     return response;
   };
 
-  if (hostname === "www.gameshop24.ru") {
-    const target = new URL(`https://gameshop24.ru${pathname}${search}`);
-    return withSecurityHeaders(NextResponse.redirect(target, 301));
-  }
-
-  if (pathname.startsWith("/catalog/") && pathname.includes("copy")) {
+  if (normalizedPath.startsWith("/catalog/") && normalizedPath.includes("copy")) {
     try {
       const url = new URL("/api/seo/resolve-copy", request.url);
-      url.searchParams.set("path", pathname);
+      url.searchParams.set("path", normalizedPath);
       const res = await fetch(url.toString(), { cache: "no-store" });
       if (res.ok) {
         const data = (await res.json()) as { targetUrl?: string | null };
@@ -54,8 +49,8 @@ export async function middleware(request: NextRequest) {
   }
 
   const isLegacyGone =
-    LEGACY_GONE_PATHS.has(pathname) ||
-    LEGACY_GONE_PREFIXES.some((prefix) => pathname.startsWith(prefix));
+    LEGACY_GONE_PATHS.has(normalizedPath) ||
+    LEGACY_GONE_PREFIXES.some((prefix) => normalizedPath.startsWith(prefix));
 
   if (isLegacyGone) {
     const response = new NextResponse('Gone', { status: 410 });
@@ -63,19 +58,27 @@ export async function middleware(request: NextRequest) {
     return withSecurityHeaders(response);
   }
 
-  // /catalog → /catalog/all (bare catalog path returns 404)
-  if (pathname === '/catalog' || pathname === '/catalog/') {
-    return withSecurityHeaders(NextResponse.redirect(new URL('/catalog/all', request.url), 301));
+  // /catalog → /catalog/all with canonical host (single-hop redirect)
+  if (normalizedPath === '/catalog') {
+    const target = new URL(`${canonicalOrigin}/catalog/all${search}`);
+    return withSecurityHeaders(NextResponse.redirect(target, 301));
+  }
+
+  // Canonicalize host + trailing slash in a single redirect (except root)
+  const hasTrailingSlash = pathname.length > 1 && pathname.endsWith("/");
+  if (hostname === "www.gameshop24.ru" || hasTrailingSlash) {
+    const target = new URL(`${canonicalOrigin}${normalizedPath}${search}`);
+    return withSecurityHeaders(NextResponse.redirect(target, 301));
   }
 
   // /admin routes — protection handled by layout (Node.js runtime, not Edge)
   // /api/admin routes — protection handled inside each route handler
 
   // Protect /account routes — server-side redirect to login
-  if (pathname.startsWith('/account')) {
+  if (normalizedPath.startsWith('/account')) {
     const token = request.cookies.get(SESSION_COOKIE)?.value;
     if (!token) {
-      return withSecurityHeaders(NextResponse.redirect(new URL('/auth/login?next=' + encodeURIComponent(pathname), request.url)));
+      return withSecurityHeaders(NextResponse.redirect(new URL('/auth/login?next=' + encodeURIComponent(normalizedPath), request.url)));
     }
   }
 

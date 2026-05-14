@@ -1,0 +1,56 @@
+<svg width="1200" height="560" viewBox="0 0 1200 560" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="560" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#F8FAFC"/>
+      <stop offset="1" stop-color="#EEF2FF"/>
+    </linearGradient>
+    <linearGradient id="pad" x1="300" y1="120" x2="900" y2="480" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#1F2937"/>
+      <stop offset="1" stop-color="#111827"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#EF4444"/>
+      <stop offset="1" stop-color="#DC2626"/>
+    </linearGradient>
+    <filter id="shadow" x="180" y="90" width="840" height="430" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+      <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+      <feOffset dy="18"/>
+      <feGaussianBlur stdDeviation="16"/>
+      <feComposite in2="hardAlpha" operator="out"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 0.067 0 0 0 0 0.094 0 0 0 0 0.153 0 0 0 0.26 0"/>
+      <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_1_1"/>
+      <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_1_1" result="shape"/>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="560" rx="36" fill="url(#bg)"/>
+
+  <g filter="url(#shadow)">
+    <path d="M342 195C294 181 252 222 234 272L188 404C175 440 192 478 224 493C257 508 296 493 318 462L388 366C402 346 426 334 451 334H749C774 334 798 346 812 366L882 462C904 493 943 508 976 493C1008 478 1025 440 1012 404L966 272C948 222 906 181 858 195L724 233C703 239 680 242 657 242H543C520 242 497 239 476 233L342 195Z" fill="url(#pad)"/>
+  </g>
+
+  <rect x="522" y="232" width="156" height="36" rx="10" fill="#0F172A" stroke="#334155" stroke-width="3"/>
+  <text x="600" y="256" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-weight="700" font-size="18" fill="#F8FAFC">gameshop24.ru</text>
+
+  <circle cx="402" cy="294" r="52" fill="#0B1220" stroke="#475569" stroke-width="6"/>
+  <circle cx="402" cy="294" r="30" fill="#1E293B" stroke="#64748B" stroke-width="4"/>
+  <circle cx="798" cy="294" r="52" fill="#0B1220" stroke="#475569" stroke-width="6"/>
+  <circle cx="798" cy="294" r="30" fill="#1E293B" stroke="#64748B" stroke-width="4"/>
+
+  <circle cx="656" cy="314" r="13" fill="#334155"/>
+  <circle cx="600" cy="314" r="13" fill="#334155"/>
+
+  <circle cx="872" cy="262" r="20" fill="#111827" stroke="#6B7280" stroke-width="4"/>
+  <circle cx="924" cy="314" r="20" fill="#111827" stroke="#6B7280" stroke-width="4"/>
+  <circle cx="924" cy="210" r="20" fill="#111827" stroke="#6B7280" stroke-width="4"/>
+  <circle cx="976" cy="262" r="20" fill="#111827" stroke="#6B7280" stroke-width="4"/>
+
+  <circle cx="924" cy="314" r="8" fill="url(#accent)"/>
+  <circle cx="872" cy="262" r="8" fill="#22C55E"/>
+  <circle cx="976" cy="262" r="8" fill="#F59E0B"/>
+  <circle cx="924" cy="210" r="8" fill="#3B82F6"/>
+
+  <rect x="252" y="224" width="88" height="18" rx="9" fill="#1F2937" stroke="#6B7280" stroke-width="3"/>
+  <rect x="860" y="224" width="88" height="18" rx="9" fill="#1F2937" stroke="#6B7280" stroke-width="3"/>
+</svg>

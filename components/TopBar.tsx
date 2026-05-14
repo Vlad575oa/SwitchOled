@@ -45,27 +45,27 @@ export const TopBar = ({ workingHours = "09:00 — 21:00" }: { workingHours?: st
               className="group flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 transition-all active:scale-95"
             >
               <Award size={12} className="shrink-0 group-hover:rotate-12 transition-transform" />
-              <span className="text-[9px] font-black uppercase tracking-tight">Почему мы</span>
+              <span className="text-[10px] font-black uppercase tracking-tight">Почему мы</span>
             </Link>
             <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-blue-50/50 text-blue-600 border border-blue-100/50">
               <ShieldCheck size={12} className="shrink-0" />
-              <span className="text-[9px] font-black uppercase tracking-tight">100% Оригинал</span>
+              <span className="text-[10px] font-black uppercase tracking-tight">100% Оригинал</span>
             </div>
             <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-purple-50/50 text-purple-600 border border-purple-100/50">
               <Award size={12} className="shrink-0" />
-              <span className="text-[9px] font-black uppercase tracking-tight">Гарантия 1 год</span>
+              <span className="text-[10px] font-black uppercase tracking-tight">Гарантия 1 год</span>
             </div>
             <Link
               href="/delivery"
               className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-50/60 text-emerald-700 border border-emerald-100/70 hover:bg-emerald-100/70 transition-all active:scale-95"
             >
-              <span className="text-[9px] font-black uppercase tracking-tight">Доставка</span>
+              <span className="text-[10px] font-black uppercase tracking-tight">Доставка</span>
             </Link>
             <Link
               href="/gamepad-test"
               className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-violet-50/60 text-violet-700 border border-violet-100/70 hover:bg-violet-100/70 transition-all active:scale-95"
             >
-              <span className="text-[9px] font-black uppercase tracking-tight">Тест геймпада</span>
+              <span className="text-[10px] font-black uppercase tracking-tight">Тест геймпада</span>
             </Link>
           </div>
         </div>

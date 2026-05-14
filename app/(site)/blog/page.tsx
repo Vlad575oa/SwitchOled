@@ -32,18 +32,35 @@ export default async function BlogPage({
 }) {
   const currentCategory = searchParams.category || "Все";
 
-  const posts = await prisma.post.findMany({
-    where: {
-      isPublished: true,
-      ...(currentCategory !== "Все" ? { category: currentCategory } : {}),
-    },
-    orderBy: { createdAt: "desc" },
-  });
+  let posts: Array<{
+    id: number;
+    slug: string;
+    title: string;
+    excerpt: string | null;
+    content: string;
+    image: string | null;
+    category: string | null;
+    createdAt: Date;
+  }> = [];
+  let allPosts: Array<{ category: string | null }> = [];
 
-  const allPosts = await prisma.post.findMany({
-    where: { isPublished: true },
-    select: { category: true },
-  });
+  try {
+    [posts, allPosts] = await Promise.all([
+      prisma.post.findMany({
+        where: {
+          isPublished: true,
+          ...(currentCategory !== "Все" ? { category: currentCategory } : {}),
+        },
+        orderBy: { createdAt: "desc" },
+      }),
+      prisma.post.findMany({
+        where: { isPublished: true },
+        select: { category: true },
+      }),
+    ]);
+  } catch (error) {
+    console.error("BLOG page query error:", error);
+  }
 
   const counts = allPosts.reduce<Record<string, number>>((acc, p) => {
     if (p.category) acc[p.category] = (acc[p.category] ?? 0) + 1;

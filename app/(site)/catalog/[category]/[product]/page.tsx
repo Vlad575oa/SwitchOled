@@ -1,5 +1,5 @@
 import { getProductBySlug, getProductVariants } from "@/lib/queries";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
@@ -38,7 +38,7 @@ export async function generateMetadata({
   return {
     title,
     description,
-    alternates: { canonical: `${baseUrl}/catalog/${params.category}/${params.product}` },
+    alternates: { canonical: `${baseUrl}/catalog/${product.category.slug}/${product.slug}` },
     openGraph: {
       title,
       description,
@@ -51,10 +51,13 @@ export async function generateMetadata({
 export default async function ProductPage({
   params,
 }: {
-  params: { product: string };
+  params: { product: string; category: string };
 }) {
   const product = await getProductBySlug(params.product);
   if (!product) notFound();
+  if (params.category !== product.category.slug) {
+    permanentRedirect(`/catalog/${product.category.slug}/${product.slug}`);
+  }
   const variants = await getProductVariants(product.id);
 
   const jsonLd = {

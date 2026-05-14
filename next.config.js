@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'standalone',
+  skipTrailingSlashRedirect: true,
   poweredByHeader: false,
   images: {
     formats: ['image/avif', 'image/webp'],

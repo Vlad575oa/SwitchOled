@@ -6,18 +6,23 @@ const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || "https://gameshop24.ru").rep
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  const categories = await prisma.category.findMany({
-    where: {
-      products: {
-        some: { isVisible: { not: false } },
-      },
-    },
-    select: { slug: true },
-  });
+  let categories: Array<{ slug: string }> = [];
 
-  const now = new Date().toISOString();
+  try {
+    categories = await prisma.category.findMany({
+      where: {
+        products: {
+          some: { isVisible: { not: false } },
+        },
+      },
+      select: { slug: true },
+    });
+  } catch (error) {
+    console.error("SITEMAP categories.xml error:", error);
+  }
+
   const urls = categories
-    .map((c) => `<url><loc>${baseUrl}/catalog/${c.slug}</loc><lastmod>${now}</lastmod></url>`)
+    .map((c) => `<url><loc>${baseUrl}/catalog/${c.slug}</loc></url>`)
     .join("");
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>

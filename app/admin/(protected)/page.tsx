@@ -6,18 +6,21 @@ import { formatPrice } from "@/lib/utils";
 export const dynamic = "force-dynamic";
 
 export default async function AdminDashboard() {
-  const [productsCount, ordersCount, postsCount, recentOrders, revenue] = await Promise.all([
-    prisma.product.count(),
-    prisma.order.count(),
-    prisma.post.count(),
-    prisma.order.findMany({ take: 8, orderBy: { createdAt: "desc" } }),
-    prisma.order.aggregate({
-      where: { status: "paid" },
-      _sum: { totalAmount: true },
-    }),
-  ]);
-
-  const monthRevenue = revenue._sum.totalAmount ?? 0;
+  let productsCount = 0, ordersCount = 0, postsCount = 0, recentOrders: any[] = [], monthRevenue = 0;
+  let dbError = false;
+  try {
+    const [pc, oc, bc, ro, revenue] = await Promise.all([
+      prisma.product.count(),
+      prisma.order.count(),
+      prisma.post.count(),
+      prisma.order.findMany({ take: 8, orderBy: { createdAt: "desc" } }),
+      prisma.order.aggregate({ where: { status: "paid" }, _sum: { totalAmount: true } }),
+    ]);
+    productsCount = pc; ordersCount = oc; postsCount = bc; recentOrders = ro;
+    monthRevenue = revenue._sum.totalAmount ?? 0;
+  } catch {
+    dbError = true;
+  }
 
   const statusLabel: Record<string, { label: string; cls: string }> = {
     pending: { label: "Ожидает", cls: "bg-yellow-100 text-yellow-700" },
@@ -43,6 +46,11 @@ export default async function AdminDashboard() {
       </header>
 
       <div className="p-8 space-y-8">
+        {dbError && (
+          <div className="bg-red-50 border border-red-200 rounded-2xl px-6 py-4 text-sm font-bold text-red-600">
+            База данных недоступна. Данные не загружены — попробуйте обновить страницу через несколько минут.
+          </div>
+        )}
         {/* Stats */}
         <div className="grid grid-cols-2 xl:grid-cols-4 gap-5">
           {[

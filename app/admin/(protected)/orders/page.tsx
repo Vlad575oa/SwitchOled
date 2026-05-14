@@ -57,7 +57,7 @@ export default async function OrdersPage() {
                       <td className="px-5 py-4 text-xs font-black text-[#111827]">#{order.id}</td>
                       <td className="px-5 py-4 text-xs font-bold text-neutral-700">{order.name}</td>
                       <td className="px-5 py-4 text-xs font-bold text-neutral-500">{order.phone}</td>
-                      <td className="px-5 py-4 text-xs font-bold text-neutral-400 max-w-[160px] truncate">{order.address}</td>
+                      <td className="px-5 py-4 text-xs font-bold text-[#111827] min-w-[320px] whitespace-normal break-words">{order.address}</td>
                       <td className="px-5 py-4">
                         <div className="space-y-0.5">
                           {order.items.map((item) => (
@@ -78,8 +78,14 @@ export default async function OrdersPage() {
                       <td className="px-5 py-4">
                         <OrderStatusSelect orderId={order.id} status={order.status} statusMap={STATUS_MAP} />
                       </td>
-                      <td className="px-5 py-4 text-xs font-bold text-neutral-400">
-                        {new Date(order.createdAt).toLocaleDateString("ru-RU")}
+                      <td className="px-5 py-4 text-xs font-bold text-neutral-400 whitespace-nowrap">
+                        {new Date(order.createdAt).toLocaleString("ru-RU", {
+                          day: "2-digit",
+                          month: "2-digit",
+                          year: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
                       </td>
                       <td className="px-5 py-4">
                         {canDeleteOrders ? (

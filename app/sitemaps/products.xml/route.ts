@@ -7,10 +7,16 @@ const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || "https://gameshop24.ru").rep
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  const products = await prisma.product.findMany({
-    where: { isVisible: { not: false } },
-    select: { slug: true, updatedAt: true, category: { select: { slug: true } } },
-  });
+  let products: Array<{ slug: string; updatedAt: Date; category: { slug: string } }> = [];
+
+  try {
+    products = await prisma.product.findMany({
+      where: { isVisible: { not: false } },
+      select: { slug: true, updatedAt: true, category: { select: { slug: true } } },
+    });
+  } catch (error) {
+    console.error("SITEMAP products.xml error:", error);
+  }
 
   const urls = products
     .filter((p) => !p.slug.includes("copy"))

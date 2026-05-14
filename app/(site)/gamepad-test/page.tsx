@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { Gamepad2, WifiOff, Vibrate, Info, Trash2 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -97,7 +98,7 @@ function StickCircle({ x, y, label, ax, ay, points, showWorkArea }: {
   points: DriftPoint[];
   showWorkArea: boolean;
 }) {
-  const S = 90; const C = S / 2; const R = C - 8;
+  const S = 120; const C = S / 2; const R = C - 10;
   const dx = C + x * R; const dy = C + y * R;
   const drift = Math.hypot(x, y) > DRIFT_THRESHOLD;
   const err = Math.max(Math.abs(x), Math.abs(y));
@@ -124,7 +125,7 @@ function StickCircle({ x, y, label, ax, ay, points, showWorkArea }: {
     : "";
 
   return (
-    <div className="flex flex-col items-center gap-1.5">
+    <div className="flex flex-col items-center gap-2">
       <svg width={S} height={S}>
         {fillPath && (
           <path d={fillPath} fill="#bfdbfe" fillOpacity="0.45" />
@@ -135,8 +136,8 @@ function StickCircle({ x, y, label, ax, ay, points, showWorkArea }: {
         <line x1={7} y1={C} x2={S-7} y2={C} stroke="#f3f4f6" strokeWidth="1"/>
         <circle cx={dx} cy={dy} r={7} fill={drift?"#e60012":"#1a1a1c"}/>
       </svg>
-      <p className="text-[9px] font-black uppercase tracking-widest text-neutral-400">{label}</p>
-      <div className="text-[9px] tabular-nums text-neutral-400 space-y-0.5 text-center">
+      <p className="text-[10px] font-black uppercase tracking-widest text-neutral-500">{label}</p>
+      <div className="text-[10px] tabular-nums text-neutral-500 space-y-0.5 text-center">
         <div>Г: <span className={Math.abs(ax)>DRIFT_THRESHOLD?"text-red-500":""}>{ax.toFixed(3)}</span></div>
         <div>В: <span className={Math.abs(ay)>DRIFT_THRESHOLD?"text-red-500":""}>{ay.toFixed(3)}</span></div>
         <div>Погрешн.: <span className={err>DRIFT_THRESHOLD?"text-red-500 font-bold":""}>{err.toFixed(3)}</span></div>
@@ -219,7 +220,7 @@ function DriftCanvas({
     }
   }, [points, showWorkArea]);
 
-  return <canvas ref={ref} width={280} height={280} className="rounded-xl border border-neutral-100"/>;
+  return <canvas ref={ref} width={420} height={420} className="w-full max-w-[520px] h-auto rounded-xl border border-neutral-100"/>;
 }
 
 // ── Radial Keyboard ───────────────────────────────────────────────────────────
@@ -359,13 +360,25 @@ function GamepadPanel({ gp, onVibrate }: { gp: GPState; onVibrate: () => void })
   });
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Row 1: SVG + Sticks */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Left: gamepad illustration + sticks */}
-        <div className="space-y-4">
-          <GamepadSVG btns={gp.buttons} />
-          <div className="flex gap-6 flex-wrap">
+        <div className="space-y-4 rounded-3xl border border-neutral-200 bg-gradient-to-b from-neutral-50 to-white p-4">
+          <div className="rounded-2xl border border-neutral-200 bg-neutral-50 p-3">
+            <Image
+              src="/images/gamepad-test/gameshop24-gamepad.svg"
+              alt="Геймпад gameshop24"
+              width={900}
+              height={420}
+              className="w-full h-auto rounded-xl"
+              priority
+            />
+          </div>
+          <div className="rounded-2xl border border-neutral-100 bg-white p-3">
+            <GamepadSVG btns={gp.buttons} />
+          </div>
+          <div className="flex gap-6 flex-wrap justify-center xl:justify-start">
             <StickCircle x={lx} y={ly} label="Левый стик" ax={lx} ay={ly} points={leftTrail} showWorkArea={showWork} />
             <StickCircle x={rx} y={ry} label="Правый стик" ax={rx} ay={ry} points={rightTrail} showWorkArea={showWork} />
           </div>
@@ -376,10 +389,10 @@ function GamepadPanel({ gp, onVibrate }: { gp: GPState; onVibrate: () => void })
         </div>
 
         {/* Right: Drift canvas */}
-        <div className="space-y-3">
+        <div className="space-y-4 rounded-3xl border border-neutral-200 bg-white p-4">
           <div>
-            <h3 className="text-sm font-black text-secondary mb-1">Проверка на дрейф в области</h3>
-            <p className="text-xs text-neutral-400 font-medium leading-relaxed mb-3">
+            <h3 className="text-base font-black text-secondary mb-1">Проверка на дрейф в области</h3>
+            <p className="text-sm text-neutral-500 font-medium leading-relaxed mb-3">
               Нажмите стик и медленно перемещайте его. Быстрые скачки &gt;0,1 (10%) отмечаются красными линиями.
             </p>
           </div>
@@ -390,7 +403,7 @@ function GamepadPanel({ gp, onVibrate }: { gp: GPState; onVibrate: () => void })
             onClearLeft={() => setLeftTrail([])}
             onClearRight={() => setRightTrail([])}/>
 
-          <div className="flex items-center gap-2 text-xs text-neutral-500 font-medium">
+          <div className="flex items-center gap-2 text-xs text-neutral-500 font-medium flex-wrap">
             <div className="w-3 h-1 rounded-full bg-indigo-400"/>
             <span>Трейл</span>
             <div className="w-3 h-1 rounded-full bg-red-500 ml-2"/>
@@ -406,7 +419,7 @@ function GamepadPanel({ gp, onVibrate }: { gp: GPState; onVibrate: () => void })
             </span>
           </label>
 
-          <p className="text-[10px] text-neutral-400 font-medium">
+          <p className="text-xs text-neutral-500 font-medium">
             Значения &gt;0,1 (10%) подсвечиваются красным цветом (для выявления дрейфа в центре)
           </p>
         </div>
@@ -471,7 +484,7 @@ function DriftTabs({ leftTrail, rightTrail, showWork, onClearLeft, onClearRight 
 
   return (
     <div className="space-y-2">
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 flex-wrap">
         {(["left","right"] as const).map(t => (
           <button key={t} onClick={()=>setTab(t)}
             className={`px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${
@@ -481,10 +494,12 @@ function DriftTabs({ leftTrail, rightTrail, showWork, onClearLeft, onClearRight 
           </button>
         ))}
         <button onClick={onClear} className="ml-auto flex items-center gap-1 text-[9px] font-black text-neutral-400 hover:text-primary transition-colors uppercase tracking-widest">
-          <Trash2 size={10}/> Очист.
+          <Trash2 size={10}/> Очистить
         </button>
       </div>
-      <DriftCanvas points={trail} showWorkArea={showWork}/>
+      <div className="flex justify-center">
+        <DriftCanvas points={trail} showWorkArea={showWork}/>
+      </div>
     </div>
   );
 }
@@ -539,11 +554,11 @@ export default function GamepadTestPage() {
   const activeGP = gamepads[activeTab] ?? { ...EMPTY_GP, index: activeTab };
 
   return (
-    <div className="bg-[#fafafa] min-h-screen pt-6 pb-28">
-      <div className="container max-w-5xl px-4">
+    <div className="bg-gradient-to-b from-[#f8fafc] to-[#f5f7fb] min-h-screen pt-6 pb-28">
+      <div className="container max-w-6xl px-4">
 
         {/* Hero */}
-        <div className="mb-6 space-y-2">
+        <div className="mb-6 space-y-3 rounded-3xl border border-neutral-200 bg-white/90 p-5 shadow-sm">
           <Link href="/" className="inline-flex items-center gap-1.5 text-[10px] font-black text-neutral-400 uppercase tracking-widest hover:text-primary transition-colors">
             ← Главная
           </Link>
@@ -557,9 +572,14 @@ export default function GamepadTestPage() {
               </h1>
             </div>
           </div>
-          <p className="text-sm text-neutral-400 font-medium max-w-2xl leading-relaxed">
+          <p className="text-sm text-neutral-500 font-medium max-w-3xl leading-relaxed">
             Подключите геймпад через USB/Bluetooth и нажмите любую кнопку на нём. Поддерживаются китайские геймпады (установите Motionjoy, драйвер, выберите Xbox 360 Emulator и нажмите Enable).
           </p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-1">
+            <div className="rounded-xl border border-neutral-200 bg-neutral-50 px-3 py-2 text-xs font-semibold text-neutral-600">1. Подключите геймпад по USB или Bluetooth</div>
+            <div className="rounded-xl border border-neutral-200 bg-neutral-50 px-3 py-2 text-xs font-semibold text-neutral-600">2. Нажмите любую кнопку для активации в браузере</div>
+            <div className="rounded-xl border border-neutral-200 bg-neutral-50 px-3 py-2 text-xs font-semibold text-neutral-600">3. Проверьте стики, триггеры, кнопки и дрейф</div>
+          </div>
         </div>
 
         {/* Info */}
@@ -571,20 +591,20 @@ export default function GamepadTestPage() {
         </div>
 
         {/* 4 Gamepad Tabs */}
-        <div className="grid grid-cols-4 gap-2 mb-6">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 mb-6">
           {slots.map(i => {
             const gp = gamepads[i];
             const isActive = i === activeTab;
             return (
               <button key={i} onClick={() => setActiveTab(i)}
-                className={`rounded-xl px-3 py-3 text-left transition-all border ${
+                className={`rounded-2xl px-3 py-3 text-left transition-all border ${
                   isActive
-                    ? "bg-secondary text-white border-secondary shadow-lg"
+                    ? "bg-secondary text-white border-secondary shadow-lg shadow-secondary/20"
                     : gp?.connected
                     ? "bg-white border-green-200 text-secondary hover:border-green-400"
                     : "bg-white border-neutral-100 text-neutral-400 hover:border-neutral-200"
                 }`}>
-                <div className="flex items-center gap-2 mb-1">
+                <div className="flex items-center gap-2 mb-1.5">
                   {gp?.connected
                     ? <div className="w-1.5 h-1.5 rounded-full bg-green-400"/>
                     : <div className="w-1.5 h-1.5 rounded-full bg-neutral-300"/>
@@ -594,13 +614,16 @@ export default function GamepadTestPage() {
                 <p className={`text-[10px] font-medium truncate ${isActive ? "text-white/60" : "text-neutral-400"}`}>
                   {gp?.connected ? gp.id.split("(")[0].trim().slice(0,28) : "не определён"}
                 </p>
+                <p className={`text-[10px] mt-1 font-bold uppercase tracking-wider ${isActive ? "text-white/70" : gp?.connected ? "text-green-600" : "text-neutral-300"}`}>
+                  {gp?.connected ? "Подключен" : "Ожидание"}
+                </p>
               </button>
             );
           })}
         </div>
 
         {/* Content */}
-        <div className="bg-white border border-neutral-100 rounded-[28px] p-6 shadow-sm">
+        <div className="bg-white border border-neutral-200 rounded-[32px] p-4 md:p-6 shadow-lg shadow-neutral-200/40">
           <GamepadPanel gp={activeGP} onVibrate={() => handleVibrate(activeTab)} />
         </div>
 
