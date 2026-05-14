@@ -46,3 +46,7 @@ next-env.d.ts
 /Sony PlayStation 5 Pro
 
 .gstack/
+
+# local docs (do not publish)
+README.md
+dev.sh

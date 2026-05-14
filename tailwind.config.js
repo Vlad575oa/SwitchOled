@@ -6,6 +6,16 @@ module.exports = {
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
+    container: {
+      center: true,
+      screens: {
+        sm: "640px",
+        md: "768px",
+        lg: "1024px",
+        xl: "1360px",
+        "2xl": "1616px",
+      },
+    },
     extend: {
       colors: {
         primary: "#e60012", // Nintendo Red

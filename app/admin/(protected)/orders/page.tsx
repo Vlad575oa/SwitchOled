@@ -54,19 +54,19 @@ export default async function OrdersPage() {
                   const s = STATUS_MAP[order.status] ?? { label: order.status, cls: "bg-neutral-100 text-neutral-500" };
                   return (
                     <tr key={order.id} className="border-b border-neutral-50 last:border-0 hover:bg-neutral-50/50 transition-colors">
-                      <td className="px-5 py-4 text-xs font-black text-[#111827]">#{order.id}</td>
+                      <td className="px-5 py-4 text-xs font-bold text-neutral-700">#{order.id}</td>
                       <td className="px-5 py-4 text-xs font-bold text-neutral-700">{order.name}</td>
-                      <td className="px-5 py-4 text-xs font-bold text-neutral-500">{order.phone}</td>
-                      <td className="px-5 py-4 text-xs font-bold text-[#111827] min-w-[320px] whitespace-normal break-words">{order.address}</td>
-                      <td className="px-5 py-4">
-                        <div className="space-y-0.5">
+                      <td className="px-5 py-4 text-xs font-bold text-neutral-700">{order.phone}</td>
+                      <td className="px-5 py-4 text-xs font-bold text-neutral-700 min-w-[280px] whitespace-normal break-words">{order.address}</td>
+                      <td className="px-5 py-4 min-w-[220px]">
+                        <div className="space-y-1">
                           {order.items.map((item) => (
-                            <div key={item.id} className="space-y-0">
-                              <p className="text-[10px] font-bold text-neutral-500 line-clamp-1">
+                            <div key={item.id}>
+                              <p className="text-xs font-bold text-neutral-700 whitespace-normal">
                                 {item.product.name} × {item.quantity}
                               </p>
                               {item.product.sku && (
-                                <p className="text-[9px] font-bold text-neutral-300">
+                                <p className="text-xs font-bold text-neutral-400">
                                   Арт: {item.product.sku}
                                 </p>
                               )}
@@ -74,11 +74,11 @@ export default async function OrdersPage() {
                           ))}
                         </div>
                       </td>
-                      <td className="px-5 py-4 text-xs font-black text-[#111827]">{formatPrice(order.totalAmount)}</td>
+                      <td className="px-5 py-4 text-xs font-bold text-neutral-700">{formatPrice(order.totalAmount)}</td>
                       <td className="px-5 py-4">
                         <OrderStatusSelect orderId={order.id} status={order.status} statusMap={STATUS_MAP} />
                       </td>
-                      <td className="px-5 py-4 text-xs font-bold text-neutral-400 whitespace-nowrap">
+                      <td className="px-5 py-4 text-xs font-bold text-neutral-700 whitespace-nowrap">
                         {new Date(order.createdAt).toLocaleString("ru-RU", {
                           day: "2-digit",
                           month: "2-digit",
