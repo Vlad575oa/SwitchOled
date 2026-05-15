@@ -394,8 +394,7 @@ function GamepadPanel({ gp, onVibrate }: { gp: GPState; onVibrate: () => void })
             </p>
           </div>
 
-          {/* Tab: left/right stick selector */}
-          <DriftTabs leftTrail={leftTrail} rightTrail={rightTrail}
+          <DriftPanels leftTrail={leftTrail} rightTrail={rightTrail}
             showWork={showWork}
             onClearLeft={() => setLeftTrail([])}
             onClearRight={() => setRightTrail([])}/>
@@ -468,34 +467,47 @@ function GamepadPanel({ gp, onVibrate }: { gp: GPState; onVibrate: () => void })
   );
 }
 
-// ── Drift Tabs (left / right stick) ──────────────────────────────────────────
+// ── Drift Panels (left + right stick) ────────────────────────────────────────
 
-function DriftTabs({ leftTrail, rightTrail, showWork, onClearLeft, onClearRight }: {
+function DriftPanels({ leftTrail, rightTrail, showWork, onClearLeft, onClearRight }: {
   leftTrail: DriftPoint[]; rightTrail: DriftPoint[];
   showWork: boolean;
   onClearLeft: () => void; onClearRight: () => void;
 }) {
-  const [tab, setTab] = useState<"left"|"right">("left");
-  const trail = tab === "left" ? leftTrail : rightTrail;
-  const onClear = tab === "left" ? onClearLeft : onClearRight;
-
   return (
-    <div className="space-y-2">
-      <div className="flex items-center gap-2 flex-wrap">
-        {(["left","right"] as const).map(t => (
-          <button key={t} onClick={()=>setTab(t)}
-            className={`px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${
-              tab===t ? "bg-secondary text-white" : "bg-neutral-100 text-neutral-400 hover:bg-neutral-200"
-            }`}>
-            {t==="left" ? "Левый стик" : "Правый стик"}
-          </button>
-        ))}
-        <button onClick={onClear} className="ml-auto flex items-center gap-1 text-[9px] font-black text-neutral-400 hover:text-primary transition-colors uppercase tracking-widest">
-          <Trash2 size={10}/> Очистить
-        </button>
+    <div className="space-y-3">
+      <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
+        <div className="rounded-xl border border-neutral-200 p-2.5">
+          <div className="mb-2 flex items-center justify-between">
+            <p className="text-[10px] font-black uppercase tracking-widest text-neutral-500">Левый стик</p>
+            <button onClick={onClearLeft} className="flex items-center gap-1 text-[9px] font-black text-neutral-400 hover:text-primary transition-colors uppercase tracking-widest">
+              <Trash2 size={10}/> Очистить
+            </button>
+          </div>
+          <DriftCanvas points={leftTrail} showWorkArea={showWork}/>
+        </div>
+
+        <div className="rounded-xl border border-neutral-200 p-2.5">
+          <div className="mb-2 flex items-center justify-between">
+            <p className="text-[10px] font-black uppercase tracking-widest text-neutral-500">Правый стик</p>
+            <button onClick={onClearRight} className="flex items-center gap-1 text-[9px] font-black text-neutral-400 hover:text-primary transition-colors uppercase tracking-widest">
+              <Trash2 size={10}/> Очистить
+            </button>
+          </div>
+          <DriftCanvas points={rightTrail} showWorkArea={showWork}/>
+        </div>
       </div>
-      <div className="flex justify-center">
-        <DriftCanvas points={trail} showWorkArea={showWork}/>
+
+      <div className="flex justify-end">
+        <button
+          onClick={() => {
+            onClearLeft();
+            onClearRight();
+          }}
+          className="flex items-center gap-1 text-[9px] font-black text-neutral-400 hover:text-primary transition-colors uppercase tracking-widest"
+        >
+          <Trash2 size={10}/> Очистить оба
+        </button>
       </div>
     </div>
   );

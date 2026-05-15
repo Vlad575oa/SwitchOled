@@ -44,13 +44,20 @@ body {
 }
 
 .container {
-  @apply max-w-screen-xl mx-auto;
+  @apply mx-auto;
 }
 
-/* Extra-wide desktops (24–27"): slightly wider content area */
+/* Desktop: +40px wider content area */
+@media (min-width: 1024px) {
+  .container {
+    max-width: 1320px;
+  }
+}
+
+/* Extra-wide desktops (24–27"): keep proportional increase */
 @media (min-width: 1920px) {
   .container {
-    max-width: 1340px; /* +60px vs 1280px */
+    max-width: 1380px;
   }
 }
 
