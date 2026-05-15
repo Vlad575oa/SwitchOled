@@ -5,6 +5,7 @@ import { formatPrice } from "@/lib/utils";
 import { ProductDeleteButton } from "./ProductDeleteButton";
 import { ProductDuplicateButton } from "./ProductDuplicateButton";
 import { ProductHideButton } from "./ProductHideButton";
+import { ProductStockToggleButton } from "./ProductStockToggleButton";
 import { cn } from "@/lib/utils";
 import { cookies } from "next/headers";
 import { ADMIN_COOKIE, verifyAdminSession } from "@/lib/adminSession";
@@ -225,6 +226,7 @@ export default async function ProductsPage({ searchParams }: Props) {
                     </td>
                     <td className="px-5 py-3">
                       <div className="flex items-center gap-2 justify-end">
+                        <ProductStockToggleButton productId={p.id} inStock={p.inStock} />
                         <ProductDuplicateButton productId={p.id} />
                         <ProductHideButton productId={p.id} isVisible={p.isVisible !== false} />
                         <Link
