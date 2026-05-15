@@ -49,13 +49,13 @@ body {
 
 @media (min-width: 1024px) {
   .container {
-    max-width: 1320px !important;
+    max-width: 1600px !important;
   }
 }
 
 @media (min-width: 1920px) {
   .container {
-    max-width: 1440px !important;
+    max-width: 1800px !important;
   }
 }
 
