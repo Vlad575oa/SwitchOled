@@ -71,7 +71,7 @@ export const Header = () => {
     router.refresh();
   };
 
-  const iconBtn = "flex flex-col items-center justify-center w-12 h-12 rounded-xl hover:bg-white/[0.07] transition-all group relative";
+  const iconBtn = "flex flex-col items-center justify-center w-[62px] h-12 rounded-xl hover:bg-white/[0.07] transition-all group relative";
   const iconLabel = "text-[9px] font-black text-white uppercase tracking-wide mt-1 transition-colors text-center";
 
   return (
@@ -187,7 +187,7 @@ export const Header = () => {
           </Link>
 
           {/* Cart */}
-          <Link href="/cart" className={cn(iconBtn, "bg-primary/10 border border-primary/20 hover:bg-primary/20 hover:border-primary/35")}>
+          <Link href="/cart" className={cn(iconBtn, pathname === "/cart" && "bg-primary/10 border border-primary/20 hover:bg-primary/20 hover:border-primary/35")}>
             <div className="relative">
               <ShoppingCart size={18} className={cn("transition-colors", mounted && totalItems > 0 ? "text-primary" : "text-white")} />
               {mounted && totalItems > 0 && (
