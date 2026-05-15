@@ -236,6 +236,15 @@ export async function Catalog({
 
         {products.length > 0 ? (
           <>
+            {products[0]?.images[0] && (
+              <link
+                rel="preload"
+                as="image"
+                href={`/_next/image?url=${encodeURIComponent(products[0].images[0])}&w=384&q=40`}
+                // @ts-expect-error fetchpriority not in React types yet
+                fetchpriority="high"
+              />
+            )}
             <div className={gridClassName}>
               {products.map((product, idx) => (
                 <ProductCard
