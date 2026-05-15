@@ -83,7 +83,7 @@ export const QuickFilters = ({ enabledSlugs }: QuickFiltersProps) => {
                 key={item.slug}
                 href={item.href}
                 className={cn(
-                  "relative text-[12px] whitespace-nowrap px-2.5 py-1.5 rounded-lg transition-all shrink-0 active:scale-95",
+                  "relative text-[10px] xl:text-[11px] whitespace-nowrap px-2.5 py-1.5 rounded-lg transition-all shrink-0 active:scale-95",
                   active
                     ? "font-black text-[var(--text-primary)]"
                     : "font-bold text-neutral-400 hover:text-[var(--text-secondary)] hover:bg-neutral-100"
