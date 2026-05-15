@@ -1,7 +1,7 @@
 FROM node:20-alpine AS base
 
 FROM base AS deps
-RUN apk add --no-cache libc6-compat openssl
+RUN apk add --no-cache libc6-compat openssl vips-dev
 WORKDIR /app
 COPY package.json package-lock.json ./
 COPY prisma ./prisma/
@@ -16,7 +16,7 @@ RUN npx prisma generate
 RUN npm run build
 
 FROM base AS runner
-RUN apk add --no-cache openssl
+RUN apk add --no-cache openssl vips-dev
 WORKDIR /app
 ENV NODE_ENV=production
 
