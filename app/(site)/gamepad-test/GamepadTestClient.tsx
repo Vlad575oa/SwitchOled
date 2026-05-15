@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { Gamepad2, WifiOff, Vibrate, Info, Trash2 } from "lucide-react";
 import Link from "next/link";
-import Image from "next/image";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -365,16 +364,6 @@ function GamepadPanel({ gp, onVibrate }: { gp: GPState; onVibrate: () => void })
       <div className="grid grid-cols-1 md:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)] gap-6">
         {/* Left: gamepad illustration + sticks */}
         <div className="space-y-5 rounded-3xl border border-neutral-200 bg-gradient-to-b from-neutral-50 to-white p-5 overflow-visible">
-          <div className="rounded-2xl border border-neutral-200 bg-neutral-50 p-3 md:p-4">
-            <Image
-              src="/images/gamepad-test/gameshop24-gamepad.jpg"
-              alt="Геймпад gameshop24"
-              width={960}
-              height={716}
-              className="mx-auto w-[70%] max-w-[686px] h-auto rounded-xl"
-              priority
-            />
-          </div>
           <div className="flex gap-8 justify-center">
             <StickCircle x={lx} y={ly} label="Левый стик" ax={lx} ay={ly} points={leftTrail} showWorkArea={showWork} />
             <StickCircle x={rx} y={ry} label="Правый стик" ax={rx} ay={ry} points={rightTrail} showWorkArea={showWork} />
