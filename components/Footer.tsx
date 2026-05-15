@@ -69,7 +69,7 @@ export const Footer = ({ workingHours = "09:00 — 21:00", currentYear }: Footer
 
                     {/* Nav */}
                     <div>
-                        <h4 className="text-[9px] font-black uppercase tracking-[0.2em] text-primary mb-4">Каталог</h4>
+                        <h4 className="text-[9px] xl:text-[11px] font-black uppercase tracking-[0.2em] text-primary mb-4">Каталог</h4>
                         <ul className="space-y-2">
                             {[
                                 { name: "Nintendo Switch", href: "/catalog/nintendo" },
@@ -89,7 +89,7 @@ export const Footer = ({ workingHours = "09:00 — 21:00", currentYear }: Footer
 
                     {/* Info */}
                     <div>
-                        <h4 className="text-[9px] font-black uppercase tracking-[0.2em] text-primary mb-4">Информация</h4>
+                        <h4 className="text-[9px] xl:text-[11px] font-black uppercase tracking-[0.2em] text-primary mb-4">Информация</h4>
                         <ul className="space-y-2">
                                 {[
                                     { name: "О компании", href: "/about" },
@@ -109,7 +109,7 @@ export const Footer = ({ workingHours = "09:00 — 21:00", currentYear }: Footer
 
                     {/* Contacts */}
                     <div>
-                        <h4 className="text-[9px] font-black uppercase tracking-[0.2em] text-primary mb-4">Контакты</h4>
+                        <h4 className="text-[9px] xl:text-[11px] font-black uppercase tracking-[0.2em] text-primary mb-4">Контакты</h4>
                         <div className="space-y-3">
                             <Link href={`tel:${CONTACTS.phoneHref}`} className="flex items-center gap-3 group/item">
                                 <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center shrink-0 group-hover/item:bg-primary/20 transition-colors">
@@ -117,7 +117,7 @@ export const Footer = ({ workingHours = "09:00 — 21:00", currentYear }: Footer
                                 </div>
                                 <div>
                                     <p className="text-[16px] font-black text-white">{CONTACTS.phoneDisplay}</p>
-                                    <p className="text-[9px] font-bold text-neutral-500 uppercase tracking-widest">{workingHours}</p>
+                                    <p className="text-[9px] xl:text-[11px] font-bold text-neutral-500 uppercase tracking-widest">{workingHours}</p>
                                 </div>
                             </Link>
                             <Link href={`mailto:${CONTACTS.email}`} className="flex items-center gap-3 group/item">
@@ -126,7 +126,7 @@ export const Footer = ({ workingHours = "09:00 — 21:00", currentYear }: Footer
                                 </div>
                                 <div>
                                     <p className="text-[12px] font-black text-white">{CONTACTS.email}</p>
-                                    <p className="text-[9px] font-bold text-neutral-500 uppercase tracking-widest">Email</p>
+                                    <p className="text-[9px] xl:text-[11px] font-bold text-neutral-500 uppercase tracking-widest">Email</p>
                                 </div>
                             </Link>
                             <div className="flex items-center gap-3">
@@ -135,7 +135,7 @@ export const Footer = ({ workingHours = "09:00 — 21:00", currentYear }: Footer
                                 </div>
                                 <div>
                                     <p className="text-[12px] font-black text-white">{CONTACTS.address}</p>
-                                    <p className="text-[9px] font-bold text-neutral-500 uppercase tracking-widest">Шоурум</p>
+                                    <p className="text-[9px] xl:text-[11px] font-bold text-neutral-500 uppercase tracking-widest">Шоурум</p>
                                 </div>
                             </div>
                         </div>
