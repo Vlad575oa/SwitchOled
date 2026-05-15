@@ -371,7 +371,7 @@ function GamepadPanel({ gp, onVibrate }: { gp: GPState; onVibrate: () => void })
               alt="Геймпад gameshop24"
               width={960}
               height={716}
-              className="mx-auto w-full max-w-[980px] h-auto rounded-xl"
+              className="mx-auto w-[70%] max-w-[686px] h-auto rounded-xl"
               priority
             />
           </div>

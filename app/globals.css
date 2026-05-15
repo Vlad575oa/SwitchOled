@@ -47,6 +47,13 @@ body {
   @apply max-w-screen-xl mx-auto;
 }
 
+/* Extra-wide desktops (24–27"): slightly wider content area */
+@media (min-width: 1920px) {
+  .container {
+    max-width: 1340px; /* +60px vs 1280px */
+  }
+}
+
 /* ── Elevation system (flat cards, no neumorphism) ── */
 .neu-raised {
   background: #fff;
