@@ -43,24 +43,6 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-.container {
-  @apply mx-auto;
-}
-
-/* Desktop: +40px wider content area */
-@media (min-width: 1024px) {
-  .container {
-    max-width: 1320px;
-  }
-}
-
-/* Extra-wide desktops (24–27"): keep proportional increase */
-@media (min-width: 1920px) {
-  .container {
-    max-width: 1380px;
-  }
-}
-
 /* ── Elevation system (flat cards, no neumorphism) ── */
 .neu-raised {
   background: #fff;
