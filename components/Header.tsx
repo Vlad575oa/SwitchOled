@@ -75,7 +75,7 @@ export const Header = () => {
 
   return (
     <header className="sticky top-0 z-50 h-[68px] flex items-center bg-[#2c2c30] border-b border-white/[0.07] relative" style={{ boxShadow: "0 2px 12px rgba(0,0,0,0.25)" }}>
-      <div className="container px-4 flex items-center gap-2 xl:gap-4">
+      <div className="w-full mx-auto px-4 lg:px-10 flex items-center gap-2 xl:gap-4">
 
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2.5 group shrink-0">
