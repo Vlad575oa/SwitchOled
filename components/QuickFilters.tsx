@@ -58,7 +58,7 @@ export const QuickFilters = ({ enabledSlugs }: QuickFiltersProps) => {
   const fadeCls = "absolute top-0 bottom-0 z-10 w-16 pointer-events-none flex items-center";
 
   return (
-    <div className="sticky top-[68px] z-40 bg-[var(--bg-base)] border-b border-[var(--border)]">
+    <div className="sticky top-[76px] z-40 bg-[var(--bg-base)] border-b border-[var(--border)]">
       <div className="relative">
         {canScrollLeft && (
           <div className={cn(fadeCls, "left-0 bg-gradient-to-r from-[var(--bg-base)] to-transparent")}>
@@ -74,7 +74,7 @@ export const QuickFilters = ({ enabledSlugs }: QuickFiltersProps) => {
           onMouseLeave={() => setIsDragging(false)}
           onMouseUp={() => setIsDragging(false)}
           onMouseMove={onMouseMove}
-          className={cn("w-full max-w-[1600px] mx-auto flex items-center justify-center gap-1 overflow-x-auto no-scrollbar py-2 px-4 lg:px-10 scroll-smooth", isDragging ? "cursor-grabbing select-none" : "cursor-default")}
+          className={cn("w-full max-w-[1920px] mx-auto flex items-center justify-center gap-1 overflow-x-auto no-scrollbar py-2 px-4 lg:px-10 scroll-smooth", isDragging ? "cursor-grabbing select-none" : "cursor-default")}
         >
           {links.map((item) => {
             const active = isLinkActive(item);

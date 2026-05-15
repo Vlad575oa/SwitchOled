@@ -71,12 +71,12 @@ export const Header = () => {
     router.refresh();
   };
 
-  const iconBtn = "flex flex-col items-center justify-center w-[62px] h-12 rounded-xl hover:bg-white/[0.07] transition-all group relative";
-  const iconLabel = "text-[9px] font-black text-white uppercase tracking-wide mt-1 transition-colors text-center";
+  const iconBtn = "flex flex-col items-center justify-center w-[68px] h-[52px] rounded-xl hover:bg-white/[0.07] transition-all group relative";
+  const iconLabel = "text-[10px] font-black text-white uppercase tracking-wide mt-1 transition-colors text-center";
 
   return (
-    <header className="sticky top-0 z-50 h-[68px] flex items-center bg-[#2c2c30] border-b border-white/[0.07] relative" style={{ boxShadow: "0 2px 12px rgba(0,0,0,0.25)" }}>
-      <div className="w-full max-w-[1600px] mx-auto px-4 lg:pl-16 lg:pr-10 flex items-center gap-2 xl:gap-4">
+    <header className="sticky top-0 z-50 h-[76px] flex items-center bg-[#2c2c30] border-b border-white/[0.07] relative" style={{ boxShadow: "0 2px 12px rgba(0,0,0,0.25)" }}>
+      <div className="w-full max-w-[1920px] mx-auto px-4 lg:pl-16 lg:pr-10 flex items-center gap-2 xl:gap-4">
 
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2.5 group shrink-0">
@@ -85,8 +85,8 @@ export const Header = () => {
             <div className="absolute inset-0 bg-gradient-to-tr from-black/25 to-white/10" />
           </div>
           <div className="hidden lg:flex flex-col leading-none">
-            <span className="text-[8px] font-black text-white/30 uppercase tracking-[0.2em]">Premium Store</span>
-            <span className="text-[15px] font-black text-white tracking-tighter uppercase leading-tight">
+            <span className="text-[9px] font-black text-white/30 uppercase tracking-[0.2em]">Premium Store</span>
+            <span className="text-[17px] font-black text-white tracking-tighter uppercase leading-tight">
               Gameshop<span className="text-primary italic">24</span>
             </span>
           </div>
@@ -96,7 +96,7 @@ export const Header = () => {
         <button
           onClick={() => setMegaMenuOpen((v) => !v)}
           className={cn(
-            "hidden lg:flex items-center gap-2 px-4 h-9 border rounded-xl font-black text-[12px] uppercase tracking-tight transition-all group shrink-0",
+            "hidden lg:flex items-center gap-2 px-5 h-10 border rounded-xl font-black text-[13px] uppercase tracking-tight transition-all group shrink-0",
             megaMenuOpen
               ? "bg-white/15 border-white/20 text-white"
               : "bg-white/[0.06] border-white/[0.08] text-white/70 hover:bg-white/10 hover:text-white hover:border-white/15"

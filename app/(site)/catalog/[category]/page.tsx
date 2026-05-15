@@ -60,7 +60,7 @@ export default async function CategoryPage({ params, searchParams }: CatalogPage
   }
 
   return (
-    <main className="w-full max-w-[1600px] mx-auto px-6 lg:px-16 py-12">
+    <main className="w-full max-w-[1920px] mx-auto px-6 lg:px-16 py-12">
       <Catalog category={category} searchParams={searchParams} />
     </main>
   );
