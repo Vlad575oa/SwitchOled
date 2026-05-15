@@ -25,7 +25,7 @@ interface HomePageProps {
 
 export default async function HomePage({ searchParams }: HomePageProps) {
   return (
-    <main className="w-full mx-auto px-6 lg:px-10 pt-6 pb-20">
+    <main className="w-full max-w-[1600px] mx-auto px-6 lg:px-16 pt-6 pb-20">
 
       <div id="catalog" className="mb-20 scroll-mt-24">
         <Catalog

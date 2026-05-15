@@ -19,7 +19,7 @@ const TelegramIcon = () => (
 export const TopBar = ({ workingHours = "09:00 — 21:00" }: { workingHours?: string }) => {
   return (
     <div className="bg-[var(--bg-surface)] border-b border-[var(--bg-elevated)] transition-colors">
-      <div className="container px-4 h-10 flex items-center justify-between gap-2 sm:gap-4">
+      <div className="w-full max-w-[1600px] mx-auto px-4 lg:px-10 h-10 flex items-center justify-between gap-2 sm:gap-4">
         {/* Left: Location, Time & Trust Badges */}
         <div className="flex items-center gap-3 sm:gap-6 overflow-hidden">
           <div className="flex items-center gap-3 sm:gap-4 sm:border-r sm:border-[var(--bg-elevated)] sm:pr-6 shrink-0">

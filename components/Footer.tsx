@@ -13,7 +13,7 @@ export const Footer = ({ workingHours = "09:00 — 21:00", currentYear }: Footer
         <footer className="bg-[#2c2c30] text-white pt-12 pb-6 border-t border-white/[0.06] relative overflow-hidden">
             <div className="absolute top-0 left-1/4 w-80 h-80 bg-primary/5 blur-[120px] rounded-full -translate-y-1/2 pointer-events-none" />
 
-            <div className="container relative z-10 px-4">
+            <div className="w-full max-w-[1600px] mx-auto relative z-10 px-4 lg:px-10">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12 mb-10">
 
                     {/* Brand */}
