@@ -6,7 +6,7 @@ import { useCompareStore } from "@/features/product/store/useCompareStore";
 import { ShoppingCart, Menu, User, LogOut, Package, Heart, Scale } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import dynamic from "next/dynamic";
 
@@ -27,6 +27,7 @@ interface CurrentUser {
 }
 
 export const Header = () => {
+  const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
   const [user, setUser] = useState<CurrentUser | null>(null);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
@@ -114,7 +115,7 @@ export const Header = () => {
         </div>
 
         {/* Icons */}
-        <div className="flex items-center gap-3 shrink-0">
+        <div className="flex items-center gap-5 lg:gap-6 shrink-0 ml-auto">
 
           {/* Auth */}
           <div className="relative" ref={menuRef}>
@@ -152,7 +153,7 @@ export const Header = () => {
                 )}
               </button>
             ) : (
-              <Link href="/auth/login" className={iconBtn}>
+              <Link href="/auth/login" className={cn(iconBtn, pathname?.startsWith("/auth") && "bg-primary/10 border border-primary/20")}>
                 <User size={18} className="text-white transition-colors" />
                 <span className={iconLabel}>Войти</span>
               </Link>
@@ -160,7 +161,7 @@ export const Header = () => {
           </div>
 
           {/* Wishlist */}
-          <Link href="/wishlist" className={cn(iconBtn, "hidden sm:flex")}>
+          <Link href="/wishlist" className={cn(iconBtn, "hidden sm:flex", pathname === "/wishlist" && "bg-primary/10 border border-primary/20")}>
             <div className="relative">
               <Heart size={18} className={cn("transition-colors", mounted && wishlistCount > 0 ? "text-red-400 fill-red-400" : "text-white")} />
               {mounted && wishlistCount > 0 && (
@@ -173,7 +174,7 @@ export const Header = () => {
           </Link>
 
           {/* Compare */}
-          <Link href="/compare" className={cn(iconBtn, "hidden sm:flex ml-2")}>
+          <Link href="/compare" className={cn(iconBtn, "hidden sm:flex", pathname === "/compare" && "bg-primary/10 border border-primary/20")}>
             <div className="relative">
               <Scale size={18} className={cn("transition-colors", mounted && compareCount > 0 ? "text-blue-400" : "text-white")} />
               {mounted && compareCount > 0 && (
@@ -186,7 +187,7 @@ export const Header = () => {
           </Link>
 
           {/* Cart */}
-          <Link href="/cart" className={cn(iconBtn, "ml-1 bg-primary/10 border border-primary/20 hover:bg-primary/20 hover:border-primary/35")}>
+          <Link href="/cart" className={cn(iconBtn, "bg-primary/10 border border-primary/20 hover:bg-primary/20 hover:border-primary/35")}>
             <div className="relative">
               <ShoppingCart size={18} className={cn("transition-colors", mounted && totalItems > 0 ? "text-primary" : "text-white")} />
               {mounted && totalItems > 0 && (
