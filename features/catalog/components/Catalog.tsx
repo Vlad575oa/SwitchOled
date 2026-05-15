@@ -104,6 +104,9 @@ export async function Catalog({
 
   // ── Category-specific attribute filters ───────────────────────────────────
   const categoryFilterSections = CATEGORY_FILTERS[category] ?? [];
+  const hasAttributeFilters = categoryFilterSections.some(
+    (section) => Boolean(searchParams[section.paramKey])
+  );
   for (const section of categoryFilterSections) {
     const raw = searchParams[section.paramKey];
     if (!raw) continue;
@@ -141,7 +144,10 @@ export async function Catalog({
   let errorMsg = "";
   try {
     // On the "all" tab with default sort, prioritize Nintendo products
-    const useNintendoPriority = category === "all" && !sort && !q;
+    const hasNonSearchFilters = Boolean(
+      priceMin || priceMax || color || memory || status || hasAttributeFilters
+    );
+    const useNintendoPriority = category === "all" && !sort && !q && !hasNonSearchFilters;
     [products, totalCount, categoryData, categoryTree, availableVariantFilters] = await Promise.all([
       useNintendoPriority
         ? getProductsNintendoFirst(where, skip, pageSize)

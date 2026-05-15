@@ -162,7 +162,7 @@ export const getCategorySlugsByPrefix = cache(async (prefix: string) => {
   );
 });
 
-export const getProducts = cache(async (
+export const getProducts = async (
   where: Prisma.ProductWhereInput,
   orderBy: Prisma.ProductOrderByWithRelationInput,
   skip: number,
@@ -178,32 +178,34 @@ export const getProducts = cache(async (
     }),
     []
   );
-});
+};
 
 // Returns products with Nintendo/Switch categories first, then rest by newest
-export const getProductsNintendoFirst = cache(async (
+export const getProductsNintendoFirst = async (
   where: Prisma.ProductWhereInput,
   skip: number,
   take: number
 ) => {
   return safeQuery(async () => {
-    const results = await prisma.$queryRaw<any[]>`
-      SELECT p.*,
-        c.id as "cat_id", c.name as "cat_name", c.slug as "cat_slug",
-        CASE WHEN c.slug ILIKE '%nintendo%' OR c.slug ILIKE '%switch%' THEN 0 ELSE 1 END as priority,
-        CASE WHEN p."inStock" = true THEN 0 ELSE 1 END as stock_priority
-      FROM "Product" p
-      JOIN "Category" c ON p."categoryId" = c.id
-      WHERE p."isVisible" IS DISTINCT FROM false
-      ORDER BY priority ASC, stock_priority ASC, p."createdAt" DESC
-      LIMIT ${take} OFFSET ${skip}
-    `;
-    return results.map((r: any) => ({
-      ...r,
-      category: { id: r.cat_id, name: r.cat_name, slug: r.cat_slug },
-    }));
+    const rows = await prisma.product.findMany({
+      where: { AND: [VISIBLE, where] },
+      orderBy: [{ inStock: "desc" }, { createdAt: "desc" }],
+      include: { category: true },
+    });
+
+    const prioritized = rows.sort((a, b) => {
+      const aPriority = /nintendo|switch/i.test(a.category.slug) ? 0 : 1;
+      const bPriority = /nintendo|switch/i.test(b.category.slug) ? 0 : 1;
+
+      if (aPriority !== bPriority) return aPriority - bPriority;
+      if (a.inStock !== b.inStock) return a.inStock ? -1 : 1;
+
+      return b.createdAt.getTime() - a.createdAt.getTime();
+    });
+
+    return prioritized.slice(skip, skip + take);
   }, []);
-});
+};
 
 export const getProductBySlug = cache(async (slug: string) => {
   return safeQuery(
@@ -236,19 +238,19 @@ export const getAllProducts = cache(async (take: number = 48) => {
   );
 });
 
-export const getProductsCount = cache(async (where: Prisma.ProductWhereInput) => {
+export const getProductsCount = async (where: Prisma.ProductWhereInput) => {
   return safeQuery(
     () => prisma.product.count({ where: { AND: [VISIBLE, where] } }),
     0
   );
-});
+};
 
 export interface CatalogVariantFilters {
   colors: string[];
   memories: string[];
 }
 
-export const getCatalogVariantFilters = cache(async (categorySlugs: string[]) => {
+export const getCatalogVariantFilters = async (categorySlugs: string[]) => {
   return safeQuery(async () => {
     const categoryFilter = categorySlugs.length
       ? { category: { slug: { in: categorySlugs } } }
@@ -286,7 +288,7 @@ export const getCatalogVariantFilters = cache(async (categorySlugs: string[]) =>
       memories: Array.from(memorySet),
     } as CatalogVariantFilters;
   }, { colors: [], memories: [] } as CatalogVariantFilters);
-});
+};
 
 export const getOrdersCount = cache(async () => {
   return safeQuery(() => prisma.order.count(), 0);

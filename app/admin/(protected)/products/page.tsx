@@ -223,10 +223,12 @@ export default async function ProductsPage({ searchParams }: Props) {
                     <td className="px-5 py-3 text-xs font-bold text-neutral-500">{p.category.name}</td>
                     <td className="px-5 py-3">
                       <p className="text-sm font-black text-[#111827]">{formatPrice(p.price)}</p>
+                      <div className="mt-2">
+                        <ProductStockToggleButton productId={p.id} inStock={p.inStock} />
+                      </div>
                     </td>
                     <td className="px-5 py-3">
                       <div className="flex items-center gap-2 justify-end">
-                        <ProductStockToggleButton productId={p.id} inStock={p.inStock} />
                         <ProductDuplicateButton productId={p.id} />
                         <ProductHideButton productId={p.id} isVisible={p.isVisible !== false} />
                         <Link
