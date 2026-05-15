@@ -60,6 +60,8 @@ const COLOR_OPTIONS = [
   "Белый", "Чёрный", "Серый", "Синий", "Красный", "Жёлтый",
   "Коралловый", "Бирюзовый", "Зелёный", "Розовый", "Фиолетовый",
   "Золотой", "Серебристый", "Белый/Чёрный", "Белый/Красный",
+  "Mario Edition", "Neon", "Pokemon Edition", "Splatoon 3 Edition",
+  "White", "Zelda Edition",
 ];
 
 const MEMORY_OPTIONS = [
