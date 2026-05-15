@@ -43,6 +43,22 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+.container {
+  @apply mx-auto;
+}
+
+@media (min-width: 1024px) {
+  .container {
+    max-width: 1320px !important;
+  }
+}
+
+@media (min-width: 1920px) {
+  .container {
+    max-width: 1440px !important;
+  }
+}
+
 /* ── Elevation system (flat cards, no neumorphism) ── */
 .neu-raised {
   background: #fff;
