@@ -8,9 +8,15 @@ import {
   getCatalogVariantFilters,
 } from "@/lib/queries";
 import { Suspense } from "react";
+import dynamic from "next/dynamic";
 import { ProductCard } from "@/features/product/components/ProductCard";
-import { FilterSidebar } from "@/features/catalog/components/FilterSidebar";
 import { MobileFilterDrawer } from "@/features/catalog/components/MobileFilterDrawer";
+
+// FilterSidebar uses framer-motion — lazy load so it doesn't block initial render
+const FilterSidebar = dynamic(
+  () => import("@/features/catalog/components/FilterSidebar").then((m) => m.FilterSidebar),
+  { ssr: false }
+);
 import { SortingSelect } from "@/features/catalog/components/SortingSelect";
 import { ActiveFiltersBar } from "@/features/catalog/components/ActiveFiltersBar";
 import { CATEGORY_FILTERS } from "@/features/catalog/config/categoryFilters";

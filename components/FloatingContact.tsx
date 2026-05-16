@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { MaxContactLink } from "./MaxContactLink";
 
 export const FloatingContact = () => {
@@ -9,16 +10,13 @@ export const FloatingContact = () => {
         <div className="absolute inset-0 bg-[#A044FF] rounded-full blur-xl opacity-20 group-hover:opacity-40 transition-opacity" />
 
         <div className="relative w-full h-full flex items-center justify-center transition-transform group-hover:rotate-6 drop-shadow-xl">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/icons/logotip-messendzhera-max.svg"
-              alt="Chat with Max"
-              width={38}
-              height={38}
-              loading="lazy"
-              fetchPriority="low"
-              className="object-contain rounded-full shadow-lg w-full h-full"
-            />
+          <Image
+            src="/icons/logotip-messendzhera-max.svg"
+            alt="Chat with Max"
+            width={38}
+            height={38}
+            className="object-contain rounded-full shadow-lg"
+          />
         </div>
         
         {/* Tooltip */}

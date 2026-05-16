@@ -81,10 +81,8 @@ export default async function SiteLayout({
       <Footer workingHours={workingHours} currentYear={currentYear} />
 
       <MobileBottomNav />
-      <DeferredRender delayMs={3000}>
-        <CookieBanner />
-      </DeferredRender>
-      <DeferredRender delayMs={4000}>
+      <CookieBanner />
+      <DeferredRender delayMs={5000}>
         <ChatWidget />
       </DeferredRender>
     </>

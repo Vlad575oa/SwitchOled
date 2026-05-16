@@ -5,8 +5,9 @@ import loadDynamic from "next/dynamic";
 import { Metadata } from "next";
 import { Suspense } from "react";
 
-// Removed force-dynamic — page uses Data Cache + unstable_cache in queries.
-// searchParams make the route per-request by default; no need to force it.
+// force-dynamic required: page reads DB on every request via Catalog + ExpertInsights.
+// Individual queries are cached at the Data Cache layer via unstable_cache (revalidate).
+export const dynamic = "force-dynamic";
 
 const RecentlyViewed = loadDynamic(
   () => import("@/features/product/components/RecentlyViewed").then((m) => m.RecentlyViewed),

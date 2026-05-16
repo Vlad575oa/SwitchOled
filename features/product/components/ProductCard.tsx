@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback } from "react";
+import { useHydrated } from "@/lib/hooks/useHydrated";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { ShoppingCart, Heart, Scale, Info } from "lucide-react";
@@ -31,7 +32,7 @@ interface ProductCardProps {
 
 export const ProductCard = ({ product, eagerImage = false }: ProductCardProps) => {
   const [activeImageIndex, setActiveImageIndex] = useState(0);
-  const [mounted, setMounted] = useState(false);
+  const hydrated = useHydrated();
   const router = useRouter();
   const productUrl = `/catalog/${product.category?.slug || "any"}/${product.slug}`;
   const paymentMethodsPrice = product.priceOld ?? Math.round(product.price * 1.13);
@@ -44,13 +45,9 @@ export const ProductCard = ({ product, eagerImage = false }: ProductCardProps) =
   const addToCart = useCartStore((s) => s.addItem);
 
   const imagesCount = product.images.length;
-  const hydratedInWishlist = mounted && inWishlist;
-  const hydratedInCompare = mounted && inCompare;
-  const hydratedCompareFull = mounted && compareFull;
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const hydratedInWishlist = hydrated && inWishlist;
+  const hydratedInCompare = hydrated && inCompare;
+  const hydratedCompareFull = hydrated && compareFull;
 
   const goToProduct = useCallback(() => router.push(productUrl), [productUrl, router]);
 

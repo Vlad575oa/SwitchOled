@@ -22,23 +22,25 @@ export const CookieBanner = () => {
 
     if (consent) return;
 
+    // Wait for window.load (all resources) + delay to ensure banner never becomes LCP element.
+    // Mobile browsers need LCP image to paint first, then we can show the banner.
     const isDesktop = window.matchMedia("(min-width: 1024px)").matches;
-    const delayMs = isDesktop ? 8000 : 3500;
+    const postLoadDelay = isDesktop ? 4000 : 6000;
     let timerId: number | undefined;
 
-    const showLater = () => {
-      timerId = window.setTimeout(() => setIsVisible(true), delayMs);
+    const scheduleShow = () => {
+      timerId = window.setTimeout(() => setIsVisible(true), postLoadDelay);
     };
 
-    if ("requestIdleCallback" in window) {
-      (window as Window & { requestIdleCallback: (cb: IdleRequestCallback, options?: IdleRequestOptions) => number })
-        .requestIdleCallback(showLater, { timeout: 3000 });
+    if (document.readyState === "complete") {
+      scheduleShow();
     } else {
-      showLater();
+      window.addEventListener("load", scheduleShow, { once: true });
     }
 
     return () => {
-      if (timerId) window.clearTimeout(timerId);
+      window.clearTimeout(timerId);
+      window.removeEventListener("load", scheduleShow);
     };
   }, []);
 

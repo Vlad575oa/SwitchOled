@@ -1,20 +1,34 @@
-"use client";
-
-import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, Clock } from "lucide-react";
+import { unstable_cache } from "next/cache";
+import prisma from "@/lib/prisma";
 
-export const ExpertInsights = () => {
-  const [posts, setPosts] = useState<any[]>([]);
+const getRecentPosts = unstable_cache(
+  async () => {
+    const raw = await prisma.post.findMany({
+      where: { isPublished: true },
+      orderBy: { createdAt: "desc" },
+      take: 9,
+      select: { id: true, title: true, slug: true, excerpt: true, image: true, category: true },
+    });
 
-  useEffect(() => {
-    fetch("/api/posts?limit=3")
-      .then(res => res.json())
-      .then(data => setPosts(data))
-      .catch(() => {});
-  }, []);
+    const isNintendo = (p: (typeof raw)[0]) =>
+      p.category?.toLowerCase().includes("nintendo") ||
+      p.title?.toLowerCase().includes("nintendo") ||
+      p.title?.toLowerCase().includes("switch");
 
+    return [
+      ...raw.filter(isNintendo),
+      ...raw.filter((p) => !isNintendo(p)),
+    ].slice(0, 3);
+  },
+  ["recent-posts"],
+  { revalidate: 3600, tags: ["posts"] }
+);
+
+export async function ExpertInsights() {
+  const posts = await getRecentPosts();
   if (!posts.length) return null;
 
   return (
@@ -32,9 +46,9 @@ export const ExpertInsights = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {posts.slice(0, 3).map((post) => (
-          <Link 
-            key={post.slug} 
+        {posts.map((post) => (
+          <Link
+            key={post.slug}
             href={`/blog/${post.slug}`}
             className="group flex flex-col bg-white border border-neutral-100 rounded-2xl shadow-sm overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
           >
@@ -55,7 +69,7 @@ export const ExpertInsights = () => {
                   {post.category || "Обзор"}
                 </span>
                 <span className="text-[var(--text-muted)] text-[9px] font-bold uppercase tracking-widest flex items-center gap-1.5">
-                   <Clock size={10} /> 4 мин
+                  <Clock size={10} /> 4 мин
                 </span>
               </div>
               <h4 className="text-lg font-black text-[var(--text-primary)] leading-tight uppercase tracking-tight group-hover:text-primary transition-colors mb-4 line-clamp-2">
@@ -70,4 +84,4 @@ export const ExpertInsights = () => {
       </div>
     </section>
   );
-};
+}
