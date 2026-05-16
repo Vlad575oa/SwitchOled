@@ -1,4 +1,5 @@
 import { cache } from "react";
+import { unstable_cache } from "next/cache";
 import prisma from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 
@@ -60,28 +61,32 @@ export const getCategoryTree = cache(async () => {
   }, []);
 });
 
-export const getCategorySlugsWithProducts = cache(async (): Promise<string[]> => {
-  return safeQuery(async () => {
-    // Get all categories with their parentId and direct product count
-    const all = await prisma.category.findMany({
-      select: { id: true, slug: true, parentId: true, _count: { select: { products: { where: VISIBLE } } } },
-    });
+export const getCategorySlugsWithProducts = unstable_cache(
+  async (): Promise<string[]> => {
+    return safeQuery(async () => {
+      // Get all categories with their parentId and direct product count
+      const all = await prisma.category.findMany({
+        select: { id: true, slug: true, parentId: true, _count: { select: { products: { where: VISIBLE } } } },
+      });
 
-    const withProducts = new Set(all.filter((c) => c._count.products > 0).map((c) => c.id));
+      const withProducts = new Set(all.filter((c) => c._count.products > 0).map((c) => c.id));
 
-    // Walk up: if a child has products, mark its parent (and grandparent) as valid too
-    for (const cat of all) {
-      if (cat.parentId !== null && withProducts.has(cat.id)) {
-        withProducts.add(cat.parentId);
-        // one more level up (grandparent)
-        const parent = all.find((c) => c.id === cat.parentId);
-        if (parent?.parentId !== null && parent?.parentId != null) withProducts.add(parent.parentId);
+      // Walk up: if a child has products, mark its parent (and grandparent) as valid too
+      for (const cat of all) {
+        if (cat.parentId !== null && withProducts.has(cat.id)) {
+          withProducts.add(cat.parentId);
+          // one more level up (grandparent)
+          const parent = all.find((c) => c.id === cat.parentId);
+          if (parent?.parentId !== null && parent?.parentId != null) withProducts.add(parent.parentId);
+        }
       }
-    }
 
-    return all.filter((c) => withProducts.has(c.id)).map((c) => c.slug);
-  }, []);
-});
+      return all.filter((c) => withProducts.has(c.id)).map((c) => c.slug);
+    }, []);
+  },
+  ["category-slugs-with-products"],
+  { revalidate: 300, tags: ["products"] }
+);
 
 export const getCategoryBySlug = cache(async (slug: string) => {
   return safeQuery(

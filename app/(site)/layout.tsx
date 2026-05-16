@@ -1,20 +1,22 @@
 import { TopBar } from "@/components/TopBar";
 import { Footer } from "@/components/Footer";
+import { HeaderSkeleton } from "@/components/HeaderSkeleton";
+import { QuickFilters } from "@/components/QuickFilters";
 import { Suspense } from "react";
 import { CONTACTS } from "@/lib/constants/contacts";
 import { getPageContent } from "@/lib/getPageContent";
 import { getCategorySlugsWithProducts } from "@/lib/queries";
+import { unstable_cache } from "next/cache";
 import { ALL_QUICK_LINKS } from "@/lib/constants/quickLinks";
 import dynamic from "next/dynamic";
 import { DeferredRender } from "@/components/DeferredRender";
 
+// Header is client-only (zustand stores + auth fetch).
+// HeaderSkeleton is rendered server-side to reserve space and prevent CLS.
 const Header = dynamic(() => import("@/components/Header").then((m) => m.Header), {
   ssr: false,
+  loading: () => <HeaderSkeleton />,
 });
-const QuickFilters = dynamic(
-  () => import("@/components/QuickFilters").then((m) => m.QuickFilters),
-  { ssr: false }
-);
 const FloatingContact = dynamic(
   () => import("@/components/FloatingContact").then((m) => m.FloatingContact),
   { ssr: false }
@@ -32,22 +34,26 @@ const ChatWidget = dynamic(
   { ssr: false }
 );
 
-const getSiteConfig = async () => {
-  try {
-    const [contacts, home] = await Promise.all([
-      getPageContent("contacts"),
-      getPageContent("home"),
-    ]);
-    const weekdays = (contacts.hours_weekdays ?? "").trim();
-    const workingHours = weekdays || CONTACTS.workingHours;
-    const enabledSlugs: string[] = Array.isArray((home as any).quick_filter_slugs)
-      ? (home as any).quick_filter_slugs
-      : [];
-    return { workingHours, enabledSlugs };
-  } catch {
-    return { workingHours: CONTACTS.workingHours, enabledSlugs: [] };
-  }
-};
+const getSiteConfig = unstable_cache(
+  async () => {
+    try {
+      const [contacts, home] = await Promise.all([
+        getPageContent("contacts"),
+        getPageContent("home"),
+      ]);
+      const weekdays = (contacts.hours_weekdays ?? "").trim();
+      const workingHours = weekdays || CONTACTS.workingHours;
+      const enabledSlugs: string[] = Array.isArray((home as any).quick_filter_slugs)
+        ? (home as any).quick_filter_slugs
+        : [];
+      return { workingHours, enabledSlugs };
+    } catch {
+      return { workingHours: CONTACTS.workingHours, enabledSlugs: [] };
+    }
+  },
+  ["site-config"],
+  { revalidate: 300, tags: ["site-config"] }
+);
 
 export default async function SiteLayout({
   children,
@@ -67,9 +73,7 @@ export default async function SiteLayout({
     <>
       <TopBar workingHours={workingHours} />
       <Header />
-      <Suspense fallback={null}>
-        <QuickFilters enabledSlugs={activeQuickSlugs} />
-      </Suspense>
+      <QuickFilters enabledSlugs={activeQuickSlugs} />
       <main className="flex-grow">
         {children}
       </main>

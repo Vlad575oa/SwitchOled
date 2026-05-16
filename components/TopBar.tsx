@@ -1,18 +1,19 @@
 import Link from "next/link";
+import Image from "next/image";
 import { MapPin, Clock, ShieldCheck, Award } from "lucide-react";
 import { MaxContactLink } from "./MaxContactLink";
 import { CONTACTS } from "@/lib/constants/contacts";
 
 const MaxIcon = () => (
-  <img src="/icons/logotip-messendzhera-max.svg" alt="MAX" className="w-full h-full object-contain overflow-hidden rounded-full" />
+  <Image src="/icons/logotip-messendzhera-max.svg" alt="MAX" width={26} height={26} className="object-contain rounded-full" />
 );
 
 const WhatsAppIcon = () => (
-  <img src="/icons/whatsapp-svgrepo-com.svg" alt="WhatsApp" className="w-full h-full object-contain" />
+  <Image src="/icons/whatsapp-svgrepo-com.svg" alt="WhatsApp" width={26} height={26} className="object-contain" />
 );
 
 const TelegramIcon = () => (
-  <img src="/icons/telegram-svgrepo-com.svg" alt="Telegram" className="w-full h-full object-contain" />
+  <Image src="/icons/telegram-svgrepo-com.svg" alt="Telegram" width={26} height={26} className="object-contain" />
 );
 
 
@@ -88,7 +89,7 @@ export const TopBar = ({ workingHours = "09:00 — 21:00" }: { workingHours?: st
               href={CONTACTS.telegramUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-7 h-7 flex items-center justify-center hover:scale-110 transition-all drop-shadow-sm"
+              className="flex items-center justify-center hover:scale-110 transition-all drop-shadow-sm"
               title="Telegram"
             >
               <TelegramIcon />
@@ -97,13 +98,13 @@ export const TopBar = ({ workingHours = "09:00 — 21:00" }: { workingHours?: st
               href={`https://wa.me/${CONTACTS.phoneHref.replace("+", "")}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-7 h-7 flex items-center justify-center hover:scale-110 transition-all drop-shadow-sm"
+              className="flex items-center justify-center hover:scale-110 transition-all drop-shadow-sm"
               title="WhatsApp"
             >
               <WhatsAppIcon />
             </Link>
             <MaxContactLink
-              className="w-[26px] h-[26px] flex items-center justify-center hover:scale-110 transition-all drop-shadow-sm"
+              className="flex items-center justify-center hover:scale-110 transition-all drop-shadow-sm"
               title="MAX"
             >
               <MaxIcon />
