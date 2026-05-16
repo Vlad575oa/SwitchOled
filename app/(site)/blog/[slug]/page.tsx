@@ -8,7 +8,6 @@ import { ArrowLeft, Clock, User, Share2, Bookmark, MessageCircle, ChevronRight }
 import Link from "next/link";
 import { Metadata } from "next";
 import { marked } from "marked";
-import { BlogShareBar } from "@/components/BlogShareBar";
 import { Prisma } from "@prisma/client";
 
 const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || "https://gameshop24.ru").replace("://www.", "://");
@@ -240,14 +239,6 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
           ">
             <div dangerouslySetInnerHTML={{ __html: marked(post.content) as string }} />
           </div>
-
-          {/* Social Proof & Interactive Footer */}
-          <footer className="mt-20 pt-10 border-t border-neutral-100">
-            <BlogShareBar
-              title={post.title}
-              url={`${baseUrl}/blog/${post.slug}`}
-            />
-          </footer>
 
           {relatedProducts.length > 0 && (
             <div className="mt-14 space-y-6">
