@@ -12,7 +12,7 @@ import { MobileStickyCart } from "@/features/product/components/MobileStickyCart
 import { RelatedProducts } from "@/features/product/components/RelatedProducts";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
-import { buildProductMetaDescription, buildProductMetaTitle } from "@/lib/seo";
+import { buildProductMetaDescription, resolveProductMetaTitle } from "@/lib/seo";
 
 const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || "https://gameshop24.ru").replace("://www.", "://");
 
@@ -26,7 +26,7 @@ export async function generateMetadata({
   const product = await getProductBySlug(params.product);
   if (!product) return { title: "Товар не найден" };
 
-  const title = product.metaTitle?.trim() || buildProductMetaTitle(product.name);
+  const title = resolveProductMetaTitle(product.metaTitle, product.name);
   const description =
     product.metaDesc?.trim() ||
     buildProductMetaDescription({

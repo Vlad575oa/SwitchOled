@@ -1,28 +1,43 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { getCategorySlugsVisibleInCatalog } from "@/lib/categoryVisibility";
 
 const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || "https://gameshop24.ru").replace("://www.", "://");
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  let categories: Array<{ slug: string }> = [];
+  let categories: Array<{
+    id: number;
+    slug: string;
+    parentId: number | null;
+    _count: { products: number };
+  }> = [];
 
   try {
     categories = await prisma.category.findMany({
-      where: {
-        products: {
-          some: { isVisible: { not: false } },
-        },
+      select: {
+        id: true,
+        slug: true,
+        parentId: true,
+        _count: { select: { products: { where: { isVisible: { not: false } } } } },
       },
-      select: { slug: true },
     });
   } catch (error) {
     console.error("SITEMAP categories.xml error:", error);
   }
 
-  const urls = categories
-    .map((c) => `<url><loc>${baseUrl}/catalog/${c.slug}</loc></url>`)
+  const visibleSlugs = getCategorySlugsVisibleInCatalog(
+    categories.map((category) => ({
+      id: category.id,
+      slug: category.slug,
+      parentId: category.parentId,
+      productCount: category._count.products,
+    }))
+  );
+
+  const urls = visibleSlugs
+    .map((slug) => `<url><loc>${baseUrl}/catalog/${slug}</loc></url>`)
     .join("");
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>

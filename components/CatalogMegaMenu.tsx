@@ -157,13 +157,13 @@ export function CatalogMegaMenu({ onClose }: CatalogMegaMenuProps) {
 
   // Filter a group's sub-links to only those whose category has products
   const filterLinks = (links: SubLink[]): SubLink[] => {
-    if (!availableSlugs) return links;
+    if (!availableSlugs) return [];
     return links.filter((l) => availableSlugs.has(hrefToSlug(l.href)));
   };
 
   // A group is visible if it has at least one visible sub-link OR its own slug has products
   const isGroupVisible = (group: PlatformGroup): boolean => {
-    if (!availableSlugs) return true;
+    if (!availableSlugs) return false;
     const ownSlug = hrefToSlug(group.href);
     if (availableSlugs.has(ownSlug)) return true;
     return filterLinks(group.links).length > 0;

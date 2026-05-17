@@ -5,11 +5,10 @@ export default function SitemapInfoPage() {
     {
       title: "Каталог",
       links: [
-        { name: "PlayStation 5", href: "/catalog/playstation" },
-        { name: "Xbox Series", href: "/catalog/xbox" },
         { name: "Nintendo Switch", href: "/catalog/nintendo" },
-        { name: "Аксессуары", href: "/catalog/accessories" },
-        { name: "Игры", href: "/catalog/games" },
+        { name: "Nintendo Switch OLED", href: "/catalog/nintendo-switch-oled" },
+        { name: "Nintendo Switch Lite", href: "/catalog/nintendo-switch-lite" },
+        { name: "Все товары", href: "/catalog/all" },
       ]
     },
     {

@@ -2,6 +2,7 @@ import { cache } from "react";
 import { unstable_cache } from "next/cache";
 import prisma from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
+import { getCategorySlugsVisibleInCatalog } from "@/lib/categoryVisibility";
 
 const VISIBLE: Prisma.ProductWhereInput = { isVisible: { not: false } };
 
@@ -69,19 +70,14 @@ export const getCategorySlugsWithProducts = unstable_cache(
         select: { id: true, slug: true, parentId: true, _count: { select: { products: { where: VISIBLE } } } },
       });
 
-      const withProducts = new Set(all.filter((c) => c._count.products > 0).map((c) => c.id));
-
-      // Walk up: if a child has products, mark its parent (and grandparent) as valid too
-      for (const cat of all) {
-        if (cat.parentId !== null && withProducts.has(cat.id)) {
-          withProducts.add(cat.parentId);
-          // one more level up (grandparent)
-          const parent = all.find((c) => c.id === cat.parentId);
-          if (parent?.parentId !== null && parent?.parentId != null) withProducts.add(parent.parentId);
-        }
-      }
-
-      return all.filter((c) => withProducts.has(c.id)).map((c) => c.slug);
+      return getCategorySlugsVisibleInCatalog(
+        all.map((category) => ({
+          id: category.id,
+          slug: category.slug,
+          parentId: category.parentId,
+          productCount: category._count.products,
+        }))
+      );
     }, []);
   },
   ["category-slugs-with-products"],

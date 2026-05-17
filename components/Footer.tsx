@@ -50,9 +50,8 @@ export const Footer = ({ workingHours = "09:00 — 21:00", currentYear }: Footer
                         <ul className="space-y-2">
                             {[
                                 { name: "Nintendo Switch", href: "/catalog/nintendo" },
-                                { name: "PlayStation 5", href: "/catalog/playstation" },
-                                { name: "Xbox Series", href: "/catalog/xbox" },
-                                { name: "Аксессуары", href: "/catalog/accessories" },
+                                { name: "Nintendo Switch OLED", href: "/catalog/nintendo-switch-oled" },
+                                { name: "Nintendo Switch Lite", href: "/catalog/nintendo-switch-lite" },
                                 { name: "Все товары", href: "/catalog/all" },
                             ].map((item) => (
                                 <li key={item.name}>

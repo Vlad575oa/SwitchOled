@@ -16,6 +16,12 @@ export function buildProductMetaTitle(name: string): string {
   return truncateByWords(`${name} — Купить в Gameshop24`, 70);
 }
 
+export function resolveProductMetaTitle(metaTitle: string | null | undefined, name: string): string {
+  const normalized = metaTitle?.trim() ?? "";
+  if (!normalized || /(?:[-–—|:]\s*)$/.test(normalized)) return buildProductMetaTitle(name);
+  return normalized;
+}
+
 export function buildProductMetaDescription(params: {
   name: string;
   categoryName?: string | null;
@@ -37,4 +43,3 @@ export function normalizeCopySlug(slug: string): string {
     .replace(/--+/g, "-")
     .replace(/^-|-$/g, "");
 }
-
