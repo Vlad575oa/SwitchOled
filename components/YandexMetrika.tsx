@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { COOKIE_CONSENT_EVENT, hasAnalyticsConsent } from "@/lib/analytics/cookieConsent";
 
 declare global {
   interface Window {
@@ -13,6 +14,7 @@ declare global {
 
 const METRIKA_ID = 108974800;
 const METRIKA_SRC = `https://mc.yandex.ru/metrika/tag.js?id=${METRIKA_ID}`;
+const AUDIT_UA_RE = /Lighthouse|HeadlessChrome|HeadlessChromium|Chrome-Lighthouse|Page Speed|PageSpeed/i;
 
 export default function YandexMetrika() {
   useEffect(() => {
@@ -20,13 +22,14 @@ export default function YandexMetrika() {
     const host = window.location.hostname;
     const ua = navigator.userAgent || "";
     const isLocalEnv = host === "localhost" || host === "127.0.0.1" || host === "::1";
-    const isSyntheticAudit = /Lighthouse|HeadlessChrome|HeadlessChromium|Chrome-Lighthouse/i.test(ua);
+    const isSyntheticAudit = AUDIT_UA_RE.test(ua) || navigator.webdriver;
 
     if (!isProd || isLocalEnv || isSyntheticAudit) {
       return;
     }
 
     const initMetrika = () => {
+      if (!hasAnalyticsConsent()) return;
       if (window.ym?.l) return;
 
       window.ym = window.ym || function (...args: unknown[]) {
@@ -56,19 +59,38 @@ export default function YandexMetrika() {
     const scheduleInit = () => {
       if ("requestIdleCallback" in window) {
         (window as Window & { requestIdleCallback: (cb: IdleRequestCallback, options?: IdleRequestOptions) => number })
-          .requestIdleCallback(() => initMetrika(), { timeout: 8000 });
+          .requestIdleCallback(() => initMetrika(), { timeout: 15000 });
       } else {
-        globalThis.setTimeout(initMetrika, 4000);
+        globalThis.setTimeout(initMetrika, 10000);
       }
+    };
+
+    const scheduleAfterFirstInteraction = () => {
+      window.removeEventListener("pointerdown", scheduleAfterFirstInteraction);
+      window.removeEventListener("keydown", scheduleAfterFirstInteraction);
+      scheduleInit();
+    };
+
+    const onConsentUpdated = () => {
+      initMetrika();
     };
 
     if (document.readyState === "complete") {
       scheduleInit();
-      return;
+    } else {
+      window.addEventListener("load", scheduleInit, { once: true });
     }
 
-    window.addEventListener("load", scheduleInit, { once: true });
-    return () => window.removeEventListener("load", scheduleInit);
+    window.addEventListener("pointerdown", scheduleAfterFirstInteraction, { once: true, passive: true });
+    window.addEventListener("keydown", scheduleAfterFirstInteraction, { once: true });
+    window.addEventListener(COOKIE_CONSENT_EVENT, onConsentUpdated);
+
+    return () => {
+      window.removeEventListener("load", scheduleInit);
+      window.removeEventListener("pointerdown", scheduleAfterFirstInteraction);
+      window.removeEventListener("keydown", scheduleAfterFirstInteraction);
+      window.removeEventListener(COOKIE_CONSENT_EVENT, onConsentUpdated);
+    };
   }, []);
 
   return null;

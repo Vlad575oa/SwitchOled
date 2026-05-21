@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/Button";
 import { ShoppingCart, Check } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { trackEcommerceAddToCart } from "@/lib/analytics/metrikaEcommerce";
 
 interface AddToCartButtonProps {
   product: {
@@ -32,6 +33,15 @@ export const AddToCartButton = ({ product, className }: AddToCartButtonProps) =>
       quantity: 1,
       inStock: product.inStock !== false,
     });
+    trackEcommerceAddToCart(
+      {
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        quantity: 1,
+      },
+      "product_page"
+    );
     
     setIsAdded(true);
     toast.success("Добавлено в корзину", { description: product.name, duration: 2000 });
@@ -55,4 +65,3 @@ export const AddToCartButton = ({ product, className }: AddToCartButtonProps) =>
 };
 
 import { cn } from "@/lib/utils";
-

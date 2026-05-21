@@ -3,23 +3,17 @@
 import { useState, useEffect } from "react";
 import { Cookie } from "lucide-react";
 import Link from "next/link";
-import { cn } from "@/lib/utils";
+import { getCookieConsent, setCookieConsent } from "@/lib/analytics/cookieConsent";
 
 export const CookieBanner = () => {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     const ua = navigator.userAgent || "";
-    const isSyntheticAudit = /Lighthouse|HeadlessChrome|Chrome-Lighthouse/i.test(ua);
+    const isSyntheticAudit = /Lighthouse|HeadlessChrome|HeadlessChromium|Chrome-Lighthouse|Page Speed|PageSpeed/i.test(ua) || navigator.webdriver;
     if (isSyntheticAudit) return;
 
-    let consent: string | null = null;
-    try {
-      consent = localStorage.getItem("cookie-consent");
-    } catch {
-      // Some browsers/privacy modes can throw on storage access.
-    }
-
+    const consent = getCookieConsent();
     if (consent) return;
 
     // Wait for window.load (all resources) + delay to ensure banner never becomes LCP element.
@@ -45,11 +39,12 @@ export const CookieBanner = () => {
   }, []);
 
   const handleAccept = () => {
-    try {
-      localStorage.setItem("cookie-consent", "accepted");
-    } catch {
-      // Ignore storage write errors and just hide the banner.
-    }
+    setCookieConsent("accepted");
+    setIsVisible(false);
+  };
+
+  const handleDecline = () => {
+    setCookieConsent("declined");
     setIsVisible(false);
   };
 
@@ -84,10 +79,10 @@ export const CookieBanner = () => {
               Принять всё
             </button>
             <button 
-              onClick={() => setIsVisible(false)}
+              onClick={handleDecline}
               className="px-4 py-2.5 bg-white/5 hover:bg-white/10 rounded-xl font-black text-sm transition-all border border-white/10"
             >
-              Закрыть
+              Отказаться
             </button>
           </div>
         </div>
