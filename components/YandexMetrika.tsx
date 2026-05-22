@@ -72,7 +72,12 @@ export default function YandexMetrika() {
     };
 
     const onConsentUpdated = () => {
-      initMetrika();
+      if (hasAnalyticsConsent()) {
+        initMetrika();
+      } else if (window.ym?.l) {
+        // Script already loaded but consent revoked — reload to stop tracking
+        window.location.reload();
+      }
     };
 
     if (document.readyState === "complete") {
