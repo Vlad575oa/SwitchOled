@@ -27,7 +27,7 @@ export function trackEcommerceAddToCart(product: EcommerceProductInput, source: 
   const quantity = product.quantity && product.quantity > 0 ? product.quantity : 1;
 
   window.dataLayer = window.dataLayer || [];
-  window.dataLayer.push({
+  const event = {
     ecommerce: {
       currencyCode: "RUB",
       add: {
@@ -45,5 +45,10 @@ export function trackEcommerceAddToCart(product: EcommerceProductInput, source: 
         ],
       },
     },
-  });
+  };
+  window.dataLayer.push(event);
+
+  if (process.env.NODE_ENV === "development") {
+    console.log("[Metrika ecommerce] add_to_cart", event);
+  }
 }

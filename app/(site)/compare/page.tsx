@@ -9,6 +9,7 @@ import { formatPrice } from "@/lib/utils";
 import { useCartStore } from "@/features/cart/store/useCartStore";
 import { useWishlistStore } from "@/features/product/store/useWishlistStore";
 import { toast } from "sonner";
+import { trackEcommerceAddToCart } from "@/lib/analytics/metrikaEcommerce";
 
 interface Product {
   id: number;
@@ -267,6 +268,7 @@ export default function ComparePage() {
                             <button
                               onClick={() => {
                                 addToCart({ id: p.id, name: p.name, slug: p.slug, price: p.price, image: p.images[0] || "/placeholder.jpg", quantity: 1 });
+                                trackEcommerceAddToCart({ id: p.id, name: p.name, price: p.price }, "catalog_grid");
                                 toast.success("Добавлено в корзину", { description: p.name, duration: 2000 });
                               }}
                               className="flex-1 h-7 bg-orange-500 text-white rounded-xl text-[8px] font-black hover:bg-orange-600 transition-all flex items-center justify-center gap-0.5"
@@ -365,6 +367,7 @@ export default function ComparePage() {
                             <button
                               onClick={() => {
                                 addToCart({ id: p.id, name: p.name, slug: p.slug, price: p.price, image: p.images[0] || "/placeholder.jpg", quantity: 1 });
+                                trackEcommerceAddToCart({ id: p.id, name: p.name, price: p.price }, "catalog_grid");
                                 toast.success("Добавлено в корзину", { description: p.name, duration: 2000 });
                               }}
                               className="flex-1 h-9 bg-orange-500 text-white rounded-xl text-[10px] font-black hover:bg-orange-600 transition-all flex items-center justify-center gap-1.5"
