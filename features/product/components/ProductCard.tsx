@@ -44,6 +44,7 @@ export function ProductCard({ product, eagerImage = false }: ProductCardProps) {
               fill
               sizes="(max-width: 640px) 46vw, (max-width: 1024px) 30vw, (max-width: 1280px) 22vw, 16vw"
               quality={40}
+              priority={eagerImage}
               loading={eagerImage ? "eager" : "lazy"}
               fetchPriority={eagerImage ? "high" : "auto"}
               className="object-contain p-1 transition-transform duration-500 group-hover:scale-105"
