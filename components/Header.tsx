@@ -32,6 +32,7 @@ export const Header = () => {
   const [user, setUser] = useState<CurrentUser | null>(null);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [megaMenuOpen, setMegaMenuOpen] = useState(false);
+  const [searchReady, setSearchReady] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const totalItems = useCartStore((state) => state.totalItems());
   const clearCart = useCartStore((s) => s.clearCart);
@@ -46,6 +47,11 @@ export const Header = () => {
   useEffect(() => {
     setMounted(true);
     fetch("/api/auth/me").then((r) => r.json()).then(setUser).catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setSearchReady(true), 1800);
+    return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {
@@ -110,8 +116,24 @@ export const Header = () => {
 
 
         {/* Search */}
-        <div className="flex-1 min-w-[150px] max-w-2xl">
-          <Search />
+        <div
+          className="flex-1 min-w-[150px] max-w-2xl"
+          onMouseEnter={() => setSearchReady(true)}
+          onFocusCapture={() => setSearchReady(true)}
+          onTouchStart={() => setSearchReady(true)}
+        >
+          {searchReady ? (
+            <Search />
+          ) : (
+            <button
+              type="button"
+              aria-label="Открыть поиск"
+              onClick={() => setSearchReady(true)}
+              className="w-full h-11 rounded-[14px] bg-white border-2 border-neutral-200 text-left px-4 text-[14px] text-neutral-400 font-medium"
+            >
+              Искать в Gameshop24...
+            </button>
+          )}
         </div>
 
         {/* Icons */}

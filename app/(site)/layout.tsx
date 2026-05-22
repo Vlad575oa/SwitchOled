@@ -17,10 +17,6 @@ const Header = dynamic(() => import("@/components/Header").then((m) => m.Header)
   ssr: false,
   loading: () => <HeaderSkeleton />,
 });
-const FloatingContact = dynamic(
-  () => import("@/components/FloatingContact").then((m) => m.FloatingContact),
-  { ssr: false }
-);
 const MobileBottomNav = dynamic(
   () => import("@/components/MobileBottomNav").then((m) => m.MobileBottomNav),
   { ssr: false }
@@ -65,7 +61,10 @@ export default async function SiteLayout({
 
   // Filter QuickFilters: only slugs enabled by admin AND have at least one product
   // "all" is always shown if enabled (it's not a real category slug in DB)
-  const slugsWithProducts = await getCategorySlugsWithProducts();
+  const slugsWithProducts = await getCategorySlugsWithProducts().catch((error) => {
+    console.error("CATEGORY QUICK FILTERS ERROR:", error);
+    return [] as string[];
+  });
   const activeQuickSlugs = (enabledSlugs.length > 0 ? enabledSlugs : ALL_QUICK_LINKS.map((l) => l.slug))
     .filter((slug) => slug === "all" || slugsWithProducts.includes(slug));
 

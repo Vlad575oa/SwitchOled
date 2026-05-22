@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import { useRecentlyViewed } from "@/features/product/hooks/useRecentlyViewed";
-import { ProductCard } from "@/features/product/components/ProductCard";
+import { ProductCardClient } from "@/features/product/components/ProductCardClient";
 import { cn } from "@/lib/utils";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
@@ -142,7 +142,7 @@ export function RecentlyViewed() {
         >
           {filtered.map((product) => (
             <div key={product.id} className="min-w-[240px] snap-start">
-              <ProductCard product={product} />
+              <ProductCardClient product={product} />
             </div>
           ))}
         </div>
