@@ -20,6 +20,44 @@ declare global {
   }
 }
 
+interface PurchaseInput {
+  orderId: string | number;
+  items: EcommerceProductInput[];
+  revenue: number; // in kopecks
+}
+
+export function trackEcommercePurchase({ orderId, items, revenue }: PurchaseInput) {
+  if (typeof window === "undefined") return;
+  if (!hasAnalyticsConsent()) return;
+
+  window.dataLayer = window.dataLayer || [];
+  const event = {
+    ecommerce: {
+      currencyCode: "RUB",
+      purchase: {
+        actionField: {
+          id: String(orderId),
+          revenue: revenue / 100, // kopecks → rubles
+        },
+        products: items.map((p) => ({
+          id: String(p.id),
+          name: p.name,
+          price: p.price / 100, // kopecks → rubles
+          quantity: p.quantity ?? 1,
+          brand: p.brand,
+          category: p.category,
+          variant: p.variant,
+        })),
+      },
+    },
+  };
+  window.dataLayer.push(event);
+
+  if (process.env.NODE_ENV === "development") {
+    console.log("[Metrika ecommerce] purchase", event);
+  }
+}
+
 export function trackEcommerceAddToCart(product: EcommerceProductInput, source: AddToCartSource) {
   if (typeof window === "undefined") return;
   if (!hasAnalyticsConsent()) return;

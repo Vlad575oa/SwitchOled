@@ -42,7 +42,10 @@ export async function generateMetadata({
     openGraph: {
       title,
       description,
-      images: product.images?.[0] ? [{ url: product.images[0] }] : [],
+      url: `${baseUrl}/catalog/${product.category.slug}/${product.slug}`,
+      images: product.images?.[0]
+        ? [{ url: product.images[0].startsWith("http") ? product.images[0] : `${baseUrl}${product.images[0]}` }]
+        : [],
       type: "article",
     },
   };

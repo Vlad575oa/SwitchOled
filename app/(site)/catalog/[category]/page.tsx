@@ -42,7 +42,9 @@ export async function generateMetadata({
     openGraph: {
       title,
       description,
-      type: 'website',
+      url: `${baseUrl}/catalog/${params.category}`,
+      images: [{ url: `${baseUrl}/og-catalog.jpg` }],
+      type: "website",
     },
   };
 }

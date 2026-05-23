@@ -1,17 +1,36 @@
 "use client";
 
 import { useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { useCartStore } from "@/features/cart/store/useCartStore";
+import { trackEcommercePurchase } from "@/lib/analytics/metrikaEcommerce";
 import { Button } from "@/components/ui/Button";
 import Link from "next/link";
 import { CheckCircle2 } from "lucide-react";
 
 export default function SuccessPage() {
-  const clearCart = useCartStore((state) => state.clearCart);
+  const searchParams = useSearchParams();
+  const { items, totalPrice, clearCart } = useCartStore();
 
   useEffect(() => {
+    const orderId = searchParams.get("orderId") ?? "unknown";
+
+    if (items.length > 0) {
+      trackEcommercePurchase({
+        orderId,
+        revenue: totalPrice(),
+        items: items.map((item) => ({
+          id: item.id,
+          name: item.name,
+          price: item.price,
+          quantity: item.quantity,
+        })),
+      });
+    }
+
     clearCart();
-  }, [clearCart]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <main className="container py-32 text-center">
