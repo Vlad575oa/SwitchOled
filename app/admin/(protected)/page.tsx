@@ -1,23 +1,44 @@
 import prisma from "@/lib/prisma";
 import Link from "next/link";
-import { Package, ShoppingBag, FileText, TrendingUp, Plus, ArrowRight, Clock } from "lucide-react";
+import { Package, ShoppingBag, FileText, TrendingUp, Plus, ArrowRight, Clock, ShoppingCart, LayoutGrid } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminDashboard() {
   let productsCount = 0, ordersCount = 0, postsCount = 0, recentOrders: any[] = [], monthRevenue = 0;
+  let cartTotal = 0, cartGrid = 0, cartPage = 0;
+  let topCartProducts: { productId: number; _count: { id: number }; name?: string }[] = [];
   let dbError = false;
   try {
-    const [pc, oc, bc, ro, revenue] = await Promise.all([
+    const [pc, oc, bc, ro, revenue, cartAll, cartGridCount, cartPageCount, topCart] = await Promise.all([
       prisma.product.count(),
       prisma.order.count(),
       prisma.post.count(),
       prisma.order.findMany({ take: 8, orderBy: { createdAt: "desc" } }),
       prisma.order.aggregate({ where: { status: "paid" }, _sum: { totalAmount: true } }),
+      prisma.cartEvent.count(),
+      prisma.cartEvent.count({ where: { source: "catalog_grid" } }),
+      prisma.cartEvent.count({ where: { source: "product_page" } }),
+      prisma.cartEvent.groupBy({
+        by: ["productId"],
+        _count: { id: true },
+        orderBy: { _count: { id: "desc" } },
+        take: 5,
+      }),
     ]);
     productsCount = pc; ordersCount = oc; postsCount = bc; recentOrders = ro;
     monthRevenue = revenue._sum.totalAmount ?? 0;
+    cartTotal = cartAll; cartGrid = cartGridCount; cartPage = cartPageCount;
+
+    // Подгружаем имена товаров
+    const productIds = topCart.map((r) => r.productId);
+    const products = await prisma.product.findMany({
+      where: { id: { in: productIds } },
+      select: { id: true, name: true },
+    });
+    const nameMap = Object.fromEntries(products.map((p) => [p.id, p.name]));
+    topCartProducts = topCart.map((r) => ({ ...r, name: nameMap[r.productId] }));
   } catch {
     dbError = true;
   }
@@ -69,6 +90,62 @@ export default async function AdminDashboard() {
               <p className="text-2xl font-black text-[#111827]">{stat.value}</p>
             </div>
           ))}
+        </div>
+
+        {/* Cart events stats */}
+        <div className="bg-white rounded-2xl border border-neutral-100 shadow-sm overflow-hidden">
+          <div className="px-6 py-4 border-b border-neutral-100 flex items-center gap-3">
+            <div className="w-8 h-8 rounded-xl bg-orange-50 flex items-center justify-center">
+              <ShoppingCart size={15} className="text-orange-500" />
+            </div>
+            <div>
+              <h2 className="text-sm font-black text-[#111827]">Нажатия «В корзину»</h2>
+              <p className="text-[10px] text-neutral-400 font-bold">Собственная статистика сайта</p>
+            </div>
+          </div>
+          <div className="p-6">
+            <div className="grid grid-cols-3 gap-4 mb-6">
+              <div className="bg-neutral-50 rounded-xl p-4 text-center">
+                <p className="text-[10px] font-black uppercase tracking-widest text-neutral-400 mb-1">Всего</p>
+                <p className="text-2xl font-black text-[#111827]">{cartTotal}</p>
+              </div>
+              <div className="bg-orange-50 rounded-xl p-4 text-center">
+                <div className="flex items-center justify-center gap-1 mb-1">
+                  <LayoutGrid size={11} className="text-orange-400" />
+                  <p className="text-[10px] font-black uppercase tracking-widest text-orange-400">Из сетки</p>
+                </div>
+                <p className="text-2xl font-black text-orange-600">{cartGrid}</p>
+              </div>
+              <div className="bg-blue-50 rounded-xl p-4 text-center">
+                <div className="flex items-center justify-center gap-1 mb-1">
+                  <ShoppingCart size={11} className="text-blue-400" />
+                  <p className="text-[10px] font-black uppercase tracking-widest text-blue-400">Из карточки</p>
+                </div>
+                <p className="text-2xl font-black text-blue-600">{cartPage}</p>
+              </div>
+            </div>
+
+            {topCartProducts.length > 0 && (
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-widest text-neutral-400 mb-3">Топ товаров по кликам</p>
+                <div className="space-y-2">
+                  {topCartProducts.map((item, i) => (
+                    <div key={item.productId} className="flex items-center gap-3">
+                      <span className="w-5 h-5 rounded-full bg-neutral-100 text-[10px] font-black text-neutral-400 flex items-center justify-center shrink-0">{i + 1}</span>
+                      <p className="flex-1 text-xs font-bold text-[#111827] truncate">{item.name ?? `Товар #${item.productId}`}</p>
+                      <span className="text-xs font-black text-orange-600 shrink-0">{item._count.id} раз</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {cartTotal === 0 && (
+              <p className="text-center text-xs text-neutral-400 font-bold py-4">
+                Данных пока нет — статистика накапливается с момента деплоя
+              </p>
+            )}
+          </div>
         </div>
 
         {/* Quick links */}

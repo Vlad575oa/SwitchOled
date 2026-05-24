@@ -42,7 +42,12 @@ export const AddToCartButton = ({ product, className }: AddToCartButtonProps) =>
       },
       "product_page"
     );
-    
+    fetch("/api/cart-event", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ productId: product.id, source: "product_page" }),
+    }).catch(() => {});
+
     setIsAdded(true);
     toast.success("Добавлено в корзину", { description: product.name, duration: 2000 });
     setTimeout(() => setIsAdded(false), 2000);

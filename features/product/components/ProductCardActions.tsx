@@ -87,6 +87,11 @@ export function ProductCardActions({ product }: ProductCardActionsProps) {
             },
             "catalog_grid"
           );
+          fetch("/api/cart-event", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ productId: product.id, source: "catalog_grid" }),
+          }).catch(() => {});
           void notifyAddedToCart();
         }}
         className="flex-1 h-10 bg-orange-50 border border-orange-100 text-orange-600 rounded-2xl flex items-center justify-center hover:bg-orange-600 hover:text-white transition-colors active:scale-95"

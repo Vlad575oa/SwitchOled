@@ -180,6 +180,16 @@ model PageContent {
   updatedAt DateTime @updatedAt
 }
 
+model CartEvent {
+  id        Int      @id @default(autoincrement())
+  productId Int
+  source    String   // "catalog_grid" | "product_page"
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([productId])
+}
+
 model ContactMessage {
   id        Int      @id @default(autoincrement())
   name      String
