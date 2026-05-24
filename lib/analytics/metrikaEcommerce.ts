@@ -2,6 +2,8 @@
 
 import { hasAnalyticsConsent } from "@/lib/analytics/cookieConsent";
 
+const METRIKA_ID = 108974800;
+
 type AddToCartSource = "catalog_grid" | "product_page";
 
 interface EcommerceProductInput {
@@ -17,6 +19,20 @@ interface EcommerceProductInput {
 declare global {
   interface Window {
     dataLayer?: unknown[];
+    ym?: ((...args: unknown[]) => void) & { a?: unknown[]; l?: number };
+  }
+}
+
+function ymCall(...args: unknown[]) {
+  if (typeof window === "undefined") return;
+  if (typeof window.ym === "function") {
+    window.ym(...args);
+  } else {
+    // Queue call for when Metrika loads
+    window.ym = window.ym || Object.assign(function (...a: unknown[]) {
+      (window.ym!.a = window.ym!.a || []).push(a);
+    }, { a: [] as unknown[] });
+    (window.ym.a = window.ym.a || []).push(args);
   }
 }
 
@@ -60,6 +76,14 @@ export function trackEcommercePurchase({ orderId, items, revenue }: PurchaseInpu
 
 export function trackEcommerceAddToCart(product: EcommerceProductInput, source: AddToCartSource) {
   if (typeof window === "undefined") return;
+
+  // reachGoal fires regardless of ecommerce consent — used for goal counting
+  ymCall(METRIKA_ID, "reachGoal", "add_to_cart", {
+    product_id: String(product.id),
+    product_name: product.name,
+    source,
+  });
+
   if (!hasAnalyticsConsent()) return;
 
   const quantity = product.quantity && product.quantity > 0 ? product.quantity : 1;
@@ -73,7 +97,7 @@ export function trackEcommerceAddToCart(product: EcommerceProductInput, source: 
           {
             id: String(product.id),
             name: product.name,
-            price: product.price,
+            price: product.price / 100, // kopecks → rubles
             quantity,
             brand: product.brand,
             category: product.category,
