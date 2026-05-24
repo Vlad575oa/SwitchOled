@@ -66,8 +66,8 @@ export default function YandexMetrika() {
 
       window.ym(METRIKA_ID, "init", {
         ssr: true,
-        webvisor: false,
-        clickmap: false,
+        webvisor: true,
+        clickmap: true,
         ecommerce: "dataLayer",
         referrer: document.referrer,
         url: window.location.href,
