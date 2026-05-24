@@ -2,6 +2,7 @@ import prisma from "@/lib/prisma";
 import Link from "next/link";
 import { Package, ShoppingBag, FileText, TrendingUp, Plus, ArrowRight, Clock, ShoppingCart, LayoutGrid } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
+import { ClearCartEventsButton } from "./ClearCartEventsButton";
 
 export const dynamic = "force-dynamic";
 
@@ -103,6 +104,7 @@ export default async function AdminDashboard() {
               <p className="text-[10px] text-neutral-400 font-bold">Собственная статистика сайта</p>
             </div>
           </div>
+          <ClearCartEventsButton />
           <div className="p-6">
             <div className="grid grid-cols-3 gap-4 mb-6">
               <div className="bg-neutral-50 rounded-xl p-4 text-center">
