@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Phone, Mail, MapPin } from "lucide-react";
 import { MaxContactLink } from "./MaxContactLink";
 import { CONTACTS } from "@/lib/constants/contacts";
+import { PWAInstallButton } from "./PWAInstallButton";
 
 interface FooterProps {
     workingHours?: string;
@@ -139,6 +140,7 @@ export const Footer = ({ workingHours = "09:00 — 21:00", currentYear }: Footer
                         <p className="text-[11px] xl:text-[12px] font-black text-neutral-400 uppercase tracking-widest">
                             © {currentYear} Gameshop24
                         </p>
+                        <PWAInstallButton />
                     </div>
                 </div>
             </div>

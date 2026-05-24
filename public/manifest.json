@@ -1,0 +1,29 @@
+{
+  "name": "Gameshop24 — Магазин игровых консолей",
+  "short_name": "Gameshop24",
+  "description": "Оригинальные игровые консоли Nintendo, PlayStation, Xbox с гарантией и быстрой доставкой",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1a1a1e",
+  "theme_color": "#e8002d",
+  "orientation": "portrait-primary",
+  "lang": "ru",
+  "categories": ["shopping", "games"],
+  "icons": [
+    {
+      "src": "/apple-icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/apple-icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [],
+  "related_applications": [],
+  "prefer_related_applications": false
+}

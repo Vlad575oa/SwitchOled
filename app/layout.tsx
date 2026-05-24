@@ -157,6 +157,13 @@ export default function RootLayout({
         <link rel="preconnect" href="https://s3.ru1.storage.beget.cloud" crossOrigin="anonymous" />
         <link rel="icon" href="/favicon.svg?v=20260505" type="image/svg+xml" sizes="any" />
         <link rel="shortcut icon" href="/favicon.svg?v=20260505" type="image/svg+xml" />
+        <link rel="manifest" href="/manifest.json" />
+        <link rel="apple-touch-icon" href="/apple-icon.png" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="apple-mobile-web-app-title" content="Gameshop24" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="theme-color" content="#e8002d" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
