@@ -99,7 +99,7 @@ export default async function AdminDashboard() {
               <ShoppingCart size={15} className="text-orange-500" />
             </div>
             <div>
-              <h2 className="text-sm font-black text-[#111827]">Нажатия «В корзину»</h2>
+              <h2 className="text-sm font-black text-[#111827]">Положили в корзину</h2>
               <p className="text-[10px] text-neutral-400 font-bold">Собственная статистика сайта</p>
             </div>
           </div>
