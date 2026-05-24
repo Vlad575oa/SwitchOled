@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { useCartStore } from "@/features/cart/store/useCartStore";
 import { trackEcommercePurchase } from "@/lib/analytics/metrikaEcommerce";
@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/Button";
 import Link from "next/link";
 import { CheckCircle2 } from "lucide-react";
 
-export default function SuccessPage() {
+function SuccessContent() {
   const searchParams = useSearchParams();
   const { items, totalPrice, clearCart } = useCartStore();
 
@@ -50,5 +50,13 @@ export default function SuccessPage() {
         </Link>
       </div>
     </main>
+  );
+}
+
+export default function SuccessPage() {
+  return (
+    <Suspense>
+      <SuccessContent />
+    </Suspense>
   );
 }
