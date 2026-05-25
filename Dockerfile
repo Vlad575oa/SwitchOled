@@ -1,4 +1,11 @@
 FROM node:20-alpine AS base
+# Use multiple mirrors in case the CDN is flaky
+RUN printf '%s\n' \
+    'https://mirrors.aliyun.com/alpine/v3.23/main' \
+    'https://mirrors.aliyun.com/alpine/v3.23/community' \
+    'https://dl-cdn.alpinelinux.org/alpine/v3.23/main' \
+    'https://dl-cdn.alpinelinux.org/alpine/v3.23/community' \
+    > /etc/apk/repositories && apk update
 
 FROM base AS deps
 RUN apk add --no-cache libc6-compat openssl
@@ -17,7 +24,7 @@ RUN npx prisma generate
 RUN npm run build
 
 FROM base AS runner
-RUN apk update && apk add --no-cache openssl vips || apk add --no-cache openssl
+RUN apk add --no-cache openssl vips || apk add --no-cache openssl
 WORKDIR /app
 ENV NODE_ENV=production
 
