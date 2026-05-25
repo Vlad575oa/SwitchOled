@@ -17,7 +17,7 @@ RUN npx prisma generate
 RUN npm run build
 
 FROM base AS runner
-RUN apk add --no-cache openssl vips
+RUN apk update && apk add --no-cache openssl vips || apk add --no-cache openssl
 WORKDIR /app
 ENV NODE_ENV=production
 
