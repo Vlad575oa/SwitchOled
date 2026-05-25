@@ -136,22 +136,11 @@ export const Footer = ({ workingHours = "09:00 — 21:00", currentYear }: Footer
                         ))}
                     </div>
 
-                    {/* PWA banner — prominent on mobile */}
-                    <div className="lg:hidden mb-5 p-4 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-between gap-4">
-                        <div>
-                            <p className="text-white font-black text-[14px]">📱 Установить приложение</p>
-                            <p className="text-neutral-400 text-[11px] mt-0.5">Быстрый доступ к каталогу и заказам</p>
-                        </div>
-                        <PWAInstallButton />
-                    </div>
-
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                    <div className="flex items-center justify-between gap-3">
                         <p className="text-[11px] xl:text-[12px] font-black text-neutral-400 uppercase tracking-widest">
                             © {currentYear} Gameshop24
                         </p>
-                        <div className="hidden lg:block">
-                            <PWAInstallButton />
-                        </div>
+                        <PWAInstallButton />
                     </div>
                 </div>
             </div>

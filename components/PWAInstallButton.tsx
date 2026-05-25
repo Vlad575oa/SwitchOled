@@ -70,11 +70,11 @@ export function PWAInstallButton() {
       {/* Button */}
       <button
         onClick={handleClick}
-        className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary/10 border border-primary/30 text-primary hover:bg-primary/20 transition-all active:scale-95 text-[13px] font-bold"
+        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/10 border border-primary/30 text-primary hover:bg-primary/20 transition-all active:scale-95 text-[11px] font-black uppercase tracking-wide whitespace-nowrap"
         aria-label="Установить приложение"
       >
-        <Smartphone size={16} />
-        <span>Установить приложение</span>
+        <Smartphone size={13} />
+        <span>Скачать приложение</span>
       </button>
 
       {/* Modal */}
