@@ -251,9 +251,10 @@ export function ChatWidget() {
       {/* Floating button */}
       <button
         onClick={() => setIsOpen((v) => !v)}
-        className="w-14 h-14 rounded-full bg-primary text-white shadow-xl shadow-primary/40 hover:bg-red-700 hover:scale-110 active:scale-95 transition-all flex items-center justify-center relative"
+        className="flex items-center gap-2 pl-4 pr-5 h-14 rounded-full bg-primary text-white shadow-xl shadow-primary/40 hover:bg-red-700 hover:scale-105 active:scale-95 transition-all"
       >
-        {isOpen ? <X size={22} /> : <MessageCircle size={22} />}
+        {isOpen ? <X size={20} /> : <MessageCircle size={20} />}
+        {!isOpen && <span className="text-[13px] font-black tracking-wide">ИИ-чат</span>}
       </button>
     </div>
   );
