@@ -252,7 +252,7 @@ export function ChatWidget() {
       <div className="flex flex-col items-center gap-1">
         {!isOpen && (
           <span className="text-[10px] font-black text-white bg-black/50 backdrop-blur-sm px-2 py-0.5 rounded-full tracking-wide shadow">
-            ИИ-чат
+            Спросить ИИ ✨
           </span>
         )}
         <button
