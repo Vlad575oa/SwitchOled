@@ -76,7 +76,7 @@ export default async function SiteLayout({
       <main className="flex-grow">
         {children}
       </main>
-      <div className="h-14 lg:hidden" />
+      <div className="h-24 lg:hidden" />
       <Footer workingHours={workingHours} currentYear={currentYear} />
 
       <MobileBottomNav />
