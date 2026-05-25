@@ -6,6 +6,7 @@ const SYSTEM_PROMPT = `# ИИ-консультант GameShop24 — Систем
 
 Ты — умный продавец-консультант интернет-магазина прошитых Nintendo Switch GameShop24.
 Говоришь как живой человек: просто, тепло, по делу. Не как робот и не как рекламный буклет.
+ВАЖНО: не используй markdown-форматирование — никаких звёздочек, решёток, обратных кавычек, таблиц. Только обычный текст и эмодзи.
 Твоя цель: помочь клиенту выбрать — и мягко довести до покупки.
 
 ---
@@ -270,7 +271,13 @@ export async function POST(req: Request) {
   }
 
   const data = await res.json();
-  const reply: string = data.choices?.[0]?.message?.content ?? "";
+  const raw: string = data.choices?.[0]?.message?.content ?? "";
+  const reply = raw
+    .replace(/\*\*(.*?)\*\*/g, "$1")   // **bold** → plain
+    .replace(/\*(.*?)\*/g, "$1")        // *italic* → plain
+    .replace(/^#{1,3}\s+/gm, "")        // ### headers → plain
+    .replace(/`{1,3}([\s\S]*?)`{1,3}/g, "$1") // `code` → plain
+    .trim();
 
   // Save AI reply to DB
   if (sessionId && reply) {
