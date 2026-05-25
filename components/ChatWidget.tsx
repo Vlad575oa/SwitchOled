@@ -155,9 +155,9 @@ export function ChatWidget() {
                 </div>
                 <div className="flex flex-wrap gap-2 justify-center mt-1">
                   {[
-                    "Что лучше — PS5 или Xbox?",
-                    "Switch для ребёнка 7 лет",
-                    "Бюджет 30 000 ₽",
+                    "Switch OLED или Lite — что взять?",
+                    "Посоветуй для ребёнка 8 лет",
+                    "Что входит в прошивку?",
                   ].map((hint) => (
                     <button
                       key={hint}
