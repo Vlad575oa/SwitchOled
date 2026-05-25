@@ -64,9 +64,14 @@ export default function AdminChatPage() {
     return () => clearInterval(interval);
   }, [selectedId, fetchMessages]);
 
+  // Scroll to bottom only when opening a new dialog, not on every update
+  const prevSelectedId = useRef<string | null>(null);
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+    if (selectedId !== prevSelectedId.current) {
+      prevSelectedId.current = selectedId;
+      messagesEndRef.current?.scrollIntoView({ behavior: "instant" });
+    }
+  }, [selectedId, messages]);
 
   const handleSend = async () => {
     if (!selectedId || !reply.trim() || sending) return;
