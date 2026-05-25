@@ -11,7 +11,7 @@ interface FooterProps {
 
 export const Footer = ({ workingHours = "09:00 — 21:00", currentYear }: FooterProps) => {
     return (
-        <footer className="bg-[#2c2c30] text-white pt-12 pb-6 border-t border-white/[0.06] relative overflow-hidden">
+        <footer className="bg-[#2c2c30] text-white pt-12 pb-28 lg:pb-6 border-t border-white/[0.06] relative overflow-hidden">
             <div className="absolute top-0 left-1/4 w-80 h-80 bg-primary/5 blur-[120px] rounded-full -translate-y-1/2 pointer-events-none" />
 
             <div className="w-full max-w-[1920px] mx-auto relative z-10 px-4 lg:px-10">
@@ -136,11 +136,22 @@ export const Footer = ({ workingHours = "09:00 — 21:00", currentYear }: Footer
                         ))}
                     </div>
 
+                    {/* PWA banner — prominent on mobile */}
+                    <div className="lg:hidden mb-5 p-4 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-between gap-4">
+                        <div>
+                            <p className="text-white font-black text-[14px]">📱 Установить приложение</p>
+                            <p className="text-neutral-400 text-[11px] mt-0.5">Быстрый доступ к каталогу и заказам</p>
+                        </div>
+                        <PWAInstallButton />
+                    </div>
+
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                         <p className="text-[11px] xl:text-[12px] font-black text-neutral-400 uppercase tracking-widest">
                             © {currentYear} Gameshop24
                         </p>
-                        <PWAInstallButton />
+                        <div className="hidden lg:block">
+                            <PWAInstallButton />
+                        </div>
                     </div>
                 </div>
             </div>
