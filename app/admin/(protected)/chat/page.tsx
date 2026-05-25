@@ -325,26 +325,44 @@ export default function AdminChatPage() {
                 {messages.length === 0 ? (
                   <div className="text-center py-12 text-neutral-300 text-sm font-bold">Нет сообщений</div>
                 ) : (
-                  messages.map((msg) => (
-                    <div
-                      key={msg.id}
-                      className={cn("flex", msg.sender === "ADMIN" ? "justify-end" : "justify-start")}
-                    >
-                      <div
-                        className={cn(
-                          "max-w-[70%] px-4 py-2.5 rounded-2xl text-sm font-bold",
-                          msg.sender === "ADMIN"
-                            ? "bg-primary text-white rounded-br-sm"
-                            : "bg-white border border-neutral-100 text-[#111827] rounded-bl-sm shadow-sm"
+                  messages.map((msg, i) => {
+                    const msgDate = new Date(msg.createdAt);
+                    const prevDate = i > 0 ? new Date(messages[i - 1].createdAt) : null;
+                    const isNewDay = !prevDate || msgDate.toDateString() !== prevDate.toDateString();
+                    const today = new Date();
+                    const yesterday = new Date(today);
+                    yesterday.setDate(today.getDate() - 1);
+                    let dateLabel = msgDate.toLocaleDateString("ru-RU", { day: "numeric", month: "long", year: "numeric" });
+                    if (msgDate.toDateString() === today.toDateString()) dateLabel = "Сегодня";
+                    else if (msgDate.toDateString() === yesterday.toDateString()) dateLabel = "Вчера";
+
+                    return (
+                      <div key={msg.id}>
+                        {isNewDay && (
+                          <div className="flex items-center gap-3 my-4">
+                            <div className="flex-1 h-px bg-neutral-200" />
+                            <span className="text-[10px] font-black text-neutral-400 uppercase tracking-widest whitespace-nowrap">{dateLabel}</span>
+                            <div className="flex-1 h-px bg-neutral-200" />
+                          </div>
                         )}
-                      >
-                        <p className="leading-relaxed">{msg.content}</p>
-                        <p className={cn("text-[9px] mt-1 font-bold", msg.sender === "ADMIN" ? "text-white/60 text-right" : "text-neutral-300")}>
-                          {new Date(msg.createdAt).toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" })}
-                        </p>
+                        <div className={cn("flex", msg.sender === "ADMIN" ? "justify-end" : "justify-start")}>
+                          <div
+                            className={cn(
+                              "max-w-[70%] px-4 py-2.5 rounded-2xl text-sm font-bold",
+                              msg.sender === "ADMIN"
+                                ? "bg-primary text-white rounded-br-sm"
+                                : "bg-white border border-neutral-100 text-[#111827] rounded-bl-sm shadow-sm"
+                            )}
+                          >
+                            <p className="leading-relaxed">{msg.content}</p>
+                            <p className={cn("text-[9px] mt-1 font-bold", msg.sender === "ADMIN" ? "text-white/60 text-right" : "text-neutral-300")}>
+                              {msgDate.toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" })}
+                            </p>
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  ))
+                    );
+                  })
                 )}
                 <div ref={messagesEndRef} />
               </div>
