@@ -260,7 +260,12 @@ export default function AdminChatPage() {
                           {(s.name ?? s.visitorId.slice(0, 2)).toUpperCase().slice(0, 2)}
                         </div>
                         <div className="min-w-0">
-                          <p className="text-xs font-black text-[#111827] truncate">{s.name ?? `Гость ${s.visitorId.slice(0, 8)}`}</p>
+                          <div className="flex items-center gap-1.5">
+                            <p className="text-xs font-black text-[#111827] truncate">{s.name ?? `Гость ${s.visitorId.slice(0, 8)}`}</p>
+                            {s.visitorId.startsWith("ai_") && (
+                              <span className="flex-shrink-0 text-[9px] font-black px-1.5 py-0.5 rounded-md bg-violet-100 text-violet-600">🤖 AI</span>
+                            )}
+                          </div>
                           <p className="text-[10px] text-neutral-400 font-bold truncate mt-0.5">
                             {s.lastMessage?.content ?? "Нет сообщений"}
                           </p>
@@ -303,7 +308,12 @@ export default function AdminChatPage() {
               {/* Chat header */}
               <div className="bg-white border-b border-neutral-100 px-6 py-4 flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-black text-[#111827]">{selected?.name ?? `Гость ${selected?.visitorId.slice(0, 8)}`}</p>
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm font-black text-[#111827]">{selected?.name ?? `Гость ${selected?.visitorId.slice(0, 8)}`}</p>
+                    {selected?.visitorId.startsWith("ai_") && (
+                      <span className="text-[10px] font-black px-2 py-0.5 rounded-lg bg-violet-100 text-violet-600">🤖 ИИ-диалог</span>
+                    )}
+                  </div>
                   {selected?.email && <p className="text-xs text-neutral-400 font-bold">{selected.email}</p>}
                 </div>
                 <button

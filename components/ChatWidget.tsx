@@ -15,7 +15,22 @@ function makeId() {
 }
 
 const STORAGE_KEY = "ai_chat_history";
+const VISITOR_KEY = "ai_visitor_id";
+const SESSION_KEY = "ai_session_id";
 const MAX_STORED = 40;
+
+function getVisitorId(): string {
+  try {
+    let id = localStorage.getItem(VISITOR_KEY);
+    if (!id) {
+      id = "ai_" + makeId() + makeId();
+      localStorage.setItem(VISITOR_KEY, id);
+    }
+    return id;
+  } catch {
+    return "ai_" + makeId();
+  }
+}
 
 function loadHistory(): Message[] {
   if (typeof window === "undefined") return [];
@@ -64,16 +79,24 @@ export function ChatWidget() {
     setLoading(true);
 
     try {
+      const visitorId = getVisitorId();
+      const storedSession = localStorage.getItem(SESSION_KEY) ?? undefined;
+
       const res = await fetch("/api/ai-chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           messages: updated.map(({ role, content }) => ({ role, content })),
+          visitorId,
+          sessionId: storedSession,
         }),
       });
 
       if (res.ok) {
-        const { reply } = await res.json();
+        const { reply, sessionId } = await res.json();
+        if (sessionId) {
+          try { localStorage.setItem(SESSION_KEY, sessionId); } catch {}
+        }
         const aiMsg: Message = { role: "assistant", content: reply, id: makeId() };
         const final = [...updated, aiMsg];
         setMessages(final);
