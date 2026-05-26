@@ -26,6 +26,7 @@ export interface VariantRow {
   slug: string;
   sku: string;
   color: string;
+  colorHex: string;
   memory: string;
   price: string;
   priceOld: string;
@@ -73,7 +74,7 @@ const COLOR_ATTR_KEYS = ["Цвет"];
 const MEMORY_ATTR_KEYS = ["Накопитель", "Объём", "Объем"];
 
 const EMPTY_VARIANT: VariantRow = {
-  name: "", slug: "", sku: "", color: "", memory: "", price: "", priceOld: "", showOtherPaymentPrice: false, stock: "10",
+  name: "", slug: "", sku: "", color: "", colorHex: "", memory: "", price: "", priceOld: "", showOtherPaymentPrice: false, stock: "10",
   inStock: true, images: [], newImages: [], newPreviews: [], _deleted: false,
 };
 
@@ -279,6 +280,7 @@ export const ProductForm = ({
         data.append("showOtherPaymentPrice", String(v.showOtherPaymentPrice));
         data.append("categoryId", form.categoryId);
         data.append("color", v.color);
+        data.append("colorHex", v.colorHex || "");
         data.append("inStock", String(v.inStock));
         data.append("isNew", String(form.isNew));
         data.append("isSale", String(form.isSale));
@@ -512,6 +514,27 @@ export const ProductForm = ({
                             ))}
                           </select>
                           <ChevronDown size={14} className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400" />
+                        </div>
+                        <div className="flex items-center gap-2 mt-2">
+                          <label className="text-[10px] font-black uppercase tracking-widest text-neutral-400">
+                            HEX цвет кружка
+                          </label>
+                          <div className="flex items-center gap-1.5 flex-1">
+                            <input
+                              type="color"
+                              className="w-8 h-8 rounded-lg border border-neutral-200 cursor-pointer p-0.5 bg-white"
+                              value={v.colorHex || "#d1d5db"}
+                              onChange={(e) => setVariant(realIdx, "colorHex", e.target.value)}
+                            />
+                            <input
+                              type="text"
+                              className={inputCls + " !py-1.5 !text-xs font-mono"}
+                              value={v.colorHex}
+                              onChange={(e) => setVariant(realIdx, "colorHex", e.target.value)}
+                              placeholder="#d1d5db"
+                              maxLength={7}
+                            />
+                          </div>
                         </div>
                       </div>
                       <div>

@@ -314,6 +314,7 @@ export interface ProductVariantOption {
   images: string[];
   memory: string | null;
   color: string | null;
+  colorHex: string | null;
 }
 
 const ATTRIBUTE_MEMORY_KEYS = ["Накопитель", "Объём", "Объем"] as const;
@@ -426,6 +427,7 @@ export const getProductVariants = cache(async (productId: number) => {
         inStock: true,
         images: true,
         color: true,
+        colorHex: true,
         attributes: true,
       },
       orderBy: { price: "asc" },
@@ -451,6 +453,7 @@ export const getProductVariants = cache(async (productId: number) => {
       color: normalizeColor(
         readAttribute(item.attributes, ATTRIBUTE_COLOR_KEYS) ?? item.color ?? null
       ),
+      colorHex: item.colorHex ?? null,
     }));
 
     // Deduplicate by (color, memory): keep the current product if duplicated, otherwise first (cheapest)

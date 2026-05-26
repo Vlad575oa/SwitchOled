@@ -36,6 +36,7 @@ type VariantCardItem = {
   images: string[];
   memory: string | null;
   color: string | null;
+  colorHex: string | null;
 };
 
 const pickBestMatch = (
@@ -75,6 +76,7 @@ export function PurchaseBlock({ product, variants = [], categorySlug }: Purchase
           images: product.images,
           memory: null,
           color: null,
+          colorHex: null,
         },
       ];
     }
@@ -234,26 +236,45 @@ export function PurchaseBlock({ product, variants = [], categorySlug }: Purchase
             {colorOptions.length > 1 && (
               <div className="bg-[#f0f9ff] rounded-2xl p-4">
                 <label className="text-[10px] text-blue-500 font-bold uppercase mb-3 block">
-                  Цвет
+                  Цвет: <span className="text-secondary normal-case tracking-normal">{selectedVariant.color}</span>
                 </label>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-3">
                   {colorOptions.map((color) => {
                     const isSelected = selectedVariant.color === color;
                     const isAvailable = availableColors.has(color);
+                    const hex = variantItems.find((v) => v.color === color)?.colorHex ?? null;
                     return (
                       <button
                         key={color}
                         onClick={() => onColorChange(color)}
+                        title={color}
                         className={cn(
-                          "px-3 py-1.5 rounded-xl text-xs font-bold border transition-all",
-                          isSelected
-                            ? "bg-secondary text-white border-secondary"
-                            : isAvailable
-                            ? "bg-white text-secondary border-neutral-200 hover:border-secondary hover:shadow-sm"
-                            : "bg-white text-neutral-300 border-neutral-100 line-through"
+                          "flex flex-col items-center gap-1 group focus:outline-none",
+                          !isAvailable && "opacity-40"
                         )}
                       >
-                        {color}
+                        <span
+                          className={cn(
+                            "w-9 h-9 rounded-full border-2 transition-all flex items-center justify-center shadow-sm",
+                            isSelected
+                              ? "border-primary scale-110 shadow-md shadow-primary/20"
+                              : "border-transparent group-hover:border-neutral-300"
+                          )}
+                          style={hex ? { backgroundColor: hex } : { backgroundColor: "#d1d5db" }}
+                        >
+                          {isSelected && (
+                            <span
+                              className="w-2.5 h-2.5 rounded-full bg-white"
+                              style={hex ? { boxShadow: `0 0 0 1px ${hex}` } : {}}
+                            />
+                          )}
+                        </span>
+                        <span className={cn(
+                          "text-[9px] font-bold max-w-[48px] text-center leading-tight break-words",
+                          isSelected ? "text-primary" : "text-neutral-400"
+                        )}>
+                          {color}
+                        </span>
                       </button>
                     );
                   })}

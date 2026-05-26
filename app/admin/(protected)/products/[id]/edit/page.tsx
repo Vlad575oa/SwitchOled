@@ -70,6 +70,7 @@ export default async function EditProductPage({ params }: { params: { id: string
       slug: s.slug,
       sku: s.sku ?? "",
       color,
+      colorHex: s.colorHex ?? "",
       memory,
       price: String(priceRub),
       priceOld: String(priceOldRub),

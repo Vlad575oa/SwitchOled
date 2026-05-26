@@ -31,6 +31,7 @@ model Product {
   isNew       Boolean     @default(false)
   isSale      Boolean     @default(false)
   color       String?
+  colorHex    String?
   brand       String?
   attributes  Json?
   categoryId  Int
