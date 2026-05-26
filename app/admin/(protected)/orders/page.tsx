@@ -36,7 +36,7 @@ export default async function OrdersPage() {
           <table className="w-full text-left">
             <thead>
               <tr className="border-b border-neutral-100">
-                {["#", "Клиент", "Телефон", "Адрес", "Товары", "Сумма", "Статус", "Дата", ""].map((h) => (
+                {["#", "Клиент", "Телефон", "Адрес", "Комментарий", "Товары", "Сумма", "Статус", "Дата", ""].map((h) => (
                   <th key={h} className="px-5 py-3.5 text-[9px] font-black uppercase tracking-widest text-neutral-400">{h}</th>
                 ))}
               </tr>
@@ -44,7 +44,7 @@ export default async function OrdersPage() {
             <tbody>
               {orders.length === 0 ? (
                 <tr>
-                  <td colSpan={9} className="px-5 py-20 text-center">
+                  <td colSpan={10} className="px-5 py-20 text-center">
                     <ShoppingBag size={40} className="mx-auto mb-3 text-neutral-200" />
                     <p className="text-neutral-400 font-bold text-sm">Заказов пока нет</p>
                   </td>
@@ -58,6 +58,9 @@ export default async function OrdersPage() {
                       <td className="px-5 py-4 text-xs font-bold text-neutral-700">{order.name}</td>
                       <td className="px-5 py-4 text-xs font-bold text-neutral-700">{order.phone}</td>
                       <td className="px-5 py-4 text-xs font-bold text-neutral-700 min-w-[280px] whitespace-normal break-words">{order.address}</td>
+                      <td className="px-5 py-4 text-xs text-neutral-500 font-medium min-w-[180px] whitespace-normal break-words">
+                        {order.comment || <span className="text-neutral-300">—</span>}
+                      </td>
                       <td className="px-5 py-4 min-w-[220px]">
                         <div className="space-y-1">
                           {order.items.map((item) => (

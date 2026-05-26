@@ -10,6 +10,7 @@ const CheckoutSchema = z.object({
   name: z.string().trim().min(2).max(80),
   phone: z.string().trim().min(10).max(24),
   address: z.string().trim().min(6).max(240),
+  comment: z.string().trim().max(500).optional(),
   items: z.array(z.object({
     id: z.number().int().positive(),
     quantity: z.number().int().positive().max(20),
@@ -26,7 +27,7 @@ export async function POST(req: Request) {
     if (!parsed.success) {
       return NextResponse.json({ success: false, error: "Некорректные данные заказа" }, { status: 400 });
     }
-    const { name, phone, address, items } = parsed.data;
+    const { name, phone, address, comment, items } = parsed.data;
     const sessionToken = cookies().get(SESSION_COOKIE)?.value;
     let userId: number | null = null;
 
@@ -45,6 +46,7 @@ export async function POST(req: Request) {
       name,
       phone,
       address,
+      comment,
       userId,
       items: items.map((item) => ({
         productId: item.id,

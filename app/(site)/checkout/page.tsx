@@ -13,6 +13,7 @@ interface CheckoutFormData {
   name: string;
   phone: string;
   address: string;
+  comment: string;
   consent: boolean;
 }
 
@@ -45,7 +46,10 @@ export default function CheckoutPage() {
       const response = await fetch("/api/checkout", {
         method: "POST",
         body: JSON.stringify({
-          ...data,
+          name: data.name,
+          phone: data.phone,
+          address: data.address,
+          comment: data.comment || undefined,
           items,
           totalAmount: finalTotal,
           promoCode: promoApplied ? promoCode : undefined,
@@ -123,6 +127,16 @@ export default function CheckoutPage() {
                 placeholder="Город, улица, дом, квартира"
               />
               {errors.address && <p className="text-xs font-bold text-red-500 mt-1">{errors.address.message}</p>}
+            </div>
+
+            <div>
+              <label className="block text-sm font-bold text-neutral-400 mb-2">Комментарий к заказу <span className="font-medium">(необязательно)</span></label>
+              <textarea
+                {...register("comment")}
+                rows={3}
+                className="w-full px-6 py-4 bg-neutral-50 rounded-2xl border-none focus:ring-2 focus:ring-primary/20 transition-all font-bold"
+                placeholder="Пожелания, уточнения по заказу..."
+              />
             </div>
 
             {/* Consent */}

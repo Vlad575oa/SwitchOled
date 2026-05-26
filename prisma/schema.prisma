@@ -58,6 +58,7 @@ model Order {
   name        String
   phone       String
   address     String
+  comment     String?
   paymentId   String?     @unique
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
