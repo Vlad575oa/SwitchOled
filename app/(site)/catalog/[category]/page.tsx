@@ -2,6 +2,7 @@ import { getCategoryBySlug, getCategoryDescendantSlugsBySlug, getProductsCount }
 import { Catalog } from "@/features/catalog/components/Catalog";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
+import prisma from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
 
@@ -43,7 +44,7 @@ export async function generateMetadata({
       title,
       description,
       url: `${baseUrl}/catalog/${params.category}`,
-      images: [{ url: `${baseUrl}/og-catalog.jpg` }],
+      images: [{ url: `${baseUrl}/og-catalog.jpg`, width: 1200, height: 630, alt: title }],
       type: "website",
     },
   };
@@ -56,13 +57,51 @@ interface CatalogPageProps {
 
 export default async function CategoryPage({ params, searchParams }: CatalogPageProps) {
   const { category } = params;
+
+  let categoryData: { name: string; slug: string } | null = null;
   if (category !== "all") {
-    const categoryData = await getCategoryBySlug(category);
+    categoryData = await getCategoryBySlug(category);
     if (!categoryData) notFound();
   }
 
+  const categorySlugs =
+    category !== "all" ? await getCategoryDescendantSlugsBySlug(category) : [];
+
+  const topProducts = await prisma.product.findMany({
+    where: {
+      isVisible: { not: false },
+      ...(categorySlugs.length
+        ? { category: { slug: { in: categorySlugs } } }
+        : category !== "all"
+        ? { category: { slug: category } }
+        : {}),
+    },
+    orderBy: [{ inStock: "desc" }, { createdAt: "desc" }],
+    take: 8,
+    select: { name: true, slug: true, category: { select: { slug: true } } },
+  }).catch(() => []);
+
+  const itemListSchema = topProducts.length > 0 ? {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: categoryData ? categoryData.name : "Весь каталог",
+    url: `${baseUrl}/catalog/${category}`,
+    itemListElement: topProducts.map((p, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      url: `${baseUrl}/catalog/${p.category.slug}/${p.slug}`,
+      name: p.name,
+    })),
+  } : null;
+
   return (
     <main className="w-full max-w-[1920px] mx-auto px-6 lg:px-16 py-12">
+      {itemListSchema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }}
+        />
+      )}
       <Catalog category={category} searchParams={searchParams} />
     </main>
   );

@@ -1,8 +1,8 @@
 [production]
-chrome >= 87
-firefox >= 78
-safari >= 14
-edge >= 88
+chrome >= 94
+firefox >= 92
+safari >= 15.4
+edge >= 94
 not ie 11
 not dead
 not op_mini all

@@ -154,7 +154,6 @@ export default function RootLayout({
     <html lang="ru">
       <head>
         <link rel="dns-prefetch" href="//mc.yandex.ru" />
-        <link rel="preconnect" href="https://s3.ru1.storage.beget.cloud" crossOrigin="anonymous" />
         <link rel="icon" href="/favicon.svg?v=20260505" type="image/svg+xml" sizes="any" />
         <link rel="shortcut icon" href="/favicon.svg?v=20260505" type="image/svg+xml" />
         <link rel="manifest" href="/manifest.json" />

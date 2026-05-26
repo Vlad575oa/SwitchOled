@@ -34,9 +34,10 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     openGraph: {
       title,
       description,
-      images: post.image ? [{ url: post.image }] : [],
+      images: post.image ? [{ url: post.image, width: 1200, height: 630, alt: post.title }] : [],
       type: 'article',
       publishedTime: post.createdAt.toISOString(),
+      modifiedTime: post.updatedAt.toISOString(),
     },
     twitter: {
       card: 'summary_large_image',
@@ -68,9 +69,9 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
     "datePublished": post.createdAt.toISOString(),
     "dateModified": post.updatedAt.toISOString(),
     "author": {
-      "@type": "Person",
-      "name": "Редакция Gameshop24",
-      "url": `${baseUrl}/about`,
+      "@type": "Organization",
+      "name": "Gameshop24",
+      "url": baseUrl,
     },
     "publisher": {
       "@type": "Organization",

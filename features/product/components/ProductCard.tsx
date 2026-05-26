@@ -1,8 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { Info } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
-import { ProductCardActions } from "./ProductCardActions";
+
+const ProductCardActions = dynamic(
+  () => import("./ProductCardActions").then((m) => m.ProductCardActions),
+  { ssr: false, loading: () => <div className="h-10 mt-auto pt-3" /> }
+);
 
 export interface ProductCardProduct {
   id: number;
