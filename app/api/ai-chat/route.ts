@@ -1,6 +1,26 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 
+async function buildBlogSection(): Promise<string> {
+  const posts = await prisma.post.findMany({
+    where: { isPublished: true },
+    orderBy: { createdAt: "desc" },
+    take: 30,
+    select: { title: true, slug: true, excerpt: true },
+  });
+  if (posts.length === 0) return "";
+  const lines = [
+    "## 📰 СТАТЬИ БЛОГА (ссылки для рекомендаций клиентам)",
+    "Когда тема разговора совпадает — предлагай статью одной строкой: «Кстати, у нас есть статья по этой теме: [название] — gameshop24.ru/blog/[slug]»",
+    "",
+  ];
+  for (const p of posts) {
+    lines.push(`- ${p.title} → https://gameshop24.ru/blog/${p.slug}`);
+    if (p.excerpt) lines.push(`  ${p.excerpt.slice(0, 100)}`);
+  }
+  return lines.join("\n");
+}
+
 async function buildCatalogSection(): Promise<string> {
   const products = await prisma.product.findMany({
     where: { isVisible: { not: false } },
@@ -77,27 +97,11 @@ const SYSTEM_PROMPT_BASE = `# ИИ-консультант GameShop24 — Сис�
 
 ---
 
-## 🔑 БАЗА ЗНАНИЙ (статьи блога — используй при ответах)
+## 🔑 БАЗА ЗНАНИЙ (статьи блога)
 
-### О прошитых консолях:
-- **"Прошитая Nintendo Switch: что это, риски, кому подходит"** — объясняет CFW, emuNAND/sysNAND, онлайн, гарантию
-- **"Как выбрать прошитую/чипованную Nintendo Switch OLED/Lite"** — сравнение моделей, чек-лист покупки
-- **"Полный гайд по выбору прошитой Switch"** — для тех, кто не разбирается в теме
+{{BLOG}}
 
-### Для родителей и подарков:
-- **"Nintendo Switch OLED для ребёнка: чек-лист покупки"** — возраст, родительский контроль, игры
-- **"Switch 2 vs PS5 для семьи, ребёнка и путешествий"** — сравнение по сценариям жизни
-
-### Аксессуары:
-- **"ТОП-аксессуаров для Nintendo: что реально нужно в первый месяц"** — чехол, стекло, геймпад
-- **"Топ-5 аксессуаров, которые изменят ваш опыт на Switch"** — Pro Controller, MicroSD, стекло
-
-### Развлечения:
-- **"Топ-7 игр для Nintendo Switch 2 (2025)"** — Mario Kart World, Metroid Prime 4 и др.
-- **"Лучшие игры для Nintendo Switch 2 в 2026: топ-15"** — полный гайд новичка
-- **"Ретро-гейминг в 2024"** — Switch как эмулятор ретро-игр
-
-Когда пользователь спрашивает про выбор, риски, детей, аксессуары, игры — извлекай советы из этих статей и адаптируй под его ситуацию.
+Когда клиент спрашивает про выбор, риски, детей, аксессуары, игры — предлагай релевантную статью с ссылкой одной строкой в конце ответа.
 
 ---
 
@@ -260,7 +264,7 @@ interface Message {
   content: string;
 }
 
-const MAX_MESSAGES_PER_SESSION = 60;
+const MAX_MESSAGES_PER_SESSION = 15;
 
 async function getOrCreateSession(visitorId: string): Promise<string> {
   let session = await prisma.chatSession.findFirst({ where: { visitorId } });
@@ -310,7 +314,10 @@ export async function POST(req: Request) {
   }
 
   const catalog = await buildCatalogSection();
-  const systemPrompt = SYSTEM_PROMPT_BASE.replace("{{CATALOG}}", catalog);
+  const blog = await buildBlogSection();
+  const systemPrompt = SYSTEM_PROMPT_BASE
+    .replace("{{CATALOG}}", catalog)
+    .replace("{{BLOG}}", blog);
 
   const res = await fetch("https://api.deepseek.com/chat/completions", {
     method: "POST",
