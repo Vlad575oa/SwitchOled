@@ -1,25 +1,6 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 
-async function buildBlogSection(): Promise<string> {
-  const posts = await prisma.post.findMany({
-    where: { isPublished: true },
-    orderBy: { createdAt: "desc" },
-    take: 30,
-    select: { title: true, slug: true, excerpt: true },
-  });
-  if (posts.length === 0) return "";
-  const lines = [
-    "## 📰 СТАТЬИ БЛОГА (ссылки для рекомендаций клиентам)",
-    "Когда тема разговора совпадает — предлагай статью одной строкой: «Кстати, у нас есть статья по этой теме: [название] — gameshop24.ru/blog/[slug]»",
-    "",
-  ];
-  for (const p of posts) {
-    lines.push(`- ${p.title} → https://gameshop24.ru/blog/${p.slug}`);
-    if (p.excerpt) lines.push(`  ${p.excerpt.slice(0, 100)}`);
-  }
-  return lines.join("\n");
-}
 
 async function buildCatalogSection(): Promise<string> {
   const products = await prisma.product.findMany({
@@ -97,11 +78,6 @@ const SYSTEM_PROMPT_BASE = `# ИИ-консультант GameShop24 — Сис�
 
 ---
 
-## 🔑 БАЗА ЗНАНИЙ (статьи блога)
-
-{{BLOG}}
-
-Когда клиент спрашивает про выбор, риски, детей, аксессуары, игры — предлагай релевантную статью с ссылкой одной строкой в конце ответа.
 
 ---
 
@@ -293,15 +269,25 @@ export async function POST(req: Request) {
 
   // Persist to DB if visitorId provided
   let sessionId: string | null = null;
+  let msgCount = 0;
   if (visitorId?.startsWith("ai_")) {
     sessionId = await getOrCreateSession(visitorId);
 
-    const msgCount = await prisma.chatMessage.count({ where: { sessionId } });
+    msgCount = await prisma.chatMessage.count({ where: { sessionId } });
+
+    // Hard limit reached — return contact info
     if (msgCount >= MAX_MESSAGES_PER_SESSION) {
-      return NextResponse.json(
-        { error: "Лимит сообщений в сессии исчерпан. Обратитесь к нам напрямую." },
-        { status: 429 }
-      );
+      return NextResponse.json({
+        reply:
+          "Вы достигли лимита сообщений в этом чате 😊\n\n" +
+          "Чтобы продолжить общение — свяжитесь с нами напрямую:\n\n" +
+          "📞 7(926)676-34-88\n" +
+          "📍 Москва, Митинская 10, корп. 1 (м. Волоколамская)\n" +
+          "🕐 Режим работы: 09:00 — 20:00\n\n" +
+          "Позвоните или напишите — менеджер ответит на все вопросы!",
+        sessionId,
+        limitReached: true,
+      });
     }
 
     // Save last user message (newest in array)
@@ -313,11 +299,37 @@ export async function POST(req: Request) {
     }
   }
 
+  // Check if contact was already shared in this session
+  const hasContact = sessionId
+    ? await (async () => {
+        const msgs = await prisma.chatMessage.findMany({
+          where: { sessionId: sessionId!, sender: "USER" },
+          select: { content: true },
+        });
+        return msgs.some(m =>
+          /(\+7|8)[\s\-]?\(?\d{3}\)?[\s\-]?\d{3}[\s\-]?\d{2}[\s\-]?\d{2}/.test(m.content) ||
+          /@\w+/.test(m.content) ||
+          /whatsapp|вотсап|телефон|номер/i.test(m.content)
+        );
+      })()
+    : false;
+
+  // Inject contact reminder into system prompt when approaching limit (last 3 messages)
+  const nearLimit = msgCount >= MAX_MESSAGES_PER_SESSION - 3;
+
   const catalog = await buildCatalogSection();
-  const blog = await buildBlogSection();
-  const systemPrompt = SYSTEM_PROMPT_BASE
-    .replace("{{CATALOG}}", catalog)
-    .replace("{{BLOG}}", blog);
+  let systemPrompt = SYSTEM_PROMPT_BASE.replace("{{CATALOG}}", catalog);
+
+  // Append contact reminder when near limit and contact not yet shared
+  if (nearLimit && !hasContact) {
+    systemPrompt +=
+      "\n\n## ⚠️ ВАЖНО — ПРИОРИТЕТ ПРЯМО СЕЙЧАС\n" +
+      "Это один из последних ответов в чате. Клиент ещё не оставил контакт.\n" +
+      "ОБЯЗАТЕЛЬНО в конце ответа попроси контакт и напомни данные офиса:\n" +
+      "Телефон: 7(926)676-34-88 | Адрес: Москва, Митинская 10, корп. 1, м. Волоколамская | Часы: 09:00–20:00\n" +
+      "Пример: \"Кстати, чтобы не потерять нас — оставьте телефон, Telegram, WhatsApp или MAX, и менеджер свяжется с вами. " +
+      "Или приезжайте: Москва, Митинская 10, корп. 1 (м. Волоколамская), тел. 7(926)676-34-88, пн–вс 09:00–20:00.\"";
+  }
 
   const res = await fetch("https://api.deepseek.com/chat/completions", {
     method: "POST",
