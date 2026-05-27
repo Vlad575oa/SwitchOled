@@ -144,7 +144,7 @@ export async function Catalog({
   let totalCount = 0;
   let categoryData: { name: string } | null = { name: "Весь каталог" };
   let categoryTree: Awaited<ReturnType<typeof getCategoryTree>> = [];
-  let availableVariantFilters: { colors: string[]; memories: string[] } = { colors: [], memories: [] };
+  let availableVariantFilters: { colors: Array<{ name: string; hex: string }>; memories: string[] } = { colors: [], memories: [] };
   let dbError = false;
 
   let errorMsg = "";

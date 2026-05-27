@@ -26,6 +26,7 @@ export interface VariantRow {
   slug: string;
   sku: string;
   color: string;
+  colorHex: string;
   memory: string;
   price: string;
   priceOld: string;
@@ -73,7 +74,7 @@ const COLOR_ATTR_KEYS = ["Цвет"];
 const MEMORY_ATTR_KEYS = ["Накопитель", "Объём", "Объем"];
 
 const EMPTY_VARIANT: VariantRow = {
-  name: "", slug: "", sku: "", color: "", memory: "", price: "", priceOld: "", showOtherPaymentPrice: false, stock: "10",
+  name: "", slug: "", sku: "", color: "", colorHex: "", memory: "", price: "", priceOld: "", showOtherPaymentPrice: false, stock: "10",
   inStock: true, images: [], newImages: [], newPreviews: [], _deleted: false,
 };
 
