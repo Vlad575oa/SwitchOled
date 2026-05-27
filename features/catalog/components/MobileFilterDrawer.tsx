@@ -9,7 +9,7 @@ interface Props {
   totalCount: number;
   categoryTree: any;
   activeFilterCount: number;
-  availableColors: string[];
+  availableColors: Array<{ name: string; hex: string }>;
   availableMemories: string[];
 }
 

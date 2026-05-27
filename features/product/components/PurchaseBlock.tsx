@@ -95,7 +95,7 @@ export function PurchaseBlock({ product, variants = [], categorySlug }: Purchase
     () =>
       Array.from(
         new Set(variantItems.map((variant) => variant.memory).filter(Boolean) as string[])
-      ),
+      ).filter((m) => m !== "0" && m !== "Не указана"),
     [variantItems]
   );
 

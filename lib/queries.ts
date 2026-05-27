@@ -247,7 +247,7 @@ export const getProductsCount = async (where: Prisma.ProductWhereInput) => {
 };
 
 export interface CatalogVariantFilters {
-  colors: string[];
+  colors: Array<{ name: string; hex: string }>;
   memories: string[];
 }
 
@@ -257,36 +257,58 @@ export const getCatalogVariantFilters = async (categorySlugs: string[]) => {
       ? { category: { slug: { in: categorySlugs } } }
       : {};
 
-    const rows = await prisma.product.findMany({
-      where: {
-        AND: [
-          VISIBLE,
-          { inStock: true },
-          categoryFilter,
-        ],
-      },
-      select: {
-        color: true,
-        attributes: true,
-      },
-    });
+    const [allVisibleRows, inStockRows, allColors] = await Promise.all([
+      // All VISIBLE products in category — for memory values
+      prisma.product.findMany({
+        where: { AND: [VISIBLE, categoryFilter] },
+        select: { attributes: true },
+      }),
+      // Only IN-STOCK products — for color ordering (which colors are "active")
+      prisma.product.findMany({
+        where: { AND: [VISIBLE, { inStock: true }, categoryFilter] },
+        select: { color: true, attributes: true },
+      }),
+      // Always fetch ALL colors from the Color table, sorted by name
+      prisma.color.findMany({ orderBy: { name: "asc" } }),
+    ]);
 
-    const colorSet = new Set<string>();
+    // Memory from ALL visible products — only add real values, skip products without memory
     const memorySet = new Set<string>();
-
-    for (const row of rows) {
-      const colorValue = normalizeColor(
-        readAttribute(row.attributes, ATTRIBUTE_COLOR_KEYS) ?? row.color ?? null
-      );
-      if (colorValue) colorSet.add(colorValue);
-
+    for (const row of allVisibleRows) {
       const memoryValue = readAttribute(row.attributes, ATTRIBUTE_MEMORY_KEYS);
       if (memoryValue) memorySet.add(memoryValue);
     }
 
+    // Collect colors that have in-stock products (for sort ordering)
+    const categoryColorSet = new Set<string>();
+    for (const row of inStockRows) {
+      const colorValue = normalizeColor(
+        readAttribute(row.attributes, ATTRIBUTE_COLOR_KEYS) ?? row.color ?? null
+      );
+      if (colorValue) categoryColorSet.add(colorValue);
+    }
+
+    // Return ALL colors from the Color table.
+    // Colors that have in-stock products in current category come first, rest follow alphabetically.
+    const colors = allColors
+      .sort((a, b) => {
+        const aHasProducts = categoryColorSet.has(a.name) ? 0 : 1;
+        const bHasProducts = categoryColorSet.has(b.name) ? 0 : 1;
+        if (aHasProducts !== bHasProducts) return aHasProducts - bHasProducts;
+        return a.name.localeCompare(b.name, "ru");
+      })
+      .map((c) => ({ name: c.name, hex: c.hex }));
+
+    // Sort memories naturally: "Не указана" first, then numeric ascending
+    const memorySorted = Array.from(memorySet).sort((a, b) => {
+      if (a === "Не указана") return -1;
+      if (b === "Не указана") return 1;
+      return (parseInt(a) || 0) - (parseInt(b) || 0);
+    });
+
     return {
-      colors: Array.from(colorSet),
-      memories: Array.from(memorySet),
+      colors,
+      memories: memorySorted,
     } as CatalogVariantFilters;
   }, { colors: [], memories: [] } as CatalogVariantFilters);
 };

@@ -60,7 +60,6 @@ export async function PUT(request: Request, { params }: { params: { id: string }
     const showOtherPaymentPrice = fd.get("showOtherPaymentPrice") === "true";
     const categoryId = parseInt(fd.get("categoryId") as string);
     const color = (fd.get("color") as string) || null;
-    const colorHex = (fd.get("colorHex") as string) || null;
     const inStock = fd.get("inStock") === "true";
     const isNew = fd.get("isNew") === "true";
     const isSale = fd.get("isSale") === "true";
@@ -129,7 +128,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
       where: { id },
       data: {
         name, description, sku, price, priceOld, showOtherPaymentPrice, categoryId,
-        brand, color, colorHex, inStock, isNew, isSale, stock,
+        brand, color, inStock, isNew, isSale, stock,
         images, attributes, metaTitle, metaDesc,
         slug,
       },

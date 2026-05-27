@@ -15,6 +15,7 @@ import {
   ChevronRight,
   Scale,
   MessageSquare,
+  Palette,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -22,6 +23,7 @@ const navItems = [
   { label: "Дашборд", href: "/admin", icon: LayoutDashboard, exact: true },
   { label: "Товары", href: "/admin/products", icon: Package },
   { label: "Заказы", href: "/admin/orders", icon: ShoppingBag },
+  { label: "Цвета", href: "/admin/colors", icon: Palette },
   { label: "Блог", href: "/admin/posts", icon: FileText },
   { label: "FAQ", href: "/admin/faq", icon: HelpCircle },
   { label: "Чат", href: "/admin/chat", icon: MessageSquare, badge: true },

@@ -128,7 +128,7 @@ export const Footer = ({ workingHours = "09:00 — 21:00", currentYear }: Footer
                             { name: "Условия использования", href: "/legal/terms" },
                             { name: "Файлы Cookie", href: "/legal/cookies" },
                             { name: "Политика", href: "/policy" },
-                            { name: "Согласие на обработку персональных данных", href: "/legal/personal-data" },
+                            { name: "Согласие на обработку ПД", href: "/legal/personal-data" },
                             { name: "Контакты", href: "/contacts" },
                         ].map((link) => (
                             <Link key={link.name} href={link.href} className="text-[11px] xl:text-[12px] font-bold text-neutral-400 hover:text-neutral-200 transition-colors uppercase tracking-widest">

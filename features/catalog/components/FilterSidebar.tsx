@@ -1,31 +1,14 @@
 "use client";
 
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { useCallback, useState, useEffect, useMemo } from "react";
-import { ChevronDown, X, Loader2 } from "lucide-react";
+import { useCallback, useState, useEffect, useMemo, useRef } from "react";
+import { ChevronDown, ChevronLeft, ChevronRight, X, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PriceRangeSlider } from "./PriceRangeSlider";
 import { motion, AnimatePresence } from "framer-motion";
 import { getFilteredProductsCountAction } from "../actions";
 
 const MAX_PRICE = 200000;
-
-// Map Russian color names → hex for swatches
-const COLOR_HEX: Record<string, string> = {
-  "Белый":       "#F5F5F5",
-  "Чёрный":      "#1A1A1A",
-  "Синий":       "#2563EB",
-  "Красный":     "#DC2626",
-  "Жёлтый":      "#EAB308",
-  "Зелёный":     "#16A34A",
-  "Серый":       "#9CA3AF",
-  "Розовый":     "#F472B6",
-  "Бирюзовый":   "#06B6D4",
-  "Коралловый":  "#FB7185",
-  "Фиолетовый":  "#7C3AED",
-  "Золотой":     "#CA8A04",
-  "Серебристый": "#CBD5E1",
-};
 
 const STATUS_OPTIONS = [
   { label: "В наличии", value: "inStock" },
@@ -38,6 +21,143 @@ interface Category {
   slug: string;
   children?: Category[];
 }
+
+// ─── ColorScrollRow ─────────────────────────────────────────────────────────
+
+interface ColorScrollRowProps {
+  availableColors: Array<{ name: string; hex: string }>;
+  selectedColors: string[];
+  onToggle: (name: string) => void;
+}
+
+const ColorScrollRow = ({ availableColors, selectedColors, onToggle }: ColorScrollRowProps) => {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+
+  const checkScroll = () => {
+    const el = scrollRef.current;
+    if (!el) return;
+    setCanScrollLeft(el.scrollLeft > 4);
+    setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 4);
+  };
+
+  useEffect(() => {
+    checkScroll();
+    const el = scrollRef.current;
+    if (!el) return;
+    el.addEventListener("scroll", checkScroll, { passive: true });
+    const ro = new ResizeObserver(checkScroll);
+    ro.observe(el);
+    return () => {
+      el.removeEventListener("scroll", checkScroll);
+      ro.disconnect();
+    };
+  }, [availableColors]);
+
+  const scroll = (dir: "left" | "right") => {
+    const el = scrollRef.current;
+    if (!el) return;
+    el.scrollBy({ left: dir === "left" ? -120 : 120, behavior: "smooth" });
+  };
+
+  // Split colors into rows of 8
+  const ROW_SIZE = 8;
+  const rows: Array<typeof availableColors> = [];
+  for (let i = 0; i < availableColors.length; i += ROW_SIZE) {
+    rows.push(availableColors.slice(i, i + ROW_SIZE));
+  }
+
+  return (
+    <div className="relative -mx-1">
+      {/* Left fade + arrow */}
+      <div
+        className={cn(
+          "absolute left-0 top-0 bottom-0 z-10 flex items-center transition-opacity duration-200",
+          canScrollLeft ? "opacity-100" : "opacity-0 pointer-events-none"
+        )}
+      >
+        <div className="w-8 h-full bg-gradient-to-r from-white to-transparent" />
+        <button
+          onClick={() => scroll("left")}
+          className="absolute left-0 w-7 h-7 rounded-full bg-white border border-neutral-200 shadow-sm flex items-center justify-center text-neutral-400 hover:text-secondary hover:border-neutral-300 transition-all active:scale-90"
+        >
+          <ChevronLeft size={13} />
+        </button>
+      </div>
+
+      {/* Scrollable container */}
+      <div
+        ref={scrollRef}
+        className="overflow-x-auto scrollbar-hide px-1 pt-2 pb-1"
+        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+      >
+        <div className="flex flex-col gap-2" style={{ width: "max-content" }}>
+          {rows.map((row, rowIdx) => (
+            <div key={rowIdx} className="flex gap-2">
+              {row.map((colorObj) => {
+                const isSelected = selectedColors.includes(colorObj.name);
+                const isLight =
+                  colorObj.name === "Белый" ||
+                  colorObj.name === "Жёлтый" ||
+                  colorObj.name === "White" ||
+                  colorObj.name === "Серебристый" ||
+                  colorObj.hex.toLowerCase() === "#ffffff" ||
+                  colorObj.hex.toLowerCase() === "#f5f5f5" ||
+                  colorObj.hex.toLowerCase() === "#fafafa" ||
+                  colorObj.hex.toLowerCase() === "#f0f0f0" ||
+                  colorObj.hex.toLowerCase() === "#e8e8e8";
+                return (
+                  <button
+                    key={colorObj.name}
+                    title={colorObj.name}
+                    onClick={() => onToggle(colorObj.name)}
+                    className={cn(
+                      "w-7 h-7 rounded-full border-2 transition-all hover:scale-110 active:scale-95 relative flex-shrink-0",
+                      isSelected
+                        ? "border-primary ring-2 ring-primary/30 scale-110"
+                        : isLight
+                        ? "border-neutral-300 shadow-sm hover:border-neutral-400"
+                        : "border-white shadow-sm hover:border-neutral-300"
+                    )}
+                    style={{ backgroundColor: colorObj.hex }}
+                  >
+                    {isSelected && (
+                      <span className="absolute inset-0 flex items-center justify-center">
+                        <span
+                          className={cn(
+                            "w-2 h-2 rounded-full",
+                            isLight ? "bg-neutral-600" : "bg-white"
+                          )}
+                        />
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Right fade + arrow */}
+      <div
+        className={cn(
+          "absolute right-0 top-0 bottom-0 z-10 flex items-center transition-opacity duration-200",
+          canScrollRight ? "opacity-100" : "opacity-0 pointer-events-none"
+        )}
+      >
+        <div className="w-8 h-full bg-gradient-to-l from-white to-transparent" />
+        <button
+          onClick={() => scroll("right")}
+          className="absolute right-0 w-7 h-7 rounded-full bg-white border border-neutral-200 shadow-sm flex items-center justify-center text-neutral-400 hover:text-secondary hover:border-neutral-300 transition-all active:scale-90"
+        >
+          <ChevronRight size={13} />
+        </button>
+      </div>
+    </div>
+  );
+};
 
 // ─── Sub-components defined OUTSIDE FilterSidebar to prevent remount on state change ──
 
@@ -145,7 +265,7 @@ interface FilterSidebarProps {
   currentCategory: string;
   totalCount: number;
   categoryTree: any[];
-  availableColors: string[];
+  availableColors: Array<{ name: string; hex: string }>;
   availableMemories: string[];
 }
 
@@ -409,38 +529,11 @@ export const FilterSidebar = ({
           isOpen={openSections.color}
           onToggle={() => toggleSection("color")}
         >
-          <div className="flex flex-wrap gap-2 px-1">
-            {availableColors.map((colorName) => {
-              const hex = COLOR_HEX[colorName] ?? "#D1D5DB";
-              const isSelected = colors.includes(colorName);
-              return (
-                <button
-                  key={colorName}
-                  title={colorName}
-                  onClick={() => toggleValue(colors, setColors, colorName)}
-                  className={cn(
-                    "w-7 h-7 rounded-full border-2 transition-all hover:scale-110 active:scale-95 relative",
-                    isSelected
-                      ? "border-primary ring-2 ring-primary/30 scale-110"
-                      : "border-white shadow-sm hover:border-neutral-300"
-                  )}
-                  style={{ backgroundColor: hex }}
-                >
-                  {colorName === "Белый" && (
-                    <span className="absolute inset-0 rounded-full border border-neutral-200" />
-                  )}
-                  {isSelected && (
-                    <span className="absolute inset-0 flex items-center justify-center">
-                      <span className={cn(
-                        "w-2 h-2 rounded-full",
-                        colorName === "Белый" || colorName === "Жёлтый" ? "bg-neutral-600" : "bg-white"
-                      )} />
-                    </span>
-                  )}
-                </button>
-              );
-            })}
-          </div>
+          <ColorScrollRow
+            availableColors={availableColors}
+            selectedColors={colors}
+            onToggle={(name) => toggleValue(colors, setColors, name)}
+          />
         </FilterSection>
       )}
 
