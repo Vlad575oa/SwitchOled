@@ -323,35 +323,73 @@ export async function POST(req: Request) {
   }
 
   // Check if contact was already shared in this session
-  const hasContact = sessionId
+  const userMsgs = sessionId
+    ? await prisma.chatMessage.findMany({
+        where: { sessionId: sessionId!, sender: "USER" },
+        select: { content: true },
+      })
+    : [];
+
+  const hasContact = userMsgs.some(m =>
+    /(\+7|8)[\s\-]?\(?\d{3}\)?[\s\-]?\d{3}[\s\-]?\d{2}[\s\-]?\d{2}/.test(m.content) ||
+    /@\w+/.test(m.content) ||
+    /whatsapp|вотсап|телефон|номер/i.test(m.content)
+  );
+
+  // Count how many times AI already asked for contact (to escalate pressure)
+  const contactAskCount = sessionId
     ? await (async () => {
-        const msgs = await prisma.chatMessage.findMany({
-          where: { sessionId: sessionId!, sender: "USER" },
+        const aiMsgs = await prisma.chatMessage.findMany({
+          where: { sessionId: sessionId!, sender: "ADMIN" },
           select: { content: true },
         });
-        return msgs.some(m =>
-          /(\+7|8)[\s\-]?\(?\d{3}\)?[\s\-]?\d{3}[\s\-]?\d{2}[\s\-]?\d{2}/.test(m.content) ||
-          /@\w+/.test(m.content) ||
-          /whatsapp|вотсап|телефон|номер/i.test(m.content)
-        );
+        return aiMsgs.filter(m =>
+          /телефон|telegram|whatsapp|контакт|номер|свяжем|перезвон/i.test(m.content)
+        ).length;
       })()
-    : false;
+    : 0;
 
-  // Inject contact reminder into system prompt when approaching limit (last 3 messages)
   const nearLimit = msgCount >= MAX_MESSAGES_PER_SESSION - 3;
 
   const catalog = await buildCatalogSection();
   let systemPrompt = SYSTEM_PROMPT_BASE.replace("{{CATALOG}}", catalog);
 
-  // Append contact reminder when near limit and contact not yet shared
-  if (nearLimit && !hasContact) {
-    systemPrompt +=
-      "\n\n## ⚠️ ВАЖНО — ПРИОРИТЕТ ПРЯМО СЕЙЧАС\n" +
-      "Это один из последних ответов в чате. Клиент ещё не оставил контакт.\n" +
-      "ОБЯЗАТЕЛЬНО в конце ответа попроси контакт и напомни данные офиса:\n" +
-      "Телефон: 7(926)676-34-88 | Адрес: Москва, Митинская 10, корп. 1, м. Волоколамская | Часы: 09:00–20:00\n" +
-      "Пример: \"Кстати, чтобы не потерять нас — оставьте телефон, Telegram, WhatsApp или MAX, и менеджер свяжется с вами. " +
-      "Или приезжайте: Москва, Митинская 10, корп. 1 (м. Волоколамская), тел. 7(926)676-34-88, пн–вс 09:00–20:00.\"";
+  // Progressive contact collection strategy
+  if (!hasContact) {
+    if (nearLimit) {
+      // Stage 4: Hard push — almost out of messages
+      systemPrompt +=
+        "\n\n## ⚠️ КРИТИЧЕСКИ ВАЖНО — ПОСЛЕДНИЕ СООБЩЕНИЯ\n" +
+        "Чат заканчивается, клиент ВСЁ ЕЩЁ не оставил контакт. Это приоритет №1.\n" +
+        "ОБЯЗАТЕЛЬНО в этом ответе настойчиво попроси контакт. Используй предлог:\n" +
+        "«Чтобы я мог зарезервировать для вас товар — оставьте номер, и менеджер свяжется в течение 15 минут»\n" +
+        "Также напомни: Телефон офиса: 7(926)676-34-88 | Адрес: Москва, Митинская 10, корп. 1, м. Волоколамская | 09:00–20:00";
+    } else if (msgCount >= 8 || contactAskCount >= 2) {
+      // Stage 3: Urgency + alternative — client is ignoring
+      systemPrompt +=
+        "\n\n## ⚠️ ЗАДАЧА В ЭТОМ ОТВЕТЕ\n" +
+        "Клиент продолжает общаться, но игнорирует вопросы о контакте. Попробуй другой подход — предложи конкретную выгоду:\n" +
+        "Варианты предлогов (выбери подходящий по контексту):\n" +
+        "- «Хочу уточнить у менеджера наличие именно для вас — дайте номер, он проверит и сразу напишет»\n" +
+        "- «Могу попросить менеджера отложить этот вариант — он пользуется спросом. Напишите номер?»\n" +
+        "- «Если оставите контакт — менеджер сможет подобрать лучший вариант под ваш запрос и, возможно, договориться о комплектации»\n" +
+        "Вставь просьбу о контакте ОРГАНИЧНО в конец ответа, не навязчиво.";
+    } else if (msgCount >= 4 || contactAskCount >= 1) {
+      // Stage 2: Soft repeat with different angle
+      systemPrompt +=
+        "\n\n## 💡 НАПОМИНАНИЕ В ЭТОМ ОТВЕТЕ\n" +
+        "Клиент ещё не оставил контакт. В конце ответа ненавязчиво предложи один из вариантов:\n" +
+        "- «Кстати, если хотите — оставьте телефон или Telegram, менеджер ответит быстрее и сможет уточнить детали лично»\n" +
+        "- «Чтобы не упустить — могу передать ваш запрос менеджеру. Телефон, Telegram, WhatsApp или MAX — что удобнее?»\n" +
+        "Вставь в конец ответа, одной строкой, без давления.";
+    } else if (msgCount >= 2) {
+      // Stage 1: First gentle ask after 2nd message
+      systemPrompt +=
+        "\n\n## 💡 ЗАДАЧА В ЭТОМ ОТВЕТЕ\n" +
+        "После ответа на вопрос клиента — добавь в конце одну фразу с предложением оставить контакт:\n" +
+        "«Если хотите, оставьте удобный контакт (телефон, Telegram, WhatsApp или MAX) — менеджер свяжется и поможет с выбором лично 🙌»\n" +
+        "Без давления, одной строкой в конце.";
+    }
   }
 
   const res = await fetch("https://api.deepseek.com/chat/completions", {
