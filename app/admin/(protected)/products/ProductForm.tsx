@@ -66,7 +66,7 @@ const COLOR_OPTIONS = [
 ];
 
 const MEMORY_OPTIONS = [
-  "32 ГБ", "64 ГБ", "128 ГБ", "256 ГБ", "512 ГБ",
+  "0 ГБ", "32 ГБ", "64 ГБ", "128 ГБ", "256 ГБ", "512 ГБ",
   "825 ГБ", "1024 ГБ", "2048 ГБ",
 ];
 
@@ -522,7 +522,7 @@ export const ProductForm = ({
                           <div className="flex items-center gap-1.5 flex-1">
                             <input
                               type="color"
-                              className="w-8 h-8 rounded-lg border border-neutral-200 cursor-pointer p-0.5 bg-white"
+                              className="w-8 h-8 rounded-full border border-neutral-200 cursor-pointer p-0 bg-white overflow-hidden"
                               value={v.colorHex || "#d1d5db"}
                               onChange={(e) => setVariant(realIdx, "colorHex", e.target.value)}
                             />
@@ -538,7 +538,7 @@ export const ProductForm = ({
                         </div>
                       </div>
                       <div>
-                        <label className={labelCls}>Память</label>
+                        <label className={labelCls}>Память / MicroSD</label>
                         <div className="relative">
                           <select
                             className={inputCls + " appearance-none pr-9"}
@@ -673,9 +673,8 @@ export const ProductForm = ({
               </button>
             </div>
             <p className="text-[10px] text-neutral-400 font-bold mb-4">
-              Цвет и память указываются в вариантах выше. Здесь — всё остальное (Платформа, Процессор и т.д.)
+             Цвет, память и MicroSD указываются в вариантах выше. Здесь — всё остальное (Платформа, Процессор и т.д.)
             </p>
-
             {attrs.length === 0 ? (
               <div className="border-2 border-dashed border-neutral-100 rounded-xl py-10 text-center">
                 <Settings2 size={28} className="mx-auto mb-2 text-neutral-200" />

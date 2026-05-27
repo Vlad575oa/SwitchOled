@@ -37,9 +37,10 @@ export const CATEGORY_FILTERS: Record<string, FilterSectionConfig[]> = {
     },
     {
       id: "ps_storage",
-      title: "Объём встроенной памяти",
+      title: "Объём встроенной памяти / MicroSD",
       paramKey: "attr_storage",
       options: [
+        { label: "0 GB", value: "0GB" },
         { label: "825 GB", value: "825GB" },
         { label: "1 TB", value: "1TB" },
         { label: "2 TB", value: "2TB" },
@@ -134,9 +135,10 @@ export const CATEGORY_FILTERS: Record<string, FilterSectionConfig[]> = {
     },
     {
       id: "xbox_storage",
-      title: "Объём встроенной памяти",
+      title: "Объём встроенной памяти / MicroSD",
       paramKey: "attr_storage",
       options: [
+        { label: "0 GB", value: "0GB" },
         { label: "512 GB", value: "512GB" },
         { label: "1 TB", value: "1TB" },
         { label: "2 TB", value: "2TB" },
@@ -216,9 +218,10 @@ export const CATEGORY_FILTERS: Record<string, FilterSectionConfig[]> = {
     },
     {
       id: "ns_storage",
-      title: "Объём встроенной памяти",
+      title: "Объём встроенной памяти / MicroSD",
       paramKey: "attr_storage",
       options: [
+        { label: "0 GB", value: "0GB" },
         { label: "32 GB", value: "32GB" },
         { label: "64 GB", value: "64GB" },
       ],

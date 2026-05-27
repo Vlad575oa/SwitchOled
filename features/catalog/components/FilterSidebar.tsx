@@ -385,7 +385,7 @@ export const FilterSidebar = ({
 
       {availableMemories.length > 0 && (
         <FilterSection
-          title="Память"
+          title="Память / MicroSD"
           id="memory"
           isOpen={openSections.memory ?? false}
           onToggle={() => toggleSection("memory")}

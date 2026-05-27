@@ -6,6 +6,7 @@ import { ProductDeleteButton } from "./ProductDeleteButton";
 import { ProductDuplicateButton } from "./ProductDuplicateButton";
 import { ProductHideButton } from "./ProductHideButton";
 import { ProductStockToggleButton } from "./ProductStockToggleButton";
+import { InlinePriceEditor } from "./InlinePriceEditor";
 import { cn } from "@/lib/utils";
 import { cookies } from "next/headers";
 import { ADMIN_COOKIE, verifyAdminSession } from "@/lib/adminSession";
@@ -85,6 +86,18 @@ export default async function ProductsPage({ searchParams }: Props) {
     orderBy,
   });
 
+  const editorProducts = products.map(p => ({
+    id: p.id,
+    name: p.name,
+    price: p.price,
+    images: p.images,
+    category: { name: p.category.name },
+    inStock: p.inStock,
+    isVisible: p.isVisible !== false,
+    slug: p.slug,
+    sku: p.sku
+  }));
+
   return (
     <>
       <header className="bg-white border-b border-neutral-100 px-8 py-5 flex items-center justify-between">
@@ -108,7 +121,7 @@ export default async function ProductsPage({ searchParams }: Props) {
         </div>
       </header>
 
-      <div className="p-8 space-y-5">
+      <div className="p-8 space-y-5 pb-32">
 
         {/* Category Pills */}
         <div className="flex flex-wrap gap-2 pb-1 overflow-x-auto no-scrollbar">
@@ -183,71 +196,18 @@ export default async function ProductsPage({ searchParams }: Props) {
           </button>
         </form>
 
-        {/* Table */}
-        <div className="bg-white rounded-2xl border border-neutral-100 shadow-sm overflow-hidden">
-          <table className="w-full text-left">
-            <thead>
-              <tr className="border-b border-neutral-100">
-                {["Фото", "Название", "Категория", "Цена", ""].map((h) => (
-                  <th key={h} className="px-5 py-3.5 text-[9px] font-black uppercase tracking-widest text-neutral-400">{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {products.length === 0 ? (
-                <tr>
-                  <td colSpan={5} className="px-5 py-20 text-center">
-                    <Package size={40} className="mx-auto mb-3 text-neutral-200" />
-                    <p className="text-neutral-400 font-bold text-sm">Товаров не найдено</p>
-                  </td>
-                </tr>
-              ) : (
-                products.map((p) => (
-                  <tr key={p.id} className={`border-b border-neutral-50 last:border-0 transition-colors ${p.isVisible === false ? "opacity-50 bg-neutral-50/80" : "hover:bg-neutral-50/50"}`}>
-                    <td className="px-5 py-3">
-                      <div className="w-12 h-12 rounded-xl overflow-hidden bg-neutral-50 border border-neutral-100 flex-shrink-0">
-                        {p.images[0] ? (
-                          <img src={p.images[0]} alt={p.name} className="w-full h-full object-contain p-1" />
-                        ) : (
-                          <Package size={20} className="m-auto text-neutral-300 mt-3" />
-                        )}
-                      </div>
-                    </td>
-                    <td className="px-5 py-3 w-[360px]">
-                      <p className="text-xs font-black leading-4 text-[#111827] line-clamp-2 max-w-[340px] break-words">{p.name}</p>
-                      <p className="text-[10px] text-neutral-400 font-bold mt-0.5">{p.slug}</p>
-                      {p.sku ? (
-                        <p className="text-[10px] text-neutral-400 font-bold">Артикул: {p.sku}</p>
-                      ) : null}
-                    </td>
-                    <td className="px-5 py-3 text-xs font-bold text-neutral-500">{p.category.name}</td>
-                    <td className="px-5 py-3">
-                      <p className="text-sm font-black text-[#111827]">{formatPrice(p.price)}</p>
-                      <div className="mt-2">
-                        <ProductStockToggleButton productId={p.id} inStock={p.inStock} />
-                      </div>
-                    </td>
-                    <td className="px-5 py-3">
-                      <div className="flex items-center gap-2 justify-end">
-                        <ProductDuplicateButton productId={p.id} />
-                        <ProductHideButton productId={p.id} isVisible={p.isVisible !== false} />
-                        <Link
-                          href={`/admin/products/${p.id}/edit`}
-                          className="w-8 h-8 rounded-lg bg-neutral-50 border border-neutral-200 flex items-center justify-center text-neutral-400 hover:text-blue-500 hover:border-blue-200 hover:bg-blue-50 transition-all"
-                        >
-                          <Pencil size={13} />
-                        </Link>
-                        {canDeleteProducts && (
-                          <ProductDeleteButton productId={p.id} productName={p.name} />
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
+        {/* Inline Price Editor */}
+        {products.length === 0 ? (
+          <div className="bg-white rounded-2xl border border-neutral-100 shadow-sm py-20 text-center">
+            <Package size={40} className="mx-auto mb-3 text-neutral-200" />
+            <p className="text-neutral-400 font-bold text-sm">Товаров не найдено</p>
+          </div>
+        ) : (
+          <InlinePriceEditor 
+            products={editorProducts} 
+            canDelete={canDeleteProducts}
+          />
+        )}
       </div>
     </>
   );
