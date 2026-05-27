@@ -183,9 +183,9 @@ export const FilterSidebar = ({
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
     category: true,
     price: true,
-    color: false,
-    memory: false,
-    status: false,
+    color: Boolean(searchParams.get("color")),
+    memory: Boolean(searchParams.get("memory")),
+    status: Boolean(searchParams.get("status")),
   });
   const [collapsedRootCategories, setCollapsedRootCategories] = useState<Record<number, boolean>>({});
 
@@ -324,17 +324,6 @@ export const FilterSidebar = ({
         onToggle={() => toggleSection("category")}
       >
         <div className="space-y-1 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
-          <button
-            onClick={() => router.push(`/catalog/all`)}
-            className={cn(
-              "text-[13px] font-black transition-all w-full text-left py-2 px-3 rounded-xl",
-              currentCategory === "all"
-                ? "text-primary bg-primary/5"
-                : "text-neutral-400 hover:text-secondary hover:bg-neutral-50"
-            )}
-          >
-            Все товары
-          </button>
           {categoryTree.map((item) => (
             <CategoryItem key={item.id} item={item} />
           ))}
