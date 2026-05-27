@@ -538,7 +538,7 @@ export const ProductForm = ({
                         </div>
                       </div>
                       <div>
-                        <label className={labelCls}>Память / MicroSD</label>
+                        <label className={labelCls}>Память MicroSD</label>
                         <div className="relative">
                           <select
                             className={inputCls + " appearance-none pr-9"}
