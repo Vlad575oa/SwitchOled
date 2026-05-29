@@ -63,6 +63,7 @@ export default async function ProductsPage({ searchParams }: Props) {
             OR: [
               { name: { contains: q, mode: "insensitive" } },
               { sku: { contains: q, mode: "insensitive" } },
+              { slug: { contains: q, mode: "insensitive" } },
             ],
           }
         : {}),
@@ -159,7 +160,7 @@ export default async function ProductsPage({ searchParams }: Props) {
             <input
               name="q"
               defaultValue={q}
-              placeholder="Поиск по названию или артикулу..."
+              placeholder="Поиск по названию, артикулу или slug..."
               className="w-full pl-9 pr-4 py-2.5 bg-white border border-neutral-200 rounded-xl text-sm font-bold text-[#111827] placeholder:text-neutral-300 outline-none focus:border-primary/30"
             />
           </div>

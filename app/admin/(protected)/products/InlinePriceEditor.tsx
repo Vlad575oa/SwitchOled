@@ -90,7 +90,7 @@ export function InlinePriceEditor({ products: initialProducts, canDelete }: Inli
         <table className="w-full text-left min-w-[800px]">
           <thead>
             <tr className="border-b border-neutral-100 bg-neutral-50/50">
-              {["Фото", "Название", "Категория", "Цена (₽)", ""].map((h) => (
+              {["ID", "Фото", "Название", "Категория", "Цена (₽)", ""].map((h) => (
                 <th key={h} className="px-5 py-3.5 text-[9px] font-black uppercase tracking-widest text-neutral-400">{h}</th>
               ))}
             </tr>
@@ -98,6 +98,7 @@ export function InlinePriceEditor({ products: initialProducts, canDelete }: Inli
           <tbody>
             {initialProducts.map((p) => (
               <tr key={p.id} className={`border-b border-neutral-50 last:border-0 transition-colors ${p.isVisible === false ? "opacity-60 bg-neutral-50/80" : "hover:bg-neutral-50/30"}`}>
+                <td className="px-5 py-3 text-[10px] font-black text-neutral-400">#{p.id}</td>
                 <td className="px-5 py-3">
                   <div className="w-12 h-12 rounded-xl overflow-hidden bg-white border border-neutral-100 flex-shrink-0">
                     {p.images[0] ? (
