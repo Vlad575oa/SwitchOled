@@ -61,8 +61,8 @@ const ColorScrollRow = ({ availableColors, selectedColors, onToggle }: ColorScro
     el.scrollBy({ left: dir === "left" ? -120 : 120, behavior: "smooth" });
   };
 
-  // Split colors into rows of 8
-  const ROW_SIZE = 8;
+  // Split colors into rows of 6
+  const ROW_SIZE = 6;
   const rows: Array<typeof availableColors> = [];
   for (let i = 0; i < availableColors.length; i += ROW_SIZE) {
     rows.push(availableColors.slice(i, i + ROW_SIZE));
