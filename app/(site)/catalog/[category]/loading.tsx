@@ -1,6 +1,6 @@
 export default function Loading() {
   return (
-    <div className="w-full max-w-[1920px] mx-auto px-6 lg:px-16 py-12 animate-pulse">
+    <div className="w-full max-w-[1920px] mx-auto px-6 lg:px-6 2xl:px-4 py-12 animate-pulse">
       <div className="flex flex-col lg:flex-row gap-12">
         <aside className="w-full lg:w-64 space-y-8">
           <div className="h-8 bg-neutral-100 rounded-full w-32" />

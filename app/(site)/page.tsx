@@ -28,7 +28,7 @@ interface HomePageProps {
 
 export default async function HomePage({ searchParams }: HomePageProps) {
   return (
-    <main className="w-full max-w-[1920px] mx-auto px-6 lg:px-16 pt-6 pb-20">
+    <main className="w-full max-w-[1920px] mx-auto px-6 lg:px-6 2xl:px-4 pt-6 pb-20">
 
       <div id="catalog" className="mb-20 scroll-mt-24">
         <Suspense fallback={<CatalogSkeleton count={8} />}>

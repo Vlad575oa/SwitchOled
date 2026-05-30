@@ -95,7 +95,7 @@ export default async function CategoryPage({ params, searchParams }: CatalogPage
   } : null;
 
   return (
-    <main className="w-full max-w-[1920px] mx-auto px-6 lg:px-16 py-12">
+    <main className="w-full max-w-[1920px] mx-auto px-6 lg:px-6 2xl:px-4 py-12">
       {itemListSchema && (
         <script
           type="application/ld+json"

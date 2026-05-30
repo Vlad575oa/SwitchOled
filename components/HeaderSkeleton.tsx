@@ -7,7 +7,7 @@ export function HeaderSkeleton() {
       style={{ boxShadow: "0 2px 12px rgba(0,0,0,0.25)" }}
       aria-hidden="true"
     >
-      <div className="w-full max-w-[1920px] mx-auto px-4 lg:pl-24 lg:pr-10 flex items-center gap-2 xl:gap-6">
+      <div className="w-full max-w-[1920px] mx-auto px-4 lg:pl-6 lg:pr-4 2xl:pl-4 2xl:pr-4 flex items-center gap-2 xl:gap-6">
         {/* Logo placeholder */}
         <div className="hidden lg:flex items-center gap-2.5 shrink-0">
           <div className="w-9 h-9 xl:w-11 xl:h-11 bg-primary rounded-xl opacity-80" />

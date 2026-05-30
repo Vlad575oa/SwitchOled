@@ -74,7 +74,7 @@ export const QuickFilters = ({ enabledSlugs }: QuickFiltersProps) => {
           onMouseLeave={() => setIsDragging(false)}
           onMouseUp={() => setIsDragging(false)}
           onMouseMove={onMouseMove}
-          className={cn("w-full max-w-[1920px] mx-auto flex items-center justify-center gap-1 overflow-x-auto no-scrollbar py-2 px-4 lg:px-10 scroll-smooth", isDragging ? "cursor-grabbing select-none" : "cursor-default")}
+          className={cn("w-full max-w-[1920px] mx-auto flex items-center justify-center gap-1 overflow-x-auto no-scrollbar py-2 px-4 lg:px-6 2xl:px-4 scroll-smooth", isDragging ? "cursor-grabbing select-none" : "cursor-default")}
         >
           {links.map((item) => {
             const active = isLinkActive(item);

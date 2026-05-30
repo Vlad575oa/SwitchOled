@@ -82,7 +82,7 @@ export const Header = () => {
 
   return (
     <header className="sticky top-0 lg:top-10 z-50 h-[76px] xl:h-[88px] flex items-center bg-[#2c2c30] border-b border-white/[0.07] relative" style={{ boxShadow: "0 2px 12px rgba(0,0,0,0.25)" }}>
-      <div className="w-full max-w-[1920px] mx-auto px-4 lg:pl-24 lg:pr-10 flex items-center gap-2 xl:gap-6">
+      <div className="w-full max-w-[1920px] mx-auto px-4 lg:pl-6 lg:pr-4 2xl:pl-4 2xl:pr-4 flex items-center gap-2 xl:gap-6">
 
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2.5 group shrink-0">
