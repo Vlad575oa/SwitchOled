@@ -72,6 +72,7 @@ const MEMORY_OPTIONS = [
 
 const COLOR_ATTR_KEYS = ["Цвет"];
 const MEMORY_ATTR_KEYS = ["Накопитель", "Объём", "Объем"];
+const VARIANT_GROUP_KEY = "__variantGroupId";
 
 const EMPTY_VARIANT: VariantRow = {
   name: "", slug: "", sku: "", color: "", colorHex: "", memory: "", price: "", priceOld: "", showOtherPaymentPrice: false, stock: "10",
@@ -248,7 +249,14 @@ export const ProductForm = ({
     setError("");
     setSlugErrors({});
 
-    const sharedAttrsBase = attrs.filter(
+    // Ensure all variants in this save share the same __variantGroupId
+    const existingGroupId = attrs.find((a) => a.key === VARIANT_GROUP_KEY)?.value;
+    const groupId = existingGroupId || `vg_${Date.now().toString(36)}_${Math.random().toString(36).substring(2, 8)}`;
+    const attrsWithGroup = attrs.some((a) => a.key === VARIANT_GROUP_KEY)
+      ? attrs
+      : [...attrs, { key: VARIANT_GROUP_KEY, value: groupId }];
+
+    const sharedAttrsBase = attrsWithGroup.filter(
       (a) =>
         a.key &&
         !COLOR_ATTR_KEYS.includes(a.key) &&

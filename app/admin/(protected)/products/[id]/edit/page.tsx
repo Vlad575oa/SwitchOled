@@ -51,11 +51,7 @@ export default async function EditProductPage({ params }: { params: { id: string
       },
       orderBy: { price: "asc" },
     });
-    const productIsBase = isBase(product.name, product.slug);
-    const filtered = productIsBase
-      ? pool.filter((p) => isBase(p.name, p.slug))
-      : pool;
-    if (filtered.length > 1) siblings = filtered;
+    if (pool.length > 1) siblings = pool;
   }
 
   const initialVariants: Omit<VariantRow, "_deleted">[] = siblings.map((s) => {

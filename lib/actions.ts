@@ -161,21 +161,19 @@ export async function duplicateProductAction(id: number): Promise<ActionResponse
     const baseSlug = original.slug.replace(/-copy-[a-z0-9]+$/, "");
     const suffix = Math.random().toString(36).substring(2, 6);
     const newSlug = `${baseSlug}-copy-${suffix}`;
-    const variantGroupId = `vg_${Date.now().toString(36)}_${Math.random().toString(36).substring(2, 8)}`;
 
     // Create duplicate (excluding ID and timestamps)
     const { id: _, createdAt, updatedAt, ...rest } = original as any;
     const originalAttrs = (original.attributes ?? {}) as Record<string, unknown>;
+    // Strip __variantGroupId so the copy groups by Platform like the rest of the family
+    const { [VARIANT_GROUP_KEY]: _vgId, ...attrsWithoutGroupId } = originalAttrs;
 
     const duplicate = await prisma.product.create({
       data: {
         ...rest,
         slug: newSlug,
         name: `${original.name} (Копия)`,
-        attributes: {
-          ...originalAttrs,
-          [VARIANT_GROUP_KEY]: variantGroupId,
-        },
+        attributes: attrsWithoutGroupId,
       },
     });
 

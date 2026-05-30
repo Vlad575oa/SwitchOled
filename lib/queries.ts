@@ -427,17 +427,19 @@ export const getProductVariants = cache(async (productId: number) => {
 
     if (!current) return [];
 
+    const variantGroupId = readAttribute(current.attributes, ["__variantGroupId"]);
     const platform = readAttribute(current.attributes, ["Платформа"]);
-    if (!platform) return [];
+
+    const whereClause = variantGroupId
+      ? { AND: [VISIBLE, { attributes: { path: ["__variantGroupId"], equals: variantGroupId } }] }
+      : platform
+      ? { AND: [VISIBLE, { categoryId: current.categoryId }, { attributes: { path: ["Платформа"], equals: platform } }] }
+      : null;
+
+    if (!whereClause) return [];
 
     const familyPool = await prisma.product.findMany({
-      where: {
-        AND: [
-          VISIBLE,
-          { categoryId: current.categoryId },
-          { attributes: { path: ["Платформа"], equals: platform } },
-        ],
-      },
+      where: whereClause,
       select: {
         id: true,
         name: true,
@@ -455,13 +457,7 @@ export const getProductVariants = cache(async (productId: number) => {
       orderBy: { price: "asc" },
     });
 
-    const baseOnly = familyPool.filter((item) =>
-      isBaseVariantCandidate(item.name, item.slug)
-    );
-    const currentIsBase = isBaseVariantCandidate(current.name, current.slug);
-    const filtered = currentIsBase ? baseOnly : familyPool;
-
-    const rawVariants: ProductVariantOption[] = filtered.map((item) => ({
+    const rawVariants: ProductVariantOption[] = familyPool.map((item) => ({
       id: item.id,
       name: item.name,
       slug: item.slug,
