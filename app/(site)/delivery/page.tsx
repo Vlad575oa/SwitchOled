@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Доставка и оплата | Gameshop24",
-  description: "Доставка по Москве в день заказа. СДЭК, Boxberry, самовывоз. Оплата картой, СБП, наличными и в рассрочку 0%.",
+  description: "Доставка по Москве в день заказа. СДЭК, Boxberry, самовывоз. Оплата наличными при получении или в офисе.",
   alternates: { canonical: "/delivery" },
 };
 
@@ -57,24 +57,19 @@ export default async function DeliveryPage() {
 
   const paymentMethods = [
     {
-      icon: CreditCard,
-      label: d.payments_1_title ?? "Банковская карта",
-      desc: d.payments_1_desc ?? "Visa, Mastercard, МИР. SSL-шифрование, 3D Secure. Скидка 3% при онлайн-оплате.",
-    },
-    {
-      icon: Smartphone,
-      label: d.payments_2_title ?? "СБП",
-      desc: d.payments_2_desc ?? "Оплата по QR-коду или номеру телефона. Мгновенно, без комиссии.",
-    },
-    {
       icon: Banknote,
-      label: d.payments_3_title ?? "Наличные / карта курьеру",
-      desc: d.payments_3_desc ?? "Принимаем при получении в Москве и через СДЭК в большинстве городов.",
+      label: d.payments_1_title ?? "Наличные курьеру",
+      desc: d.payments_1_desc ?? "Оплата наличными при получении заказа (Москва и МО).",
     },
     {
-      icon: Star,
-      label: d.payments_4_title ?? "Рассрочка 0%",
-      desc: d.payments_4_desc ?? "На 3, 6 и 12 месяцев через Тинькофф и Сбер. Решение за 2 минуты без визита в банк.",
+      icon: MapPin,
+      label: d.payments_2_title ?? "Наличные в офисе",
+      desc: d.payments_2_desc ?? "Оплата наличными при самовывозе из нашего шоурума в Митино.",
+    },
+    {
+      icon: ShieldCheck,
+      label: d.payments_3_title ?? "Безопасность",
+      desc: d.payments_3_desc ?? "Вы получаете товарный чек и официальный гарантийный талон на 1 год.",
     },
   ];
 

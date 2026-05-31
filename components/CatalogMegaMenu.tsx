@@ -20,8 +20,9 @@ interface PlatformGroup {
 
 // Extract category slug from href (ignores query params)
 const hrefToSlug = (href: string): string => {
+  if (href === "/catalog/all") return "all";
   const path = href.split("?")[0]; // strip query
-  return path.replace("/catalog/", "");
+  return path.replace("/catalog/", "").split("/")[0] || "all";
 };
 
 const PLATFORMS: PlatformGroup[][] = [
@@ -137,8 +138,16 @@ export function CatalogMegaMenu({ onClose }: CatalogMegaMenuProps) {
   useEffect(() => {
     fetch("/api/catalog-slugs")
       .then((r) => r.json())
-      .then((slugs: string[]) => setAvailableSlugs(new Set(slugs)))
-      .catch(() => setAvailableSlugs(null)); // on error show everything
+      .then((slugs: string[]) => {
+        if (Array.isArray(slugs) && slugs.length > 0) {
+          const slugSet = new Set(slugs);
+          slugSet.add("all");
+          setAvailableSlugs(slugSet);
+        } else {
+          setAvailableSlugs(null);
+        }
+      })
+      .catch(() => setAvailableSlugs(null));
   }, []);
 
   useEffect(() => {
@@ -157,13 +166,13 @@ export function CatalogMegaMenu({ onClose }: CatalogMegaMenuProps) {
 
   // Filter a group's sub-links to only those whose category has products
   const filterLinks = (links: SubLink[]): SubLink[] => {
-    if (!availableSlugs) return links; // show all while loading
+    if (!availableSlugs) return links;
     return links.filter((l) => availableSlugs.has(hrefToSlug(l.href)));
   };
 
   // A group is visible if it has at least one visible sub-link OR its own slug has products
   const isGroupVisible = (group: PlatformGroup): boolean => {
-    if (!availableSlugs) return true; // show all while loading
+    if (!availableSlugs) return true;
     const ownSlug = hrefToSlug(group.href);
     if (availableSlugs.has(ownSlug)) return true;
     return filterLinks(group.links).length > 0;
@@ -171,6 +180,7 @@ export function CatalogMegaMenu({ onClose }: CatalogMegaMenuProps) {
 
   // Filter columns to only those with at least one visible group
   const visibleColumns = PLATFORMS.map((col) => col.filter(isGroupVisible)).filter((col) => col.length > 0);
+  const finalColumns = visibleColumns.length > 0 ? visibleColumns : PLATFORMS;
 
   return (
     <>
@@ -193,8 +203,8 @@ export function CatalogMegaMenu({ onClose }: CatalogMegaMenuProps) {
               <X size={14} />
             </button>
 
-            <div className={`grid gap-8 grid-cols-${Math.min(visibleColumns.length, 4) || 4} justify-items-center`}>
-              {visibleColumns.map((column, colIdx) => (
+            <div className={`grid gap-8 grid-cols-${Math.min(finalColumns.length, 4) || 4} justify-items-center`}>
+              {finalColumns.map((column, colIdx) => (
                 <div
                   key={colIdx}
                   className="space-y-8"
