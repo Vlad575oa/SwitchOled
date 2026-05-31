@@ -36,9 +36,24 @@ export async function GET() {
     }))
   );
 
-  const urls = visibleSlugs
-    .map((slug) => `<url><loc>${baseUrl}/catalog/${slug}</loc><changefreq>daily</changefreq><priority>0.9</priority></url>`)
-    .join("");
+  const smartFilters = [
+    { slug: "nintendo-switch-oled", filter: "proshitaya" },
+    { slug: "nintendo-switch-v2", filter: "proshitaya" },
+    { slug: "nintendo-switch-lite", filter: "proshitaya" },
+    { slug: "xbox-series-s", filter: "s-podpiskoy" },
+    { slug: "xbox-series-x", filter: "s-podpiskoy" },
+    { slug: "all", filter: "v-nalichii" },
+  ];
+
+  const categoryUrls = visibleSlugs.map((slug) => 
+    `<url><loc>${baseUrl}/catalog/${slug}</loc><changefreq>daily</changefreq><priority>0.9</priority></url>`
+  );
+
+  const filterUrls = smartFilters
+    .filter(f => visibleSlugs.includes(f.slug) || f.slug === "all")
+    .map(f => `<url><loc>${baseUrl}/catalog/${f.slug}/${f.filter}</loc><changefreq>daily</changefreq><priority>0.8</priority></url>`);
+
+  const urls = [...categoryUrls, ...filterUrls].join("");
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls}</urlset>`;

@@ -45,7 +45,8 @@ export function ProductCard({ product, eagerImage = false }: ProductCardProps) {
           <div className="relative w-full h-full">
             <Image
               src={product.images[0] || "/placeholder.jpg"}
-              alt={product.name}
+              alt={`Купить ${product.name} в Gameshop24`}
+              title={`${product.name} — Фото в Gameshop24`}
               fill
               sizes="(max-width: 640px) 46vw, (max-width: 1024px) 30vw, (max-width: 1280px) 22vw, 16vw"
               quality={40}

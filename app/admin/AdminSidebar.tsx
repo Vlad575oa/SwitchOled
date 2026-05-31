@@ -22,11 +22,11 @@ import { cn } from "@/lib/utils";
 const navItems = [
   { label: "Дашборд", href: "/admin", icon: LayoutDashboard, exact: true },
   { label: "Товары", href: "/admin/products", icon: Package },
-  { label: "Заказы", href: "/admin/orders", icon: ShoppingBag },
+  { label: "Заказы", href: "/admin/orders", icon: ShoppingBag, badge: true, badgeType: "orders" },
   { label: "Цвета", href: "/admin/colors", icon: Palette },
   { label: "Блог", href: "/admin/posts", icon: FileText },
   { label: "FAQ", href: "/admin/faq", icon: HelpCircle },
-  { label: "Чат", href: "/admin/chat", icon: MessageSquare, badge: true },
+  { label: "Чат", href: "/admin/chat", icon: MessageSquare, badge: true, badgeType: "chat" },
   { label: "Страницы", href: "/admin/pages", icon: Layers },
   { label: "Правовые", href: "/admin/legal", icon: Scale },
 ];
@@ -34,7 +34,8 @@ const navItems = [
 export const AdminSidebar = () => {
   const pathname = usePathname();
   const router = useRouter();
-  const [unreadCount, setUnreadCount] = useState(0);
+  const [unreadChatCount, setUnreadChatCount] = useState(0);
+  const [pendingOrdersCount, setPendingOrdersCount] = useState(0);
   const [mounted, setMounted] = useState(false);
 
   const isActive = (item: { href: string; exact?: boolean }) =>
@@ -48,20 +49,42 @@ export const AdminSidebar = () => {
   useEffect(() => { setMounted(true); }, []);
 
   useEffect(() => {
-    const fetchUnread = async () => {
+    const playNotification = () => {
       try {
-        const res = await fetch("/api/admin/chat/sessions");
-        if (res.ok) {
-          const data = await res.json();
+        const audio = new Audio("/sounds/notification.mp3");
+        audio.play().catch(() => {
+          // Silent catch for browser autoplay blocks
+          console.log("Autoplay blocked - sound notification skipped");
+        });
+      } catch (err) {
+        console.error("Failed to play notification sound:", err);
+      }
+    };
+
+    const fetchCounts = async () => {
+      try {
+        // Chat
+        const chatRes = await fetch("/api/admin/chat/sessions");
+        if (chatRes.ok) {
+          const data = await chatRes.json();
           const total = data.reduce((acc: number, s: { unreadCount: number }) => acc + s.unreadCount, 0);
-          setUnreadCount(total);
+          if (total > unreadChatCount && mounted) playNotification();
+          setUnreadChatCount(total);
+        }
+
+        // Orders
+        const ordersRes = await fetch("/api/admin/orders/count");
+        if (ordersRes.ok) {
+          const { count } = await ordersRes.json();
+          if (count > pendingOrdersCount && mounted) playNotification();
+          setPendingOrdersCount(count);
         }
       } catch {}
     };
-    fetchUnread();
-    const interval = setInterval(fetchUnread, 60000);
+    fetchCounts();
+    const interval = setInterval(fetchCounts, 60000);
     return () => clearInterval(interval);
-  }, []);
+  }, [unreadChatCount, pendingOrdersCount, mounted]);
 
   return (
     <aside className="w-[240px] min-h-screen bg-[#111827] flex flex-col flex-shrink-0">
@@ -81,34 +104,41 @@ export const AdminSidebar = () => {
       {/* Nav */}
       <nav className="flex-1 px-3 py-5 space-y-1">
         <p className="text-[9px] font-black uppercase tracking-[0.2em] text-neutral-600 px-3 mb-3">Управление</p>
-        {navItems.map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            className={cn(
-              "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold transition-all group",
-              isActive(item)
-                ? "bg-white/10 text-white"
-                : "text-neutral-400 hover:text-white hover:bg-white/5"
-            )}
-          >
-            <item.icon
-              size={16}
+        {navItems.map((item) => {
+          const count = item.badgeType === "chat" ? unreadChatCount : pendingOrdersCount;
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
               className={cn(
-                "flex-shrink-0 transition-colors",
-                isActive(item) ? "text-primary" : "text-neutral-500 group-hover:text-neutral-300"
+                "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold transition-all group",
+                isActive(item)
+                  ? "bg-white/10 text-white"
+                  : "text-neutral-400 hover:text-white hover:bg-white/5"
               )}
-            />
-            <span className="flex-1">{item.label}</span>
-            {mounted && item.badge && unreadCount > 0 && (
-              <span className="w-5 h-5 rounded-full bg-primary text-white text-[9px] font-black flex items-center justify-center">
-                {unreadCount > 99 ? "99+" : unreadCount}
-              </span>
-            )}
-            {isActive(item) && !(item.badge && unreadCount > 0) && <ChevronRight size={12} className="text-neutral-500" />}
-          </Link>
-        ))}
+            >
+              <item.icon
+                size={16}
+                className={cn(
+                  "flex-shrink-0 transition-colors",
+                  isActive(item) ? "text-primary" : "text-neutral-500 group-hover:text-neutral-300"
+                )}
+              />
+              <span className="flex-1">{item.label}</span>
+              {mounted && item.badge && count > 0 && (
+                <span className={cn(
+                  "w-5 h-5 rounded-full text-[9px] font-black flex items-center justify-center",
+                  item.badgeType === "orders" ? "bg-orange-500 text-white" : "bg-primary text-white"
+                )}>
+                  {count > 99 ? "99+" : count}
+                </span>
+              )}
+              {isActive(item) && !(item.badge && count > 0) && <ChevronRight size={12} className="text-neutral-500" />}
+            </Link>
+          );
+        })}
       </nav>
+
 
       {/* Bottom */}
       <div className="px-3 pb-5 space-y-1 border-t border-white/5 pt-4">

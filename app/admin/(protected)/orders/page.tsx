@@ -3,6 +3,7 @@ import { formatPrice } from "@/lib/utils";
 import { ShoppingBag } from "lucide-react";
 import { OrderStatusSelect } from "./OrderStatusSelect";
 import { OrderDeleteButton } from "./OrderDeleteButton";
+import { CopyButton } from "@/components/ui/CopyButton";
 import { cookies } from "next/headers";
 import { ADMIN_COOKIE, verifyAdminSession } from "@/lib/adminSession";
 
@@ -56,8 +57,18 @@ export default async function OrdersPage() {
                     <tr key={order.id} className="border-b border-neutral-50 last:border-0 hover:bg-neutral-50/50 transition-colors">
                       <td className="px-5 py-4 text-xs font-bold text-neutral-700">#{order.id}</td>
                       <td className="px-5 py-4 text-xs font-bold text-neutral-700">{order.name}</td>
-                      <td className="px-5 py-4 text-xs font-bold text-neutral-700">{order.phone}</td>
-                      <td className="px-5 py-4 text-xs font-bold text-neutral-700 min-w-[280px] whitespace-normal break-words">{order.address}</td>
+                      <td className="px-5 py-4 text-xs font-bold text-neutral-700">
+                        <div className="flex items-center gap-2 group">
+                          <span>{order.phone}</span>
+                          <CopyButton text={order.phone} className="opacity-0 group-hover:opacity-100" />
+                        </div>
+                      </td>
+                      <td className="px-5 py-4 text-xs font-bold text-neutral-700 min-w-[280px] whitespace-normal break-words">
+                        <div className="flex items-start gap-2 group">
+                          <span className="flex-1">{order.address}</span>
+                          <CopyButton text={order.address} className="opacity-0 group-hover:opacity-100 mt-[-2px]" />
+                        </div>
+                      </td>
                       <td className="px-5 py-4 text-xs text-neutral-500 font-medium min-w-[180px] whitespace-normal break-words">
                         {order.comment || <span className="text-neutral-300">—</span>}
                       </td>

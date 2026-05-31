@@ -1,6 +1,7 @@
-import { getProductBySlug, getProductVariants } from "@/lib/queries";
+import { getProductBySlug, getProductVariants, getCategoryBySlug, getCategoryDescendantSlugsBySlug, getProductsCount } from "@/lib/queries";
 import { notFound, permanentRedirect } from "next/navigation";
 import { Metadata } from "next";
+import { Catalog } from "@/features/catalog/components/Catalog";
 
 export const dynamic = "force-dynamic";
 import { ProductGallery } from "@/features/product/components/ProductGallery";
@@ -16,6 +17,13 @@ import { buildProductMetaDescription, resolveProductMetaTitle } from "@/lib/seo"
 
 const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || "https://gameshop24.ru").replace("://www.", "://");
 
+const SMART_FILTERS: Record<string, { q?: string; status?: string; title: string; desc: string }> = {
+  "proshitaya": { q: "прошитая", title: "Прошитые", desc: "Лучшие прошитые и чипованные консоли с гарантией." },
+  "chipovannaya": { q: "чипованная", title: "Чипованные", desc: "Консоли с установленным чипом для запуска любых игр." },
+  "v-nalichii": { status: "inStock", title: "В наличии", desc: "Товары в наличии с быстрой доставкой сегодня." },
+  "vtoroy-geympad": { q: "2-й геймпад", title: "С двумя геймпадами", desc: "Комплекты с дополнительным контроллером для игры вдвоём." },
+};
+
 export const revalidate = 1800;
 
 export async function generateMetadata({
@@ -23,6 +31,17 @@ export async function generateMetadata({
 }: {
   params: { product: string; category: string };
 }): Promise<Metadata> {
+  const smartFilter = SMART_FILTERS[params.product];
+  if (smartFilter) {
+    const category = await getCategoryBySlug(params.category);
+    const title = `${smartFilter.title} ${category?.name || ""} — Купить в Gameshop24`;
+    return {
+      title,
+      description: smartFilter.desc,
+      alternates: { canonical: `${baseUrl}/catalog/${params.category}/${params.product}` },
+    };
+  }
+
   const product = await getProductBySlug(params.product);
   if (!product) return { title: "Товар не найден" };
 
@@ -55,9 +74,36 @@ export async function generateMetadata({
 
 export default async function ProductPage({
   params,
+  searchParams,
 }: {
   params: { product: string; category: string };
+  searchParams: Record<string, string | undefined>;
 }) {
+  const smartFilter = SMART_FILTERS[params.product];
+  
+  if (smartFilter) {
+    const combinedParams = { ...searchParams };
+    if (smartFilter.q) combinedParams.q = smartFilter.q;
+    if (smartFilter.status) combinedParams.status = smartFilter.status;
+
+    return (
+      <main className="w-full max-w-[1920px] mx-auto px-6 py-12">
+         <div className="mb-8">
+            <nav className="flex items-center gap-2 text-[10px] font-bold text-neutral-300 uppercase tracking-widest mb-4">
+              <Link href="/" className="hover:text-primary transition-colors">Главная</Link>
+              <ChevronRight size={10} />
+              <Link href="/catalog/all" className="hover:text-primary transition-colors">Каталог</Link>
+              <ChevronRight size={10} />
+              <Link href={`/catalog/${params.category}`} className="hover:text-primary transition-colors">{params.category}</Link>
+            </nav>
+            <h1 className="text-4xl font-black text-secondary uppercase italic">{smartFilter.title}</h1>
+            <p className="text-neutral-400 font-medium mt-2">{smartFilter.desc}</p>
+         </div>
+         <Catalog category={params.category} searchParams={combinedParams} />
+      </main>
+    );
+  }
+
   const product = await getProductBySlug(params.product);
   if (!product) notFound();
   if (params.category !== product.category.slug) {
@@ -98,6 +144,29 @@ export default async function ProductPage({
     ],
   };
 
+  const faqLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": `Предоставляется ли гарантия на ${product.name}?`,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Да, на все консоли в нашем магазине предоставляется полная гарантия сроком 1 год. В комплекте идет гарантийный талон."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": `Как осуществляется доставка ${product.name}?`,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Мы осуществляем быструю доставку курьером по городу и СДЭКом по всей России. Возможен самовывоз из нашего офиса."
+        }
+      }
+    ]
+  };
+
   return (
     <div className="bg-[#fcfcfc] min-h-screen">
       <main className="container py-8 lg:py-12">
@@ -108,6 +177,10 @@ export default async function ProductPage({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
         />
 
         {/* Breadcrumbs */}

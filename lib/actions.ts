@@ -47,8 +47,8 @@ export async function createOrderAction(input: CreateOrderInput): Promise<Action
       // 1. Check stock and visibility for all items
       for (const item of normalizedItems) {
         const product = productMap.get(item.productId);
-        if (!product || product.isVisible === false) {
-          throw new Error(`Товар "${product?.name || "ID " + item.productId}" недоступен`);
+        if (!product || product.isVisible === false || product.stock < item.quantity) {
+          throw new Error(`Товар "${product?.name || "ID " + item.productId}" недоступен или закончился`);
         }
       }
 
@@ -103,8 +103,13 @@ export async function createOrderAction(input: CreateOrderInput): Promise<Action
       return order;
     });
 
-    revalidatePath("/admin");
-    revalidatePath("/catalog");
+    try {
+      revalidatePath("/admin");
+      revalidatePath("/catalog");
+    } catch (err) {
+      // revalidatePath might throw if run outside of Next.js environment (e.g. in tests)
+      console.warn("revalidatePath skipped:", err instanceof Error ? err.message : err);
+    }
 
     return { success: true, data: result };
   } catch (error: any) {

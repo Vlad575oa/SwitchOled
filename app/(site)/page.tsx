@@ -15,10 +15,16 @@ const RecentlyViewed = loadDynamic(
 );
 
 export const metadata: Metadata = {
-  title: "Gameshop24 | Премиальный магазин консолей и игр",
-  description: "Официальные консоли, редкие аксессуары и экспертные обзоры. Gameshop24 — твой проводник в мир премиального гейминга 2026.",
+  title: "Прошитые Nintendo Switch — купить в Москве | Gameshop24",
+  description: "Прошитые Nintendo Switch OLED и Lite с гарантией 1 год. 45+ конфигураций от 27 000 ₽. 100+ игр в комплекте. Доставка в день заказа по Москве.",
   alternates: {
     canonical: "/",
+  },
+  openGraph: {
+    title: "Прошитые Nintendo Switch — купить в Москве | Gameshop24",
+    description: "Прошитые Nintendo Switch OLED и Lite с гарантией 1 год. 45+ конфигураций от 27 000 ₽. 100+ игр в комплекте.",
+    url: "/",
+    type: "website",
   },
 };
 

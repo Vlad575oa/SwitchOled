@@ -43,7 +43,13 @@ export function ProductGallery({ images, name }: ProductGalleryProps) {
               activeIndex === i ? "border-primary shadow-md" : "border-neutral-100 hover:border-neutral-300"
             )}
           >
-            <Image src={img} alt={`${name} thumb ${i}`} fill className="object-contain p-1" />
+            <Image
+              src={img}
+              alt={`${name} — Фото ${i + 1}`}
+              title={`${name} — Ракурс ${i + 1}`}
+              fill
+              className="object-contain p-1"
+            />
           </button>
         ))}
       </div>
@@ -56,7 +62,8 @@ export function ProductGallery({ images, name }: ProductGalleryProps) {
       >
         <Image
           src={images[activeIndex] || "/placeholder.jpg"}
-          alt={name}
+          alt={`${name} — Оригинальное фото в Gameshop24`}
+          title={`${name} — Купить с гарантией 1 год`}
           fill
           className="object-contain p-6 md:p-10"
           priority
