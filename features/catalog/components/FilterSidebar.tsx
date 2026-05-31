@@ -389,7 +389,7 @@ export const FilterSidebar = ({
       <div className="space-y-1">
         <div
           className={cn(
-            "text-[13px] font-bold transition-all w-full text-left py-2 px-3 rounded-xl flex items-center justify-between group/cat",
+            "text-[13px] lg:text-[15px] font-bold transition-all w-full text-left py-2 px-3 rounded-xl flex items-center justify-between group/cat",
             isActive
               ? "text-primary bg-primary/5 shadow-sm shadow-primary/5"
               : "text-neutral-400 hover:text-secondary hover:bg-neutral-50"

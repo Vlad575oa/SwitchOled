@@ -7,11 +7,19 @@ import { HomePageLink } from "@/components/HomePageLink";
 
 export const revalidate = 1800;
 
-export const metadata: Metadata = {
-  title: "Блог игромана | Новости, обзоры и гайды | Gameshop24",
-  description: "Самые свежие новости из мира консолей, подробные обзоры PS5 Pro, Nintendo Switch 2 и ретро-гейминга.",
-  alternates: { canonical: "/blog" },
-};
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Record<string, string | undefined>;
+}): Promise<Metadata> {
+  const category = searchParams.category;
+  return {
+    title: "Блог игромана | Новости, обзоры и гайды | Gameshop24",
+    description: "Самые свежие новости из мира консолей, подробные обзоры PS5 Pro, Nintendo Switch 2 и ретро-гейминга.",
+    alternates: { canonical: "https://gameshop24.ru/blog" },
+    ...(category ? { robots: { index: false, follow: true } } : {}),
+  };
+}
 
 const calculateReadingTime = (content: string) => {
   const words = content.split(/\s+/).length;

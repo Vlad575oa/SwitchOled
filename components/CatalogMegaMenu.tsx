@@ -157,13 +157,13 @@ export function CatalogMegaMenu({ onClose }: CatalogMegaMenuProps) {
 
   // Filter a group's sub-links to only those whose category has products
   const filterLinks = (links: SubLink[]): SubLink[] => {
-    if (!availableSlugs) return [];
+    if (!availableSlugs) return links; // show all while loading
     return links.filter((l) => availableSlugs.has(hrefToSlug(l.href)));
   };
 
   // A group is visible if it has at least one visible sub-link OR its own slug has products
   const isGroupVisible = (group: PlatformGroup): boolean => {
-    if (!availableSlugs) return false;
+    if (!availableSlugs) return true; // show all while loading
     const ownSlug = hrefToSlug(group.href);
     if (availableSlugs.has(ownSlug)) return true;
     return filterLinks(group.links).length > 0;
@@ -193,7 +193,7 @@ export function CatalogMegaMenu({ onClose }: CatalogMegaMenuProps) {
               <X size={14} />
             </button>
 
-            <div className={`grid gap-8 grid-cols-${Math.min(visibleColumns.length, 4) || 4}`}>
+            <div className={`grid gap-8 grid-cols-${Math.min(visibleColumns.length, 4) || 4} justify-items-center`}>
               {visibleColumns.map((column, colIdx) => (
                 <div
                   key={colIdx}
@@ -207,24 +207,24 @@ export function CatalogMegaMenu({ onClose }: CatalogMegaMenuProps) {
                         <Link
                           href={group.href}
                           onClick={onClose}
-                          className="flex items-center gap-2.5 mb-3 group"
+                          className="flex items-center justify-center gap-2.5 mb-3 group"
                         >
-                          <div className={`w-8 h-8 rounded-xl flex items-center justify-center text-sm ${group.color}`}>
+                          <div className={`w-9 h-9 rounded-xl flex items-center justify-center text-base ${group.color}`}>
                             {group.emoji}
                           </div>
-                          <span className="font-black text-[13px] text-secondary group-hover:text-primary transition-colors">
+                          <span className="font-black text-base text-secondary group-hover:text-primary transition-colors">
                             {group.title}
                           </span>
                         </Link>
 
                         {/* Subcategory links */}
-                        <ul className="space-y-1.5 pl-1">
+                        <ul className="space-y-2 pl-1">
                           {visibleLinks.map((link) => (
                             <li key={link.label}>
                               <Link
                                 href={link.href}
                                 onClick={onClose}
-                                className="flex items-center gap-2 text-[12px] font-bold text-neutral-400 hover:text-primary transition-colors"
+                                className="flex items-center justify-center gap-2 text-sm font-bold text-neutral-400 hover:text-primary transition-colors"
                               >
                                 <span className="w-1 h-1 rounded-full bg-neutral-200 shrink-0" />
                                 {link.label}

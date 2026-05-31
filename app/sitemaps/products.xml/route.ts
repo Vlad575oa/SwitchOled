@@ -23,7 +23,7 @@ export async function GET() {
     .filter((p) => normalizeCopySlug(p.slug) === p.slug)
     .map(
       (p) =>
-        `<url><loc>${baseUrl}/catalog/${p.category.slug}/${p.slug}</loc><lastmod>${p.updatedAt.toISOString()}</lastmod></url>`
+        `<url><loc>${baseUrl}/catalog/${p.category.slug}/${p.slug}</loc><lastmod>${p.updatedAt.toISOString()}</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>`
     )
     .join("");
 

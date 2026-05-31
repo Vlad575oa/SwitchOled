@@ -251,7 +251,7 @@ export function ChatWidget() {
       {/* Floating button */}
       <div className="flex flex-col items-center gap-1">
         {!isOpen && (
-          <span className="text-[10px] font-black text-white bg-black/50 backdrop-blur-sm px-2 py-0.5 rounded-full tracking-wide shadow">
+          <span className="text-xs font-black text-white bg-black/50 backdrop-blur-sm px-2.5 py-1 rounded-full tracking-wide shadow">
             Спросить ИИ ✨
           </span>
         )}

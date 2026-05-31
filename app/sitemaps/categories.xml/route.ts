@@ -37,7 +37,7 @@ export async function GET() {
   );
 
   const urls = visibleSlugs
-    .map((slug) => `<url><loc>${baseUrl}/catalog/${slug}</loc></url>`)
+    .map((slug) => `<url><loc>${baseUrl}/catalog/${slug}</loc><changefreq>daily</changefreq><priority>0.9</priority></url>`)
     .join("");
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>

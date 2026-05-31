@@ -21,7 +21,6 @@ export default function robots(): MetadataRoute.Robots {
           "/catalog/mashini_motocikli_tehnika-17",
           "/catalog/lego-11",
           "/*copy*",
-          "/*?*", // Disallow query parameters for SEO
         ],
       },
       {
