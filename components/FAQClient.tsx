@@ -52,8 +52,8 @@ function FAQItem({
 
   return (
     <div className="border-b border-neutral-100 last:border-0" onClick={() => setOpen(!open)}>
-      <div className="flex items-center justify-between cursor-pointer py-7 gap-4">
-        <span className="text-lg font-bold text-secondary leading-snug pr-4">
+      <div className="flex items-center justify-between cursor-pointer py-8 gap-4">
+        <span className="text-lg md:text-xl font-bold text-secondary leading-snug pr-4">
           {highlight(question, query)}
         </span>
         <div
@@ -63,11 +63,11 @@ function FAQItem({
               : "bg-neutral-50 text-neutral-400"
           }`}
         >
-          <ChevronDown size={18} />
+          <ChevronDown size={20} />
         </div>
       </div>
       {isOpen && (
-        <div className="text-neutral-500 text-base leading-relaxed font-medium pb-7 max-w-3xl animate-in fade-in slide-in-from-top-2 duration-300">
+        <div className="text-neutral-500 text-base md:text-lg leading-relaxed font-medium pb-8 max-w-4xl animate-in fade-in slide-in-from-top-2 duration-300">
           {highlight(answer, query)}
         </div>
       )}
@@ -106,7 +106,7 @@ export default function FAQClient({ faqs }: { faqs: FAQ[] }) {
     <>
 
       {/* Category Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 mb-12 mt-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-16 mt-8">
         {Object.keys(CAT_ICONS).map((slug) => {
           const Icon = CAT_ICONS[slug];
           const isActive = active === slug;
@@ -114,30 +114,30 @@ export default function FAQClient({ faqs }: { faqs: FAQ[] }) {
             <button
               key={slug}
               onClick={() => setActive(isActive ? "all" : slug)}
-              className={`group p-7 rounded-[28px] border text-left transition-all duration-300 cursor-pointer ${
+              className={`group p-8 rounded-[32px] border text-left transition-all duration-300 cursor-pointer ${
                 isActive
                   ? "bg-secondary border-secondary shadow-2xl shadow-secondary/20"
                   : "bg-neutral-50 border-transparent hover:bg-white hover:border-neutral-100 hover:shadow-xl hover:shadow-neutral-200/50"
               }`}
             >
               <div
-                className={`w-13 h-13 w-12 h-12 rounded-[18px] flex items-center justify-center mb-5 transition-all duration-300 ${
+                className={`w-14 h-14 rounded-[20px] flex items-center justify-center mb-6 transition-all duration-300 ${
                   isActive
                     ? "bg-white/20"
                     : "bg-white shadow-sm group-hover:bg-primary group-hover:shadow-xl group-hover:shadow-primary/30"
                 }`}
               >
                 <Icon
-                  size={22}
+                  size={26}
                   className={`transition-colors ${
                     isActive ? "text-white" : "text-neutral-300 group-hover:text-white"
                   }`}
                 />
               </div>
-              <h3 className={`text-lg font-black mb-1 ${isActive ? "text-white" : "text-secondary"}`}>
+              <h3 className={`text-xl font-black mb-1.5 ${isActive ? "text-white" : "text-secondary"}`}>
                 {slug}
               </h3>
-              <p className={`text-[11px] font-bold uppercase tracking-widest ${isActive ? "text-white/50" : "text-neutral-400"}`}>
+              <p className={`text-[12px] font-bold uppercase tracking-widest ${isActive ? "text-white/50" : "text-neutral-400"}`}>
                 {counts[slug] ?? 0} вопросов
               </p>
             </button>

@@ -45,7 +45,7 @@ export default async function AboutPage() {
 
   return (
     <div className="bg-[#fcfcfc] min-h-screen pt-12 pb-28">
-      <div className="container max-w-6xl px-4 lg:px-8">
+      <div className="container max-w-[1400px] px-4 lg:px-12">
 
         {/* ── HERO ───────────────────────────────────────────────── */}
         <div className="mb-32">
@@ -55,7 +55,7 @@ export default async function AboutPage() {
           {/* Top Metadata */}
           <div className="flex items-center gap-4 mb-8">
             <div className="h-px w-12 bg-primary/30" />
-            <span className="text-[11px] font-black text-primary uppercase tracking-[0.3em]">
+            <span className="text-[12px] font-black text-primary uppercase tracking-[0.3em]">
               {d.hero_label ?? "История бренда"}
             </span>
           </div>
@@ -63,28 +63,28 @@ export default async function AboutPage() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
             {/* Left Content */}
             <div className="lg:col-span-7">
-              <h1 className="text-[clamp(3.5rem,10vw,7rem)] font-black tracking-tighter text-secondary leading-[0.82] uppercase mb-10">
+              <h1 className="text-[clamp(3.5rem,10vw,8.5rem)] font-black tracking-tighter text-secondary leading-[0.82] uppercase mb-10">
                 {d.hero_title ?? "Живём"}{" "}
                 <span className="text-primary italic">играми</span>
                 <br />
                 {d.hero_subtitle ?? "с 2017 года"}
               </h1>
 
-              <div className="max-w-xl space-y-6">
-                <p className="text-xl md:text-2xl text-secondary font-black leading-[1.3] tracking-tight">
+              <div className="max-w-xl md:max-w-2xl space-y-6">
+                <p className="text-xl md:text-3xl text-secondary font-black leading-[1.3] tracking-tight">
                   {d.hero_text1 ?? "Gameshop24 начинался с двух друзей и десяти консолей, привезённых из Европы."}
                 </p>
                 <div className="h-px w-20 bg-neutral-100" />
-                <p className="text-base text-neutral-500 font-bold leading-relaxed">
+                <p className="text-base md:text-xl text-neutral-500 font-bold leading-relaxed">
                   {d.hero_text2 ?? "Сегодня — это команда из 15 профессиональных геймеров и более 12 000 клиентов."}
                 </p>
 
                 {/* Stats */}
-                <div className="flex flex-wrap gap-8 pt-6">
+                <div className="flex flex-wrap gap-8 md:gap-12 pt-6">
                   {stats.map((s) => (
                     <div key={s.label}>
-                      <p className="text-2xl font-black text-secondary leading-none mb-1">{s.value}</p>
-                      <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest">{s.label}</p>
+                      <p className="text-2xl md:text-4xl font-black text-secondary leading-none mb-1">{s.value}</p>
+                      <p className="text-[10px] md:text-[12px] font-black text-neutral-400 uppercase tracking-widest">{s.label}</p>
                     </div>
                   ))}
                 </div>

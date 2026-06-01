@@ -5,6 +5,7 @@ import { Prisma } from "@prisma/client";
 import { getCategorySlugsVisibleInCatalog } from "@/lib/categoryVisibility";
 
 const VISIBLE: Prisma.ProductWhereInput = { isVisible: { not: false } };
+const IN_STOCK_VISIBLE: Prisma.ProductWhereInput = { isVisible: { not: false }, inStock: true };
 
 const safeQuery = async <T>(fn: () => Promise<T>, fallback: T): Promise<T> => {
   try {
@@ -29,18 +30,18 @@ export const getCategoryTree = cache(async () => {
         children: {
           include: {
             children: {
-              include: { _count: { select: { products: { where: VISIBLE } } } },
+              include: { _count: { select: { products: { where: IN_STOCK_VISIBLE } } } },
             },
-            _count: { select: { products: { where: VISIBLE } } },
+            _count: { select: { products: { where: IN_STOCK_VISIBLE } } },
           },
         },
-        _count: { select: { products: { where: VISIBLE } } },
+        _count: { select: { products: { where: IN_STOCK_VISIBLE } } },
       },
       where: { parentId: null },
       orderBy: { name: "asc" },
     });
 
-    // Keep only categories that have at least one visible product (direct or in descendants)
+    // Keep only categories that have at least one visible in-stock product (direct or in descendants)
     return allCats
       .map((root) => ({
         ...root,
@@ -65,9 +66,9 @@ export const getCategoryTree = cache(async () => {
 export const getCategorySlugsWithProducts = unstable_cache(
   async (): Promise<string[]> => {
     return safeQuery(async () => {
-      // Get all categories with their parentId and direct product count
+      // Get all categories with their parentId and direct in-stock product count
       const all = await prisma.category.findMany({
-        select: { id: true, slug: true, parentId: true, _count: { select: { products: { where: VISIBLE } } } },
+        select: { id: true, slug: true, parentId: true, _count: { select: { products: { where: IN_STOCK_VISIBLE } } } },
       });
 
       return getCategorySlugsVisibleInCatalog(

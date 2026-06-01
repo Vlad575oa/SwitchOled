@@ -19,7 +19,7 @@ const TelegramIcon = () => (
 
 export const TopBar = ({ workingHours = "09:00 — 21:00" }: { workingHours?: string }) => {
   return (
-    <div className="fixed bottom-14 left-0 right-0 z-40 lg:sticky lg:bottom-auto lg:top-0 bg-[var(--bg-surface)] border-t lg:border-t-0 lg:border-b border-[var(--bg-elevated)] transition-colors" style={{ paddingBottom: "env(safe-area-inset-bottom)" }}>
+    <div className="sticky top-0 left-0 right-0 z-40 bg-[var(--bg-surface)] border-b border-[var(--bg-elevated)] transition-colors">
       <div className="w-full max-w-[1920px] mx-auto px-4 lg:pl-6 lg:pr-4 2xl:pl-4 2xl:pr-4 h-10 flex items-center justify-between gap-2 sm:gap-4">
         {/* Left: Location, Time & Trust Badges */}
         <div className="flex items-center gap-3 sm:gap-6 overflow-hidden">
@@ -32,41 +32,41 @@ export const TopBar = ({ workingHours = "09:00 — 21:00" }: { workingHours?: st
               title={CONTACTS.address}
             >
               <MapPin size={13} className="text-secondary shrink-0 hover:text-primary transition-colors" />
-              <span className="text-[10px] xl:text-[11px] font-black uppercase tracking-wider hidden sm:inline">Москва</span>
+              <span className="text-[11px] xl:text-[12px] font-black uppercase tracking-wider hidden sm:inline">Москва</span>
             </a>
             <div className="flex items-center gap-1.5 text-[var(--text-secondary)]">
               <Clock size={13} className="text-secondary shrink-0" />
-              <span className="text-[10px] xl:text-[11px] font-black uppercase tracking-wider">{workingHours}</span>
+              <span className="text-[11px] xl:text-[12px] font-black uppercase tracking-wider">{workingHours}</span>
             </div>
           </div>
 
           <div className="hidden lg:flex items-center gap-5">
             <Link 
               href="/about" 
-              className="group flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 transition-all active:scale-95"
+              className="group flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 transition-all active:scale-95"
             >
-              <Award size={12} className="shrink-0 group-hover:rotate-12 transition-transform" />
-              <span className="text-[11px] xl:text-[12px] font-black uppercase tracking-tight">Почему мы</span>
+              <Award size={13} className="shrink-0 group-hover:rotate-12 transition-transform" />
+              <span className="text-[12px] xl:text-[13px] font-black uppercase tracking-tight">Почему мы</span>
             </Link>
-            <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-blue-50/50 text-blue-600 border border-blue-100/50">
-              <ShieldCheck size={12} className="shrink-0" />
-              <span className="text-[11px] xl:text-[12px] font-black uppercase tracking-tight">100% Оригинал</span>
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-50/50 text-blue-600 border border-blue-100/50">
+              <ShieldCheck size={13} className="shrink-0" />
+              <span className="text-[12px] xl:text-[13px] font-black uppercase tracking-tight">100% Оригинал</span>
             </div>
-            <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-purple-50/50 text-purple-600 border border-purple-100/50">
-              <Award size={12} className="shrink-0" />
-              <span className="text-[11px] xl:text-[12px] font-black uppercase tracking-tight">Гарантия 1 год</span>
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-purple-50/50 text-purple-600 border border-purple-100/50">
+              <Award size={13} className="shrink-0" />
+              <span className="text-[12px] xl:text-[13px] font-black uppercase tracking-tight">Гарантия 1 год</span>
             </div>
             <Link
               href="/delivery"
-              className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-50/60 text-emerald-700 border border-emerald-100/70 hover:bg-emerald-100/70 transition-all active:scale-95"
+              className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50/60 text-emerald-700 border border-emerald-100/70 hover:bg-emerald-100/70 transition-all active:scale-95"
             >
-              <span className="text-[11px] xl:text-[12px] font-black uppercase tracking-tight">Доставка</span>
+              <span className="text-[12px] xl:text-[13px] font-black uppercase tracking-tight">Доставка</span>
             </Link>
             <Link
               href="/gamepad-test"
-              className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-violet-50/60 text-violet-700 border border-violet-100/70 hover:bg-violet-100/70 transition-all active:scale-95"
+              className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-violet-50/60 text-violet-700 border border-violet-100/70 hover:bg-violet-100/70 transition-all active:scale-95"
             >
-              <span className="text-[11px] xl:text-[12px] font-black uppercase tracking-tight">Тест геймпада</span>
+              <span className="text-[12px] xl:text-[13px] font-black uppercase tracking-tight">Тест геймпада</span>
             </Link>
           </div>
         </div>
@@ -75,7 +75,7 @@ export const TopBar = ({ workingHours = "09:00 — 21:00" }: { workingHours?: st
         <div className="flex items-center gap-2 sm:gap-4 shrink-0">
           <a
             href={`tel:${CONTACTS.phoneHref}`}
-            className="text-[14px] font-black text-[var(--text-primary)] hover:text-primary transition-colors tracking-widest uppercase hidden sm:inline"
+            className="text-[15px] xl:text-[16px] font-black text-[var(--text-primary)] hover:text-primary transition-colors tracking-widest uppercase hidden sm:inline"
           >
             {CONTACTS.phoneDisplay}
           </a>
