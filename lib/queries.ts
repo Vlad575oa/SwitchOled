@@ -195,8 +195,8 @@ export const getProductsNintendoFirst = async (
     });
 
     const prioritized = rows.sort((a, b) => {
-      const aPriority = /nintendo|switch/i.test(a.category.slug) ? 0 : 1;
-      const bPriority = /nintendo|switch/i.test(b.category.slug) ? 0 : 1;
+      const aPriority = /nintendo|switch/i.test(a.category?.slug ?? "") ? 0 : 1;
+      const bPriority = /nintendo|switch/i.test(b.category?.slug ?? "") ? 0 : 1;
 
       if (aPriority !== bPriority) return aPriority - bPriority;
       if (a.inStock !== b.inStock) return a.inStock ? -1 : 1;
@@ -257,20 +257,17 @@ export const getCatalogVariantFilters = async (categorySlugs: string[]) => {
       ? { category: { slug: { in: categorySlugs } } }
       : {};
 
-    const [allVisibleRows, inStockRows, allColors] = await Promise.all([
-      // All VISIBLE products in category — for memory values
-      prisma.product.findMany({
-        where: { AND: [VISIBLE, categoryFilter] },
-        select: { attributes: true },
-      }),
-      // Only IN-STOCK products — for color ordering (which colors are "active")
-      prisma.product.findMany({
-        where: { AND: [VISIBLE, { inStock: true }, categoryFilter] },
-        select: { color: true, attributes: true },
-      }),
-      // Always fetch ALL colors from the Color table, sorted by name
-      prisma.color.findMany({ orderBy: { name: "asc" } }),
-    ]);
+    const allVisibleRows = await prisma.product.findMany({
+      where: { AND: [VISIBLE, categoryFilter] },
+      select: { attributes: true },
+    });
+
+    const inStockRows = await prisma.product.findMany({
+      where: { AND: [VISIBLE, { inStock: true }, categoryFilter] },
+      select: { color: true, attributes: true },
+    });
+
+    const allColors = await prisma.color.findMany({ orderBy: { name: "asc" } });
 
     // Memory from ALL visible products — only add real values, skip products without memory
     const memorySet = new Set<string>();

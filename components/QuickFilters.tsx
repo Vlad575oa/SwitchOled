@@ -55,10 +55,20 @@ export const QuickFilters = ({ enabledSlugs }: QuickFiltersProps) => {
 
   const isLinkActive = (item: QuickLink) => pathname === `/catalog/${item.slug}`;
 
+  const getLabel = (item: QuickLink) => {
+    if (item.slug === "nintendo-switch-oled") {
+      return { mobile: "OLED", desktop: item.label };
+    }
+    if (item.slug === "nintendo-switch-lite") {
+      return { mobile: "LITE", desktop: item.label };
+    }
+    return { mobile: item.label, desktop: item.label };
+  };
+
   const fadeCls = "absolute top-0 bottom-0 z-10 w-16 pointer-events-none flex items-center";
 
   return (
-    <div className="sticky top-[116px] z-40 bg-[var(--bg-base)] border-b border-[var(--border)]">
+    <div className="sticky top-[156px] sm:top-[156px] z-40 bg-[var(--bg-base)] border-b border-[var(--border)]">
       <div className="relative">
         {canScrollLeft && (
           <div className={cn(fadeCls, "left-0 bg-gradient-to-r from-[var(--bg-base)] to-transparent")}>
@@ -83,13 +93,14 @@ export const QuickFilters = ({ enabledSlugs }: QuickFiltersProps) => {
                 key={item.slug}
                 href={item.href}
                 className={cn(
-                  "relative text-[12px] xl:text-[13px] whitespace-nowrap px-2.5 py-1.5 rounded-lg transition-all shrink-0 active:scale-95",
+                  "relative text-[15px] xl:text-[16px] whitespace-nowrap px-3.5 py-2.5 rounded-lg transition-all shrink-0 active:scale-95",
                   active
                     ? "font-black text-[var(--text-primary)]"
                     : "font-bold text-neutral-400 hover:text-[var(--text-secondary)] hover:bg-neutral-100"
                 )}
               >
-                {item.label}
+                <span className="sm:hidden">{getLabel(item).mobile}</span>
+                <span className="hidden sm:inline">{getLabel(item).desktop}</span>
                 {active && (
                   <span className="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-primary" />
                 )}

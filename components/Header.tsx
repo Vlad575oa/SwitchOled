@@ -81,8 +81,8 @@ export const Header = () => {
   const iconLabel = "text-[10px] xl:text-[11px] font-black text-white uppercase tracking-wide mt-1 transition-colors text-center";
 
   return (
-    <header className="sticky top-10 z-50 h-[76px] xl:h-[88px] flex items-center bg-[#2c2c30] border-b border-white/[0.07] relative" style={{ boxShadow: "0 2px 12px rgba(0,0,0,0.25)" }}>
-      <div className="w-full max-w-[1920px] mx-auto px-4 lg:pl-6 lg:pr-4 2xl:pl-4 2xl:pr-4 flex items-center gap-2 xl:gap-6">
+    <header className="sticky top-[80px] sm:top-[80px] z-50 h-[76px] xl:h-[88px] flex items-center bg-[#2c2c30] border-b border-white/[0.07] relative" style={{ boxShadow: "0 2px 12px rgba(0,0,0,0.25)" }}>
+      <div className="relative w-full max-w-[1920px] mx-auto px-4 lg:pl-6 lg:pr-4 2xl:pl-4 2xl:pr-4 flex items-center gap-2 xl:gap-6">
 
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2.5 group shrink-0">
@@ -117,7 +117,7 @@ export const Header = () => {
 
         {/* Search */}
         <div
-          className="flex-1 min-w-[150px] max-w-2xl"
+          className="flex-1 min-w-[150px] lg:flex-none lg:w-full lg:max-w-[760px] lg:absolute lg:left-1/2 lg:-translate-x-1/2"
           onMouseEnter={() => setSearchReady(true)}
           onFocusCapture={() => setSearchReady(true)}
           onTouchStart={() => setSearchReady(true)}
@@ -175,10 +175,7 @@ export const Header = () => {
                 )}
               </button>
             ) : (
-              <Link href="/auth/login" className={cn(iconBtn, pathname?.startsWith("/auth") && "bg-primary/10 border border-primary/20")}>
-                <User size={18} className="text-white transition-colors" />
-                <span className={iconLabel}>Войти</span>
-              </Link>
+              null
             )}
           </div>
 

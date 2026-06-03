@@ -53,6 +53,7 @@ export function ChatWidget() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [hideFloating, setHideFloating] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -66,6 +67,19 @@ export function ChatWidget() {
       setTimeout(() => inputRef.current?.focus(), 100);
     }
   }, [isOpen, messages]);
+
+  useEffect(() => {
+    const footer = document.querySelector("footer");
+    if (!footer) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setHideFloating(entry.isIntersecting),
+      { threshold: 0.1 }
+    );
+
+    observer.observe(footer);
+    return () => observer.disconnect();
+  }, []);
 
   const handleSend = async () => {
     const text = input.trim();
@@ -127,7 +141,10 @@ export function ChatWidget() {
   };
 
   return (
-    <div className="fixed bottom-20 sm:bottom-6 right-4 sm:right-6 z-50 flex flex-col items-end gap-3">
+    <div className={cn(
+      "fixed bottom-20 sm:bottom-6 right-4 sm:right-6 z-50 flex flex-col items-end gap-3 transition-opacity duration-200",
+      hideFloating && !isOpen && "pointer-events-none opacity-0"
+    )}>
       {isOpen && (
         <div
           className="w-[360px] bg-white rounded-3xl shadow-2xl shadow-black/20 border border-neutral-100 flex flex-col overflow-hidden"
@@ -251,15 +268,17 @@ export function ChatWidget() {
       {/* Floating button */}
       <div className="flex flex-col items-center gap-1">
         {!isOpen && (
-          <span className="text-xs font-black text-white bg-black/50 backdrop-blur-sm px-2.5 py-1 rounded-full tracking-wide shadow">
-            Спросить ИИ ✨
+          <span className="max-w-[92px] text-[11px] leading-[1.05] text-center font-black text-white bg-black/50 backdrop-blur-sm px-2.5 py-1.5 rounded-2xl tracking-wide shadow">
+            ИИ
+            <br />
+            консультант
           </span>
         )}
         <button
           onClick={() => setIsOpen((v) => !v)}
-          className="w-14 h-14 rounded-full bg-primary text-white shadow-xl shadow-primary/40 hover:bg-red-700 hover:scale-110 active:scale-95 transition-all flex items-center justify-center"
+          className="w-12 h-12 rounded-full bg-primary text-white shadow-xl shadow-primary/40 hover:bg-red-700 hover:scale-110 active:scale-95 transition-all flex items-center justify-center"
         >
-          {isOpen ? <X size={22} /> : <MessageCircle size={22} />}
+          {isOpen ? <X size={18} /> : <MessageCircle size={18} />}
         </button>
       </div>
     </div>

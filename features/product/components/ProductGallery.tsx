@@ -30,16 +30,16 @@ export function ProductGallery({ images, name }: ProductGalleryProps) {
   if (!images.length) return null;
 
   return (
-    <div className="flex flex-col-reverse md:flex-row gap-3 md:gap-4 h-auto md:h-[540px] lg:h-[600px]">
+    <div className="flex flex-col md:flex-row gap-3 md:gap-4 h-auto md:h-[540px] lg:h-[600px]">
 
-      {/* Thumbnails — horizontal on mobile, vertical on desktop */}
-      <div className="flex md:flex-col gap-2 overflow-x-auto md:overflow-x-hidden md:overflow-y-auto no-scrollbar py-1 md:w-20 shrink-0">
+      {/* Thumbnails — horizontal under image on mobile, vertical on desktop */}
+      <div className="order-2 md:order-1 flex md:flex-col gap-2 overflow-x-auto md:overflow-x-hidden md:overflow-y-auto py-1 md:w-20 shrink-0 snap-x snap-mandatory">
         {images.map((img, i) => (
           <button
             key={i}
             onClick={() => setActiveIndex(i)}
             className={cn(
-              "relative aspect-square w-14 h-14 md:w-full md:h-auto md:aspect-square rounded-xl overflow-hidden border-2 transition-all p-1 bg-white flex-shrink-0",
+              "relative aspect-square w-16 h-16 md:w-full md:h-auto md:aspect-square rounded-xl overflow-hidden border-2 transition-all p-1 bg-white flex-shrink-0 snap-start",
               activeIndex === i ? "border-primary shadow-md" : "border-neutral-100 hover:border-neutral-300"
             )}
           >
@@ -56,7 +56,7 @@ export function ProductGallery({ images, name }: ProductGalleryProps) {
 
       {/* Main Image */}
       <div
-        className="relative bg-neutral-50 border border-neutral-100 rounded-[24px] md:rounded-[40px] overflow-hidden group h-[320px] sm:h-[380px] md:flex-1 md:h-full"
+        className="order-1 md:order-2 relative bg-neutral-50 border border-neutral-100 rounded-[24px] md:rounded-[40px] overflow-hidden group h-[320px] sm:h-[380px] md:flex-1 md:h-full"
         onTouchStart={onTouchStart}
         onTouchEnd={onTouchEnd}
       >
@@ -89,20 +89,6 @@ export function ProductGallery({ images, name }: ProductGalleryProps) {
           </>
         )}
 
-        {/* Dot indicators — mobile only */}
-        {images.length > 1 && (
-          <div className="absolute bottom-3 inset-x-0 flex justify-center gap-1.5 md:hidden pointer-events-none">
-            {images.map((_, i) => (
-              <div
-                key={i}
-                className={cn(
-                  "rounded-full transition-all",
-                  i === activeIndex ? "w-4 h-1.5 bg-primary" : "w-1.5 h-1.5 bg-neutral-300"
-                )}
-              />
-            ))}
-          </div>
-        )}
       </div>
     </div>
   );

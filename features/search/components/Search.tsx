@@ -1,30 +1,33 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Search as SearchIcon, X, Loader2, History, TrendingUp } from "lucide-react";
+import { Search as SearchIcon, X, Loader2, TrendingUp } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { searchProductsAction } from "@/lib/actions";
 
-const POPULAR_TAGS = ["PlayStation 5 Pro", "Xbox Series X", "Nintendo Switch OLED", "DualSense", "Elden Ring"];
-
-const POPULAR_ITEMS = [
-  { id: 1, name: "Sony PlayStation 5", category: "Консоли", image: "/images/placeholder.webp" },
-  { id: 2, name: "Microsoft XBOX Series", category: "Консоли", image: "/images/placeholder.webp" },
-  { id: 3, name: "Nintendo Switch", category: "Консоли", image: "/images/placeholder.webp" },
-];
+interface SearchProduct {
+  id: number;
+  name: string;
+  slug: string;
+  category: string;
+  categorySlug: string;
+  image: string;
+}
 
 export const Search = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<any[]>([]);
-  const [popularItems, setPopularItems] = useState<any[]>(POPULAR_ITEMS);
+  const [results, setResults] = useState<SearchProduct[]>([]);
+  const [popularItems, setPopularItems] = useState<SearchProduct[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [popularLoaded, setPopularLoaded] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+  const displayItems = query.length >= 2 ? results : popularItems;
+  const quickTags = popularItems.slice(0, 5).map((item) => item.name);
 
   const handleSubmit = () => {
     if (query.trim()) {
@@ -40,7 +43,7 @@ export const Search = () => {
       try {
         const data = await searchProductsAction(""); // I'll update the action to return defaults if empty
         if (data && data.length > 0) {
-          setPopularItems(data.slice(0, 3));
+          setPopularItems(data);
         }
       } catch (e) {
         console.error("Failed to fetch popular items", e);
@@ -84,7 +87,13 @@ export const Search = () => {
   }, []);
 
   return (
-    <div ref={containerRef} className="relative w-full z-50">
+    <div
+      ref={containerRef}
+      className={cn(
+        "relative w-full z-50 transition-[max-width,width] duration-300 lg:mx-auto",
+        isOpen ? "lg:w-[760px] lg:max-w-[760px]" : "lg:w-[680px] lg:max-w-[680px]"
+      )}
+    >
       {/* Ozon-style Search Bar */}
       <div className={cn(
         "flex items-center h-11 bg-white border-2 rounded-[14px] transition-all duration-300 overflow-hidden",
@@ -135,8 +144,9 @@ export const Search = () => {
         <div className="absolute top-[calc(100%+8px)] left-0 right-0 bg-white rounded-[24px] shadow-[0_20px_50px_rgba(0,0,0,0.15)] border border-neutral-100 p-5 animate-in fade-in slide-in-from-top-2 duration-200 overflow-hidden">
           
           {/* Quick Tags */}
-          <div className="flex flex-wrap gap-2 mb-6">
-            {POPULAR_TAGS.map((tag) => (
+          {quickTags.length > 0 && (
+            <div className="flex flex-wrap gap-2 mb-6">
+              {quickTags.map((tag) => (
               <button 
                 key={tag} 
                 className="px-3 py-1.5 bg-neutral-50 hover:bg-neutral-100 rounded-full text-[11px] font-bold text-neutral-500 hover:text-secondary transition-all"
@@ -144,8 +154,9 @@ export const Search = () => {
               >
                 {tag}
               </button>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
 
           <div className="space-y-6">
             <section>
@@ -155,16 +166,16 @@ export const Search = () => {
               </h3>
               
               <div className="space-y-1">
-                {(query.length >= 2 ? results : popularItems).map((item) => (
+                {displayItems.map((item) => (
                   <Link 
                     key={item.id} 
-                    href={`/catalog/${item.categorySlug || "any"}/${item.slug || ""}`}
+                    href={`/catalog/${item.categorySlug}/${item.slug}`}
                     onClick={() => setIsOpen(false)}
                     className="flex items-center gap-4 p-2.5 rounded-2xl hover:bg-neutral-50 transition-all group"
                   >
                     <div className="w-11 h-11 relative rounded-xl overflow-hidden bg-neutral-100 shrink-0 border border-neutral-100">
                       <Image
-                        src={item.image || (item.images && item.images[0]) || ""}
+                        src={item.image || "/images/placeholder.webp"}
                         alt={item.name}
                         fill
                         sizes="44px"
@@ -178,25 +189,15 @@ export const Search = () => {
                     </div>
                   </Link>
                 ))}
+                {!isLoading && displayItems.length === 0 && (
+                  <div className="px-2 py-4 text-sm font-medium text-neutral-400">
+                    {query.length >= 2
+                      ? "Ничего не найдено в текущем каталоге."
+                      : "В каталоге пока нет товаров для показа в поиске."}
+                  </div>
+                )}
               </div>
             </section>
-
-            {query.length < 2 && (
-                <section>
-                    <h3 className="text-[10px] font-black text-neutral-400 uppercase tracking-widest mb-4 flex items-center gap-2">
-                        <History size={12} />
-                        История поиска
-                    </h3>
-                    <div className="flex flex-col">
-                        {["DualSense Edge", "Switch 2", "Xbox Controller"].map((history) => (
-                            <button key={history} className="flex items-center gap-3 p-2.5 text-xs font-bold text-neutral-500 hover:text-secondary hover:bg-neutral-50 rounded-xl transition-all text-left">
-                                <SearchIcon size={12} className="text-neutral-300" />
-                                {history}
-                            </button>
-                        ))}
-                    </div>
-                </section>
-            )}
           </div>
           
           {query.trim() && (

@@ -18,7 +18,7 @@ export const Footer = ({ workingHours = "09:00 — 21:00", currentYear }: Footer
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12 mb-10">
 
                     {/* Brand */}
-                    <div className="flex flex-col gap-4">
+                    <div className="order-2 md:order-none flex flex-col gap-4">
                         <Link href="/" className="flex items-center gap-2.5 group">
                             <div className="w-9 h-9 bg-primary rounded-xl flex items-center justify-center shadow-[0_6px_16px_var(--primary-glow)] transition-all group-hover:scale-105">
                                 <span className="text-white font-black text-xl italic leading-none">G</span>
@@ -46,7 +46,7 @@ export const Footer = ({ workingHours = "09:00 — 21:00", currentYear }: Footer
                     </div>
 
                     {/* Nav */}
-                    <div>
+                    <div className="order-3 md:order-none">
                         <h4 className="text-[10px] xl:text-[12px] font-black uppercase tracking-[0.2em] text-primary mb-4">Каталог</h4>
                         <ul className="space-y-2">
                             {[
@@ -65,7 +65,7 @@ export const Footer = ({ workingHours = "09:00 — 21:00", currentYear }: Footer
                     </div>
 
                     {/* Info */}
-                    <div>
+                    <div className="order-4 md:order-none">
                         <h4 className="text-[10px] xl:text-[12px] font-black uppercase tracking-[0.2em] text-primary mb-4">Информация</h4>
                         <ul className="space-y-2">
                             {[
@@ -85,7 +85,7 @@ export const Footer = ({ workingHours = "09:00 — 21:00", currentYear }: Footer
                     </div>
 
                     {/* Contacts */}
-                    <div>
+                    <div className="order-1 md:order-none">
                         <h4 className="text-[10px] xl:text-[12px] font-black uppercase tracking-[0.2em] text-primary mb-4">Контакты</h4>
                         <div className="space-y-3">
                             <Link href={`tel:${CONTACTS.phoneHref}`} className="flex items-center gap-3 group/item">

@@ -175,7 +175,7 @@ const FilterSection = ({ title, children, isOpen, onToggle }: FilterSectionProps
       onClick={onToggle}
       className="flex items-center justify-between w-full py-5 text-left group"
     >
-      <h3 className="text-sm font-black text-secondary group-hover:text-primary transition-colors duration-200">
+      <h3 className="text-[15px] lg:text-[16px] font-black text-secondary group-hover:text-primary transition-colors duration-200">
         {title}
       </h3>
       <motion.div
@@ -250,7 +250,7 @@ const CheckboxOption = ({ label, checked, onChange, colorHex }: CheckboxOptionPr
     )}
     <span
       className={cn(
-        "text-[13px] font-bold transition-colors",
+        "text-[14px] lg:text-[15px] font-bold transition-colors",
         checked ? "text-secondary" : "text-neutral-400 group-hover:text-secondary"
       )}
     >
@@ -303,9 +303,9 @@ export const FilterSidebar = ({
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
     category: true,
     price: true,
-    color: Boolean(searchParams.get("color")),
-    memory: Boolean(searchParams.get("memory")),
-    status: Boolean(searchParams.get("status")),
+    color: true,
+    memory: true,
+    status: true,
   });
   const [collapsedRootCategories, setCollapsedRootCategories] = useState<Record<number, boolean>>({});
 
@@ -389,7 +389,7 @@ export const FilterSidebar = ({
       <div className="space-y-1">
         <div
           className={cn(
-            "text-[13px] lg:text-[15px] font-bold transition-all w-full text-left py-2 px-3 rounded-xl flex items-center justify-between group/cat",
+            "text-[15px] lg:text-[16px] font-bold transition-all w-full text-left py-2.5 px-3 rounded-xl flex items-center justify-between group/cat",
             isActive
               ? "text-primary bg-primary/5 shadow-sm shadow-primary/5"
               : "text-neutral-400 hover:text-secondary hover:bg-neutral-50"
@@ -470,11 +470,11 @@ export const FilterSidebar = ({
                   setPriceMin(v);
                   setPriceMinInput(v === 0 ? "" : String(v));
                 }}
-                className="w-full pl-4 pr-7 py-3 bg-neutral-50 border border-neutral-100 focus:border-primary/30 focus:bg-white rounded-2xl text-[13px] font-black transition-all placeholder:text-neutral-300 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                className="w-full pl-4 pr-7 py-3 bg-neutral-50 border border-neutral-100 focus:border-primary/30 focus:bg-white rounded-2xl text-[14px] font-black transition-all placeholder:text-neutral-300 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               />
-              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-neutral-300 font-bold pointer-events-none">₽</span>
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[11px] text-neutral-300 font-bold pointer-events-none">₽</span>
             </div>
-            <span className="text-neutral-200 font-bold text-sm">—</span>
+            <span className="text-neutral-200 font-bold text-base">—</span>
             <div className="flex-1 relative">
               <input
                 type="number"
@@ -487,9 +487,9 @@ export const FilterSidebar = ({
                   setPriceMax(v);
                   setPriceMaxInput(v === MAX_PRICE ? "" : String(v));
                 }}
-                className="w-full pl-4 pr-7 py-3 bg-neutral-50 border border-neutral-100 focus:border-primary/30 focus:bg-white rounded-2xl text-[13px] font-black transition-all placeholder:text-neutral-300 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                className="w-full pl-4 pr-7 py-3 bg-neutral-50 border border-neutral-100 focus:border-primary/30 focus:bg-white rounded-2xl text-[14px] font-black transition-all placeholder:text-neutral-300 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               />
-              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-neutral-300 font-bold pointer-events-none">₽</span>
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[11px] text-neutral-300 font-bold pointer-events-none">₽</span>
             </div>
           </div>
           <PriceRangeSlider
@@ -503,39 +503,43 @@ export const FilterSidebar = ({
         </div>
       </FilterSection>
 
-      {availableMemories.length > 0 && (
-        <FilterSection
-          title="Память MicroSD"
-          id="memory"
-          isOpen={openSections.memory ?? false}
-          onToggle={() => toggleSection("memory")}
-        >
-          {availableMemories.map((memoryValue) => (
+      <FilterSection
+        title="Память MicroSD"
+        id="memory"
+        isOpen={openSections.memory ?? false}
+        onToggle={() => toggleSection("memory")}
+      >
+        {availableMemories.length > 0 ? (
+          availableMemories.map((memoryValue) => (
             <CheckboxOption
               key={memoryValue}
               label={memoryValue}
               checked={memories.includes(memoryValue)}
               onChange={() => toggleValue(memories, setMemories, memoryValue)}
             />
-          ))}
-        </FilterSection>
-      )}
+          ))
+        ) : (
+          <p className="px-1 text-xs font-bold text-neutral-300">Варианты памяти скоро появятся</p>
+        )}
+      </FilterSection>
 
       {/* ── Цвет ── */}
-      {availableColors.length > 0 && (
-        <FilterSection
-          title="Цвет"
-          id="color"
-          isOpen={openSections.color}
-          onToggle={() => toggleSection("color")}
-        >
+      <FilterSection
+        title="Цвет"
+        id="color"
+        isOpen={openSections.color}
+        onToggle={() => toggleSection("color")}
+      >
+        {availableColors.length > 0 ? (
           <ColorScrollRow
             availableColors={availableColors}
             selectedColors={colors}
             onToggle={(name) => toggleValue(colors, setColors, name)}
           />
-        </FilterSection>
-      )}
+        ) : (
+          <p className="px-1 text-xs font-bold text-neutral-300">Цвета скоро появятся</p>
+        )}
+      </FilterSection>
 
       {/* ── Статус ── */}
       <FilterSection

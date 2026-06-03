@@ -2,6 +2,7 @@
 
 import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { buildProductSearchWhere } from "@/lib/search";
 
 const VARIANT_GROUP_KEY = "__variantGroupId";
 
@@ -120,16 +121,11 @@ export async function createOrderAction(input: CreateOrderInput): Promise<Action
 
 export async function searchProductsAction(query: string) {
   try {
+    const searchWhere = query && query.length >= 2 ? buildProductSearchWhere(query) : undefined;
     const products = await prisma.product.findMany({
       where: {
         isVisible: { not: false },
-        ...(query && query.length >= 2 ? {
-          OR: [
-            { name: { contains: query, mode: "insensitive" } },
-            { sku: { contains: query, mode: "insensitive" } },
-            { category: { name: { contains: query, mode: "insensitive" } } },
-          ],
-        } : {}),
+        ...(searchWhere ?? {}),
       },
       take: query && query.length >= 2 ? 8 : 4,
       orderBy: { createdAt: "desc" },

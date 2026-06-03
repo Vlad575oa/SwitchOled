@@ -22,6 +22,7 @@ import { ActiveFiltersBar } from "@/features/catalog/components/ActiveFiltersBar
 import { CATEGORY_FILTERS } from "@/features/catalog/config/categoryFilters";
 import { Pagination } from "./Pagination";
 import { Prisma } from "@prisma/client";
+import { buildProductSearchWhere } from "@/lib/search";
 
 interface CatalogProps {
   category: string;
@@ -34,7 +35,7 @@ export async function Catalog({
   category,
   searchParams,
   pageSize = 12,
-  gridClassName = "grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4",
+  gridClassName = "grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-[3px] sm:gap-4",
 }: CatalogProps) {
   const { q, priceMin, priceMax, color, memory, status, sort, page = "1" } = searchParams;
   const skip = (parseInt(page) - 1) * pageSize;
@@ -53,21 +54,9 @@ export async function Catalog({
   }
 
   if (q) {
-    const normalized = q.trim().toLowerCase();
-    if (normalized === "switch2") {
-      andConditions.push({
-        OR: [
-          { name: { contains: "switch 2", mode: "insensitive" } },
-          { name: { contains: "switch2", mode: "insensitive" } },
-        ],
-      });
-    } else {
-      andConditions.push({
-        OR: [
-          { name: { contains: q.trim(), mode: "insensitive" } },
-          { sku: { contains: q.trim(), mode: "insensitive" } },
-        ],
-      });
+    const searchWhere = buildProductSearchWhere(q.trim());
+    if (searchWhere) {
+      andConditions.push(searchWhere);
     }
   }
 
@@ -154,17 +143,18 @@ export async function Catalog({
       priceMin || priceMax || color || memory || status || hasAttributeFilters
     );
     const useNintendoPriority = category === "all" && !sort && !q && !hasNonSearchFilters;
-    [products, totalCount, categoryData, categoryTree, availableVariantFilters] = await Promise.all([
-      useNintendoPriority
-        ? getProductsNintendoFirst(where, skip, pageSize)
-        : getProducts(where, orderBy, skip, pageSize),
-      getProductsCount(where),
+    products = useNintendoPriority
+      ? await getProductsNintendoFirst(where, skip, pageSize)
+      : await getProducts(where, orderBy, skip, pageSize);
+    totalCount = await getProductsCount(where);
+    categoryData =
       category !== "all"
-        ? getCategoryBySlug(category)
-        : Promise.resolve({ name: "Весь каталог" }),
-      getCategoryTree(),
-      getCatalogVariantFilters(categorySlugs.length ? categorySlugs : category !== "all" ? [category] : []),
-    ]);
+        ? await getCategoryBySlug(category)
+        : { name: "Весь каталог" };
+    categoryTree = await getCategoryTree();
+    availableVariantFilters = await getCatalogVariantFilters(
+      categorySlugs.length ? categorySlugs : category !== "all" ? [category] : []
+    );
   } catch (err: any) {
     dbError = true;
     errorMsg = err.message || "Unknown error";
@@ -192,9 +182,9 @@ export async function Catalog({
   }
 
   return (
-    <div className="flex flex-col lg:flex-row gap-12">
+    <div className="flex flex-col lg:flex-row gap-8 xl:gap-10">
       {/* Sidebar — desktop only */}
-      <aside className="hidden lg:block w-[280px] flex-shrink-0">
+      <aside className="hidden lg:block w-[300px] xl:w-[320px] flex-shrink-0">
         <Suspense fallback={null}>
           <FilterSidebar
             currentCategory={category}
@@ -242,14 +232,16 @@ export async function Catalog({
 
         {products.length > 0 ? (
           <>
-            <div className={gridClassName}>
-              {products.map((product, idx) => (
-                <ProductCard
-                  key={product.id}
-                  product={product}
-                  eagerImage={idx < 2}
-                />
-              ))}
+            <div className="-mx-6 sm:mx-0">
+              <div className={gridClassName}>
+                {products.map((product, idx) => (
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    eagerImage={idx < 2}
+                  />
+                ))}
+              </div>
             </div>
             <Suspense fallback={null}>
               <Pagination totalPages={totalPages} />

@@ -1,7 +1,6 @@
 import { TopBar } from "@/components/TopBar";
 import { Footer } from "@/components/Footer";
 import { HeaderSkeleton } from "@/components/HeaderSkeleton";
-import { QuickFilters } from "@/components/QuickFilters";
 import { Suspense } from "react";
 import { CONTACTS } from "@/lib/constants/contacts";
 import { getPageContent } from "@/lib/getPageContent";
@@ -17,6 +16,10 @@ const Header = dynamic(() => import("@/components/Header").then((m) => m.Header)
   ssr: false,
   loading: () => <HeaderSkeleton />,
 });
+const QuickFilters = dynamic(
+  () => import("@/components/QuickFilters").then((m) => m.QuickFilters),
+  { ssr: false }
+);
 const MobileBottomNav = dynamic(
   () => import("@/components/MobileBottomNav").then((m) => m.MobileBottomNav),
   { ssr: false }

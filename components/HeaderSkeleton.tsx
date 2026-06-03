@@ -3,7 +3,7 @@
 export function HeaderSkeleton() {
   return (
     <header
-      className="sticky top-10 z-50 h-[76px] xl:h-[88px] flex items-center bg-[#2c2c30] border-b border-white/[0.07]"
+      className="sticky top-[80px] z-50 h-[76px] xl:h-[88px] flex items-center bg-[#2c2c30] border-b border-white/[0.07]"
       style={{ boxShadow: "0 2px 12px rgba(0,0,0,0.25)" }}
       aria-hidden="true"
     >
