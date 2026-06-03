@@ -18,27 +18,28 @@ const TelegramIcon = () => (
 
 
 export const TopBar = ({ workingHours = "09:00 — 21:00" }: { workingHours?: string }) => {
+  const compactWorkingHours = workingHours
+    .replace(/:00/g, "")
+    .replace(/\s*—\s*/g, "-");
+
   return (
     <div className="sticky top-0 left-0 right-0 z-[60] bg-[var(--bg-surface)] border-b border-[var(--bg-elevated)] transition-colors">
       <div className="w-full max-w-[1920px] mx-auto px-4 lg:pl-6 lg:pr-4 2xl:pl-4 2xl:pr-4">
-        <div className="sm:hidden flex items-center justify-between gap-3 py-2.5">
+        <div className="sm:hidden relative flex items-center justify-between gap-3 py-2.5 min-h-[52px]">
+          <div className="flex items-center gap-1.5 text-[var(--text-secondary)] shrink-0">
+            <Clock size={14} className="text-secondary shrink-0" />
+            <span className="text-[11px] font-black uppercase tracking-tight text-black whitespace-nowrap">
+              {compactWorkingHours}
+            </span>
+          </div>
+
           <a
             href={`tel:${CONTACTS.phoneHref}`}
-            className="inline-flex flex-col items-start gap-0.5 px-3 py-1.5 rounded-full bg-primary/10 text-primary border border-primary/20 hover:bg-primary/15 transition-all active:scale-95"
+            className="absolute left-1/2 -translate-x-1/2 inline-flex items-center px-4 py-2 rounded-full border border-primary/25 text-black hover:text-neutral-700 hover:border-primary/40 transition-colors"
           >
-            <span className="text-[9px] font-black uppercase tracking-[0.18em] leading-none">Подобрать консоль</span>
-            <span className="text-[11px] font-black tracking-wider leading-none whitespace-nowrap">{CONTACTS.phoneDisplay}</span>
+            <span className="text-[16px] font-black tracking-tight leading-none whitespace-nowrap">{CONTACTS.phoneDisplay}</span>
           </a>
           <div className="flex items-center gap-2 shrink-0">
-            <a
-              href={`tel:${CONTACTS.phoneHref}`}
-              className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary"
-              aria-label="Позвонить"
-            >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-4 h-4">
-                <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.8a19.79 19.79 0 01-3.07-8.7A2 2 0 012 .86h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 8.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z" />
-              </svg>
-            </a>
             <a
               href={CONTACTS.telegramUrl}
               target="_blank"
@@ -113,7 +114,31 @@ export const TopBar = ({ workingHours = "09:00 — 21:00" }: { workingHours?: st
           </div>
         </div>
 
-        <div className="hidden sm:flex items-center justify-between gap-2 sm:gap-4 h-10 relative">
+        <div className="lg:hidden flex flex-col gap-2 py-2.5 border-t border-[var(--bg-elevated)]">
+          <div className="flex items-center justify-center gap-3 overflow-x-auto no-scrollbar">
+            <div className="flex items-center gap-1.5 shrink-0 text-black">
+              <ShieldCheck size={12} className="shrink-0 text-emerald-600" />
+              <span className="text-[10px] font-bold uppercase tracking-tight whitespace-nowrap">Работаем с 1997 года</span>
+            </div>
+            <div className="flex items-center gap-1.5 shrink-0 text-black">
+              <ShieldCheck size={12} className="shrink-0 text-emerald-600" />
+              <span className="text-[10px] font-bold uppercase tracking-tight whitespace-nowrap">100% Оригинал</span>
+            </div>
+            <div className="flex items-center gap-1.5 shrink-0 text-black">
+              <Award size={12} className="shrink-0 text-emerald-600" />
+              <span className="text-[10px] font-bold uppercase tracking-tight whitespace-nowrap">1 год гарантии</span>
+            </div>
+            <Link
+              href="/delivery"
+              className="flex items-center justify-center w-7 h-7 rounded-full border border-emerald-300 bg-emerald-50 text-emerald-700 shrink-0"
+              aria-label="Быстрая доставка"
+            >
+              <Truck size={12} className="shrink-0" />
+            </Link>
+          </div>
+        </div>
+
+        <div className="hidden lg:flex items-center justify-between gap-2 sm:gap-4 h-10 relative">
           {/* Left: Location & Time */}
           <div className="flex items-center gap-3 sm:gap-4 sm:border-r sm:border-[var(--bg-elevated)] sm:pr-6 shrink-0">
             <a

@@ -65,6 +65,7 @@ export const MobileFilterDrawer = ({
                 categoryTree={categoryTree}
                 availableColors={availableColors}
                 availableMemories={availableMemories}
+                onApply={() => setOpen(false)}
               />
             </div>
           </div>

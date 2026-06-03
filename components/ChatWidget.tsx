@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { MessageCircle, X, Send, Bot } from "lucide-react";
+import { MessageCircle, X, Send, Bot, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface Message {
@@ -269,7 +269,10 @@ export function ChatWidget() {
       <div className="flex flex-col items-center gap-1">
         {!isOpen && (
           <span className="max-w-[92px] text-[11px] leading-[1.05] text-center font-black text-white bg-black/50 backdrop-blur-sm px-2.5 py-1.5 rounded-2xl tracking-wide shadow">
-            ИИ
+            <span className="inline-flex items-center justify-center gap-1">
+              <Sparkles size={10} className="shrink-0" />
+              <span>ИИ</span>
+            </span>
             <br />
             консультант
           </span>

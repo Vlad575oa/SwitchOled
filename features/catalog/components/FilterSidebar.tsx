@@ -267,6 +267,7 @@ interface FilterSidebarProps {
   categoryTree: any[];
   availableColors: Array<{ name: string; hex: string }>;
   availableMemories: string[];
+  onApply?: () => void;
 }
 
 export const FilterSidebar = ({
@@ -275,6 +276,7 @@ export const FilterSidebar = ({
   categoryTree,
   availableColors,
   availableMemories,
+  onApply,
 }: FilterSidebarProps) => {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -367,6 +369,7 @@ export const FilterSidebar = ({
       status: statuses.length ? statuses.join(",") : null,
     };
     router.push(`${pathname}?${createQueryString(params)}`);
+    onApply?.();
   };
 
   const handleClear = () => {

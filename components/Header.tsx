@@ -3,12 +3,13 @@
 import { useCartStore } from "@/features/cart/store/useCartStore";
 import { useWishlistStore } from "@/features/product/store/useWishlistStore";
 import { useCompareStore } from "@/features/product/store/useCompareStore";
-import { ShoppingCart, Menu, User, LogOut, Package, Heart, Scale } from "lucide-react";
+import { ShoppingCart, Menu, User, LogOut, Package, Heart, Scale, MapPin } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import dynamic from "next/dynamic";
+import { CONTACTS } from "@/lib/constants/contacts";
 
 const Search = dynamic(
   () => import("@/features/search/components/Search").then((m) => m.Search),
@@ -81,7 +82,7 @@ export const Header = () => {
   const iconLabel = "text-[10px] xl:text-[11px] font-black text-white uppercase tracking-wide mt-1 transition-colors text-center";
 
   return (
-    <header className="sticky top-[80px] sm:top-[80px] z-50 h-[76px] xl:h-[88px] flex items-center bg-[#2c2c30] border-b border-white/[0.07] relative" style={{ boxShadow: "0 2px 12px rgba(0,0,0,0.25)" }}>
+    <header className="relative z-50 h-[76px] xl:h-[88px] flex items-center bg-[#2c2c30] border-b border-white/[0.07] lg:sticky lg:top-[80px]" style={{ boxShadow: "0 2px 12px rgba(0,0,0,0.25)" }}>
       <div className="relative w-full max-w-[1920px] mx-auto px-4 lg:pl-6 lg:pr-4 2xl:pl-4 2xl:pr-4 flex items-center gap-2 xl:gap-6">
 
         {/* Logo */}
@@ -115,9 +116,23 @@ export const Header = () => {
 
 
 
+        <a
+          href={CONTACTS.yandexMapsUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="sm:hidden inline-flex items-center gap-1.5 px-2.5 py-2 rounded-2xl text-white border border-white/12 bg-white/[0.06] hover:bg-white/[0.1] transition-colors shrink-0"
+          title={CONTACTS.address}
+        >
+          <MapPin size={13} className="text-white/80 shrink-0" />
+          <span className="flex flex-col leading-[1.02]">
+            <span className="text-[9px] font-bold uppercase tracking-tight">Москва</span>
+            <span className="text-[9px] font-bold uppercase tracking-tight">Шоурум</span>
+          </span>
+        </a>
+
         {/* Search */}
         <div
-          className="flex-1 min-w-[150px] lg:flex-none lg:w-full lg:max-w-[760px] lg:absolute lg:left-1/2 lg:-translate-x-1/2"
+          className="flex-1 min-w-0 sm:min-w-[150px] lg:flex-none lg:w-full lg:max-w-[760px] lg:absolute lg:left-1/2 lg:-translate-x-1/2"
           onMouseEnter={() => setSearchReady(true)}
           onFocusCapture={() => setSearchReady(true)}
           onTouchStart={() => setSearchReady(true)}

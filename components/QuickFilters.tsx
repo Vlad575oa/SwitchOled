@@ -68,7 +68,7 @@ export const QuickFilters = ({ enabledSlugs }: QuickFiltersProps) => {
   const fadeCls = "absolute top-0 bottom-0 z-10 w-16 pointer-events-none flex items-center";
 
   return (
-    <div className="sticky top-[156px] sm:top-[156px] z-40 bg-[var(--bg-base)] border-b border-[var(--border)]">
+    <div className="relative z-40 bg-[var(--bg-base)] border-b border-[var(--border)] lg:sticky lg:top-[156px]">
       <div className="relative">
         {canScrollLeft && (
           <div className={cn(fadeCls, "left-0 bg-gradient-to-r from-[var(--bg-base)] to-transparent")}>
