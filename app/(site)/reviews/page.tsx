@@ -18,28 +18,12 @@ export default function ReviewsPage() {
         </p>
         <div className="flex flex-wrap gap-3">
           <a
-            href={CONTACTS.yandexBusinessUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="px-5 py-3 bg-neutral-900 text-white rounded-xl text-xs font-black uppercase tracking-wider"
-          >
-            Отзывы в Яндекс Бизнес
-          </a>
-          <a
-            href={CONTACTS.yandexMapsUrl}
+            href="https://yandex.ru/maps/org/gameshop24/31485288867/reviews/?ll=37.379327%2C55.840783&tab=reviews&z=19"
             target="_blank"
             rel="noopener noreferrer"
             className="px-5 py-3 bg-neutral-100 text-secondary rounded-xl text-xs font-black uppercase tracking-wider"
           >
             Открыть на карте
-          </a>
-          <a
-            href={CONTACTS.twoGisUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="px-5 py-3 bg-neutral-100 text-secondary rounded-xl text-xs font-black uppercase tracking-wider"
-          >
-            Открыть в 2ГИС
           </a>
         </div>
       </div>
