@@ -2,6 +2,7 @@ import prisma from "@/lib/prisma";
 import Link from "next/link";
 import { Package, ShoppingBag, FileText, TrendingUp, Plus, ArrowRight, Clock, ShoppingCart, LayoutGrid } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
+import { groupCartEventsByDate } from "@/lib/admin/cartEventStats";
 import { ClearCartEventsButton } from "./ClearCartEventsButton";
 
 export const dynamic = "force-dynamic";
@@ -10,9 +11,10 @@ export default async function AdminDashboard() {
   let productsCount = 0, ordersCount = 0, postsCount = 0, recentOrders: any[] = [], monthRevenue = 0;
   let cartTotal = 0, cartGrid = 0, cartPage = 0;
   let topCartProducts: { productId: number; _count: { id: number }; name?: string }[] = [];
+  let cartByDate: ReturnType<typeof groupCartEventsByDate> = [];
   let dbError = false;
   try {
-    const [pc, oc, bc, ro, revenue, cartAll, cartGridCount, cartPageCount, topCart] = await Promise.all([
+    const [pc, oc, bc, ro, revenue, cartAll, cartGridCount, cartPageCount, topCart, cartEvents] = await Promise.all([
       prisma.product.count(),
       prisma.order.count(),
       prisma.post.count(),
@@ -27,10 +29,15 @@ export default async function AdminDashboard() {
         orderBy: { _count: { id: "desc" } },
         take: 5,
       }),
+      prisma.cartEvent.findMany({
+        select: { createdAt: true, source: true },
+        orderBy: { createdAt: "desc" },
+      }),
     ]);
     productsCount = pc; ordersCount = oc; postsCount = bc; recentOrders = ro;
     monthRevenue = revenue._sum.totalAmount ?? 0;
     cartTotal = cartAll; cartGrid = cartGridCount; cartPage = cartPageCount;
+    cartByDate = groupCartEventsByDate(cartEvents).slice(0, 14);
 
     // Подгружаем имена товаров
     const productIds = topCart.map((r) => r.productId);
@@ -126,6 +133,35 @@ export default async function AdminDashboard() {
                 <p className="text-2xl font-black text-blue-600">{cartPage}</p>
               </div>
             </div>
+
+            {cartByDate.length > 0 && (
+              <div className="mb-6">
+                <p className="text-[10px] font-black uppercase tracking-widest text-neutral-400 mb-3">По датам добавления</p>
+                <div className="overflow-hidden rounded-xl border border-neutral-100">
+                  <table className="w-full text-left">
+                    <thead className="bg-neutral-50">
+                      <tr>
+                        {["Дата", "Всего", "Из сетки", "Из карточки"].map((h) => (
+                          <th key={h} className="px-4 py-3 text-[9px] font-black uppercase tracking-widest text-neutral-400">
+                            {h}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {cartByDate.map((item) => (
+                        <tr key={item.dateKey} className="border-t border-neutral-100 first:border-t-0">
+                          <td className="px-4 py-3 text-xs font-black text-[#111827]">{item.dateLabel}</td>
+                          <td className="px-4 py-3 text-xs font-black text-[#111827]">{item.total}</td>
+                          <td className="px-4 py-3 text-xs font-bold text-orange-600">{item.grid}</td>
+                          <td className="px-4 py-3 text-xs font-bold text-blue-600">{item.page}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
 
             {topCartProducts.length > 0 && (
               <div>

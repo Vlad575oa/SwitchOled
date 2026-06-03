@@ -35,7 +35,7 @@ export const TopBar = ({ workingHours = "09:00 — 21:00" }: { workingHours?: st
 
           <a
             href={`tel:${CONTACTS.phoneHref}`}
-            className="absolute left-1/2 -translate-x-1/2 inline-flex items-center px-4 py-2 rounded-full border border-primary/25 text-black hover:text-neutral-700 hover:border-primary/40 transition-colors"
+            className="absolute left-1/2 -translate-x-1/2 inline-flex items-center mx-1 px-2 py-2 rounded-full border border-primary/25 text-black hover:text-neutral-700 hover:border-primary/40 transition-colors"
           >
             <span className="text-[16px] font-black tracking-tight leading-none whitespace-nowrap">{CONTACTS.phoneDisplay}</span>
           </a>
@@ -114,19 +114,19 @@ export const TopBar = ({ workingHours = "09:00 — 21:00" }: { workingHours?: st
           </div>
         </div>
 
-        <div className="lg:hidden flex flex-col gap-2 py-2.5 border-t border-[var(--bg-elevated)]">
-          <div className="flex items-center justify-center gap-3 overflow-x-auto no-scrollbar">
-            <div className="flex items-center gap-1.5 shrink-0 text-black">
+        <div className="lg:hidden flex flex-col gap-2 py-2.5 px-1 border-t border-[var(--bg-elevated)]">
+          <div className="flex items-center justify-between gap-2 overflow-x-auto no-scrollbar">
+            <div className="flex items-center gap-1 shrink-0 text-black">
               <ShieldCheck size={12} className="shrink-0 text-emerald-600" />
-              <span className="text-[10px] font-bold uppercase tracking-tight whitespace-nowrap">Работаем с 1997 года</span>
+              <span className="text-[11px] font-bold uppercase tracking-tight whitespace-nowrap">С 1997 года</span>
             </div>
-            <div className="flex items-center gap-1.5 shrink-0 text-black">
+            <div className="flex items-center gap-1 shrink-0 text-black">
               <ShieldCheck size={12} className="shrink-0 text-emerald-600" />
-              <span className="text-[10px] font-bold uppercase tracking-tight whitespace-nowrap">100% Оригинал</span>
+              <span className="text-[11px] font-bold uppercase tracking-tight whitespace-nowrap">100% Оригинал</span>
             </div>
-            <div className="flex items-center gap-1.5 shrink-0 text-black">
+            <div className="flex items-center gap-1 shrink-0 text-black">
               <Award size={12} className="shrink-0 text-emerald-600" />
-              <span className="text-[10px] font-bold uppercase tracking-tight whitespace-nowrap">1 год гарантии</span>
+              <span className="text-[11px] font-bold uppercase tracking-tight whitespace-nowrap">1 год гарантии</span>
             </div>
             <Link
               href="/delivery"
@@ -163,7 +163,7 @@ export const TopBar = ({ workingHours = "09:00 — 21:00" }: { workingHours?: st
             <div className="flex items-center gap-1.5 text-black shrink-0 leading-none">
               <ShieldCheck size={13} className="shrink-0 text-emerald-600" />
               <span className="flex flex-col -mt-px">
-                <span className="text-[12px] xl:text-[13px] font-normal uppercase tracking-tight text-black/80">Работаем с</span>
+                <span className="text-[12px] xl:text-[13px] font-normal uppercase tracking-tight text-black/80">С</span>
                 <span className="text-[12px] xl:text-[13px] font-normal tracking-tight text-black">
                   <span className="font-bold">1997</span> года
                 </span>

@@ -67,19 +67,65 @@ export function ProductCardMedia({ images, name, eagerImage = false }: ProductCa
         )}
       </div>
 
-      <div className="hidden sm:block relative aspect-[16/12]">
-        <Image
-          src={safeImages[0]}
-          alt={`${name} — Фото в Gameshop24`}
-          title={`${name} — Купить с гарантией 1 год`}
-          fill
-          sizes="(max-width: 640px) 46vw, (max-width: 1024px) 30vw, (max-width: 1280px) 22vw, 16vw"
-          quality={40}
-          priority={eagerImage}
-          loading={eagerImage ? "eager" : "lazy"}
-          fetchPriority={eagerImage ? "high" : "auto"}
-          className="object-contain p-0 transition-transform duration-500 group-hover:scale-105"
-        />
+      <div
+        className="hidden sm:block"
+        onMouseLeave={() => setActiveIndex(0)}
+      >
+        <div className="relative aspect-[16/12] overflow-hidden rounded-[24px] bg-neutral-50">
+          {safeImages.map((img, index) => (
+            <Image
+              key={`${img}-desktop-${index}`}
+              src={img}
+              alt={`${name} — Фото ${index + 1} в Gameshop24`}
+              title={`${name} — Ракурс ${index + 1}`}
+              fill
+              sizes="(max-width: 640px) 46vw, (max-width: 1024px) 30vw, (max-width: 1280px) 22vw, 16vw"
+              quality={40}
+              priority={eagerImage && index === 0}
+              loading={eagerImage && index === 0 ? "eager" : "lazy"}
+              fetchPriority={eagerImage && index === 0 ? "high" : "auto"}
+              className={cn(
+                "object-contain p-0 transition-all duration-300 group-hover:scale-105",
+                index === activeIndex ? "opacity-100" : "opacity-0 pointer-events-none"
+              )}
+            />
+          ))}
+
+          {safeImages.length > 1 && (
+            <div className="absolute inset-x-4 top-3 z-10 flex items-center gap-1.5">
+              {safeImages.map((img, index) => (
+                <button
+                  key={`${img}-desktop-segment-${index}`}
+                  type="button"
+                  aria-label={`Показать фото ${index + 1}`}
+                  onMouseEnter={() => setActiveIndex(index)}
+                  className="h-0.5 flex-1 rounded-full bg-black/10 transition-colors hover:bg-black/20"
+                >
+                  <span
+                    className={cn(
+                      "block h-full w-full rounded-full transition-all duration-300",
+                      index === activeIndex ? "bg-primary" : "bg-transparent"
+                    )}
+                  />
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {safeImages.length > 1 && (
+          <div className="mt-2 flex items-center justify-center gap-1.5">
+            {safeImages.map((img, index) => (
+              <span
+                key={`${img}-desktop-dot-${index}`}
+                className={cn(
+                  "h-1 rounded-full transition-all duration-300",
+                  index === activeIndex ? "w-5 bg-primary" : "w-1.5 bg-neutral-300"
+                )}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

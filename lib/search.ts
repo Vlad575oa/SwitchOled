@@ -76,17 +76,17 @@ function replaceWords(
   return Array.from(variants).filter(Boolean);
 }
 
-export function getSearchQueryVariants(query: string) {
-  const normalized = normalizeSearchText(query);
+function getTokenVariants(token: string) {
+  const normalized = normalizeSearchText(token);
   if (!normalized) return [];
 
   const variants = new Set<string>([normalized]);
 
-  for (const variant of Array.from(replaceWords(normalized, LAT_TO_CYR_WORDS))) {
+  for (const variant of replaceWords(normalized, LAT_TO_CYR_WORDS)) {
     variants.add(variant);
   }
 
-  for (const variant of Array.from(replaceWords(normalized, CYR_TO_LAT_WORDS))) {
+  for (const variant of replaceWords(normalized, CYR_TO_LAT_WORDS)) {
     variants.add(variant);
   }
 
@@ -100,18 +100,41 @@ export function getSearchQueryVariants(query: string) {
     variants.add("switch2");
   }
 
-  return Array.from(variants).filter((variant) => variant.length >= 2);
+  return Array.from(variants).filter((variant) => variant.length >= 1);
+}
+
+export function getSearchQueryVariants(query: string) {
+  const normalized = normalizeSearchText(query);
+  if (!normalized) return [];
+
+  return getTokenVariants(normalized).filter((variant) => variant.length >= 2);
 }
 
 export function buildProductSearchWhere(query: string): Prisma.ProductWhereInput | undefined {
-  const variants = getSearchQueryVariants(query);
-  if (!variants.length) return undefined;
+  const normalized = normalizeSearchText(query);
+  if (!normalized) return undefined;
 
-  return {
-    OR: variants.flatMap((variant) => [
-      { name: { contains: variant, mode: "insensitive" } },
-      { sku: { contains: variant, mode: "insensitive" } },
-      { category: { name: { contains: variant, mode: "insensitive" } } },
-    ]),
-  };
+  const tokens = normalized.split(" ").filter(Boolean);
+  const tokenConditions = tokens
+    .map((token) => {
+      const variants = getTokenVariants(token);
+      if (!variants.length) return null;
+
+      return {
+        OR: variants.flatMap((variant) => [
+          { name: { contains: variant, mode: "insensitive" } },
+          { sku: { contains: variant, mode: "insensitive" } },
+          { category: { name: { contains: variant, mode: "insensitive" } } },
+        ]),
+      } satisfies Prisma.ProductWhereInput;
+    })
+    .filter(Boolean) as Prisma.ProductWhereInput[];
+
+  if (!tokenConditions.length) return undefined;
+
+  if (tokenConditions.length === 1) {
+    return tokenConditions[0];
+  }
+
+  return { AND: tokenConditions };
 }

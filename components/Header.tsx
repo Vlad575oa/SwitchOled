@@ -144,7 +144,7 @@ export const Header = () => {
               type="button"
               aria-label="Открыть поиск"
               onClick={() => setSearchReady(true)}
-              className="w-full h-11 rounded-[14px] bg-white border-2 border-neutral-200 text-left px-4 text-[14px] text-neutral-400 font-medium"
+              className="w-full h-11 rounded-[14px] bg-white border-2 border-neutral-200 text-left px-4 text-[16px] lg:text-[14px] text-neutral-400 font-medium"
             >
               Искать в Gameshop24...
             </button>

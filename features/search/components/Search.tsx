@@ -90,8 +90,10 @@ export const Search = () => {
     <div
       ref={containerRef}
       className={cn(
-        "relative w-full z-50 transition-[max-width,width] duration-300 lg:mx-auto",
-        isOpen ? "lg:w-[760px] lg:max-w-[760px]" : "lg:w-[680px] lg:max-w-[680px]"
+        "relative z-50 transition-[max-width,width,left,transform] duration-300 lg:mx-auto",
+        isOpen
+          ? "w-screen left-1/2 -translate-x-1/2 lg:left-auto lg:translate-x-0 lg:w-[760px] lg:max-w-[760px]"
+          : "w-full lg:w-[680px] lg:max-w-[680px]"
       )}
     >
       {/* Ozon-style Search Bar */}
@@ -108,7 +110,7 @@ export const Search = () => {
             onFocus={() => setIsOpen(true)}
             placeholder="Искать в Gameshop24..."
             onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
-            className="w-full bg-transparent border-none focus:ring-0 outline-none text-[14px] font-medium text-secondary ml-1 placeholder:text-neutral-400"
+            className="w-full bg-transparent border-none focus:ring-0 outline-none text-[16px] lg:text-[14px] font-medium text-secondary ml-1 placeholder:text-neutral-400"
           />
           {query && (
             <button 
@@ -141,7 +143,7 @@ export const Search = () => {
 
       {/* Ozon-style Dropdown */}
       {isOpen && (
-        <div className="absolute top-[calc(100%+8px)] left-0 right-0 bg-white rounded-[24px] shadow-[0_20px_50px_rgba(0,0,0,0.15)] border border-neutral-100 p-5 animate-in fade-in slide-in-from-top-2 duration-200 overflow-hidden">
+        <div className="absolute top-[calc(100%+8px)] left-1/2 w-screen -translate-x-1/2 bg-white border border-neutral-100 p-5 animate-in fade-in slide-in-from-top-2 duration-200 overflow-hidden rounded-none shadow-[0_20px_50px_rgba(0,0,0,0.15)] sm:left-0 sm:right-0 sm:w-auto sm:translate-x-0 sm:rounded-[24px]">
           
           {/* Quick Tags */}
           {quickTags.length > 0 && (
@@ -150,7 +152,10 @@ export const Search = () => {
               <button 
                 key={tag} 
                 className="px-3 py-1.5 bg-neutral-50 hover:bg-neutral-100 rounded-full text-[11px] font-bold text-neutral-500 hover:text-secondary transition-all"
-                onClick={() => setQuery(tag)}
+                onClick={() => {
+                  setQuery(tag);
+                  setIsOpen(false);
+                }}
               >
                 {tag}
               </button>

@@ -79,6 +79,19 @@ async function runTests() {
     },
   });
 
+  const storageProduct = await prisma.product.create({
+    data: {
+      name: `Nintendo Switch 128GB ${suffix}`,
+      slug: `nintendo-switch-128gb-${suffix}`,
+      sku: `NS128-${suffix}`,
+      price: 10000,
+      stock: 3,
+      isVisible: true,
+      categoryId: category.id,
+      images: ["/images/placeholder.webp"],
+    },
+  });
+
   try {
     console.log("Test 1: empty search returns only visible catalog products...");
     const emptyResults = await searchProductsAction("");
@@ -115,9 +128,17 @@ async function runTests() {
     const liteRussianResults = await searchProductsAction("лайт");
     assert.ok(liteRussianResults.some((product) => product.id === liteProduct.id));
     console.log("✅ Passed");
+
+    console.log("Test 5: mixed word-and-number queries match by tokens...");
+    const englishNumericResults = await searchProductsAction("nintendo 128");
+    assert.ok(englishNumericResults.some((product) => product.id === storageProduct.id));
+
+    const russianNumericResults = await searchProductsAction("нинтендо 128");
+    assert.ok(russianNumericResults.some((product) => product.id === storageProduct.id));
+    console.log("✅ Passed");
   } finally {
     await prisma.product.deleteMany({
-      where: { id: { in: [visibleProduct.id, hiddenProduct.id, bilingualProduct.id, liteProduct.id] } },
+      where: { id: { in: [visibleProduct.id, hiddenProduct.id, bilingualProduct.id, liteProduct.id, storageProduct.id] } },
     });
     console.log("\n🧹 Test data cleaned up.");
   }
