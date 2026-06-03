@@ -90,39 +90,25 @@ export function ProductCardMedia({ images, name, eagerImage = false }: ProductCa
               )}
             />
           ))}
-
-          {safeImages.length > 1 && (
-            <div className="absolute inset-x-4 top-3 z-10 flex items-center gap-1.5">
-              {safeImages.map((img, index) => (
-                <button
-                  key={`${img}-desktop-segment-${index}`}
-                  type="button"
-                  aria-label={`Показать фото ${index + 1}`}
-                  onMouseEnter={() => setActiveIndex(index)}
-                  className="h-0.5 flex-1 rounded-full bg-black/10 transition-colors hover:bg-black/20"
-                >
-                  <span
-                    className={cn(
-                      "block h-full w-full rounded-full transition-all duration-300",
-                      index === activeIndex ? "bg-primary" : "bg-transparent"
-                    )}
-                  />
-                </button>
-              ))}
-            </div>
-          )}
         </div>
 
         {safeImages.length > 1 && (
-          <div className="mt-2 flex items-center justify-center gap-1.5">
+          <div className="mt-2 flex items-center justify-center gap-1.5 px-3">
             {safeImages.map((img, index) => (
-              <span
-                key={`${img}-desktop-dot-${index}`}
-                className={cn(
-                  "h-1 rounded-full transition-all duration-300",
-                  index === activeIndex ? "w-5 bg-primary" : "w-1.5 bg-neutral-300"
-                )}
-              />
+              <button
+                key={`${img}-desktop-segment-${index}`}
+                type="button"
+                aria-label={`Показать фото ${index + 1}`}
+                onMouseEnter={() => setActiveIndex(index)}
+                className="h-1 flex-1 rounded-full bg-black/10 transition-colors hover:bg-black/20"
+              >
+                <span
+                  className={cn(
+                    "block h-full w-full rounded-full transition-all duration-300",
+                    index === activeIndex ? "bg-primary" : "bg-transparent"
+                  )}
+                />
+              </button>
             ))}
           </div>
         )}

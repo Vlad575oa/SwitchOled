@@ -162,11 +162,8 @@ export const TopBar = ({ workingHours = "09:00 — 21:00" }: { workingHours?: st
           <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 hidden lg:flex items-center gap-5 xl:gap-8 whitespace-nowrap">
             <div className="flex items-center gap-1.5 text-black shrink-0 leading-none">
               <ShieldCheck size={13} className="shrink-0 text-emerald-600" />
-              <span className="flex flex-col -mt-px">
-                <span className="text-[12px] xl:text-[13px] font-normal uppercase tracking-tight text-black/80">С</span>
-                <span className="text-[12px] xl:text-[13px] font-normal tracking-tight text-black">
-                  <span className="font-bold">1997</span> года
-                </span>
+              <span className="text-[12px] xl:text-[13px] font-bold tracking-tight whitespace-nowrap">
+                Работаем с 1997 года
               </span>
             </div>
             <div className="flex items-center gap-1.5 text-black">
