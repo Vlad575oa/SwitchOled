@@ -1,11 +1,4 @@
 FROM node:20-alpine AS base
-# Use multiple mirrors in case the CDN is flaky
-RUN printf '%s\n' \
-    'http://mirror.yandex.ru/mirrors/alpine/v3.23/main' \
-    'http://mirror.yandex.ru/mirrors/alpine/v3.23/community' \
-    'https://dl-cdn.alpinelinux.org/alpine/v3.23/main' \
-    'https://dl-cdn.alpinelinux.org/alpine/v3.23/community' \
-    > /etc/apk/repositories && apk update
 
 FROM base AS deps
 RUN apk add --no-cache libc6-compat openssl
