@@ -237,7 +237,6 @@ export default async function ProductPage({
               { href: "/payment", label: "Оплата" },
               { href: "/refund", label: "Возврат" },
               { href: "/warranty", label: "Гарантия" },
-              { href: "/reviews", label: "Отзывы" },
             ].map((item) => (
               <Link
                 key={item.href}
