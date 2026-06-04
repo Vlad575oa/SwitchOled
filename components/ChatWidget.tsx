@@ -142,13 +142,12 @@ export function ChatWidget() {
 
   return (
     <div className={cn(
-      "fixed bottom-20 sm:bottom-6 right-4 sm:right-6 z-50 flex flex-col items-end gap-3 transition-opacity duration-200",
+      "fixed bottom-20 sm:bottom-6 right-4 sm:right-6 z-[70] flex flex-col items-end gap-3 transition-opacity duration-200",
       hideFloating && !isOpen && "pointer-events-none opacity-0"
     )}>
       {isOpen && (
         <div
-          className="w-[360px] bg-white rounded-3xl shadow-2xl shadow-black/20 border border-neutral-100 flex flex-col overflow-hidden"
-          style={{ height: "500px" }}
+          className="fixed inset-0 sm:static sm:inset-auto sm:w-[360px] sm:rounded-3xl sm:h-[500px] bg-white shadow-2xl shadow-black/20 sm:border border-neutral-100 flex flex-col overflow-hidden"
         >
           {/* Header */}
           <div className="bg-[#111827] px-5 py-4 flex items-center justify-between flex-shrink-0">
