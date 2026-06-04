@@ -31,6 +31,13 @@ export const TopBar = ({ workingHours = "09:00 — 21:00" }: { workingHours?: st
             <span className="text-[11px] font-black uppercase tracking-tight text-black whitespace-nowrap">
               {compactWorkingHours}
             </span>
+            <Link
+              href="/delivery"
+              className="flex items-center justify-center w-6 h-6 rounded-full border border-emerald-300 bg-emerald-50 text-emerald-700 ml-1 shrink-0"
+              aria-label="Быстрая доставка"
+            >
+              <Truck size={11} className="shrink-0" />
+            </Link>
           </div>
 
           <a
@@ -118,23 +125,16 @@ export const TopBar = ({ workingHours = "09:00 — 21:00" }: { workingHours?: st
           <div className="flex items-center justify-between gap-2 overflow-x-auto no-scrollbar">
             <div className="flex items-center gap-1 shrink-0 text-black">
               <ShieldCheck size={12} className="shrink-0 text-emerald-600" />
-              <span className="text-[11px] font-bold uppercase tracking-tight whitespace-nowrap">С 1997 года</span>
+              <span className="text-[11px] font-black uppercase tracking-tight whitespace-nowrap">С 1997 года</span>
             </div>
             <div className="flex items-center gap-1 shrink-0 text-black">
               <ShieldCheck size={12} className="shrink-0 text-emerald-600" />
-              <span className="text-[11px] font-bold uppercase tracking-tight whitespace-nowrap">100% Оригинал</span>
+              <span className="text-[11px] font-black uppercase tracking-tight whitespace-nowrap">100% Оригинал</span>
             </div>
             <div className="flex items-center gap-1 shrink-0 text-black">
               <Award size={12} className="shrink-0 text-emerald-600" />
-              <span className="text-[11px] font-bold uppercase tracking-tight whitespace-nowrap">1 год гарантии</span>
+              <span className="text-[11px] font-black uppercase tracking-tight whitespace-nowrap">1 год гарантии</span>
             </div>
-            <Link
-              href="/delivery"
-              className="flex items-center justify-center w-7 h-7 rounded-full border border-emerald-300 bg-emerald-50 text-emerald-700 shrink-0"
-              aria-label="Быстрая доставка"
-            >
-              <Truck size={12} className="shrink-0" />
-            </Link>
           </div>
         </div>
 
@@ -160,19 +160,19 @@ export const TopBar = ({ workingHours = "09:00 — 21:00" }: { workingHours?: st
 
           {/* Center: Trust Badges */}
           <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 hidden lg:flex items-center gap-5 xl:gap-8 whitespace-nowrap">
-            <div className="flex items-center gap-1.5 text-black shrink-0 leading-none">
-              <ShieldCheck size={13} className="shrink-0 text-emerald-600" />
-              <span className="text-[12px] xl:text-[13px] font-bold tracking-tight whitespace-nowrap">
+            <div className="flex items-center gap-2 text-black shrink-0 leading-none">
+              <ShieldCheck size={15} className="shrink-0 text-emerald-600" />
+              <span className="text-[14px] xl:text-[15px] font-bold tracking-tight whitespace-nowrap">
                 Работаем с 1997 года
               </span>
             </div>
-            <div className="flex items-center gap-1.5 text-black">
-              <ShieldCheck size={13} className="shrink-0 text-emerald-600" />
-              <span className="text-[12px] xl:text-[13px] font-bold uppercase tracking-tight whitespace-nowrap">100% Оригинал</span>
+            <div className="flex items-center gap-2 text-black">
+              <ShieldCheck size={15} className="shrink-0 text-emerald-600" />
+              <span className="text-[14px] xl:text-[15px] font-bold uppercase tracking-tight whitespace-nowrap">100% Оригинал</span>
             </div>
-            <div className="flex items-center gap-1.5 text-black">
-              <Award size={13} className="shrink-0 text-emerald-600" />
-              <span className="text-[12px] xl:text-[13px] font-bold uppercase tracking-tight">Гарантия 1 год</span>
+            <div className="flex items-center gap-2 text-black">
+              <Award size={15} className="shrink-0 text-emerald-600" />
+              <span className="text-[14px] xl:text-[15px] font-bold uppercase tracking-tight">Гарантия 1 год</span>
             </div>
           </div>
 

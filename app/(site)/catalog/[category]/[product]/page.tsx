@@ -14,15 +14,9 @@ import { RelatedProducts } from "@/features/product/components/RelatedProducts";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { buildProductMetaDescription, resolveProductMetaTitle } from "@/lib/seo";
+import { CATALOG_SMART_FILTERS } from "@/lib/catalogSmartFilters";
 
 const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || "https://gameshop24.ru").replace("://www.", "://");
-
-const SMART_FILTERS: Record<string, { q?: string; status?: string; title: string; desc: string }> = {
-  "proshitaya": { q: "прошитая", title: "Прошитые", desc: "Лучшие прошитые и чипованные консоли с гарантией." },
-  "chipovannaya": { q: "чипованная", title: "Чипованные", desc: "Консоли с установленным чипом для запуска любых игр." },
-  "v-nalichii": { status: "inStock", title: "В наличии", desc: "Товары в наличии с быстрой доставкой сегодня." },
-  "vtoroy-geympad": { q: "2-й геймпад", title: "С двумя геймпадами", desc: "Комплекты с дополнительным контроллером для игры вдвоём." },
-};
 
 export const revalidate = 1800;
 
@@ -31,7 +25,7 @@ export async function generateMetadata({
 }: {
   params: { product: string; category: string };
 }): Promise<Metadata> {
-  const smartFilter = SMART_FILTERS[params.product];
+  const smartFilter = CATALOG_SMART_FILTERS[params.product];
   if (smartFilter) {
     const category = await getCategoryBySlug(params.category);
     const title = `${smartFilter.title} ${category?.name || ""} — Купить в Gameshop24`;
@@ -79,7 +73,7 @@ export default async function ProductPage({
   params: { product: string; category: string };
   searchParams: Record<string, string | undefined>;
 }) {
-  const smartFilter = SMART_FILTERS[params.product];
+  const smartFilter = CATALOG_SMART_FILTERS[params.product];
   
   if (smartFilter) {
     const combinedParams = { ...searchParams };

@@ -10,10 +10,12 @@ const MEMORY_KEYS = ["Накопитель", "Объём", "Объем"];
 
 export default async function AddVariantPage({ params }: { params: { id: string } }) {
   const id = parseInt(params.id);
-  const [source, categories] = await Promise.all([
+  const [source, categories, dbColors] = await Promise.all([
     prisma.product.findUnique({ where: { id } }),
     prisma.category.findMany({ orderBy: { name: "asc" } }),
+    prisma.color.findMany({ orderBy: { name: "asc" } }),
   ]);
+  const colors = dbColors.map((c) => ({ name: c.name, hex: c.hex }));
 
   if (!source) notFound();
 
@@ -70,6 +72,7 @@ export default async function AddVariantPage({ params }: { params: { id: string 
   return (
     <ProductForm
       categories={categories}
+      colors={colors}
       sourceProductName={source.name}
       initialAttrs={sharedAttrs}
       initial={{

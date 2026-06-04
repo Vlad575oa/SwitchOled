@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
@@ -49,21 +49,19 @@ interface SharedForm {
   metaDesc: string;
 }
 
+interface ColorOption {
+  name: string;
+  hex: string;
+}
+
 interface ProductFormProps {
   categories: Category[];
+  colors?: ColorOption[];
   sourceProductName?: string;
   initial?: Partial<SharedForm>;
   initialAttrs?: Attribute[];
   initialVariants?: Omit<VariantRow, "_deleted">[];
 }
-
-const COLOR_OPTIONS = [
-  "Белый", "Чёрный", "Серый", "Синий", "Красный", "Жёлтый",
-  "Коралловый", "Бирюзовый", "Зелёный", "Розовый", "Фиолетовый",
-  "Золотой", "Серебристый", "Белый/Чёрный", "Белый/Красный",
-  "Mario Edition", "Neon", "Pokemon Edition", "Splatoon 3 Edition",
-  "White", "Zelda Edition",
-];
 
 const MEMORY_OPTIONS = [
   "0 ГБ", "32 ГБ", "64 ГБ", "128 ГБ", "256 ГБ", "512 ГБ",
@@ -97,6 +95,7 @@ const normalizeSlug = (input: string) =>
 
 export const ProductForm = ({
   categories,
+  colors = [],
   sourceProductName,
   initial = {},
   initialAttrs,
@@ -105,6 +104,11 @@ export const ProductForm = ({
   const router = useRouter();
   const isEdit = !!initial.id;
   const isVariant = !!sourceProductName;
+
+  const colorHexMap = useMemo(
+    () => new Map(colors.map((c) => [c.name, c.hex])),
+    [colors]
+  );
 
   const rootCategories = categories.filter((c) => !c.parentId);
 
@@ -288,6 +292,7 @@ export const ProductForm = ({
         data.append("showOtherPaymentPrice", String(v.showOtherPaymentPrice));
         data.append("categoryId", form.categoryId);
         data.append("color", v.color);
+        data.append("colorHex", v.colorHex || colorHexMap.get(v.color) || "");
         data.append("inStock", String(v.inStock));
         data.append("isNew", String(form.isNew));
         data.append("isSale", String(form.isSale));
@@ -509,18 +514,34 @@ export const ProductForm = ({
                     <div className="grid grid-cols-2 gap-3">
                       <div>
                         <label className={labelCls}>Цвет</label>
-                        <div className="relative">
-                          <select
-                            className={inputCls + " appearance-none pr-9"}
-                            value={v.color}
-                            onChange={(e) => setVariant(realIdx, "color", e.target.value)}
-                          >
-                            <option value="">Не указан</option>
-                            {COLOR_OPTIONS.map((c) => (
-                              <option key={c} value={c}>{c}</option>
-                            ))}
-                          </select>
-                          <ChevronDown size={14} className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400" />
+                        <div className="relative flex items-center gap-2">
+                          {v.colorHex && (
+                            <span
+                              className="w-6 h-6 rounded-full border border-neutral-200 shrink-0"
+                              style={{ backgroundColor: v.colorHex }}
+                            />
+                          )}
+                          <div className="relative flex-1">
+                            <select
+                              className={inputCls + " appearance-none pr-9"}
+                              value={v.color}
+                              onChange={(e) => {
+                                const name = e.target.value;
+                                const hex = colorHexMap.get(name) ?? "";
+                                setVariants((p) =>
+                                  p.map((row, i) =>
+                                    i === realIdx ? { ...row, color: name, colorHex: hex } : row
+                                  )
+                                );
+                              }}
+                            >
+                              <option value="">Не указан</option>
+                              {colors.map((c) => (
+                                <option key={c.name} value={c.name}>{c.name}</option>
+                              ))}
+                            </select>
+                            <ChevronDown size={14} className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400" />
+                          </div>
                         </div>
                       </div>
                       <div>

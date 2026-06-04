@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getCategorySlugsVisibleInCatalog } from "@/lib/categoryVisibility";
+import { getCatalogSmartFilterEntries } from "@/lib/catalogSmartFilters";
 
 const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || "https://gameshop24.ru").replace("://www.", "://");
 
@@ -36,22 +37,14 @@ export async function GET() {
     }))
   );
 
-  const smartFilters = [
-    { slug: "nintendo-switch-oled", filter: "proshitaya" },
-    { slug: "nintendo-switch-v2", filter: "proshitaya" },
-    { slug: "nintendo-switch-lite", filter: "proshitaya" },
-    { slug: "xbox-series-s", filter: "s-podpiskoy" },
-    { slug: "xbox-series-x", filter: "s-podpiskoy" },
-    { slug: "all", filter: "v-nalichii" },
-  ];
-
   const categoryUrls = visibleSlugs.map((slug) => 
     `<url><loc>${baseUrl}/catalog/${slug}</loc><changefreq>daily</changefreq><priority>0.9</priority></url>`
   );
 
-  const filterUrls = smartFilters
-    .filter(f => visibleSlugs.includes(f.slug) || f.slug === "all")
-    .map(f => `<url><loc>${baseUrl}/catalog/${f.slug}/${f.filter}</loc><changefreq>daily</changefreq><priority>0.8</priority></url>`);
+  const filterUrls = getCatalogSmartFilterEntries(visibleSlugs).map(
+    ({ slug, filter }) =>
+      `<url><loc>${baseUrl}/catalog/${slug}/${filter}</loc><changefreq>daily</changefreq><priority>0.8</priority></url>`
+  );
 
   const urls = [...categoryUrls, ...filterUrls].join("");
 

@@ -435,41 +435,50 @@ export const getProductVariants = cache(async (productId: number) => {
 
     if (!whereClause) return [];
 
-    const familyPool = await prisma.product.findMany({
-      where: whereClause,
-      select: {
-        id: true,
-        name: true,
-        slug: true,
-        sku: true,
-        price: true,
-        priceOld: true,
-        showOtherPaymentPrice: true,
-        inStock: true,
-        images: true,
-        color: true,
-        colorHex: true,
-        attributes: true,
-      },
-      orderBy: { price: "asc" },
-    });
+    const [familyPool, globalColors] = await Promise.all([
+      prisma.product.findMany({
+        where: whereClause,
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+          sku: true,
+          price: true,
+          priceOld: true,
+          showOtherPaymentPrice: true,
+          inStock: true,
+          images: true,
+          color: true,
+          colorHex: true,
+          attributes: true,
+        },
+        orderBy: { price: "asc" },
+      }),
+      prisma.color.findMany({ select: { name: true, hex: true } }),
+    ]);
 
-    const rawVariants: ProductVariantOption[] = familyPool.map((item) => ({
-      id: item.id,
-      name: item.name,
-      slug: item.slug,
-      sku: item.sku,
-      price: item.price,
-      priceOld: item.priceOld ?? null,
-      showOtherPaymentPrice: item.showOtherPaymentPrice ?? false,
-      inStock: item.inStock,
-      images: item.images,
-      memory: readAttribute(item.attributes, ATTRIBUTE_MEMORY_KEYS),
-      color: normalizeColor(
+    const colorHexMap = new Map(globalColors.map((c) => [c.name, c.hex]));
+
+    const rawVariants: ProductVariantOption[] = familyPool.map((item) => {
+      const colorName = normalizeColor(
         readAttribute(item.attributes, ATTRIBUTE_COLOR_KEYS) ?? item.color ?? null
-      ),
-      colorHex: item.colorHex ?? null,
-    }));
+      );
+      const colorHex = item.colorHex || (colorName ? colorHexMap.get(colorName) ?? null : null);
+      return {
+        id: item.id,
+        name: item.name,
+        slug: item.slug,
+        sku: item.sku,
+        price: item.price,
+        priceOld: item.priceOld ?? null,
+        showOtherPaymentPrice: item.showOtherPaymentPrice ?? false,
+        inStock: item.inStock,
+        images: item.images,
+        memory: readAttribute(item.attributes, ATTRIBUTE_MEMORY_KEYS),
+        color: colorName,
+        colorHex,
+      };
+    });
 
     // Deduplicate by (color, memory): keep the current product if duplicated, otherwise first (cheapest)
     const seen = new Map<string, ProductVariantOption>();

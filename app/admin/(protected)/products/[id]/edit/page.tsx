@@ -20,10 +20,12 @@ const isBase = (name: string, slug: string) => {
 
 export default async function EditProductPage({ params }: { params: { id: string } }) {
   const id = parseInt(params.id);
-  const [product, categories] = await Promise.all([
+  const [product, categories, dbColors] = await Promise.all([
     prisma.product.findUnique({ where: { id } }),
     prisma.category.findMany({ orderBy: { name: "asc" } }),
+    prisma.color.findMany({ orderBy: { name: "asc" } }),
   ]);
+  const colors = dbColors.map((c) => ({ name: c.name, hex: c.hex }));
 
   if (!product) notFound();
 
@@ -88,6 +90,7 @@ export default async function EditProductPage({ params }: { params: { id: string
   return (
     <ProductForm
       categories={categories}
+      colors={colors}
       initialAttrs={sharedAttrs}
       initial={{
         id: product.id,
