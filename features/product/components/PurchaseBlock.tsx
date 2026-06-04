@@ -4,8 +4,8 @@ import { cn, formatPrice } from "@/lib/utils";
 import { AddToCartButton } from "@/features/cart/components/AddToCartButton";
 import { Info, ShieldCheck } from "lucide-react";
 import { useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
 import type { ProductVariantOption } from "@/lib/queries";
+import { useSelectedVariantStore } from "@/features/product/store/useSelectedVariantStore";
 
 interface PurchaseBlockProps {
   product: {
@@ -60,7 +60,7 @@ const pickBestMatch = (
 };
 
 export function PurchaseBlock({ product, variants = [], categorySlug }: PurchaseBlockProps) {
-  const router = useRouter();
+  const setVariantImages = useSelectedVariantStore((s) => s.setImages);
   const variantItems = useMemo<VariantCardItem[]>(() => {
     if (!variants.length) {
       return [
@@ -129,8 +129,9 @@ export function PurchaseBlock({ product, variants = [], categorySlug }: Purchase
 
   const applyVariant = (next: VariantCardItem) => {
     setSelectedVariantId(next.id);
-    if (categorySlug && next.slug !== product.slug) {
-      router.push(`/catalog/${categorySlug}/${next.slug}`);
+    if (next.images.length) setVariantImages(next.images);
+    if (categorySlug) {
+      window.history.replaceState(null, "", `/catalog/${categorySlug}/${next.slug}`);
     }
   };
 

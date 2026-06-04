@@ -1,17 +1,22 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useSelectedVariantStore } from "@/features/product/store/useSelectedVariantStore";
 
 interface ProductGalleryProps {
   images: string[];
   name: string;
 }
 
-export function ProductGallery({ images, name }: ProductGalleryProps) {
+export function ProductGallery({ images: initialImages, name }: ProductGalleryProps) {
+  const variantImages = useSelectedVariantStore((s) => s.images);
+  const images = variantImages ?? initialImages;
   const [activeIndex, setActiveIndex] = useState(0);
+
+  useEffect(() => { setActiveIndex(0); }, [images]);
   const touchStartX = useRef<number | null>(null);
 
   const nextImage = () => setActiveIndex((prev) => (prev + 1) % images.length);
