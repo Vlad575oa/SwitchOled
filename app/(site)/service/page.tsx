@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import { CONTACTS } from "@/lib/constants/contacts";
-import { CheckCircle, Wrench, Truck, Clock, ShieldCheck, Star } from "lucide-react";
+import { CheckCircle, Wrench, Truck, Clock, ShieldCheck, Star, ArrowLeft } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Сервисный центр Nintendo Switch в Москве | GameShop24",
@@ -46,8 +46,16 @@ export default function ServicePage() {
   return (
     <div className="bg-white min-h-screen pb-24">
 
+      {/* Back */}
+      <div className="container max-w-4xl pt-6 px-4">
+        <Link href="/" className="inline-flex items-center gap-2 text-sm font-bold text-neutral-500 hover:text-secondary transition-colors">
+          <ArrowLeft size={16} />
+          На главную
+        </Link>
+      </div>
+
       {/* Hero */}
-      <div className="bg-[#111827] text-white py-14 px-4">
+      <div className="bg-[#111827] text-white py-14 px-4 mt-4">
         <div className="container max-w-4xl">
           <p className="text-primary text-xs font-black uppercase tracking-widest mb-3">Сервисный центр</p>
           <h1 className="text-3xl sm:text-4xl font-black leading-tight mb-4">

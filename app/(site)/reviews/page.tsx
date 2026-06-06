@@ -1,5 +1,6 @@
 import { Metadata } from "next";
-import { Star } from "lucide-react";
+import Link from "next/link";
+import { Star, ArrowLeft } from "lucide-react";
 import { avitoReviews } from "@/lib/data/avito-reviews";
 
 export const metadata: Metadata = {
@@ -38,6 +39,14 @@ export default function ReviewsPage() {
   return (
     <div className="bg-neutral-50 min-h-screen pt-10 pb-24">
       <div className="container max-w-5xl">
+
+        {/* Back */}
+        <div className="mb-6">
+          <Link href="/" className="inline-flex items-center gap-2 text-sm font-bold text-neutral-500 hover:text-secondary transition-colors">
+            <ArrowLeft size={16} />
+            На главную
+          </Link>
+        </div>
 
         {/* Header */}
         <div className="mb-10">
