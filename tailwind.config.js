@@ -22,6 +22,7 @@ module.exports = {
       },
       animation: {
         marquee: "marquee 20s linear infinite",
+        "marquee-fast": "marquee 10s linear infinite",
       },
     },
   },

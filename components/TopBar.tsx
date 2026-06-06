@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Clock, ShieldCheck, Award, Truck } from "lucide-react";
+import { MapPin, ShieldCheck, Award, Truck } from "lucide-react";
 import { MaxContactLink } from "./MaxContactLink";
 import { CONTACTS } from "@/lib/constants/contacts";
 
@@ -25,15 +25,18 @@ export const TopBar = ({ workingHours = "09:00 — 21:00" }: { workingHours?: st
   return (
     <div className="sticky top-0 left-0 right-0 z-[60] bg-[var(--bg-surface)] border-b border-[var(--bg-elevated)] transition-colors">
       <div className="w-full max-w-[1920px] mx-auto px-4 lg:pl-6 lg:pr-4 2xl:pl-4 2xl:pr-4">
-        <div className="sm:hidden relative flex items-center justify-between gap-3 py-2.5 min-h-[52px]">
-          <div className="flex items-center gap-1.5 text-[var(--text-secondary)] shrink-0">
-            <Clock size={14} className="text-secondary shrink-0" />
-            <span className="text-[11px] font-black uppercase tracking-tight text-black whitespace-nowrap">
-              {compactWorkingHours}
-            </span>
+        {/* Mobile row 1: truck + phone + rating + messengers */}
+        <div className="sm:hidden relative flex items-center justify-between gap-2 py-2 min-h-[48px]">
+          <div className="flex items-center gap-1.5 shrink-0">
+            <Link
+              href="/reviews"
+              className="flex items-center gap-1 px-2 py-1 rounded-full border border-yellow-200 bg-yellow-50 text-yellow-700 text-[10px] font-black whitespace-nowrap"
+            >
+              ⭐ 5.0
+            </Link>
             <Link
               href="/delivery"
-              className="flex items-center justify-center w-6 h-6 rounded-full border border-emerald-300 bg-emerald-50 text-emerald-700 ml-1 shrink-0"
+              className="flex items-center justify-center w-6 h-6 rounded-full border border-emerald-300 bg-emerald-50 text-emerald-700 shrink-0"
               aria-label="Быстрая доставка"
             >
               <Truck size={11} className="shrink-0" />
@@ -42,11 +45,12 @@ export const TopBar = ({ workingHours = "09:00 — 21:00" }: { workingHours?: st
 
           <a
             href={`tel:${CONTACTS.phoneHref}`}
-            className="absolute left-1/2 -translate-x-1/2 inline-flex items-center mx-1 px-2 py-2 rounded-full border border-primary/25 text-black hover:text-neutral-700 hover:border-primary/40 transition-colors"
+            className="absolute left-1/2 -translate-x-1/2 inline-flex items-center px-2 py-1.5 rounded-full border border-primary/25 text-black hover:text-neutral-700 hover:border-primary/40 transition-colors"
           >
-            <span className="text-[16px] font-black tracking-tight leading-none whitespace-nowrap">{CONTACTS.phoneDisplay}</span>
+            <span className="text-[15px] font-black tracking-tight leading-none whitespace-nowrap">{CONTACTS.phoneDisplay}</span>
           </a>
-          <div className="flex items-center gap-2 shrink-0">
+
+          <div className="flex items-center gap-1.5 shrink-0">
             <a
               href={CONTACTS.telegramUrl}
               target="_blank"
@@ -71,6 +75,30 @@ export const TopBar = ({ workingHours = "09:00 — 21:00" }: { workingHours?: st
             >
               <MaxIcon />
             </MaxContactLink>
+          </div>
+        </div>
+
+        {/* Mobile row 2: marquee */}
+        <div className="sm:hidden overflow-hidden border-t border-[var(--bg-elevated)] py-1.5">
+          <div className="flex animate-marquee-fast whitespace-nowrap gap-6 text-[10px] font-bold text-black/70 tracking-tight">
+            {[
+              "📍 Москва шоурум",
+              "🕒 09:00–20:00",
+              "🛡 С 1997 года",
+              "✅ 100% Оригинал",
+              "🚚 Доставка от 500₽",
+              "🏅 Гарантия 1 год",
+              "🔧 Прошиваем консоли",
+              "📍 Москва шоурум",
+              "🕒 09:00–20:00",
+              "🛡 С 1997 года",
+              "✅ 100% Оригинал",
+              "🚚 Доставка от 500₽",
+              "🏅 Гарантия 1 год",
+              "🔧 Прошиваем консоли",
+            ].map((item, i) => (
+              <span key={i} className="shrink-0">{item}</span>
+            ))}
           </div>
         </div>
 
@@ -136,29 +164,23 @@ export const TopBar = ({ workingHours = "09:00 — 21:00" }: { workingHours?: st
           </div>
         </div>
 
-        <div className="lg:hidden flex flex-col gap-2 py-2.5 px-1 border-t border-[var(--bg-elevated)]">
-          <div className="flex items-center justify-between gap-2 overflow-x-auto no-scrollbar">
-            <div className="flex items-center gap-1 shrink-0 text-black">
-              <ShieldCheck size={12} className="shrink-0 text-emerald-600" />
-              <span className="text-[11px] font-black uppercase tracking-tight whitespace-nowrap">С 1997 года</span>
-            </div>
-            <div className="flex items-center gap-1 shrink-0 text-black">
-              <ShieldCheck size={12} className="shrink-0 text-emerald-600" />
-              <span className="text-[11px] font-black uppercase tracking-tight whitespace-nowrap">100% Оригинал</span>
-            </div>
-            <div className="flex items-center gap-1 shrink-0 text-black">
-              <Award size={12} className="shrink-0 text-emerald-600" />
-              <span className="text-[11px] font-black uppercase tracking-tight whitespace-nowrap">1 год гарантии</span>
-            </div>
-          </div>
-        </div>
 
         <div className="hidden lg:flex items-center justify-between gap-2 sm:gap-4 h-10 relative">
-          {/* Left: Reviews */}
-          <div className="flex items-center sm:border-r sm:border-[var(--bg-elevated)] sm:pr-6 shrink-0">
+          {/* Left: Showroom + Reviews */}
+          <div className="flex items-center gap-2 sm:border-r sm:border-[var(--bg-elevated)] sm:pr-6 shrink-0">
+            <a
+              href={CONTACTS.yandexMapsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-black border border-black/20 hover:border-black/35 hover:bg-black/[0.03] transition-colors"
+              title={CONTACTS.address}
+            >
+              <MapPin size={13} className="text-secondary shrink-0" />
+              <span className="text-[12px] xl:text-[13px] font-bold uppercase tracking-tight whitespace-nowrap">Москва шоурум</span>
+            </a>
             <Link
               href="/reviews"
-              className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full text-black border border-black/20 hover:border-black/35 hover:bg-black/[0.03] transition-colors"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-black border border-black/20 hover:border-black/35 hover:bg-black/[0.03] transition-colors"
             >
               <Award size={13} className="shrink-0 text-secondary" />
               <span className="text-[12px] xl:text-[13px] font-bold uppercase tracking-tight whitespace-nowrap">Отзывы</span>
