@@ -34,7 +34,8 @@ export default async function OrdersPage() {
 
       <div className="p-8">
         <div className="bg-white rounded-2xl border border-neutral-100 shadow-sm overflow-hidden">
-          <table className="w-full text-left">
+          <div className="overflow-x-auto">
+          <table className="w-full min-w-[900px] text-left">
             <thead>
               <tr className="border-b border-neutral-100">
                 {["#", "Клиент", "Телефон", "Адрес", "Комментарий", "Товары", "Сумма", "Статус", "Дата", ""].map((h) => (
@@ -114,6 +115,7 @@ export default async function OrdersPage() {
               )}
             </tbody>
           </table>
+          </div>
         </div>
       </div>
     </>
