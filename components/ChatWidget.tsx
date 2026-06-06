@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { MessageCircle, X, Send, Bot, Sparkles } from "lucide-react";
+import Image from "next/image";
+import { MessageCircle, X, Send, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface Message {
@@ -152,11 +153,17 @@ export function ChatWidget() {
           {/* Header */}
           <div className="bg-[#111827] px-5 py-4 flex items-center justify-between flex-shrink-0">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center shadow-lg shadow-primary/30">
-                <Bot size={18} className="text-white" />
+              <div className="w-9 h-9 rounded-xl overflow-hidden shadow-lg shadow-primary/30 flex-shrink-0">
+                <Image
+                  src="/kira_avatar.png"
+                  alt="Кира"
+                  width={36}
+                  height={36}
+                  className="object-cover scale-125 w-full h-full"
+                />
               </div>
               <div>
-                <p className="text-white font-black text-sm">ИИ-консультант</p>
+                <p className="text-white font-black text-sm">Кира · ИИ-консультант</p>
                 <p className="text-neutral-400 text-[10px] font-bold">Gameshop24 · Всегда онлайн</p>
               </div>
             </div>
@@ -183,13 +190,10 @@ export function ChatWidget() {
           <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3 bg-neutral-50/30">
             {messages.length === 0 && (
               <div className="flex flex-col items-center justify-center h-full gap-3 text-center pb-4">
-                <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center">
-                  <Bot size={24} className="text-primary" />
-                </div>
                 <div>
-                  <p className="text-sm font-black text-[#111827]">Привет! Я ИИ-консультант</p>
+                  <p className="text-sm font-black text-[#111827]">Привет! Я Кира AI — ваш проводник в мире Nintendo. 🎮✨</p>
                   <p className="text-xs text-neutral-400 font-bold mt-1 leading-relaxed">
-                    Помогу выбрать консоль, игру или<br />аксессуар под ваш бюджет и вкус
+                    Помогу выбрать идеальную консоль, посоветую лучшие игры для детей и взрослых. Подберу комплект, который подарит максимум удовольствия от игры.
                   </p>
                 </div>
                 <div className="flex flex-wrap gap-2 justify-center mt-1">
@@ -270,17 +274,25 @@ export function ChatWidget() {
           <span className="max-w-[92px] text-[11px] leading-[1.05] text-center font-black text-white bg-black/50 backdrop-blur-sm px-2.5 py-1.5 rounded-2xl tracking-wide shadow">
             <span className="inline-flex items-center justify-center gap-1">
               <Sparkles size={10} className="shrink-0" />
-              <span>ИИ</span>
+              <span>Кира AI</span>
             </span>
-            <br />
-            консультант
           </span>
         )}
         <button
           onClick={() => setIsOpen((v) => !v)}
-          className="w-12 h-12 rounded-full bg-primary text-white shadow-xl shadow-primary/40 hover:bg-red-700 hover:scale-110 active:scale-95 transition-all flex items-center justify-center"
+          className="w-12 h-12 rounded-full bg-primary text-white shadow-xl shadow-primary/40 hover:bg-red-700 hover:scale-110 active:scale-95 transition-all flex items-center justify-center overflow-hidden"
         >
-          {isOpen ? <X size={18} /> : <MessageCircle size={18} />}
+          {isOpen ? (
+            <X size={18} />
+          ) : (
+            <Image
+              src="/kira_avatar.png"
+              alt="Кира"
+              width={48}
+              height={48}
+              className="w-full h-full object-cover"
+            />
+          )}
         </button>
       </div>
     </div>

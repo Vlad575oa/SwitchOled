@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { MapPin, Clock, ShieldCheck, Award, Truck } from "lucide-react";
+import { Clock, ShieldCheck, Award, Truck } from "lucide-react";
 import { MaxContactLink } from "./MaxContactLink";
 import { CONTACTS } from "@/lib/constants/contacts";
 
@@ -83,14 +83,29 @@ export const TopBar = ({ workingHours = "09:00 — 21:00" }: { workingHours?: st
             <span className="text-[12px] xl:text-[13px] font-bold uppercase tracking-tight whitespace-nowrap">Почему нам доверяют</span>
           </Link>
 
-          <div className="flex items-center gap-2 sm:gap-3 justify-self-center shrink-0 lg:-translate-x-[50px]">
-            <a
-              href={`tel:${CONTACTS.phoneHref}`}
-              className="inline-flex items-center gap-2 px-0 py-0 text-black hover:text-neutral-700 transition-colors shrink-0"
-            >
-              <span className="text-[12px] xl:text-[13px] font-normal uppercase tracking-tight text-black/70">Подобрать консоль</span>
-              <span className="text-[13px] xl:text-[15px] font-bold tracking-tight whitespace-nowrap leading-none text-black">{CONTACTS.phoneDisplay}</span>
-            </a>
+          <div className="overflow-hidden justify-self-center w-full min-w-0">
+            <div className="flex animate-marquee whitespace-nowrap gap-8 text-[12px] xl:text-[13px] font-bold text-black/80 tracking-tight">
+              {[
+                "📍 Москва шоурум",
+                "🕒 09:00–20:00",
+                "🛡 Работаем с 1997 года",
+                "✅ 100% Оригинал",
+                "⭐ 5.0 • 1000+ отзывов",
+                "🚚 Быстрая доставка",
+                "🏅 Гарантия 1 год",
+                "🔧 Мы прошиваем консоли",
+                "📍 Москва шоурум",
+                "🕒 09:00–20:00",
+                "🛡 Работаем с 1997 года",
+                "✅ 100% Оригинал",
+                "⭐ 5.0 • 1000+ отзывов",
+                "🚚 Быстрая доставка",
+                "🏅 Гарантия 1 год",
+                "🔧 Мы прошиваем консоли",
+              ].map((item, i) => (
+                <span key={i} className="shrink-0">{item}</span>
+              ))}
+            </div>
           </div>
 
           <div className="flex items-center gap-3 justify-self-end shrink-0">
@@ -139,42 +154,25 @@ export const TopBar = ({ workingHours = "09:00 — 21:00" }: { workingHours?: st
         </div>
 
         <div className="hidden lg:flex items-center justify-between gap-2 sm:gap-4 h-10 relative">
-          {/* Left: Location & Time */}
-          <div className="flex items-center gap-3 sm:gap-4 sm:border-r sm:border-[var(--bg-elevated)] sm:pr-6 shrink-0">
-            <a
-              href={CONTACTS.yandexMapsUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-black border border-black/20 hover:border-black/35 hover:bg-black/[0.03] transition-colors"
-              title={CONTACTS.address}
+          {/* Left: Reviews */}
+          <div className="flex items-center sm:border-r sm:border-[var(--bg-elevated)] sm:pr-6 shrink-0">
+            <Link
+              href="/reviews"
+              className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full text-black border border-black/20 hover:border-black/35 hover:bg-black/[0.03] transition-colors"
             >
-              <MapPin size={13} className="text-secondary shrink-0 hover:text-primary transition-colors" />
-              <span className="text-[11px] xl:text-[12px] font-bold uppercase tracking-tight hidden sm:inline">Москва</span>
-              <span className="text-[11px] xl:text-[12px] font-bold uppercase tracking-tight hidden sm:inline">Шоурум</span>
-            </a>
-            <div className="flex items-center gap-1.5 text-[var(--text-secondary)]">
-              <Clock size={13} className="text-secondary shrink-0" />
-              <span className="text-[11px] xl:text-[12px] font-black uppercase tracking-wider">{workingHours}</span>
-            </div>
+              <Award size={13} className="shrink-0 text-secondary" />
+              <span className="text-[12px] xl:text-[13px] font-bold uppercase tracking-tight whitespace-nowrap">Отзывы</span>
+            </Link>
           </div>
 
-          {/* Center: Trust Badges */}
-          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 hidden lg:flex items-center gap-5 xl:gap-8 whitespace-nowrap">
-            <div className="flex items-center gap-2 text-black shrink-0 leading-none">
-              <ShieldCheck size={15} className="shrink-0 text-emerald-600" />
-              <span className="text-[14px] xl:text-[15px] font-bold tracking-tight whitespace-nowrap">
-                Работаем с 1997 года
-              </span>
-            </div>
-            <div className="flex items-center gap-2 text-black">
-              <ShieldCheck size={15} className="shrink-0 text-emerald-600" />
-              <span className="text-[14px] xl:text-[15px] font-bold uppercase tracking-tight whitespace-nowrap">100% Оригинал</span>
-            </div>
-            <div className="flex items-center gap-2 text-black">
-              <Award size={15} className="shrink-0 text-emerald-600" />
-              <span className="text-[14px] xl:text-[15px] font-bold uppercase tracking-tight">Гарантия 1 год</span>
-            </div>
-          </div>
+          {/* Center: Phone CTA */}
+          <a
+            href={`tel:${CONTACTS.phoneHref}`}
+            className="absolute left-1/2 top-1/2 inline-flex -translate-x-1/2 -translate-y-1/2 items-center gap-3 whitespace-nowrap text-black hover:text-neutral-700 transition-colors"
+          >
+            <span className="text-[12px] xl:text-[13px] font-normal uppercase tracking-tight text-black/70">Подобрать консоль</span>
+            <span className="text-[18px] xl:text-[20px] font-black tracking-tight leading-none text-black">{CONTACTS.phoneDisplay}</span>
+          </a>
 
           {/* Right: Action Buttons */}
           <div className="hidden lg:flex items-center gap-3 shrink-0">
@@ -183,7 +181,7 @@ export const TopBar = ({ workingHours = "09:00 — 21:00" }: { workingHours?: st
               className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-900 border border-emerald-300 hover:bg-emerald-100 hover:border-emerald-400 transition-all active:scale-95"
             >
               <Truck size={13} className="shrink-0 text-emerald-600" />
-              <span className="text-[12px] xl:text-[13px] font-bold uppercase tracking-tight text-emerald-800">Быстрая доставка</span>
+              <span className="text-[12px] xl:text-[13px] font-bold uppercase tracking-tight text-emerald-800">Доставка</span>
             </Link>
             <Link
               href="/gamepad-test"
