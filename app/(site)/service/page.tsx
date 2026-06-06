@@ -9,6 +9,13 @@ export const metadata: Metadata = {
   alternates: { canonical: "/service" },
 };
 
+const mainServices = [
+  { name: "Прошивка Nintendo Switch", price: "4 500 ₽", note: "V1, V2, Lite, OLED" },
+  { name: "Прошивка + карта памяти 128 ГБ", price: "от 6 500 ₽", note: "с играми в комплекте" },
+  { name: "Прошивка + карта памяти 256 ГБ", price: "от 8 500 ₽", note: "с играми в комплекте" },
+  { name: "Ремонт и диагностика", price: "от 1 500 ₽", note: "зависит от сложности" },
+];
+
 const repairs = [
   "Ремонт после неудачной прошивки",
   "Ремонт после других сервисов",
@@ -77,6 +84,25 @@ export default function ServicePage() {
             <p className="font-black text-emerald-900 text-base">Своя курьерская доставка!</p>
             <p className="text-emerald-800 font-medium text-sm mt-0.5">По Москве и МО от 500 ₽</p>
           </div>
+        </div>
+
+        {/* Main services & prices */}
+        <div>
+          <h2 className="text-xl font-black text-secondary uppercase tracking-tight mb-5">💰 Основные услуги и цены:</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {mainServices.map((s) => (
+              <div key={s.name} className="flex items-center justify-between gap-3 bg-white border border-neutral-100 rounded-2xl px-4 py-4 shadow-sm">
+                <div>
+                  <p className="font-black text-secondary text-sm leading-snug">{s.name}</p>
+                  <p className="text-xs text-neutral-400 font-medium mt-0.5">{s.note}</p>
+                </div>
+                <span className="text-primary font-black text-base whitespace-nowrap shrink-0">{s.price}</span>
+              </div>
+            ))}
+          </div>
+          <p className="text-xs text-neutral-400 font-medium mt-3">
+            Точная стоимость уточняется у менеджера — позвоните или напишите в Telegram.
+          </p>
         </div>
 
         {/* Models */}

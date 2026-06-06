@@ -273,14 +273,19 @@ export function ChatWidget() {
         {!isOpen && (
           <span className="max-w-[92px] text-[11px] leading-[1.05] text-center font-black text-white bg-black/50 backdrop-blur-sm px-2.5 py-1.5 rounded-2xl tracking-wide shadow">
             <span className="inline-flex items-center justify-center gap-1">
-              <Sparkles size={10} className="shrink-0" />
+              <Sparkles size={10} className="shrink-0 text-yellow-400 animate-sparkle" />
               <span>Кира AI</span>
             </span>
           </span>
         )}
         <button
           onClick={() => setIsOpen((v) => !v)}
-          className="w-12 h-12 rounded-full bg-primary text-white shadow-xl shadow-primary/40 hover:bg-red-700 hover:scale-110 active:scale-95 transition-all flex items-center justify-center overflow-hidden"
+          className={cn(
+            "w-12 h-12 rounded-full shadow-xl hover:scale-110 active:scale-95 transition-all flex items-center justify-center overflow-hidden",
+            isOpen
+              ? "bg-primary text-white shadow-primary/40 hover:bg-red-700"
+              : "bg-white shadow-black/20 ring-2 ring-primary/20"
+          )}
         >
           {isOpen ? (
             <X size={18} />

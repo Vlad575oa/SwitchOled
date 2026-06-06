@@ -32,7 +32,7 @@ export const TopBar = ({ workingHours = "09:00 — 21:00" }: { workingHours?: st
               href="/reviews"
               className="flex items-center gap-1 px-2 py-1 rounded-full border border-yellow-200 bg-yellow-50 text-yellow-700 text-[10px] font-black whitespace-nowrap"
             >
-              ⭐ 5.0
+              <span className="animate-sparkle">⭐</span> 5.0
             </Link>
             <Link
               href="/delivery"
@@ -182,8 +182,8 @@ export const TopBar = ({ workingHours = "09:00 — 21:00" }: { workingHours?: st
               href="/reviews"
               className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-black border border-black/20 hover:border-black/35 hover:bg-black/[0.03] transition-colors"
             >
-              <Award size={13} className="shrink-0 text-secondary" />
-              <span className="text-[12px] xl:text-[13px] font-bold uppercase tracking-tight whitespace-nowrap">Отзывы</span>
+              <span className="animate-sparkle">⭐</span>
+              <span className="text-[12px] xl:text-[13px] font-bold uppercase tracking-tight whitespace-nowrap">5.0 Отзывы</span>
             </Link>
           </div>
 
