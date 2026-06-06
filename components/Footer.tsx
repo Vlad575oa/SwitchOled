@@ -75,6 +75,7 @@ export const Footer = ({ workingHours = "09:00 — 21:00", currentYear }: Footer
                                 { name: "Гарантия", href: "/warranty" },
                                 { name: "FAQ", href: "/faq" },
                                 { name: "Тест геймпада", href: "/gamepad-test" },
+                                { name: "🔧 Сервисный центр", href: "/service" },
                             ].map((item) => (
                                 <li key={item.name}>
                                     <Link href={item.href} className="text-[13px] xl:text-[14px] font-bold text-neutral-400 hover:text-white hover:translate-x-1 transition-all inline-block">
