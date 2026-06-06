@@ -59,22 +59,6 @@ export default function ReviewsPage() {
               <span className="text-xl font-black text-secondary">5.0</span>
               <span className="text-sm text-neutral-400 font-medium">· 3 103 отзыва</span>
             </div>
-            <a
-              href="https://www.avito.ru/brands/tehnovibor/all"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-4 py-2.5 bg-[#00aaff] text-white rounded-2xl text-xs font-black uppercase tracking-wide hover:bg-[#0099ee] transition-colors"
-            >
-              Все отзывы на Авито
-            </a>
-            <a
-              href="https://yandex.ru/maps/org/gameshop24/31485288867/reviews/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-4 py-2.5 bg-[#fc3f1d] text-white rounded-2xl text-xs font-black uppercase tracking-wide hover:bg-[#e53618] transition-colors"
-            >
-              Яндекс Карты
-            </a>
           </div>
         </div>
 
