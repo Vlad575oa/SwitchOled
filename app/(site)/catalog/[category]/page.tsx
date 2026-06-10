@@ -94,8 +94,24 @@ export default async function CategoryPage({ params, searchParams }: CatalogPage
     })),
   } : null;
 
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Главная", item: baseUrl },
+      { "@type": "ListItem", position: 2, name: "Каталог", item: `${baseUrl}/catalog/all` },
+      ...(categoryData
+        ? [{ "@type": "ListItem", position: 3, name: categoryData.name, item: `${baseUrl}/catalog/${category}` }]
+        : []),
+    ],
+  };
+
   return (
     <main className="w-full max-w-[1920px] mx-auto px-6 lg:px-6 2xl:px-4 py-12">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
       {itemListSchema && (
         <script
           type="application/ld+json"

@@ -133,7 +133,15 @@ export async function PUT(request: Request, { params }: { params: { id: string }
         images, attributes, metaTitle, metaDesc,
         slug,
       },
+      include: { category: true },
     });
+
+    const productUrl = `${process.env.NEXT_PUBLIC_APP_URL}/catalog/${product.category.slug}/${product.slug}`;
+    fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/indexnow`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ urls: [productUrl] }),
+    }).catch(() => {});
 
     return NextResponse.json({ success: true, product });
   } catch (err: any) {

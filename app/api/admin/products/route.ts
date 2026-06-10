@@ -114,7 +114,15 @@ export async function POST(request: Request) {
         categoryId, brand, color, colorHex, inStock, isNew, isSale,
         stock, images: imageUrls, attributes, metaTitle, metaDesc,
       },
+      include: { category: true },
     });
+
+    const productUrl = `${process.env.NEXT_PUBLIC_APP_URL}/catalog/${product.category.slug}/${product.slug}`;
+    fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/indexnow`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ urls: [productUrl] }),
+    }).catch(() => {});
 
     return NextResponse.json({ success: true, product });
   } catch (err: any) {

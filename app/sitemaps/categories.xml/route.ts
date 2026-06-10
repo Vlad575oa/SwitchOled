@@ -13,6 +13,7 @@ export async function GET() {
     slug: string;
     parentId: number | null;
     _count: { products: number };
+    products: { updatedAt: Date }[];
   }> = [];
 
   try {
@@ -22,6 +23,12 @@ export async function GET() {
         slug: true,
         parentId: true,
         _count: { select: { products: { where: { isVisible: { not: false } } } } },
+        products: {
+          where: { isVisible: { not: false } },
+          orderBy: { updatedAt: "desc" },
+          take: 1,
+          select: { updatedAt: true },
+        },
       },
     });
   } catch (error) {
@@ -37,9 +44,14 @@ export async function GET() {
     }))
   );
 
-  const categoryUrls = visibleSlugs.map((slug) => 
-    `<url><loc>${baseUrl}/catalog/${slug}</loc><changefreq>daily</changefreq><priority>0.9</priority></url>`
+  const categoryLastmod = new Map(
+    categories.map((c) => [c.slug, c.products[0]?.updatedAt?.toISOString() ?? new Date().toISOString()])
   );
+
+  const categoryUrls = visibleSlugs.map((slug) => {
+    const lastmod = categoryLastmod.get(slug) ?? new Date().toISOString();
+    return `<url><loc>${baseUrl}/catalog/${slug}</loc><lastmod>${lastmod}</lastmod><changefreq>daily</changefreq><priority>0.9</priority></url>`;
+  });
 
   const filterUrls = getCatalogSmartFilterEntries(visibleSlugs).map(
     ({ slug, filter }) =>

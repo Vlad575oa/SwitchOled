@@ -25,6 +25,16 @@ const nextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      {
+        source: '/:path*',
+        has: [{ type: 'host', value: 'www.gameshop24.ru' }],
+        destination: 'https://gameshop24.ru/:path*',
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       {

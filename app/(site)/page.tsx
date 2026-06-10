@@ -15,7 +15,7 @@ const RecentlyViewed = loadDynamic(
 );
 
 export const metadata: Metadata = {
-  title: "Прошитые Nintendo Switch — купить в Москве | Gameshop24",
+  title: { absolute: "Прошитые Nintendo Switch — купить в Москве | Gameshop24" },
   description: "Прошитые Nintendo Switch OLED и Lite с гарантией 1 год. 45+ конфигураций от 27 000 ₽. 100+ игр в комплекте. Доставка в день заказа по Москве.",
   alternates: {
     canonical: "/",
@@ -37,6 +37,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
     <main className="w-full max-w-[1920px] mx-auto px-6 lg:px-6 2xl:px-4 pt-6 pb-20">
 
       <div id="catalog" className="mb-20 scroll-mt-24">
+        <h1 className="sr-only">Прошитые Nintendo Switch — купить в Москве с гарантией</h1>
         <Suspense fallback={<CatalogSkeleton count={8} />}>
           <Catalog
             category="all"
