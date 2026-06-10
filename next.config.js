@@ -31,7 +31,7 @@ const nextConfig = {
         source: '/:path*',
         has: [{ type: 'host', value: 'www.gameshop24.ru' }],
         destination: 'https://gameshop24.ru/:path*',
-        permanent: true,
+        statusCode: 301,
       },
     ];
   },
