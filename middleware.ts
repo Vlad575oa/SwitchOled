@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { SESSION_COOKIE } from '@/lib/auth';
+import { getCategoryRedirectTarget } from '@/lib/categoryRedirects';
 
 const LEGACY_GONE_PATHS = new Set([
   '/company',
@@ -68,6 +69,12 @@ export async function middleware(request: NextRequest) {
   const hasTrailingSlash = pathname.length > 1 && pathname.endsWith("/");
   if (hostname === "www.gameshop24.ru" || hasTrailingSlash) {
     const target = new URL(`${canonicalOrigin}${normalizedPath}${search}`);
+    return withSecurityHeaders(NextResponse.redirect(target, 301));
+  }
+
+  const categoryRedirectTarget = getCategoryRedirectTarget(normalizedPath);
+  if (categoryRedirectTarget) {
+    const target = new URL(`${canonicalOrigin}${categoryRedirectTarget}${search}`);
     return withSecurityHeaders(NextResponse.redirect(target, 301));
   }
 

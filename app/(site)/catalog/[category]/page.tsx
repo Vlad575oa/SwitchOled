@@ -3,6 +3,11 @@ import { Catalog } from "@/features/catalog/components/Catalog";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import prisma from "@/lib/prisma";
+import { getCategorySeoContent } from "@/lib/categorySeoContent";
+import {
+  CategorySeoDetails,
+  CategorySeoIntro,
+} from "@/features/catalog/components/CategorySeoContent";
 
 export const dynamic = "force-dynamic";
 
@@ -106,6 +111,22 @@ export default async function CategoryPage({ params, searchParams }: CatalogPage
     ],
   };
 
+  const seoContent = getCategorySeoContent(category);
+  const faqSchema = seoContent
+    ? {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: seoContent.faqs.map((faq) => ({
+          "@type": "Question",
+          name: faq.question,
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: faq.answer,
+          },
+        })),
+      }
+    : null;
+
   return (
     <main className="w-full max-w-[1920px] mx-auto px-6 lg:px-6 2xl:px-4 py-12">
       <script
@@ -118,7 +139,15 @@ export default async function CategoryPage({ params, searchParams }: CatalogPage
           dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }}
         />
       )}
+      {faqSchema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+        />
+      )}
+      {seoContent && <CategorySeoIntro content={seoContent} />}
       <Catalog category={category} searchParams={searchParams} />
+      {seoContent && <CategorySeoDetails content={seoContent} />}
     </main>
   );
 }
