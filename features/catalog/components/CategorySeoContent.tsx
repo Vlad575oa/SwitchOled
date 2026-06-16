@@ -4,9 +4,11 @@ import type { CategorySeoContent } from "@/lib/categorySeoContent";
 export function CategorySeoIntro({ content }: { content: CategorySeoContent }) {
   return (
     <section className="mb-8 rounded-[32px] border border-neutral-100 bg-white p-6 md:p-8">
-      <p className="mb-3 text-[10px] font-black uppercase tracking-[0.22em] text-primary">
-        {content.intro.eyebrow}
-      </p>
+      {content.intro.eyebrow ? (
+        <p className="mb-3 text-[10px] font-black uppercase tracking-[0.22em] text-primary">
+          {content.intro.eyebrow}
+        </p>
+      ) : null}
       <h2 className="max-w-4xl text-2xl font-black leading-tight text-secondary md:text-4xl">
         {content.intro.title}
       </h2>

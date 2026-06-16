@@ -1,6 +1,6 @@
 export type CategorySeoContent = {
   intro: {
-    eyebrow: string;
+    eyebrow?: string;
     title: string;
     description: string;
     badges: string[];
@@ -29,7 +29,6 @@ export type CategorySeoContent = {
 const CATEGORY_SEO_CONTENT: Record<string, CategorySeoContent> = {
   "nintendo-switch-oled": {
     intro: {
-      eyebrow: "SEO-гид по выбору",
       title: "Прошитая Nintendo Switch OLED",
       description:
         "Nintendo Switch OLED выбирают, когда нужен лучший экран, комфортный портативный режим и запас по ощущениям на несколько лет вперед.",
@@ -128,7 +127,6 @@ const CATEGORY_SEO_CONTENT: Record<string, CategorySeoContent> = {
   },
   "nintendo-switch-lite": {
     intro: {
-      eyebrow: "SEO-гид по выбору",
       title: "Прошитая Nintendo Switch Lite",
       description:
         "Nintendo Switch Lite — это вариант для тех, кому важна цена, компактность и портативный режим без переплаты за ТВ-док. Для офлайн-игры и поездок это одна из самых понятных и востребованных моделей.",
