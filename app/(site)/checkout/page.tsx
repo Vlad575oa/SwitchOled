@@ -3,11 +3,13 @@
 import { useForm } from "react-hook-form";
 import { useCartStore } from "@/features/cart/store/useCartStore";
 import { Button } from "@/components/ui/Button";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { formatPrice } from "@/lib/utils";
+import { formatRussianPhoneInput, getPhoneDigitsCount, hasValidRussianPhoneDigits } from "@/lib/phone";
 import { Tag, ShoppingBag } from "lucide-react";
+import { toast } from "sonner";
 
 interface CheckoutFormData {
   name: string;
@@ -19,11 +21,19 @@ interface CheckoutFormData {
 
 export default function CheckoutPage() {
   const { items, totalPrice } = useCartStore();
-  const { register, handleSubmit, formState: { errors } } = useForm<CheckoutFormData>();
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    setError,
+    clearErrors,
+    formState: { errors },
+  } = useForm<CheckoutFormData>();
   const [loading, setLoading] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [promoCode, setPromoCode] = useState("");
   const [promoApplied, setPromoApplied] = useState(false);
+  const phoneAlertShownRef = useRef(false);
   const router = useRouter();
 
   const discount = promoApplied ? Math.floor(totalPrice() * 0.05) : 0;
@@ -39,7 +49,26 @@ export default function CheckoutPage() {
     }
   };
 
+  const showPhoneValidationToast = () => {
+    if (phoneAlertShownRef.current) {
+      return;
+    }
+
+    phoneAlertShownRef.current = true;
+    toast.error("Проверьте номер телефона");
+  };
+
+  const resetPhoneValidationToast = () => {
+    phoneAlertShownRef.current = false;
+  };
+
   const onSubmit = async (data: CheckoutFormData) => {
+    if (!hasValidRussianPhoneDigits(data.phone)) {
+      setError("phone", { type: "manual", message: "Проверьте номер телефона" });
+      showPhoneValidationToast();
+      return;
+    }
+
     setLoading(true);
     setSubmitError(null);
     try {
@@ -110,10 +139,56 @@ export default function CheckoutPage() {
               <input
                 {...register("phone", {
                   required: "Введите номер телефона",
-                  pattern: { value: /^[\+7-9][\d\s\-\(\)]{9,14}$/, message: "Неверный формат телефона" },
+                  validate: (value) => hasValidRussianPhoneDigits(value) || "Проверьте номер телефона",
                 })}
+                onChange={(event) => {
+                  const nextValue = event.target.value;
+                  const digitsCount = getPhoneDigitsCount(nextValue);
+                  const formattedValue = formatRussianPhoneInput(nextValue);
+
+                  setValue("phone", formattedValue, {
+                    shouldDirty: true,
+                    shouldTouch: true,
+                    shouldValidate: false,
+                  });
+
+                  if (digitsCount > 11) {
+                    setError("phone", { type: "manual", message: "Проверьте номер телефона" });
+                    showPhoneValidationToast();
+                    return;
+                  }
+
+                  resetPhoneValidationToast();
+
+                  if (formattedValue && !hasValidRussianPhoneDigits(formattedValue)) {
+                    setError("phone", { type: "manual", message: "Проверьте номер телефона" });
+                    return;
+                  }
+
+                  clearErrors("phone");
+                }}
+                onBlur={(event) => {
+                  const formattedValue = formatRussianPhoneInput(event.target.value);
+
+                  setValue("phone", formattedValue, {
+                    shouldDirty: true,
+                    shouldTouch: true,
+                    shouldValidate: true,
+                  });
+
+                  if (!hasValidRussianPhoneDigits(formattedValue)) {
+                    setError("phone", { type: "manual", message: "Проверьте номер телефона" });
+                    showPhoneValidationToast();
+                    return;
+                  }
+
+                  clearErrors("phone");
+                  resetPhoneValidationToast();
+                }}
                 className={`w-full px-6 py-4 bg-neutral-50 rounded-2xl border-none focus:ring-2 focus:ring-primary/20 transition-all font-bold ${errors.phone ? "ring-2 ring-red-500/20" : ""}`}
-                placeholder="+7 (999) 000-00-00"
+                inputMode="tel"
+                maxLength={16}
+                placeholder="+7(999)999-99-99"
               />
               {errors.phone && <p className="text-xs font-bold text-red-500 mt-1">{errors.phone.message}</p>}
             </div>
