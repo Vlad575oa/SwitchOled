@@ -1,72 +1,43 @@
-function normalizeRussianPhoneDigits(value: string): string {
-  const digits = value.replace(/\D/g, "");
+export function formatPhoneInput(value: string, prevDigitCount?: number): string {
+  let digits = value.replace(/\D/g, "");
 
-  if (!digits) {
-    return "";
+  // If digit count didn't change but string did, user deleted a formatting char → remove a digit
+  if (prevDigitCount !== undefined && digits.length === prevDigitCount && digits.length > 0) {
+    digits = digits.slice(0, -1);
   }
 
-  if (digits.startsWith("8")) {
-    return `7${digits.slice(1)}`.slice(0, 11);
-  }
+  if (!digits) return "";
 
-  if (digits.startsWith("7")) {
-    return digits.slice(0, 11);
-  }
+  // +X
+  let result = `+${digits[0]}`;
+  // +X(XXX
+  if (digits.length > 1) result += `(${digits.slice(1, 4)}`;
+  // +X(XXX)XXX
+  if (digits.length >= 4) result += `)${digits.slice(4, 7)}`;
+  // +X(XXX)XXX-XX  (only if there are digits at positions 7-8)
+  if (digits.length > 7) result += `-${digits.slice(7, 9)}`;
+  // +X(XXX)XXX-XX-XX  (only if there are digits at position 9+)
+  if (digits.length > 9) result += `-${digits.slice(9)}`;
 
-  return `7${digits}`.slice(0, 11);
+  return result;
 }
 
+export function hasValidPhoneLength(value: string): boolean {
+  const len = value.replace(/\D/g, "").length;
+  return len >= 7 && len <= 11;
+}
+
+export function hasMinPhoneDigits(value: string): boolean {
+  return hasValidPhoneLength(value);
+}
+
+// kept for compatibility
 export function formatRussianPhoneInput(value: string): string {
-  const digits = normalizeRussianPhoneDigits(value);
-
-  if (!digits) {
-    return "";
-  }
-
-  if (digits.length === 1) {
-    return "+7";
-  }
-
-  const country = "+7";
-  const area = digits.slice(1, 4);
-  const first = digits.slice(4, 7);
-  const second = digits.slice(7, 9);
-  const third = digits.slice(9, 11);
-
-  let formatted = country;
-
-  if (area) {
-    formatted += `(${area}`;
-  }
-
-  if (digits.length >= 4) {
-    formatted += ")";
-  }
-
-  if (first) {
-    formatted += first;
-  }
-
-  if (second) {
-    formatted += `-${second}`;
-  }
-
-  if (third) {
-    formatted += `-${third}`;
-  }
-
-  return formatted;
+  return formatPhoneInput(value);
 }
 
 export function hasValidRussianPhoneDigits(value: string): boolean {
-  const rawDigits = value.replace(/\D/g, "");
-
-  if (rawDigits.length !== 11) {
-    return false;
-  }
-
-  const digits = normalizeRussianPhoneDigits(value);
-  return digits.length === 11 && digits.startsWith("7");
+  return value.replace(/\D/g, "").length === 11;
 }
 
 export function getPhoneDigitsCount(value: string): number {

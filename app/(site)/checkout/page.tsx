@@ -7,7 +7,7 @@ import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { formatPrice } from "@/lib/utils";
-import { formatRussianPhoneInput, getPhoneDigitsCount, hasValidRussianPhoneDigits } from "@/lib/phone";
+import { formatPhoneInput, hasValidPhoneLength } from "@/lib/phone";
 import { Tag, ShoppingBag } from "lucide-react";
 import { toast } from "sonner";
 
@@ -34,6 +34,7 @@ export default function CheckoutPage() {
   const [promoCode, setPromoCode] = useState("");
   const [promoApplied, setPromoApplied] = useState(false);
   const phoneAlertShownRef = useRef(false);
+  const prevPhoneDigitCountRef = useRef(0);
   const router = useRouter();
 
   const discount = promoApplied ? Math.floor(totalPrice() * 0.05) : 0;
@@ -63,7 +64,7 @@ export default function CheckoutPage() {
   };
 
   const onSubmit = async (data: CheckoutFormData) => {
-    if (!hasValidRussianPhoneDigits(data.phone)) {
+    if (!hasValidPhoneLength(data.phone)) {
       setError("phone", { type: "manual", message: "Проверьте номер телефона" });
       showPhoneValidationToast();
       return;
@@ -139,56 +140,35 @@ export default function CheckoutPage() {
               <input
                 {...register("phone", {
                   required: "Введите номер телефона",
-                  validate: (value) => hasValidRussianPhoneDigits(value) || "Проверьте номер телефона",
+                  validate: (value) => hasValidPhoneLength(value) || "Проверьте номер телефона",
                 })}
                 onChange={(event) => {
-                  const nextValue = event.target.value;
-                  const digitsCount = getPhoneDigitsCount(nextValue);
-                  const formattedValue = formatRussianPhoneInput(nextValue);
+                  const formatted = formatPhoneInput(event.target.value, prevPhoneDigitCountRef.current);
+                  prevPhoneDigitCountRef.current = formatted.replace(/\D/g, "").length;
+                  setValue("phone", formatted, { shouldDirty: true, shouldTouch: true, shouldValidate: false });
 
-                  setValue("phone", formattedValue, {
-                    shouldDirty: true,
-                    shouldTouch: true,
-                    shouldValidate: false,
-                  });
-
-                  if (digitsCount > 11) {
+                  if (formatted && !hasValidPhoneLength(formatted)) {
                     setError("phone", { type: "manual", message: "Проверьте номер телефона" });
                     showPhoneValidationToast();
-                    return;
+                  } else {
+                    clearErrors("phone");
+                    resetPhoneValidationToast();
                   }
-
-                  resetPhoneValidationToast();
-
-                  if (formattedValue && !hasValidRussianPhoneDigits(formattedValue)) {
-                    setError("phone", { type: "manual", message: "Проверьте номер телефона" });
-                    return;
-                  }
-
-                  clearErrors("phone");
                 }}
                 onBlur={(event) => {
-                  const formattedValue = formatRussianPhoneInput(event.target.value);
-
-                  setValue("phone", formattedValue, {
-                    shouldDirty: true,
-                    shouldTouch: true,
-                    shouldValidate: true,
-                  });
-
-                  if (!hasValidRussianPhoneDigits(formattedValue)) {
+                  const formatted = formatPhoneInput(event.target.value);
+                  setValue("phone", formatted, { shouldDirty: true, shouldTouch: true, shouldValidate: false });
+                  if (formatted && !hasValidPhoneLength(formatted)) {
                     setError("phone", { type: "manual", message: "Проверьте номер телефона" });
                     showPhoneValidationToast();
-                    return;
+                  } else {
+                    clearErrors("phone");
+                    resetPhoneValidationToast();
                   }
-
-                  clearErrors("phone");
-                  resetPhoneValidationToast();
                 }}
                 className={`w-full px-6 py-4 bg-neutral-50 rounded-2xl border-none focus:ring-2 focus:ring-primary/20 transition-all font-bold ${errors.phone ? "ring-2 ring-red-500/20" : ""}`}
                 inputMode="tel"
-                maxLength={16}
-                placeholder="+7(999)999-99-99"
+                placeholder="+8(983)777-33-33"
               />
               {errors.phone && <p className="text-xs font-bold text-red-500 mt-1">{errors.phone.message}</p>}
             </div>
