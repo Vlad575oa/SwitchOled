@@ -9,7 +9,9 @@ const MaxIcon = () => (
 );
 
 const WhatsAppIcon = () => (
-  <Image src="/icons/whatsapp-svgrepo-com.svg" alt="WhatsApp" width={26} height={26} className="object-contain" />
+  <span className="inline-flex h-[26px] min-w-[26px] items-center justify-center rounded-full border border-emerald-500/35 bg-emerald-500/12 px-1.5 text-[10px] font-black uppercase tracking-[0.14em] text-emerald-700">
+    WA
+  </span>
 );
 
 const TelegramIcon = () => (

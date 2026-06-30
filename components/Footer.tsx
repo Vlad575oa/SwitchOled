@@ -37,7 +37,9 @@ export const Footer = ({ workingHours = "09:00 — 21:00", currentYear }: Footer
                             </a>
                             <Link href={`https://wa.me/${CONTACTS.phoneHref.replace("+", "")}`} target="_blank" rel="noopener noreferrer"
                                 className="w-7 h-7 flex items-center justify-center transition-all hover:scale-110 drop-shadow-sm">
-                                <img src="/icons/whatsapp-svgrepo-com.svg" alt="wa" className="w-full h-full object-contain" />
+                                <span className="inline-flex h-7 min-w-7 items-center justify-center rounded-full border border-emerald-400/35 bg-emerald-500/12 px-1 text-[10px] font-black uppercase tracking-[0.14em] text-emerald-300">
+                                    WA
+                                </span>
                             </Link>
                             <MaxContactLink className="w-7 h-7 flex items-center justify-center transition-all hover:scale-110 drop-shadow-sm" title="MAX">
                                 <img src="/icons/logotip-messendzhera-max.svg" alt="max" className="w-full h-full object-contain" />
