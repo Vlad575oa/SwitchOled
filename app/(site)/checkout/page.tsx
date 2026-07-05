@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { formatPrice } from "@/lib/utils";
 import { formatPhoneInput, hasValidPhoneLength } from "@/lib/phone";
-import { Tag, ShoppingBag } from "lucide-react";
+import { ShoppingBag } from "lucide-react";
 import { toast } from "sonner";
 
 interface CheckoutFormData {
@@ -31,24 +31,11 @@ export default function CheckoutPage() {
   } = useForm<CheckoutFormData>();
   const [loading, setLoading] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const [promoCode, setPromoCode] = useState("");
-  const [promoApplied, setPromoApplied] = useState(false);
   const phoneAlertShownRef = useRef(false);
   const prevPhoneDigitCountRef = useRef(0);
   const router = useRouter();
 
-  const discount = promoApplied ? Math.floor(totalPrice() * 0.05) : 0;
-  const finalTotal = totalPrice() - discount;
-
-  const applyPromo = () => {
-    if (promoCode.trim().toUpperCase() === "NINTENDO5") {
-      setPromoApplied(true);
-    } else {
-      setPromoApplied(false);
-      setSubmitError("Промокод не найден");
-      setTimeout(() => setSubmitError(null), 3000);
-    }
-  };
+  const finalTotal = totalPrice();
 
   const showPhoneValidationToast = () => {
     if (phoneAlertShownRef.current) {
@@ -82,7 +69,6 @@ export default function CheckoutPage() {
           comment: data.comment || undefined,
           items,
           totalAmount: finalTotal,
-          promoCode: promoApplied ? promoCode : undefined,
         }),
       });
 
@@ -212,31 +198,6 @@ export default function CheckoutPage() {
               {errors.consent && <p className="text-xs font-bold text-red-500 mt-1">{errors.consent.message}</p>}
             </div>
 
-            {/* Promo code */}
-            <div>
-              <label className="block text-sm font-bold text-neutral-400 mb-2 flex items-center gap-1.5">
-                <Tag size={13} /> Промокод
-              </label>
-              <div className="flex gap-2">
-                <input
-                  value={promoCode}
-                  onChange={(e) => { setPromoCode(e.target.value.toUpperCase()); setPromoApplied(false); }}
-                  placeholder="NINTENDO5"
-                  className="flex-1 px-6 py-4 bg-neutral-50 rounded-2xl border-none focus:ring-2 focus:ring-primary/20 transition-all font-bold text-sm uppercase"
-                />
-                <button
-                  type="button"
-                  onClick={applyPromo}
-                  disabled={!promoCode.trim()}
-                  className="px-5 py-4 bg-neutral-100 text-secondary rounded-2xl font-black text-sm hover:bg-neutral-200 transition-all disabled:opacity-40"
-                >
-                  Применить
-                </button>
-              </div>
-              {promoApplied && (
-                <p className="text-xs font-bold text-green-600 mt-1">✓ Скидка 5% применена</p>
-              )}
-            </div>
           </div>
         </div>
 
@@ -251,13 +212,6 @@ export default function CheckoutPage() {
                 </div>
               ))}
             </div>
-
-            {promoApplied && (
-              <div className="flex justify-between text-sm mb-3 text-green-400">
-                <span className="font-bold">Скидка (промокод)</span>
-                <span className="font-black">−{formatPrice(discount)}</span>
-              </div>
-            )}
 
             <div className="pt-6 border-t border-white/10 mb-8 flex justify-between">
               <span className="text-lg font-bold">Итого</span>
