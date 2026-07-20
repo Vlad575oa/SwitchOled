@@ -141,6 +141,25 @@ export default async function DeliveryPage() {
           </div>
         )}
 
+        {/* Other cities */}
+        <div className="bg-secondary rounded-[32px] p-10 flex items-start gap-8 mb-20 md:mb-32">
+          <div className="w-14 h-14 rounded-2xl bg-white/15 flex items-center justify-center shrink-0">
+            <Truck size={28} className="text-white" />
+          </div>
+          <div>
+            <h3 className="font-black text-white text-xl mb-3">Доставляем в другие города</h3>
+            <p className="text-white/70 md:text-lg font-medium leading-relaxed max-w-3xl">
+              Да, мы доставляем по всей России! Оставьте свой контактный телефон — менеджер свяжется с вами и расскажет о доступных вариантах доставки в ваш регион.
+            </p>
+            <a
+              href="tel:79266763488"
+              className="inline-block mt-6 px-8 py-4 bg-primary text-white font-black text-sm uppercase tracking-widest rounded-2xl hover:bg-primary/90 transition-colors"
+            >
+              Позвонить: 7(926)676-34-88
+            </a>
+          </div>
+        </div>
+
         {/* Packaging note */}
         {isEnabled(d.show_packaging) && (
           <div className="bg-primary/5 border border-primary/10 rounded-[32px] p-10 flex items-start gap-8 mb-20 md:mb-32">

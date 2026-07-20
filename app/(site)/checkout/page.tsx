@@ -8,8 +8,10 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { formatPrice } from "@/lib/utils";
 import { formatPhoneInput, hasValidPhoneLength } from "@/lib/phone";
-import { ShoppingBag } from "lucide-react";
+import { ShoppingBag, MapPin } from "lucide-react";
 import { toast } from "sonner";
+
+const PICKUP_ADDRESS = "Москва, Митинская 10, корп. 1 (м. Волоколамская)";
 
 interface CheckoutFormData {
   name: string;
@@ -31,6 +33,7 @@ export default function CheckoutPage() {
   } = useForm<CheckoutFormData>();
   const [loading, setLoading] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [isPickup, setIsPickup] = useState(false);
   const phoneAlertShownRef = useRef(false);
   const prevPhoneDigitCountRef = useRef(0);
   const router = useRouter();
@@ -103,7 +106,7 @@ export default function CheckoutPage() {
   }
 
   return (
-    <main className="container py-12 lg:py-20 max-w-4xl">
+    <main className="container px-4 sm:px-6 py-12 lg:py-20 max-w-4xl">
       <h1 className="text-4xl font-black text-secondary mb-12">Оформление заказа</h1>
 
       <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-16">
@@ -159,12 +162,43 @@ export default function CheckoutPage() {
               {errors.phone && <p className="text-xs font-bold text-red-500 mt-1">{errors.phone.message}</p>}
             </div>
 
+            {/* Pickup toggle */}
+            <label className="flex items-center gap-3 cursor-pointer select-none">
+              <div
+                onClick={() => {
+                  const next = !isPickup;
+                  setIsPickup(next);
+                  if (next) {
+                    setValue("address", PICKUP_ADDRESS, { shouldValidate: true });
+                  } else {
+                    setValue("address", "", { shouldValidate: false });
+                  }
+                }}
+                className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-colors cursor-pointer flex-shrink-0 ${isPickup ? "bg-primary border-primary" : "bg-white border-neutral-300"}`}
+              >
+                {isPickup && (
+                  <svg className="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 14 14" stroke="currentColor" strokeWidth={2.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M2 7l4 4 6-6" />
+                  </svg>
+                )}
+              </div>
+              <span className="flex items-center gap-2 text-sm font-bold text-secondary">
+                <MapPin size={15} className="text-primary" />
+                Самовывоз из офиса
+              </span>
+            </label>
+
             <div>
-              <label className="block text-sm font-bold text-neutral-400 mb-2">Адрес доставки</label>
+              <label className="block text-sm font-bold text-neutral-400 mb-2">
+                {isPickup ? "Адрес самовывоза" : "Адрес доставки"}
+              </label>
               <textarea
                 {...register("address", { required: "Введите адрес доставки" })}
-                rows={4}
-                className={`w-full px-6 py-4 bg-neutral-50 rounded-2xl border-none focus:ring-2 focus:ring-primary/20 transition-all font-bold ${errors.address ? "ring-2 ring-red-500/20" : ""}`}
+                rows={isPickup ? 2 : 4}
+                readOnly={isPickup}
+                className={`w-full px-6 py-4 rounded-2xl border-none focus:ring-2 focus:ring-primary/20 transition-all font-bold ${
+                  isPickup ? "bg-primary/5 text-secondary cursor-default" : "bg-neutral-50"
+                } ${errors.address ? "ring-2 ring-red-500/20" : ""}`}
                 placeholder="Город, улица, дом, квартира"
               />
               {errors.address && <p className="text-xs font-bold text-red-500 mt-1">{errors.address.message}</p>}
