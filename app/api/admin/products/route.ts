@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 import prisma from "@/lib/prisma";
 import { uploadImagesToS3 } from "@/lib/s3";
 import { buildProductMetaDescription, buildProductMetaTitle } from "@/lib/seo";
+import { ADMIN_COOKIE, verifyAdminSession } from "@/lib/adminSession";
 
 function normalizeSlug(s: string) {
   return s.toLowerCase().replace(/[^a-z0-9-]/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, "");
@@ -30,6 +32,9 @@ async function resolveBrandFromCategory(categoryId: number) {
 }
 
 export async function GET() {
+  const session = await verifyAdminSession(cookies().get(ADMIN_COOKIE)?.value);
+  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
   const products = await prisma.product.findMany({
     include: { category: true },
     orderBy: { createdAt: "desc" },
@@ -39,6 +44,9 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
+    const session = await verifyAdminSession(cookies().get(ADMIN_COOKIE)?.value);
+    if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
     const fd = await request.formData();
 
     const name = ((fd.get("name") as string) || "").trim();
@@ -120,7 +128,7 @@ export async function POST(request: Request) {
     const productUrl = `${process.env.NEXT_PUBLIC_APP_URL}/catalog/${product.category.slug}/${product.slug}`;
     fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/indexnow`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", "x-indexnow-key": process.env.INDEXNOW_KEY || "" },
       body: JSON.stringify({ urls: [productUrl] }),
     }).catch(() => {});
 

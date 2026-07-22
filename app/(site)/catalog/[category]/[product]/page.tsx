@@ -15,6 +15,7 @@ import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { buildProductMetaDescription, resolveProductMetaTitle } from "@/lib/seo";
 import { CATALOG_SMART_FILTERS } from "@/lib/catalogSmartFilters";
+import { sanitizeRichHtml } from "@/lib/sanitizeHtml";
 
 const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || "https://gameshop24.ru").replace("://www.", "://");
 
@@ -229,7 +230,7 @@ export default async function ProductPage({
 
             {/* Description & Specs tabs */}
             <ProductTabs
-              description={product.description ?? null}
+              description={product.description ? sanitizeRichHtml(product.description) : null}
               attributes={product.attributes as Record<string, string> | null}
               productName={product.name}
             />

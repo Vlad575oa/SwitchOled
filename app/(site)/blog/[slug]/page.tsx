@@ -9,6 +9,7 @@ import Link from "next/link";
 import { Metadata } from "next";
 import { marked } from "marked";
 import { Prisma } from "@prisma/client";
+import { sanitizeRichHtml } from "@/lib/sanitizeHtml";
 
 const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || "https://gameshop24.ru").replace("://www.", "://");
 
@@ -239,7 +240,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
             
             [&_>_div_>_*:first-child]:mt-0
           ">
-            <div dangerouslySetInnerHTML={{ __html: marked(post.content) as string }} />
+            <div dangerouslySetInnerHTML={{ __html: sanitizeRichHtml(marked(post.content) as string) }} />
           </div>
 
           {relatedProducts.length > 0 && (

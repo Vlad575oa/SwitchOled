@@ -45,24 +45,30 @@ export async function createOrderAction(input: CreateOrderInput): Promise<Action
       });
       const productMap = new Map(products.map((p) => [p.id, p]));
 
-      // 1. Check stock and visibility for all items
+      // 1. Check visibility up front (fast-fail before touching rows)
       for (const item of normalizedItems) {
         const product = productMap.get(item.productId);
-        if (!product || product.isVisible === false || product.stock < item.quantity) {
+        if (!product || product.isVisible === false) {
           throw new Error(`Товар "${product?.name || "ID " + item.productId}" недоступен или закончился`);
         }
       }
 
-      // 2. Decrement stock
+      // 2. Atomically decrement stock, conditioned on sufficient stock at write
+      // time. This closes the check-then-decrement race window: under
+      // concurrent orders, only transactions whose conditional UPDATE actually
+      // matches a row (stock >= quantity) succeed — the rest fail fast instead
+      // of allowing stock to go negative.
       for (const item of normalizedItems) {
-        await tx.product.update({
-          where: { id: item.productId },
-          data: {
-            stock: { decrement: item.quantity },
-          },
+        const product = productMap.get(item.productId)!;
+        const { count } = await tx.product.updateMany({
+          where: { id: item.productId, stock: { gte: item.quantity } },
+          data: { stock: { decrement: item.quantity } },
         });
+        if (count === 0) {
+          throw new Error(`Товар "${product.name}" недоступен или закончился`);
+        }
 
-        const updatedProduct = await tx.product.findUnique({ where: { id: item.productId } });
+        const updatedProduct = await tx.product.findUnique({ where: { id: item.productId }, select: { stock: true } });
         if (updatedProduct && updatedProduct.stock <= 0) {
           await tx.product.update({
             where: { id: item.productId },

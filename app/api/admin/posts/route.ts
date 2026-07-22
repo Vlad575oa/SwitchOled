@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 import prisma from "@/lib/prisma";
 import { uploadImagesToS3 } from "@/lib/s3";
+import { ADMIN_COOKIE, verifyAdminSession } from "@/lib/adminSession";
 
 const TRANSLIT: Record<string, string> = {
   а:"a",б:"b",в:"v",г:"g",д:"d",е:"e",ё:"yo",ж:"zh",з:"z",и:"i",й:"y",
@@ -22,12 +24,18 @@ function slugify(str: string) {
 }
 
 export async function GET() {
+  const session = await verifyAdminSession(cookies().get(ADMIN_COOKIE)?.value);
+  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
   const posts = await prisma.post.findMany({ orderBy: { createdAt: "desc" } });
   return NextResponse.json(posts);
 }
 
 export async function POST(request: Request) {
   try {
+    const session = await verifyAdminSession(cookies().get(ADMIN_COOKIE)?.value);
+    if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
     const fd = await request.formData();
     const title = fd.get("title") as string;
     const excerpt = (fd.get("excerpt") as string) || null;

@@ -1,9 +1,14 @@
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 import prisma from "@/lib/prisma";
 import { uploadImagesToS3 } from "@/lib/s3";
+import { ADMIN_COOKIE, verifyAdminSession } from "@/lib/adminSession";
 
 export async function PUT(request: Request, { params }: { params: { id: string } }) {
   try {
+    const session = await verifyAdminSession(cookies().get(ADMIN_COOKIE)?.value);
+    if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
     const id = parseInt(params.id);
     const fd = await request.formData();
     const title = fd.get("title") as string;
@@ -36,6 +41,9 @@ export async function PUT(request: Request, { params }: { params: { id: string }
 
 export async function DELETE(_: Request, { params }: { params: { id: string } }) {
   try {
+    const session = await verifyAdminSession(cookies().get(ADMIN_COOKIE)?.value);
+    if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
     await prisma.post.delete({ where: { id: parseInt(params.id) } });
     return NextResponse.json({ success: true });
   } catch (err: any) {

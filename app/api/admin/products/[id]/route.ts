@@ -139,7 +139,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
     const productUrl = `${process.env.NEXT_PUBLIC_APP_URL}/catalog/${product.category.slug}/${product.slug}`;
     fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/indexnow`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", "x-indexnow-key": process.env.INDEXNOW_KEY || "" },
       body: JSON.stringify({ urls: [productUrl] }),
     }).catch(() => {});
 

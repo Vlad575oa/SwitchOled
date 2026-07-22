@@ -10,6 +10,11 @@ const OrderStatusSchema = z.object({
 
 export async function PUT(request: Request, { params }: { params: { id: string } }) {
   try {
+    const session = await verifyAdminSession(cookies().get(ADMIN_COOKIE)?.value);
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const parsed = OrderStatusSchema.safeParse(await request.json());
     if (!parsed.success) {
       return NextResponse.json({ error: "Некорректный статус" }, { status: 400 });

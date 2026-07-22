@@ -115,11 +115,13 @@ export default function ComparePage() {
       );
     }
     if (key === "description") {
+      const plainText = typeof val === "string" ? val.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim() : val;
       return (
         <div
-          className={`font-medium text-neutral-600 leading-relaxed line-clamp-5 prose prose-sm max-w-none prose-p:my-0.5 ${size === "xs" ? "text-[10px]" : "text-xs"}`}
-          dangerouslySetInnerHTML={{ __html: val }}
-        />
+          className={`font-medium text-neutral-600 leading-relaxed line-clamp-5 ${size === "xs" ? "text-[10px]" : "text-xs"}`}
+        >
+          {plainText}
+        </div>
       );
     }
     return (

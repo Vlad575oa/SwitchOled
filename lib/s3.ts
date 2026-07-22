@@ -1,5 +1,6 @@
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import crypto from "crypto";
+import sharp from "sharp";
 
 const BUCKET = process.env.S3_BUCKET!;
 const ENDPOINT = process.env.S3_ENDPOINT!;
@@ -15,8 +16,13 @@ const s3 = new S3Client({
   forcePathStyle: true,
 });
 
-const ALLOWED_MIME = new Set(["image/jpeg", "image/png", "image/webp"]);
 const MAX_SIZE = 5 * 1024 * 1024;
+
+const FORMAT_TO_MIME: Record<string, string> = {
+  jpeg: "image/jpeg",
+  png: "image/png",
+  webp: "image/webp",
+};
 
 export async function uploadImagesToS3(
   files: File[],
@@ -25,23 +31,37 @@ export async function uploadImagesToS3(
   const urls: string[] = [];
 
   for (const file of files) {
-    if (!ALLOWED_MIME.has(file.type)) {
-      throw new Error("Недопустимый формат файла. Разрешены JPG/PNG/WEBP");
-    }
     if (file.size > MAX_SIZE) {
       throw new Error("Файл слишком большой. Максимум 5MB");
     }
 
-    const ext = file.type === "image/png" ? "png" : file.type === "image/webp" ? "webp" : "jpg";
-    const key = `${folder}/${Date.now()}-${crypto.randomUUID()}.${ext}`;
     const buf = Buffer.from(await file.arrayBuffer());
+
+    // Verify the actual file content (magic bytes), not the client-supplied
+    // MIME type or filename — a spoofed Content-Type could smuggle arbitrary
+    // files (e.g. HTML/SVG with scripts) into public storage otherwise.
+    let format: string | undefined;
+    try {
+      const metadata = await sharp(buf).metadata();
+      format = metadata.format;
+    } catch {
+      throw new Error("Недопустимый формат файла. Разрешены JPG/PNG/WEBP");
+    }
+
+    const mime = format ? FORMAT_TO_MIME[format] : undefined;
+    if (!mime) {
+      throw new Error("Недопустимый формат файла. Разрешены JPG/PNG/WEBP");
+    }
+
+    const ext = format === "png" ? "png" : format === "webp" ? "webp" : "jpg";
+    const key = `${folder}/${Date.now()}-${crypto.randomUUID()}.${ext}`;
 
     await s3.send(
       new PutObjectCommand({
         Bucket: BUCKET,
         Key: key,
         Body: buf,
-        ContentType: file.type,
+        ContentType: mime,
         ACL: "public-read",
       })
     );
