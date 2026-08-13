@@ -227,3 +227,89 @@ model ChatMessage {
   createdAt DateTime    @default(now())
   isRead    Boolean     @default(false)
 }
+
+model PriceSupplier {
+  id            Int      @id @default(autoincrement())
+  slug          String   @unique
+  name          String
+  detectPattern Json
+  parserKey     String
+  createdAt     DateTime @default(now())
+
+  uploads       PriceUpload[]
+}
+
+model PriceUpload {
+  id           Int           @id @default(autoincrement())
+  supplierId   Int
+  supplier     PriceSupplier @relation(fields: [supplierId], references: [id])
+  fileName     String
+  fileHash     String
+  priceDate    DateTime?
+  status       String        @default("processing") // "processing" | "done" | "failed"
+  rowsTotal    Int           @default(0)
+  rowsMatched  Int           @default(0)
+  rowsPending  Int           @default(0)
+  uploadedBy   String?
+  createdAt    DateTime      @default(now())
+
+  entries      PriceEntry[]
+
+  @@unique([supplierId, fileHash])
+  @@index([supplierId, createdAt])
+}
+
+model Game {
+  id            Int         @id @default(autoincrement())
+  canonicalName String
+  platform      String
+  region        String?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  aliases       GameAlias[]
+  entries       PriceEntry[]
+
+  @@unique([canonicalName, platform, region])
+  @@index([platform])
+}
+
+model GameAlias {
+  id         Int      @id @default(autoincrement())
+  gameId     Int
+  game       Game     @relation(fields: [gameId], references: [id])
+  rawText    String
+  normalized String
+  source     String   @default("ai") // "ai" | "manual" | "exact"
+  createdAt  DateTime @default(now())
+
+  @@unique([normalized])
+  @@index([gameId])
+}
+
+model PriceEntry {
+  id             Int         @id @default(autoincrement())
+  uploadId       Int
+  upload         PriceUpload @relation(fields: [uploadId], references: [id])
+  gameId         Int?
+  game           Game?       @relation(fields: [gameId], references: [id])
+
+  rawName        String
+  normalizedName String
+  platform       String?
+  sku            String?
+
+  priceRetail    Int?
+  priceWholesale Int?
+  inStock        Boolean     @default(true)
+
+  matchStatus    String      @default("pending") // "pending" | "auto" | "confirmed" | "rejected"
+  matchScore     Float?
+
+  createdAt      DateTime    @default(now())
+
+  @@index([uploadId])
+  @@index([gameId])
+  @@index([normalizedName])
+  @@index([matchStatus])
+}

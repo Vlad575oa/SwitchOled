@@ -16,6 +16,7 @@ import {
   Scale,
   MessageSquare,
   Palette,
+  BarChart3,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -23,6 +24,7 @@ const navItems = [
   { label: "Дашборд", href: "/admin", icon: LayoutDashboard, exact: true },
   { label: "Товары", href: "/admin/products", icon: Package },
   { label: "Заказы", href: "/admin/orders", icon: ShoppingBag, badge: true, badgeType: "orders" },
+  { label: "Сравнение цен", href: "/admin/price-compare", icon: BarChart3 },
   { label: "Цвета", href: "/admin/colors", icon: Palette },
   { label: "Блог", href: "/admin/posts", icon: FileText },
   { label: "FAQ", href: "/admin/faq", icon: HelpCircle },
