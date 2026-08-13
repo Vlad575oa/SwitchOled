@@ -3,16 +3,16 @@
 // (страница /admin/price-compare) и не должен на неё влиять.
 
 const DEEPSEEK_URL = "https://api.deepseek.com/chat/completions";
-const BATCH_SIZE = 40;
+export const AI_MATCH_BATCH_SIZE = 40;
 
-type PendingRow = {
+export type PendingRow = {
   entryId: number;
   rawName: string;
   normalizedName: string;
   platform: string | null;
 };
 
-type ExistingGame = {
+export type ExistingGame = {
   id: number;
   canonicalName: string;
   platform: string;
@@ -23,7 +23,7 @@ export type AiMatchDecision =
   | { entryId: number; action: "new"; canonicalName: string; platform: string }
   | { entryId: number; action: "skip" };
 
-function chunk<T>(items: T[], size: number): T[][] {
+export function chunk<T>(items: T[], size: number): T[][] {
   const result: T[][] = [];
   for (let i = 0; i < items.length; i += size) result.push(items.slice(i, i + size));
   return result;
@@ -54,54 +54,51 @@ ${rowsList}
 }
 
 /**
- * Батч-сопоставление pending-строк прайса со справочником игр через DeepSeek.
- * Используется только менеджером в очереди подтверждения на /admin/price-compare —
- * не вызывается автоматически при каждой загрузке файла.
+ * Одна DeepSeek-транзакция на один батч строк. Вынесена отдельно от общего цикла,
+ * чтобы вызывающий код мог применять результат к БД и проверять сигнал остановки
+ * между батчами — а не только по завершении всей очереди.
  */
-export async function aiMatchBatch(rows: PendingRow[], games: ExistingGame[]): Promise<AiMatchDecision[]> {
+export async function aiMatchOneBatch(
+  rows: PendingRow[],
+  games: ExistingGame[],
+  signal?: AbortSignal
+): Promise<AiMatchDecision[]> {
   const apiKey = process.env.DEEPSEEK_API_KEY;
   if (!apiKey) throw new Error("DEEPSEEK_API_KEY не настроен");
   if (rows.length === 0) return [];
 
-  const batches = chunk(rows, BATCH_SIZE);
-  const allDecisions: AiMatchDecision[] = [];
+  const relevantGames = games.filter((g) => !rows[0]?.platform || rows.some((r) => r.platform === g.platform || !r.platform));
 
-  for (const batch of batches) {
-    const relevantGames = games.filter((g) => !batch[0]?.platform || batch.some((r) => r.platform === g.platform || !r.platform));
+  const res = await fetch(DEEPSEEK_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify({
+      model: "deepseek-chat",
+      messages: [{ role: "user", content: buildPrompt(rows, relevantGames) }],
+      response_format: { type: "json_object" },
+      temperature: 0,
+      max_tokens: 4096,
+    }),
+    signal,
+  });
 
-    const res = await fetch(DEEPSEEK_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify({
-        model: "deepseek-chat",
-        messages: [{ role: "user", content: buildPrompt(batch, relevantGames) }],
-        response_format: { type: "json_object" },
-        temperature: 0,
-        max_tokens: 4096,
-      }),
-    });
-
-    if (!res.ok) {
-      const err = await res.text();
-      console.error("aiMatchBatch: DeepSeek error", err);
-      batch.forEach((r) => allDecisions.push({ entryId: r.entryId, action: "skip" }));
-      continue;
-    }
-
-    const data = await res.json();
-    const raw: string = data.choices?.[0]?.message?.content ?? "{}";
-
-    try {
-      const parsed = JSON.parse(raw) as { decisions: AiMatchDecision[] };
-      allDecisions.push(...(parsed.decisions ?? []));
-    } catch (e) {
-      console.error("aiMatchBatch: failed to parse DeepSeek response", raw);
-      batch.forEach((r) => allDecisions.push({ entryId: r.entryId, action: "skip" }));
-    }
+  if (!res.ok) {
+    const err = await res.text();
+    console.error("aiMatchOneBatch: DeepSeek error", err);
+    return rows.map((r) => ({ entryId: r.entryId, action: "skip" }));
   }
 
-  return allDecisions;
+  const data = await res.json();
+  const raw: string = data.choices?.[0]?.message?.content ?? "{}";
+
+  try {
+    const parsed = JSON.parse(raw) as { decisions: AiMatchDecision[] };
+    return parsed.decisions ?? [];
+  } catch {
+    console.error("aiMatchOneBatch: failed to parse DeepSeek response", raw);
+    return rows.map((r) => ({ entryId: r.entryId, action: "skip" }));
+  }
 }

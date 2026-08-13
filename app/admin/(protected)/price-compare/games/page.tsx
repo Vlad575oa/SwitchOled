@@ -185,6 +185,7 @@ export default function GamesDictionaryPage() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="bg-neutral-50/50 border-b border-neutral-100">
+                    <th className="text-right px-4 py-3 font-black text-[10px] uppercase tracking-widest text-neutral-400 w-12">№</th>
                     <th className="text-left px-6 py-3 font-black text-[10px] uppercase tracking-widest text-neutral-400">Игра</th>
                     <th className="text-left px-4 py-3 font-black text-[10px] uppercase tracking-widest text-neutral-400">Платформа</th>
                     <th className="text-right px-4 py-3 font-black text-[10px] uppercase tracking-widest text-neutral-400">Алиасов</th>
@@ -193,12 +194,13 @@ export default function GamesDictionaryPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-neutral-50">
-                  {games.map((g) => (
+                  {games.map((g, index) => (
                     <tr
                       key={g.id}
                       onClick={() => openGame(g.id)}
                       className={`cursor-pointer hover:bg-neutral-50/50 ${selected?.id === g.id ? "bg-primary/5" : ""}`}
                     >
+                      <td className="px-4 py-3 text-right text-neutral-400 font-bold">{index + 1}</td>
                       <td className="px-6 py-3 font-bold text-[#111827]">{g.canonicalName}</td>
                       <td className="px-4 py-3 text-neutral-500 font-bold">{g.platform}</td>
                       <td className="px-4 py-3 text-right text-neutral-500 font-bold">{g._count.aliases}</td>
