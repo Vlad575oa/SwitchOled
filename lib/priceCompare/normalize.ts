@@ -12,7 +12,7 @@ const NOISE_PATTERNS: RegExp[] = [
 const PLATFORM_PATTERNS: { platform: string; pattern: RegExp }[] = [
   { platform: "PS5", pattern: /\bPS ?5\b|\bPLAYSTATION ?5\b|\bPPSA\b/i },
   { platform: "PS4", pattern: /\bPS ?4\b|\bPLAYSTATION ?4\b|\bCUSA\b/i },
-  { platform: "SWITCH", pattern: /\bSWITCH ?2?\b|\bNINTENDO SWITCH\b/i },
+  { platform: "SWITCH", pattern: /\bSWITCH ?2?\b|\bNINTENDO SWITCH\b|\bNS ?2?\b/i },
   { platform: "PSP", pattern: /\bPSP\b/i },
   { platform: "XBOX", pattern: /\bXBOX\b/i },
 ];

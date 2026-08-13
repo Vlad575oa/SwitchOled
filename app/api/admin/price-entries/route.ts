@@ -21,10 +21,9 @@ export async function GET(request: Request) {
     take: 200,
   });
 
-  const games = await prisma.game.findMany({
-    orderBy: { canonicalName: "asc" },
-    select: { id: true, canonicalName: true, platform: true },
-  });
-
-  return NextResponse.json({ entries, games });
+  // Полный справочник игр сюда не отдаём — он может разрастись до тысяч записей,
+  // а рендер такого списка внутри выпадающего списка на каждой из 200 строк
+  // вешает браузер. Игру для конкретной строки ищут отдельным запросом
+  // (см. GET /api/admin/games?search=...) по мере ввода.
+  return NextResponse.json({ entries });
 }

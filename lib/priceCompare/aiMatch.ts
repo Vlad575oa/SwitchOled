@@ -3,7 +3,7 @@
 // (страница /admin/price-compare) и не должен на неё влиять.
 
 const DEEPSEEK_URL = "https://api.deepseek.com/chat/completions";
-export const AI_MATCH_BATCH_SIZE = 40;
+export const AI_MATCH_BATCH_SIZE = 25;
 
 export type PendingRow = {
   entryId: number;
@@ -27,6 +27,27 @@ export function chunk<T>(items: T[], size: number): T[][] {
   const result: T[][] = [];
   for (let i = 0; i < items.length; i += size) result.push(items.slice(i, i + size));
   return result;
+}
+
+/**
+ * Достаёт из ответа DeepSeek все ЦЕЛЬНЫЕ объекты-решения, даже если сам JSON
+ * оборвался посреди массива (упёрлись в max_tokens). Объекты решений не содержат
+ * вложенных {} — это позволяет безопасно вырезать их регэкспом по балансу скобок.
+ */
+function extractPartialDecisions(raw: string): AiMatchDecision[] {
+  const matches = raw.match(/\{[^{}]*\}/g) || [];
+  const decisions: AiMatchDecision[] = [];
+  for (const m of matches) {
+    try {
+      const obj = JSON.parse(m);
+      if (obj && typeof obj.entryId === "number" && typeof obj.action === "string") {
+        decisions.push(obj as AiMatchDecision);
+      }
+    } catch {
+      // не целый объект — пропускаем
+    }
+  }
+  return decisions;
 }
 
 function buildPrompt(rows: PendingRow[], games: ExistingGame[]): string {
@@ -80,7 +101,7 @@ export async function aiMatchOneBatch(
       messages: [{ role: "user", content: buildPrompt(rows, relevantGames) }],
       response_format: { type: "json_object" },
       temperature: 0,
-      max_tokens: 4096,
+      max_tokens: 8192,
     }),
     signal,
   });
@@ -98,7 +119,10 @@ export async function aiMatchOneBatch(
     const parsed = JSON.parse(raw) as { decisions: AiMatchDecision[] };
     return parsed.decisions ?? [];
   } catch {
-    console.error("aiMatchOneBatch: failed to parse DeepSeek response", raw);
-    return rows.map((r) => ({ entryId: r.entryId, action: "skip" }));
+    const salvaged = extractPartialDecisions(raw);
+    console.error(`aiMatchOneBatch: JSON обрезан, восстановлено ${salvaged.length}/${rows.length} решений`);
+    const coveredIds = new Set(salvaged.map((d) => d.entryId));
+    const missing = rows.filter((r) => !coveredIds.has(r.entryId)).map((r) => ({ entryId: r.entryId, action: "skip" as const }));
+    return [...salvaged, ...missing];
   }
 }

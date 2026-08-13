@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Search, Pencil, Trash2, X, Save, Loader2 } from "lucide-react";
+import { ArrowLeft, Search, Pencil, Trash2, X, Save, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
 
 type GameRow = {
@@ -11,6 +11,7 @@ type GameRow = {
   platform: string;
   region: string | null;
   _count: { aliases: number; entries: number };
+  supplierCount: number;
 };
 
 type Alias = { id: number; rawText: string; normalized: string; source: string; createdAt: string };
@@ -27,12 +28,24 @@ type GameDetail = GameRow & {
 };
 
 const PLATFORMS = ["Все", "PS4", "PS5", "SWITCH", "PSP", "XBOX"];
+const PAGE_SIZE = 100;
+const SUPPLIER_COUNT_OPTIONS = [
+  { label: "Все", value: null },
+  { label: "У 4 поставщиков", value: 4 },
+  { label: "У 3 поставщиков", value: 3 },
+  { label: "У 2 поставщиков", value: 2 },
+  { label: "Только у 1", value: 1 },
+];
 
 export default function GamesDictionaryPage() {
   const [games, setGames] = useState<GameRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [platform, setPlatform] = useState("Все");
+  const [supplierCount, setSupplierCount] = useState<number | null>(null);
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
+  const [pageSize, setPageSize] = useState(PAGE_SIZE);
   const [selected, setSelected] = useState<GameDetail | null>(null);
   const [detailLoading, setDetailLoading] = useState(false);
   const [editName, setEditName] = useState("");
@@ -46,9 +59,14 @@ export default function GamesDictionaryPage() {
       const params = new URLSearchParams();
       if (search.trim()) params.set("search", search.trim());
       if (platform !== "Все") params.set("platform", platform);
+      if (supplierCount != null) params.set("supplierCount", String(supplierCount));
+      params.set("page", String(page));
+      params.set("limit", String(PAGE_SIZE));
       const res = await fetch(`/api/admin/games?${params.toString()}`);
       const data = await res.json();
       setGames(data.games || []);
+      setTotal(data.total || 0);
+      setPageSize(data.pageSize || PAGE_SIZE);
     } catch {
       toast.error("Не удалось загрузить справочник игр");
     } finally {
@@ -56,11 +74,16 @@ export default function GamesDictionaryPage() {
     }
   };
 
+  // Смена поиска/платформы/фильтра сбрасывает на первую страницу.
+  useEffect(() => {
+    setPage(1);
+  }, [search, platform, supplierCount]);
+
   useEffect(() => {
     const timeout = setTimeout(fetchGames, 300);
     return () => clearTimeout(timeout);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [search, platform]);
+  }, [search, platform, supplierCount, page]);
 
   const openGame = async (id: number) => {
     setDetailLoading(true);
@@ -174,6 +197,20 @@ export default function GamesDictionaryPage() {
             </div>
           </div>
 
+          <div className="flex items-center gap-2">
+            {SUPPLIER_COUNT_OPTIONS.map((opt) => (
+              <button
+                key={opt.label}
+                onClick={() => setSupplierCount(opt.value)}
+                className={`px-3 py-2 rounded-xl text-xs font-black transition-colors ${
+                  supplierCount === opt.value ? "bg-primary text-white" : "bg-white border border-neutral-200 text-neutral-500 hover:bg-neutral-50"
+                }`}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+
           <div className="bg-white rounded-2xl border border-neutral-100 shadow-sm overflow-hidden">
             {loading ? (
               <div className="p-12 flex items-center justify-center text-neutral-400">
@@ -188,6 +225,7 @@ export default function GamesDictionaryPage() {
                     <th className="text-right px-4 py-3 font-black text-[10px] uppercase tracking-widest text-neutral-400 w-12">№</th>
                     <th className="text-left px-6 py-3 font-black text-[10px] uppercase tracking-widest text-neutral-400">Игра</th>
                     <th className="text-left px-4 py-3 font-black text-[10px] uppercase tracking-widest text-neutral-400">Платформа</th>
+                    <th className="text-right px-4 py-3 font-black text-[10px] uppercase tracking-widest text-neutral-400">Поставщиков</th>
                     <th className="text-right px-4 py-3 font-black text-[10px] uppercase tracking-widest text-neutral-400">Алиасов</th>
                     <th className="text-right px-4 py-3 font-black text-[10px] uppercase tracking-widest text-neutral-400">Строк цен</th>
                     <th className="w-10"></th>
@@ -200,9 +238,22 @@ export default function GamesDictionaryPage() {
                       onClick={() => openGame(g.id)}
                       className={`cursor-pointer hover:bg-neutral-50/50 ${selected?.id === g.id ? "bg-primary/5" : ""}`}
                     >
-                      <td className="px-4 py-3 text-right text-neutral-400 font-bold">{index + 1}</td>
+                      <td className="px-4 py-3 text-right text-neutral-400 font-bold">{(page - 1) * pageSize + index + 1}</td>
                       <td className="px-6 py-3 font-bold text-[#111827]">{g.canonicalName}</td>
                       <td className="px-4 py-3 text-neutral-500 font-bold">{g.platform}</td>
+                      <td className="px-4 py-3 text-right font-bold">
+                        <span
+                          className={`inline-block px-2 py-0.5 rounded-lg ${
+                            g.supplierCount >= 4
+                              ? "bg-green-100 text-green-700"
+                              : g.supplierCount >= 2
+                              ? "bg-amber-100 text-amber-700"
+                              : "bg-neutral-100 text-neutral-500"
+                          }`}
+                        >
+                          {g.supplierCount}
+                        </span>
+                      </td>
                       <td className="px-4 py-3 text-right text-neutral-500 font-bold">{g._count.aliases}</td>
                       <td className="px-4 py-3 text-right text-neutral-500 font-bold">{g._count.entries}</td>
                       <td className="px-4 py-3 text-right">
@@ -214,6 +265,33 @@ export default function GamesDictionaryPage() {
               </table>
             )}
           </div>
+
+          {total > 0 && (
+            <div className="flex items-center justify-between px-1">
+              <p className="text-xs font-bold text-neutral-400">
+                Показано {(page - 1) * pageSize + 1}–{Math.min(page * pageSize, total)} из {total}
+              </p>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  disabled={page <= 1}
+                  className="p-2 bg-white border border-neutral-200 rounded-xl hover:bg-neutral-50 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                >
+                  <ChevronLeft size={15} className="text-neutral-500" />
+                </button>
+                <span className="text-xs font-black text-neutral-500 px-2">
+                  {page} / {Math.max(1, Math.ceil(total / pageSize))}
+                </span>
+                <button
+                  onClick={() => setPage((p) => Math.min(Math.max(1, Math.ceil(total / pageSize)), p + 1))}
+                  disabled={page >= Math.ceil(total / pageSize)}
+                  className="p-2 bg-white border border-neutral-200 rounded-xl hover:bg-neutral-50 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                >
+                  <ChevronRight size={15} className="text-neutral-500" />
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
         {selected && (

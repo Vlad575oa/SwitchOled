@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
-import { Upload, Loader2, RefreshCw, CheckCircle2, AlertCircle, Ban, Sparkles, BookOpen, Square } from "lucide-react";
+import { Upload, Loader2, RefreshCw, CheckCircle2, AlertCircle, Ban, Sparkles, BookOpen, Square, ChevronLeft, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
 
 const AI_MATCH_TIMEOUT_MS = 5 * 60 * 1000;
@@ -20,6 +21,7 @@ type CompareGame = {
   platform: string;
   prices: ComparePrice[];
   minPrice: number | null;
+  supplierCount: number;
 };
 
 type PendingEntry = {
@@ -36,6 +38,13 @@ type GameOption = { id: number; canonicalName: string; platform: string };
 type SupplierOption = { slug: string; name: string };
 
 const PLATFORMS = ["Все", "PS4", "PS5", "SWITCH", "PSP", "XBOX"];
+const SUPPLIER_COUNT_OPTIONS = [
+  { label: "Все", value: null as number | null },
+  { label: "У 4 поставщиков", value: 4 },
+  { label: "У 3 поставщиков", value: 3 },
+  { label: "У 2 поставщиков", value: 2 },
+  { label: "Только у 1", value: 1 },
+];
 
 export default function PriceComparePage() {
   const [games, setGames] = useState<CompareGame[]>([]);
@@ -43,24 +52,41 @@ export default function PriceComparePage() {
   const [platform, setPlatform] = useState("Все");
   const [search, setSearch] = useState("");
   const [onlyInStock, setOnlyInStock] = useState(false);
+  const [supplierCount, setSupplierCount] = useState<number | null>(null);
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
+  const [pageSize, setPageSize] = useState(50);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [pending, setPending] = useState<PendingEntry[]>([]);
-  const [gameOptions, setGameOptions] = useState<GameOption[]>([]);
   const [aiResolving, setAiResolving] = useState(false);
   const [selectedPendingIds, setSelectedPendingIds] = useState<Set<number>>(new Set());
   const fileInputRef = useRef<HTMLInputElement>(null);
   const aiAbortRef = useRef<AbortController | null>(null);
   const aiTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const fetchCompare = async (plat: string) => {
+  const fetchCompare = async (
+    plat: string,
+    pageArg: number,
+    searchArg: string,
+    onlyInStockArg: boolean,
+    supplierCountArg: number | null
+  ) => {
     setLoading(true);
     try {
-      const url = plat === "Все" ? "/api/admin/price-compare" : `/api/admin/price-compare?platform=${plat}`;
-      const res = await fetch(url);
+      const params = new URLSearchParams();
+      if (plat !== "Все") params.set("platform", plat);
+      if (searchArg.trim()) params.set("search", searchArg.trim());
+      if (onlyInStockArg) params.set("onlyInStock", "true");
+      if (supplierCountArg != null) params.set("supplierCount", String(supplierCountArg));
+      params.set("page", String(pageArg));
+
+      const res = await fetch(`/api/admin/price-compare?${params.toString()}`);
       const data = await res.json();
       setGames(data.games || []);
       setSuppliers(data.suppliers || []);
+      setTotal(data.total || 0);
+      setPageSize(data.pageSize || 50);
     } catch {
       toast.error("Не удалось загрузить сравнение цен");
     } finally {
@@ -73,7 +99,6 @@ export default function PriceComparePage() {
       const res = await fetch("/api/admin/price-entries");
       const data = await res.json();
       setPending(data.entries || []);
-      setGameOptions(data.games || []);
     } catch {
       // тихо — это не критичный блок
     }
@@ -121,7 +146,7 @@ export default function PriceComparePage() {
     aiAbortRef.current = null;
     setAiResolving(false);
     setSelectedPendingIds(new Set());
-    fetchCompare(platform);
+    fetchCompare(platform, page, search, onlyInStock, supplierCount);
     fetchPending();
   };
 
@@ -150,9 +175,19 @@ export default function PriceComparePage() {
     setSelectedPendingIds((prev) => (prev.size === pending.length ? new Set() : new Set(pending.map((e) => e.id))));
   };
 
+  // Смена платформы/поиска/фильтра "в наличии"/фильтра поставщиков сбрасывает на первую страницу.
   useEffect(() => {
-    fetchCompare(platform);
-  }, [platform]);
+    setPage(1);
+  }, [platform, search, onlyInStock, supplierCount]);
+
+  // Поиск — с дебаунсом, чтобы не дёргать сервер на каждое нажатие клавиши.
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      fetchCompare(platform, page, search, onlyInStock, supplierCount);
+    }, 300);
+    return () => clearTimeout(timeout);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [platform, search, onlyInStock, supplierCount, page]);
 
   useEffect(() => {
     fetchPending();
@@ -186,7 +221,7 @@ export default function PriceComparePage() {
 
     setUploading(false);
     if (fileInputRef.current) fileInputRef.current.value = "";
-    fetchCompare(platform);
+    fetchCompare(platform, page, search, onlyInStock, supplierCount);
     fetchPending();
   };
 
@@ -208,17 +243,13 @@ export default function PriceComparePage() {
         next.delete(entryId);
         return next;
       });
-      fetchCompare(platform);
+      fetchCompare(platform, page, search, onlyInStock, supplierCount);
     } catch {
       toast.error("Ошибка сервера");
     }
   };
 
-  const filteredGames = games.filter((g) => {
-    if (search.trim() && !g.name.toLowerCase().includes(search.trim().toLowerCase())) return false;
-    if (onlyInStock && !g.prices.some((p) => p.inStock && p.price != null)) return false;
-    return true;
-  });
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
   return (
     <>
@@ -252,7 +283,7 @@ export default function PriceComparePage() {
             Загрузить прайсы
           </button>
           <button
-            onClick={() => { fetchCompare(platform); fetchPending(); }}
+            onClick={() => { fetchCompare(platform, page, search, onlyInStock, supplierCount); fetchPending(); }}
             className="p-2.5 bg-neutral-50 border border-neutral-200 rounded-xl hover:bg-neutral-100 transition-colors"
             title="Обновить"
           >
@@ -305,7 +336,6 @@ export default function PriceComparePage() {
                 <PendingRow
                   key={entry.id}
                   entry={entry}
-                  gameOptions={gameOptions}
                   onConfirm={confirmEntry}
                   checked={selectedPendingIds.has(entry.id)}
                   onToggle={() => togglePendingSelected(entry.id)}
@@ -330,6 +360,20 @@ export default function PriceComparePage() {
             ))}
           </div>
 
+          <div className="flex items-center gap-2">
+            {SUPPLIER_COUNT_OPTIONS.map((opt) => (
+              <button
+                key={opt.label}
+                onClick={() => setSupplierCount(opt.value)}
+                className={`px-3 py-2 rounded-xl text-xs font-black transition-colors whitespace-nowrap ${
+                  supplierCount === opt.value ? "bg-primary text-white" : "bg-white border border-neutral-200 text-neutral-500 hover:bg-neutral-50"
+                }`}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -347,9 +391,9 @@ export default function PriceComparePage() {
             Только в наличии хотя бы у одного
           </label>
 
-          {(search || onlyInStock) && (
+          {(search || onlyInStock || supplierCount != null) && (
             <button
-              onClick={() => { setSearch(""); setOnlyInStock(false); }}
+              onClick={() => { setSearch(""); setOnlyInStock(false); setSupplierCount(null); }}
               className="px-3 py-2 text-xs font-black text-neutral-400 hover:text-neutral-600 transition-colors"
             >
               Сбросить
@@ -362,9 +406,9 @@ export default function PriceComparePage() {
             <div className="p-12 flex items-center justify-center text-neutral-400">
               <Loader2 size={20} className="animate-spin" />
             </div>
-          ) : filteredGames.length === 0 ? (
+          ) : games.length === 0 ? (
             <div className="p-12 text-center text-sm text-neutral-400 font-bold">
-              {games.length === 0 ? "Нет данных для сравнения — загрузите прайсы поставщиков" : "Ничего не найдено по текущим фильтрам"}
+              {total === 0 && page === 1 ? "Нет данных для сравнения — загрузите прайсы поставщиков" : "Ничего не найдено по текущим фильтрам"}
             </div>
           ) : (
             <div className="overflow-x-auto">
@@ -382,9 +426,9 @@ export default function PriceComparePage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-neutral-50">
-                  {filteredGames.map((g, index) => (
+                  {games.map((g, index) => (
                     <tr key={g.gameId} className="hover:bg-neutral-50/30">
-                      <td className="px-4 py-3 text-right text-neutral-400 font-bold">{index + 1}</td>
+                      <td className="px-4 py-3 text-right text-neutral-400 font-bold">{(page - 1) * pageSize + index + 1}</td>
                       <td className="px-6 py-3 font-bold text-[#111827]">{g.name}</td>
                       <td className="px-4 py-3 text-neutral-500 font-bold">{g.platform}</td>
                       {suppliers.map((s) => {
@@ -420,6 +464,33 @@ export default function PriceComparePage() {
             </div>
           )}
         </div>
+
+        {total > 0 && (
+          <div className="flex items-center justify-between px-1">
+            <p className="text-xs font-bold text-neutral-400">
+              Показано {(page - 1) * pageSize + 1}–{Math.min(page * pageSize, total)} из {total}
+            </p>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                disabled={page <= 1}
+                className="p-2 bg-white border border-neutral-200 rounded-xl hover:bg-neutral-50 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+              >
+                <ChevronLeft size={15} className="text-neutral-500" />
+              </button>
+              <span className="text-xs font-black text-neutral-500 px-2">
+                {page} / {totalPages}
+              </span>
+              <button
+                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                disabled={page >= totalPages}
+                className="p-2 bg-white border border-neutral-200 rounded-xl hover:bg-neutral-50 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+              >
+                <ChevronRight size={15} className="text-neutral-500" />
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </>
   );
@@ -427,25 +498,70 @@ export default function PriceComparePage() {
 
 function PendingRow({
   entry,
-  gameOptions,
   onConfirm,
   checked,
   onToggle,
 }: {
   entry: PendingEntry;
-  gameOptions: GameOption[];
   onConfirm: (entryId: number, gameId: number | null, newGame?: { canonicalName: string; platform: string }) => void;
   checked: boolean;
   onToggle: () => void;
 }) {
-  const [selected, setSelected] = useState("");
+  const [query, setQuery] = useState("");
+  const [options, setOptions] = useState<GameOption[]>([]);
+  const [open, setOpen] = useState(false);
+  const [selected, setSelected] = useState<GameOption | null>(null);
+  const [searching, setSearching] = useState(false);
+  const [dropdownRect, setDropdownRect] = useState<{ top: number; left: number; width: number } | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
-  const handleConfirm = () => {
-    if (selected === "__new__") {
-      onConfirm(entry.id, null, { canonicalName: entry.rawName, platform: entry.platform || "PS5" });
-    } else if (selected) {
-      onConfirm(entry.id, Number(selected));
+  // Игру ищем по мере ввода отдельным запросом, а не держим весь справочник
+  // (тысячи игр) в памяти каждой строки — иначе браузер зависает.
+  useEffect(() => {
+    if (!open) return;
+    const timeout = setTimeout(async () => {
+      setSearching(true);
+      try {
+        const params = new URLSearchParams({ limit: "20" });
+        if (query.trim()) params.set("search", query.trim());
+        if (entry.platform) params.set("platform", entry.platform);
+        const res = await fetch(`/api/admin/games?${params.toString()}`);
+        const data = await res.json();
+        setOptions(data.games || []);
+      } catch {
+        // тихо
+      } finally {
+        setSearching(false);
+      }
+    }, 250);
+    return () => clearTimeout(timeout);
+  }, [query, open, entry.platform]);
+
+  const openDropdown = () => {
+    if (inputRef.current) {
+      const rect = inputRef.current.getBoundingClientRect();
+      setDropdownRect({ top: rect.bottom + window.scrollY + 4, left: rect.left + window.scrollX, width: rect.width });
     }
+    setOpen(true);
+  };
+
+  const handlePick = (g: GameOption) => {
+    setSelected(g);
+    setQuery(`${g.canonicalName} (${g.platform})`);
+    setOpen(false);
+  };
+
+  const handleConfirmNew = () => {
+    onConfirm(entry.id, null, { canonicalName: entry.rawName, platform: entry.platform || "PS5" });
+    setSelected(null);
+    setQuery("");
+  };
+
+  const handleConfirmSelected = () => {
+    if (!selected) return;
+    onConfirm(entry.id, selected.id);
+    setSelected(null);
+    setQuery("");
   };
 
   return (
@@ -462,25 +578,62 @@ function PendingRow({
           {entry.upload.supplier.name} · {entry.platform || "платформа неизвестна"} · {entry.priceWholesale ?? entry.priceRetail ?? "—"} ₽
         </p>
       </div>
-      <select
-        value={selected}
-        onChange={(e) => setSelected(e.target.value)}
-        className="px-3 py-2 bg-white border border-neutral-200 rounded-xl text-xs font-bold outline-none focus:border-primary/40"
-      >
-        <option value="">Выберите игру...</option>
-        <option value="__new__">+ Новая игра: &quot;{entry.rawName}&quot;</option>
-        {gameOptions.map((g) => (
-          <option key={g.id} value={g.id}>
-            {g.canonicalName} ({g.platform})
-          </option>
-        ))}
-      </select>
+
+      <div className="w-64">
+        <input
+          ref={inputRef}
+          value={query}
+          onChange={(e) => {
+            setQuery(e.target.value);
+            setSelected(null);
+            openDropdown();
+          }}
+          onFocus={openDropdown}
+          onBlur={() => setTimeout(() => setOpen(false), 150)}
+          placeholder="Начните вводить название игры..."
+          className="w-full px-3 py-2 bg-white border border-neutral-200 rounded-xl text-xs font-bold outline-none focus:border-primary/40"
+        />
+      </div>
+
+      {open && dropdownRect &&
+        createPortal(
+          <div
+            style={{ position: "absolute", top: dropdownRect.top, left: dropdownRect.left, width: dropdownRect.width }}
+            className="z-50 bg-white border border-neutral-200 rounded-xl shadow-lg max-h-56 overflow-y-auto"
+          >
+            {searching ? (
+              <div className="p-3 text-xs text-neutral-400 font-bold">Поиск...</div>
+            ) : options.length === 0 ? (
+              <div className="p-3 text-xs text-neutral-400 font-bold">Ничего не найдено</div>
+            ) : (
+              options.map((g) => (
+                <button
+                  key={g.id}
+                  type="button"
+                  onMouseDown={() => handlePick(g)}
+                  className="w-full text-left px-3 py-2 text-xs font-bold text-[#111827] hover:bg-neutral-50 transition-colors"
+                >
+                  {g.canonicalName} ({g.platform})
+                </button>
+              ))
+            )}
+          </div>,
+          document.body
+        )}
+
       <button
-        onClick={handleConfirm}
+        onClick={handleConfirmSelected}
         disabled={!selected}
         className="px-4 py-2 bg-primary text-white rounded-xl text-xs font-black disabled:opacity-30 hover:opacity-90 transition-opacity"
       >
         Подтвердить
+      </button>
+      <button
+        onClick={handleConfirmNew}
+        className="px-3 py-2 bg-white border border-neutral-200 text-neutral-500 rounded-xl text-xs font-black hover:bg-neutral-50 transition-colors whitespace-nowrap"
+        title={`Создать новую игру "${entry.rawName}"`}
+      >
+        + Новая
       </button>
     </div>
   );
