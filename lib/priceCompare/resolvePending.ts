@@ -53,6 +53,10 @@ export async function resolvePendingWithAi(entryIds: number[], signal?: AbortSig
 
       if (decision.action === "skip") {
         skipped++;
+        // Помечаем отдельным статусом, а не оставляем "pending" — иначе одни и те же
+        // не-игры (чехлы, карты памяти и т.п.) снова и снова уходили бы в ИИ
+        // на каждом следующем прогоне, впустую тратя токены.
+        await prisma.priceEntry.update({ where: { id: entry.id }, data: { matchStatus: "skipped" } });
         continue;
       }
 
