@@ -75,6 +75,14 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "В файле не найдено ни одной строки с ценой" }, { status: 400 });
     }
 
+    // Новая загрузка для этого поставщика делает предыдущую неактуальной — старые
+    // неподтверждённые строки из прошлых попыток снимаем из очереди, иначе при
+    // каждой перезаливке одни и те же нераспознанные позиции копятся заново.
+    await prisma.priceEntry.updateMany({
+      where: { matchStatus: "pending", upload: { supplierId: supplier.id } },
+      data: { matchStatus: "rejected" },
+    });
+
     const upload = await prisma.priceUpload.create({
       data: {
         supplierId: supplier.id,
