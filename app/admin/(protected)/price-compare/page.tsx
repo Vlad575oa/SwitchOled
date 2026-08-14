@@ -3,10 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
-import { Upload, Loader2, RefreshCw, CheckCircle2, AlertCircle, Ban, Sparkles, BookOpen, Square, ChevronLeft, ChevronRight, ArrowUpDown, X } from "lucide-react";
+import { Upload, Loader2, RefreshCw, CheckCircle2, AlertCircle, Ban, BookOpen, ChevronLeft, ChevronRight, ArrowUpDown, X } from "lucide-react";
 import { toast } from "sonner";
-
-const AI_MATCH_TIMEOUT_MS = 5 * 60 * 1000;
 
 type ComparePrice = {
   supplierSlug: string;
@@ -68,15 +66,11 @@ export default function PriceComparePage() {
   const [pageSize, setPageSize] = useState(50);
   const [loading, setLoading] = useState(true);
   const [pending, setPending] = useState<PendingEntry[]>([]);
-  const [aiResolving, setAiResolving] = useState(false);
-  const [selectedPendingIds, setSelectedPendingIds] = useState<Set<number>>(new Set());
   const [sortBySupplier, setSortBySupplier] = useState<string | null>(null);
   const [uploadingSlug, setUploadingSlug] = useState<string | null>(null);
   const [pendingFile, setPendingFile] = useState<File | null>(null);
   const uploadFileInputRef = useRef<HTMLInputElement>(null);
   const uploadTargetRef = useRef<string | null>(null);
-  const aiAbortRef = useRef<AbortController | null>(null);
-  const aiTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const fetchCompare = async (
     plat: string,
@@ -113,77 +107,6 @@ export default function PriceComparePage() {
     } catch {
       // тихо — это не критичный блок
     }
-  };
-
-  // ИИ-сопоставление (DeepSeek) только для отмеченных галочками позиций — отдельная логика,
-  // не связана с чат-ботом Кира на сайте.
-  // Останавливается вручную (кнопка "Стоп") или автоматически через 5 минут — сервер
-  // проверяет сигнал остановки между батчами и не отправляет новые запросы в DeepSeek,
-  // так что уже обработанные позиции не пропадают, а лишние токены не тратятся.
-  const resolveWithAi = async () => {
-    const entryIds = Array.from(selectedPendingIds);
-    if (entryIds.length === 0) return;
-
-    const controller = new AbortController();
-    aiAbortRef.current = controller;
-    aiTimeoutRef.current = setTimeout(() => {
-      controller.abort();
-      toast.warning("ИИ-сопоставление остановлено автоматически — истекло 5 минут");
-    }, AI_MATCH_TIMEOUT_MS);
-
-    setAiResolving(true);
-    try {
-      const res = await fetch("/api/admin/price-entries/resolve-pending", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ entryIds }),
-        signal: controller.signal,
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        toast.error(data.error || "Ошибка ИИ-сопоставления");
-      } else if (data.stopped) {
-        toast.info(`Остановлено: ${data.matched} сопоставлено, ${data.created} новых игр, ${data.skipped} пропущено`);
-      } else {
-        toast.success(`ИИ разобрал выбранные: ${data.matched} сопоставлено, ${data.created} новых игр, ${data.skipped} пропущено`);
-      }
-    } catch (e) {
-      if (!(e instanceof DOMException && e.name === "AbortError")) {
-        toast.error("Ошибка сервера при ИИ-сопоставлении");
-      }
-    }
-
-    if (aiTimeoutRef.current) clearTimeout(aiTimeoutRef.current);
-    aiAbortRef.current = null;
-    setAiResolving(false);
-    setSelectedPendingIds(new Set());
-    fetchCompare(platform, page, search, supplierCount);
-    fetchPending();
-  };
-
-  const stopAiResolving = () => {
-    aiAbortRef.current?.abort();
-    toast.info("Останавливаю ИИ-сопоставление...");
-  };
-
-  useEffect(() => {
-    return () => {
-      if (aiTimeoutRef.current) clearTimeout(aiTimeoutRef.current);
-      aiAbortRef.current?.abort();
-    };
-  }, []);
-
-  const togglePendingSelected = (entryId: number) => {
-    setSelectedPendingIds((prev) => {
-      const next = new Set(prev);
-      if (next.has(entryId)) next.delete(entryId);
-      else next.add(entryId);
-      return next;
-    });
-  };
-
-  const toggleSelectAllPending = () => {
-    setSelectedPendingIds((prev) => (prev.size === pending.length ? new Set() : new Set(pending.map((e) => e.id))));
   };
 
   // Смена платформы/поиска/фильтра поставщиков сбрасывает на первую страницу.
@@ -268,11 +191,6 @@ export default function PriceComparePage() {
       }
       toast.success("Сопоставлено");
       setPending((prev) => prev.filter((e) => e.id !== entryId));
-      setSelectedPendingIds((prev) => {
-        const next = new Set(prev);
-        next.delete(entryId);
-        return next;
-      });
       fetchCompare(platform, page, search, supplierCount);
     } catch {
       toast.error("Ошибка сервера");
@@ -356,51 +274,15 @@ export default function PriceComparePage() {
       <div className="p-8 space-y-6">
         {pending.length > 0 && (
           <div className="bg-amber-50 border border-amber-200 rounded-2xl overflow-hidden">
-            <div className="p-4 border-b border-amber-100 flex items-center justify-between gap-2">
-              <div className="flex items-center gap-3">
-                <AlertCircle size={16} className="text-amber-600" />
-                <h2 className="text-sm font-black text-amber-800">
-                  {pending.length} позиций требуют подтверждения
-                </h2>
-                <label className="flex items-center gap-1.5 text-xs font-bold text-amber-700 cursor-pointer select-none ml-2">
-                  <input
-                    type="checkbox"
-                    checked={pending.length > 0 && selectedPendingIds.size === pending.length}
-                    onChange={toggleSelectAllPending}
-                    className="accent-amber-600"
-                  />
-                  Выбрать все
-                </label>
-              </div>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={resolveWithAi}
-                  disabled={aiResolving || selectedPendingIds.size === 0}
-                  className="flex items-center gap-2 px-3 py-1.5 bg-amber-600 text-white rounded-lg text-xs font-black hover:opacity-90 transition-opacity disabled:opacity-50"
-                >
-                  {aiResolving ? <Loader2 size={13} className="animate-spin" /> : <Sparkles size={13} />}
-                  Сопоставить через ИИ{selectedPendingIds.size > 0 ? ` (${selectedPendingIds.size})` : ""}
-                </button>
-                {aiResolving && (
-                  <button
-                    onClick={stopAiResolving}
-                    className="flex items-center gap-2 px-3 py-1.5 bg-white border border-red-200 text-red-600 rounded-lg text-xs font-black hover:bg-red-50 transition-colors"
-                  >
-                    <Square size={12} />
-                    Стоп
-                  </button>
-                )}
-              </div>
+            <div className="p-4 border-b border-amber-100 flex items-center gap-3">
+              <AlertCircle size={16} className="text-amber-600" />
+              <h2 className="text-sm font-black text-amber-800">
+                {pending.length} позиций требуют подтверждения
+              </h2>
             </div>
             <div className="divide-y divide-amber-100 max-h-96 overflow-y-auto">
               {pending.map((entry) => (
-                <PendingRow
-                  key={entry.id}
-                  entry={entry}
-                  onConfirm={confirmEntry}
-                  checked={selectedPendingIds.has(entry.id)}
-                  onToggle={() => togglePendingSelected(entry.id)}
-                />
+                <PendingRow key={entry.id} entry={entry} onConfirm={confirmEntry} />
               ))}
             </div>
           </div>
@@ -569,13 +451,9 @@ export default function PriceComparePage() {
 function PendingRow({
   entry,
   onConfirm,
-  checked,
-  onToggle,
 }: {
   entry: PendingEntry;
   onConfirm: (entryId: number, gameId: number | null, newGame?: { canonicalName: string; platform: string }) => void;
-  checked: boolean;
-  onToggle: () => void;
 }) {
   const [query, setQuery] = useState("");
   const [options, setOptions] = useState<GameOption[]>([]);
@@ -636,12 +514,6 @@ function PendingRow({
 
   return (
     <div className="p-4 flex items-center gap-3 flex-wrap">
-      <input
-        type="checkbox"
-        checked={checked}
-        onChange={onToggle}
-        className="accent-amber-600 shrink-0"
-      />
       <div className="flex-1 min-w-[240px]">
         <p className="font-bold text-[#111827] text-sm">{entry.rawName}</p>
         <p className="text-xs text-neutral-400 font-bold mt-0.5">
