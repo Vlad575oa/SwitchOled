@@ -27,6 +27,20 @@ const suppliers = [
     parserKey: "games1c",
     detectPattern: { headerContains: ["Номенклатура.Родитель"], fileNamePattern: "прайс игры" },
   },
+  {
+    slug: "gameuae",
+    name: "GameUAE",
+    parserKey: "gameuae",
+    detectPattern: { headerContains: ["Категория"], fileNamePattern: "gameuae" },
+  },
+  {
+    slug: "proverka",
+    name: "Проверка",
+    // Не участвует в автоопределении поставщика по файлу — загружается вручную
+    // через отдельную иконку в шапке столбца, с выбором формата файла.
+    parserKey: "proverka",
+    detectPattern: { headerContains: [], fileNamePattern: "" },
+  },
 ];
 
 async function main() {

@@ -79,3 +79,28 @@ export async function GET(request: Request) {
 
   return NextResponse.json({ games, total: Number(totalRows[0]?.count ?? 0), page, pageSize });
 }
+
+export async function POST(request: Request) {
+  const session = await verifyAdminSession(cookies().get(ADMIN_COOKIE)?.value);
+  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const body = await request.json();
+  const canonicalName = (body.canonicalName as string)?.trim();
+  const platform = body.platform as string;
+  const region = (body.region as string)?.trim() || null;
+
+  if (!canonicalName || !platform) {
+    return NextResponse.json({ error: "Название и платформа обязательны" }, { status: 400 });
+  }
+
+  try {
+    const game = await prisma.game.create({ data: { canonicalName, platform, region } });
+    return NextResponse.json(game, { status: 201 });
+  } catch (e: any) {
+    if (e.code === "P2002") {
+      return NextResponse.json({ error: "Такая игра для этой платформы уже существует" }, { status: 409 });
+    }
+    console.error("games POST error", e);
+    return NextResponse.json({ error: "Ошибка сервера" }, { status: 500 });
+  }
+}

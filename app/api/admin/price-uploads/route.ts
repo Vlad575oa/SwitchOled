@@ -32,6 +32,10 @@ export async function POST(request: Request) {
     }
 
     const forcedSupplierSlug = (fd.get("supplierSlug") as string) || null;
+    // parserKey задаёт ФОРМАТ файла и может отличаться от supplierSlug — так загрузка
+    // для проверочного столбца может использовать формат любого из существующих поставщиков,
+    // но записываться будет за отдельного (проверочного) поставщика.
+    const forcedParserKey = (fd.get("parserKey") as string) || forcedSupplierSlug;
 
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
@@ -42,8 +46,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Не удалось прочитать файл" }, { status: 400 });
     }
 
-    const parser = forcedSupplierSlug
-      ? PARSERS[forcedSupplierSlug as SupplierParserKey] ?? null
+    const parser = forcedParserKey
+      ? PARSERS[forcedParserKey as SupplierParserKey] ?? null
       : detectParser(file.name, rows);
 
     if (!parser) {
@@ -58,9 +62,10 @@ export async function POST(request: Request) {
       );
     }
 
-    const supplier = await prisma.priceSupplier.findUnique({ where: { slug: parser.key } });
+    const supplierSlug = forcedSupplierSlug || parser.key;
+    const supplier = await prisma.priceSupplier.findUnique({ where: { slug: supplierSlug } });
     if (!supplier) {
-      return NextResponse.json({ error: `Поставщик "${parser.key}" не настроен в базе` }, { status: 500 });
+      return NextResponse.json({ error: `Поставщик "${supplierSlug}" не настроен в базе` }, { status: 500 });
     }
 
     const existing = await prisma.priceUpload.findUnique({

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Search, Pencil, Trash2, X, Save, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowLeft, Search, Pencil, Trash2, X, Save, Loader2, ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import { toast } from "sonner";
 
 type GameRow = {
@@ -52,6 +52,12 @@ export default function GamesDictionaryPage() {
   const [editPlatform, setEditPlatform] = useState("");
   const [editRegion, setEditRegion] = useState("");
   const [saving, setSaving] = useState(false);
+
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [newName, setNewName] = useState("");
+  const [newPlatform, setNewPlatform] = useState("PS5");
+  const [newRegion, setNewRegion] = useState("");
+  const [creating, setCreating] = useState(false);
 
   const fetchGames = async () => {
     setLoading(true);
@@ -142,6 +148,32 @@ export default function GamesDictionaryPage() {
     }
   };
 
+  const createGame = async () => {
+    if (!newName.trim()) return;
+    setCreating(true);
+    try {
+      const res = await fetch("/api/admin/games", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ canonicalName: newName.trim(), platform: newPlatform, region: newRegion.trim() || null }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        toast.error(data.error || "Ошибка при создании игры");
+        return;
+      }
+      toast.success("Игра добавлена");
+      setNewName("");
+      setNewRegion("");
+      setShowAddForm(false);
+      fetchGames();
+    } catch {
+      toast.error("Ошибка сервера");
+    } finally {
+      setCreating(false);
+    }
+  };
+
   const deleteAlias = async (aliasId: number) => {
     if (!selected) return;
     try {
@@ -164,14 +196,70 @@ export default function GamesDictionaryPage() {
         <Link href="/admin/price-compare" className="p-2 hover:bg-neutral-50 rounded-xl transition-colors">
           <ArrowLeft size={18} className="text-neutral-500" />
         </Link>
-        <div>
+        <div className="flex-1">
           <h1 className="text-xl font-black text-[#111827]">Справочник игр</h1>
           <p className="text-xs text-neutral-400 font-bold mt-0.5">Канонические названия игр, к которым сопоставляются строки прайсов</p>
         </div>
+        <button
+          onClick={() => setShowAddForm((v) => !v)}
+          className="flex items-center gap-2 px-4 py-2.5 bg-primary text-white rounded-xl text-sm font-black hover:opacity-90 transition-opacity"
+        >
+          <Plus size={15} />
+          Добавить игру
+        </button>
       </header>
 
       <div className="p-8 flex gap-6">
         <div className="flex-1 space-y-4">
+          {showAddForm && (
+            <div className="bg-white rounded-2xl border border-neutral-100 shadow-sm p-4 flex items-end gap-3 flex-wrap">
+              <div className="space-y-1.5 flex-1 min-w-[220px]">
+                <label className="text-[10px] font-black uppercase tracking-widest text-neutral-400 px-1">Название</label>
+                <input
+                  value={newName}
+                  onChange={(e) => setNewName(e.target.value)}
+                  placeholder="Название игры"
+                  className="w-full px-3 py-2 bg-neutral-50 border border-neutral-200 rounded-xl text-sm font-bold outline-none focus:bg-white focus:border-primary/40 transition-all"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-black uppercase tracking-widest text-neutral-400 px-1">Платформа</label>
+                <select
+                  value={newPlatform}
+                  onChange={(e) => setNewPlatform(e.target.value)}
+                  className="px-3 py-2 bg-neutral-50 border border-neutral-200 rounded-xl text-sm font-bold outline-none focus:bg-white focus:border-primary/40 transition-all"
+                >
+                  {["PS4", "PS5", "SWITCH", "PSP", "XBOX"].map((p) => (
+                    <option key={p} value={p}>{p}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="space-y-1.5 w-40">
+                <label className="text-[10px] font-black uppercase tracking-widest text-neutral-400 px-1">Регион</label>
+                <input
+                  value={newRegion}
+                  onChange={(e) => setNewRegion(e.target.value)}
+                  placeholder="rus / eng..."
+                  className="w-full px-3 py-2 bg-neutral-50 border border-neutral-200 rounded-xl text-sm font-bold outline-none focus:bg-white focus:border-primary/40 transition-all"
+                />
+              </div>
+              <button
+                onClick={createGame}
+                disabled={creating || !newName.trim()}
+                className="flex items-center gap-2 px-4 py-2.5 bg-primary text-white rounded-xl text-xs font-black hover:opacity-90 transition-opacity disabled:opacity-50"
+              >
+                {creating ? <Loader2 size={13} className="animate-spin" /> : <Save size={13} />}
+                Создать
+              </button>
+              <button
+                onClick={() => setShowAddForm(false)}
+                className="p-2.5 bg-neutral-50 border border-neutral-200 rounded-xl hover:bg-neutral-100 transition-colors"
+              >
+                <X size={15} className="text-neutral-500" />
+              </button>
+            </div>
+          )}
+
           <div className="flex items-center gap-3">
             <div className="relative flex-1">
               <Search size={15} className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-300" />

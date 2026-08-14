@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
-import { Upload, Loader2, RefreshCw, CheckCircle2, AlertCircle, Ban, Sparkles, BookOpen, Square, ChevronLeft, ChevronRight } from "lucide-react";
+import { Upload, Loader2, RefreshCw, CheckCircle2, AlertCircle, Ban, Sparkles, BookOpen, Square, ChevronLeft, ChevronRight, ArrowUpDown, X } from "lucide-react";
 import { toast } from "sonner";
 
 const AI_MATCH_TIMEOUT_MS = 5 * 60 * 1000;
@@ -46,6 +46,17 @@ const SUPPLIER_COUNT_OPTIONS = [
   { label: "Только у 1", value: 1 },
 ];
 
+// Проверочный столбец: отдельный поставщик-эталон, который не участвует в автоопределении
+// формата — файл в него загружается вручную через иконку в шапке, с явным выбором формата.
+const VERIFICATION_SLUG = "proverka";
+const FORMAT_OPTIONS = [
+  { key: "amax", label: "AMAX" },
+  { key: "katana", label: "Katana" },
+  { key: "wholesale", label: "Оптовый Прайс" },
+  { key: "games1c", label: "Прайс игры (1С)" },
+  { key: "gameuae", label: "GameUAE" },
+];
+
 export default function PriceComparePage() {
   const [games, setGames] = useState<CompareGame[]>([]);
   const [suppliers, setSuppliers] = useState<SupplierOption[]>([]);
@@ -61,7 +72,11 @@ export default function PriceComparePage() {
   const [pending, setPending] = useState<PendingEntry[]>([]);
   const [aiResolving, setAiResolving] = useState(false);
   const [selectedPendingIds, setSelectedPendingIds] = useState<Set<number>>(new Set());
+  const [sortBySupplier, setSortBySupplier] = useState<string | null>(null);
+  const [verifPendingFile, setVerifPendingFile] = useState<File | null>(null);
+  const [verifUploading, setVerifUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const verifFileInputRef = useRef<HTMLInputElement>(null);
   const aiAbortRef = useRef<AbortController | null>(null);
   const aiTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -225,6 +240,40 @@ export default function PriceComparePage() {
     fetchPending();
   };
 
+  // Загрузка в проверочный столбец: файл выбирается отдельной иконкой, формат — вручную,
+  // строки записываются за поставщика VERIFICATION_SLUG независимо от выбранного формата.
+  const handleVerifFileChosen = (files: FileList | null) => {
+    if (!files || files.length === 0) return;
+    setVerifPendingFile(files[0]);
+    if (verifFileInputRef.current) verifFileInputRef.current.value = "";
+  };
+
+  const uploadVerifFile = async (parserKey: string) => {
+    const file = verifPendingFile;
+    if (!file) return;
+    setVerifUploading(true);
+    setVerifPendingFile(null);
+    try {
+      const fd = new FormData();
+      fd.append("file", file);
+      fd.append("supplierSlug", VERIFICATION_SLUG);
+      fd.append("parserKey", parserKey);
+      const res = await fetch("/api/admin/price-uploads", { method: "POST", body: fd });
+      const data = await res.json();
+      if (!res.ok) {
+        toast.error(`${file.name}: ${data.message || data.error || "ошибка загрузки"}`);
+      } else {
+        toast.success(`${file.name}: загружено ${data.rowsTotal} позиций (${data.rowsMatched} сопоставлено, ${data.rowsPending} требуют проверки)`);
+      }
+    } catch {
+      toast.error(`${file.name}: ошибка сервера`);
+    } finally {
+      setVerifUploading(false);
+      fetchCompare(platform, page, search, onlyInStock, supplierCount);
+      fetchPending();
+    }
+  };
+
   const confirmEntry = async (entryId: number, gameId: number | null, newGame?: { canonicalName: string; platform: string }) => {
     try {
       const res = await fetch(`/api/admin/price-entries/${entryId}/confirm`, {
@@ -250,6 +299,19 @@ export default function PriceComparePage() {
   };
 
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
+
+  const verifSupplier = suppliers.find((s) => s.slug === VERIFICATION_SLUG) || null;
+  const regularSuppliers = suppliers.filter((s) => s.slug !== VERIFICATION_SLUG);
+  const orderedSuppliers = verifSupplier ? [verifSupplier, ...regularSuppliers] : regularSuppliers;
+
+  // Клик по поставщику в шапке сортирует список: сначала его позиции в наличии, потом остальные.
+  const displayedGames = sortBySupplier
+    ? [...games].sort((a, b) => {
+        const aOk = a.prices.some((p) => p.supplierSlug === sortBySupplier && p.price != null && p.inStock) ? 0 : 1;
+        const bOk = b.prices.some((p) => p.supplierSlug === sortBySupplier && p.price != null && p.inStock) ? 0 : 1;
+        return aOk - bOk;
+      })
+    : games;
 
   return (
     <>
@@ -291,6 +353,33 @@ export default function PriceComparePage() {
           </button>
         </div>
       </header>
+
+      {verifPendingFile && (
+        <div className="fixed inset-0 z-50 bg-black/30 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-5 space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-black text-[#111827]">Формат файла</h3>
+              <button onClick={() => setVerifPendingFile(null)} className="p-1 hover:bg-neutral-50 rounded-lg transition-colors">
+                <X size={16} className="text-neutral-400" />
+              </button>
+            </div>
+            <p className="text-xs text-neutral-400 font-bold">
+              {verifPendingFile.name} — выберите, в каком формате прочитать файл для проверочного столбца
+            </p>
+            <div className="space-y-2">
+              {FORMAT_OPTIONS.map((f) => (
+                <button
+                  key={f.key}
+                  onClick={() => uploadVerifFile(f.key)}
+                  className="w-full text-left px-4 py-2.5 bg-neutral-50 hover:bg-neutral-100 rounded-xl text-xs font-black text-neutral-600 transition-colors"
+                >
+                  {f.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="p-8 space-y-6">
         {pending.length > 0 && (
@@ -360,19 +449,17 @@ export default function PriceComparePage() {
             ))}
           </div>
 
-          <div className="flex items-center gap-2">
+          <select
+            value={supplierCount == null ? "" : String(supplierCount)}
+            onChange={(e) => setSupplierCount(e.target.value === "" ? null : Number(e.target.value))}
+            className="px-3 py-2 bg-white border border-neutral-200 rounded-xl text-xs font-black text-neutral-500 outline-none focus:border-primary/40 transition-all cursor-pointer"
+          >
             {SUPPLIER_COUNT_OPTIONS.map((opt) => (
-              <button
-                key={opt.label}
-                onClick={() => setSupplierCount(opt.value)}
-                className={`px-3 py-2 rounded-xl text-xs font-black transition-colors whitespace-nowrap ${
-                  supplierCount === opt.value ? "bg-primary text-white" : "bg-white border border-neutral-200 text-neutral-500 hover:bg-neutral-50"
-                }`}
-              >
+              <option key={opt.label} value={opt.value == null ? "" : String(opt.value)}>
                 {opt.label}
-              </button>
+              </option>
             ))}
-          </div>
+          </select>
 
           <input
             value={search}
@@ -418,20 +505,52 @@ export default function PriceComparePage() {
                     <th className="text-right px-4 py-3 font-black text-[10px] uppercase tracking-widest text-neutral-400 w-12">№</th>
                     <th className="text-left px-6 py-3 font-black text-[10px] uppercase tracking-widest text-neutral-400">Игра</th>
                     <th className="text-left px-4 py-3 font-black text-[10px] uppercase tracking-widest text-neutral-400">Платформа</th>
-                    {suppliers.map((s) => (
+                    {orderedSuppliers.map((s) => (
                       <th key={s.slug} className="text-right px-4 py-3 font-black text-[10px] uppercase tracking-widest text-neutral-400">
-                        {s.name}
+                        <div className="flex items-center justify-end gap-1.5">
+                          {s.slug === VERIFICATION_SLUG && (
+                            <>
+                              <input
+                                ref={verifFileInputRef}
+                                type="file"
+                                accept=".xlsx,.xls"
+                                className="hidden"
+                                onChange={(e) => handleVerifFileChosen(e.target.files)}
+                              />
+                              <button
+                                type="button"
+                                onClick={() => verifFileInputRef.current?.click()}
+                                disabled={verifUploading}
+                                title="Загрузить файл в проверочный столбец"
+                                className="p-1 rounded-lg hover:bg-neutral-100 text-neutral-400 hover:text-neutral-600 transition-colors disabled:opacity-50"
+                              >
+                                {verifUploading ? <Loader2 size={12} className="animate-spin" /> : <Upload size={12} />}
+                              </button>
+                            </>
+                          )}
+                          <button
+                            type="button"
+                            onClick={() => setSortBySupplier((prev) => (prev === s.slug ? null : s.slug))}
+                            title="Сортировать: сначала в наличии у этого поставщика"
+                            className={`flex items-center gap-1 hover:text-neutral-700 transition-colors ${
+                              sortBySupplier === s.slug ? "text-primary" : ""
+                            }`}
+                          >
+                            {s.name}
+                            <ArrowUpDown size={11} />
+                          </button>
+                        </div>
                       </th>
                     ))}
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-neutral-50">
-                  {games.map((g, index) => (
+                  {displayedGames.map((g, index) => (
                     <tr key={g.gameId} className="hover:bg-neutral-50/30">
                       <td className="px-4 py-3 text-right text-neutral-400 font-bold">{(page - 1) * pageSize + index + 1}</td>
                       <td className="px-6 py-3 font-bold text-[#111827]">{g.name}</td>
                       <td className="px-4 py-3 text-neutral-500 font-bold">{g.platform}</td>
-                      {suppliers.map((s) => {
+                      {orderedSuppliers.map((s) => {
                         const entry = g.prices.find((p) => p.supplierSlug === s.slug);
                         const isMin = entry?.price != null && entry.price === g.minPrice;
                         return (

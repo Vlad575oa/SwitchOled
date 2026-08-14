@@ -2,6 +2,7 @@ import { amaxParser } from "./amax";
 import { katanaParser } from "./katana";
 import { wholesaleParser } from "./wholesale";
 import { games1cParser } from "./games1c";
+import { gameuaeParser } from "./gameuae";
 import type { SupplierParser, SupplierParserKey } from "../types";
 
 export const PARSERS: Record<SupplierParserKey, SupplierParser> = {
@@ -9,6 +10,7 @@ export const PARSERS: Record<SupplierParserKey, SupplierParser> = {
   katana: katanaParser,
   wholesale: wholesaleParser,
   games1c: games1cParser,
+  gameuae: gameuaeParser,
 };
 
 const ALL_PARSERS = Object.values(PARSERS);
@@ -25,4 +27,4 @@ export function detectParser(fileName: string, sheetRows: unknown[][]): Supplier
   return byContent ?? null;
 }
 
-export { amaxParser, katanaParser, wholesaleParser, games1cParser };
+export { amaxParser, katanaParser, wholesaleParser, games1cParser, gameuaeParser };

@@ -8,7 +8,7 @@ export type ParsedRow = {
   inStock: boolean;
 };
 
-export type SupplierParserKey = "amax" | "katana" | "wholesale" | "games1c";
+export type SupplierParserKey = "amax" | "katana" | "wholesale" | "games1c" | "gameuae";
 
 export type SupplierParser = {
   key: SupplierParserKey;
