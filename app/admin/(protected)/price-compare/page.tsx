@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
-import { Upload, Loader2, RefreshCw, CheckCircle2, AlertCircle, Ban, BookOpen, ChevronLeft, ChevronRight, ArrowUpDown, X } from "lucide-react";
+import { Upload, Loader2, RefreshCw, CheckCircle2, AlertCircle, Ban, BookOpen, ChevronLeft, ChevronRight, ArrowUpDown, X, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 type ComparePrice = {
@@ -706,6 +706,13 @@ function PendingRow({
         title={`Создать новую игру "${entry.rawName}"`}
       >
         + Новая
+      </button>
+      <button
+        onClick={() => onReject(entry.id)}
+        className="p-2 bg-white border border-neutral-200 text-neutral-400 rounded-xl hover:bg-red-50 hover:text-red-500 hover:border-red-200 transition-colors"
+        title="Удалить из очереди (не игра / мусорная строка)"
+      >
+        <Trash2 size={14} />
       </button>
     </div>
   );
