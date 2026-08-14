@@ -31,7 +31,6 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const platform = searchParams.get("platform"); // "PS4" | "PS5" | "SWITCH" | null (все)
   const search = searchParams.get("search")?.trim();
-  const onlyInStock = searchParams.get("onlyInStock") === "true";
   const supplierCountParam = searchParams.get("supplierCount");
   const supplierCountFilter = supplierCountParam ? Number(supplierCountParam) : null;
   const page = Math.max(1, Number(searchParams.get("page")) || 1);
@@ -49,16 +48,6 @@ export async function GET(request: Request) {
   const conditions: Prisma.Sql[] = [];
   if (platform) conditions.push(Prisma.sql`g.platform = ${platform}`);
   if (search) conditions.push(Prisma.sql`g."canonicalName" ILIKE ${`%${search}%`}`);
-  if (onlyInStock) {
-    conditions.push(
-      Prisma.sql`EXISTS (
-        SELECT 1 FROM "PriceEntry" pe2
-        WHERE pe2."gameId" = g.id AND pe2."uploadId" IN (${Prisma.join(uploadIds)})
-          AND pe2."inStock" = true
-          AND (pe2."priceWholesale" IS NOT NULL OR pe2."priceRetail" IS NOT NULL)
-      )`
-    );
-  }
   const whereSql = conditions.length ? Prisma.sql`WHERE ${Prisma.join(conditions, " AND ")}` : Prisma.empty;
   const havingSql =
     supplierCountFilter != null && Number.isFinite(supplierCountFilter)

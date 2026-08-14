@@ -68,16 +68,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: `Поставщик "${supplierSlug}" не настроен в базе` }, { status: 500 });
     }
 
-    const existing = await prisma.priceUpload.findUnique({
-      where: { supplierId_fileHash: { supplierId: supplier.id, fileHash } },
-    });
-    if (existing) {
-      return NextResponse.json(
-        { error: "DUPLICATE", message: "Этот файл уже был загружен ранее", uploadId: existing.id },
-        { status: 409 }
-      );
-    }
-
+    // Цены обновляются раз в неделю новым файлом — проверку на повторную загрузку
+    // намеренно не делаем, менеджеры перезаливают прайсы регулярно.
     const parsedRows = parser.parse(rows);
     if (parsedRows.length === 0) {
       return NextResponse.json({ error: "В файле не найдено ни одной строки с ценой" }, { status: 400 });

@@ -62,21 +62,19 @@ export default function PriceComparePage() {
   const [suppliers, setSuppliers] = useState<SupplierOption[]>([]);
   const [platform, setPlatform] = useState("Все");
   const [search, setSearch] = useState("");
-  const [onlyInStock, setOnlyInStock] = useState(false);
   const [supplierCount, setSupplierCount] = useState<number | null>(null);
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
   const [pageSize, setPageSize] = useState(50);
   const [loading, setLoading] = useState(true);
-  const [uploading, setUploading] = useState(false);
   const [pending, setPending] = useState<PendingEntry[]>([]);
   const [aiResolving, setAiResolving] = useState(false);
   const [selectedPendingIds, setSelectedPendingIds] = useState<Set<number>>(new Set());
   const [sortBySupplier, setSortBySupplier] = useState<string | null>(null);
-  const [verifPendingFile, setVerifPendingFile] = useState<File | null>(null);
-  const [verifUploading, setVerifUploading] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const verifFileInputRef = useRef<HTMLInputElement>(null);
+  const [uploadingSlug, setUploadingSlug] = useState<string | null>(null);
+  const [pendingFile, setPendingFile] = useState<File | null>(null);
+  const uploadFileInputRef = useRef<HTMLInputElement>(null);
+  const uploadTargetRef = useRef<string | null>(null);
   const aiAbortRef = useRef<AbortController | null>(null);
   const aiTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -84,7 +82,6 @@ export default function PriceComparePage() {
     plat: string,
     pageArg: number,
     searchArg: string,
-    onlyInStockArg: boolean,
     supplierCountArg: number | null
   ) => {
     setLoading(true);
@@ -92,7 +89,6 @@ export default function PriceComparePage() {
       const params = new URLSearchParams();
       if (plat !== "Все") params.set("platform", plat);
       if (searchArg.trim()) params.set("search", searchArg.trim());
-      if (onlyInStockArg) params.set("onlyInStock", "true");
       if (supplierCountArg != null) params.set("supplierCount", String(supplierCountArg));
       params.set("page", String(pageArg));
 
@@ -161,7 +157,7 @@ export default function PriceComparePage() {
     aiAbortRef.current = null;
     setAiResolving(false);
     setSelectedPendingIds(new Set());
-    fetchCompare(platform, page, search, onlyInStock, supplierCount);
+    fetchCompare(platform, page, search, supplierCount);
     fetchPending();
   };
 
@@ -190,73 +186,51 @@ export default function PriceComparePage() {
     setSelectedPendingIds((prev) => (prev.size === pending.length ? new Set() : new Set(pending.map((e) => e.id))));
   };
 
-  // Смена платформы/поиска/фильтра "в наличии"/фильтра поставщиков сбрасывает на первую страницу.
+  // Смена платформы/поиска/фильтра поставщиков сбрасывает на первую страницу.
   useEffect(() => {
     setPage(1);
-  }, [platform, search, onlyInStock, supplierCount]);
+  }, [platform, search, supplierCount]);
 
   // Поиск — с дебаунсом, чтобы не дёргать сервер на каждое нажатие клавиши.
   useEffect(() => {
     const timeout = setTimeout(() => {
-      fetchCompare(platform, page, search, onlyInStock, supplierCount);
+      fetchCompare(platform, page, search, supplierCount);
     }, 300);
     return () => clearTimeout(timeout);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [platform, search, onlyInStock, supplierCount, page]);
+  }, [platform, search, supplierCount, page]);
 
   useEffect(() => {
     fetchPending();
   }, []);
 
-  const handleUpload = async (files: FileList | null) => {
-    if (!files || files.length === 0) return;
-    setUploading(true);
+  // Загрузка прайса — отдельная иконка у каждого столбца поставщика. Для обычных
+  // поставщиков формат файла совпадает со slug'ом поставщика и известен заранее;
+  // для проверочного столбца (эталон, может быть в любом формате) сначала спрашиваем формат.
+  const openUploadFor = (slug: string) => {
+    uploadTargetRef.current = slug;
+    uploadFileInputRef.current?.click();
+  };
 
-    for (const file of Array.from(files)) {
-      const fd = new FormData();
-      fd.append("file", file);
-      try {
-        const res = await fetch("/api/admin/price-uploads", { method: "POST", body: fd });
-        const data = await res.json();
-        if (!res.ok) {
-          if (data.error === "DUPLICATE") {
-            toast.warning(`${file.name}: уже был загружен ранее`);
-          } else if (data.error === "SUPPLIER_UNKNOWN") {
-            toast.error(`${file.name}: не удалось определить поставщика`);
-          } else {
-            toast.error(`${file.name}: ${data.message || data.error || "ошибка загрузки"}`);
-          }
-          continue;
-        }
-        toast.success(`${file.name}: загружено ${data.rowsTotal} позиций (${data.rowsMatched} сопоставлено, ${data.rowsPending} требуют проверки)`);
-      } catch {
-        toast.error(`${file.name}: ошибка сервера`);
-      }
+  const handleFileChosen = (files: FileList | null) => {
+    const file = files?.[0] ?? null;
+    const slug = uploadTargetRef.current;
+    if (uploadFileInputRef.current) uploadFileInputRef.current.value = "";
+    if (!file || !slug) return;
+
+    if (slug === VERIFICATION_SLUG) {
+      setPendingFile(file);
+      return;
     }
-
-    setUploading(false);
-    if (fileInputRef.current) fileInputRef.current.value = "";
-    fetchCompare(platform, page, search, onlyInStock, supplierCount);
-    fetchPending();
+    doUpload(file, slug, slug);
   };
 
-  // Загрузка в проверочный столбец: файл выбирается отдельной иконкой, формат — вручную,
-  // строки записываются за поставщика VERIFICATION_SLUG независимо от выбранного формата.
-  const handleVerifFileChosen = (files: FileList | null) => {
-    if (!files || files.length === 0) return;
-    setVerifPendingFile(files[0]);
-    if (verifFileInputRef.current) verifFileInputRef.current.value = "";
-  };
-
-  const uploadVerifFile = async (parserKey: string) => {
-    const file = verifPendingFile;
-    if (!file) return;
-    setVerifUploading(true);
-    setVerifPendingFile(null);
+  const doUpload = async (file: File, supplierSlug: string, parserKey: string) => {
+    setUploadingSlug(supplierSlug);
     try {
       const fd = new FormData();
       fd.append("file", file);
-      fd.append("supplierSlug", VERIFICATION_SLUG);
+      fd.append("supplierSlug", supplierSlug);
       fd.append("parserKey", parserKey);
       const res = await fetch("/api/admin/price-uploads", { method: "POST", body: fd });
       const data = await res.json();
@@ -268,10 +242,17 @@ export default function PriceComparePage() {
     } catch {
       toast.error(`${file.name}: ошибка сервера`);
     } finally {
-      setVerifUploading(false);
-      fetchCompare(platform, page, search, onlyInStock, supplierCount);
+      setUploadingSlug(null);
+      fetchCompare(platform, page, search, supplierCount);
       fetchPending();
     }
+  };
+
+  const uploadPendingFileWithFormat = (parserKey: string) => {
+    if (!pendingFile) return;
+    const file = pendingFile;
+    setPendingFile(null);
+    doUpload(file, VERIFICATION_SLUG, parserKey);
   };
 
   const confirmEntry = async (entryId: number, gameId: number | null, newGame?: { canonicalName: string; platform: string }) => {
@@ -292,7 +273,7 @@ export default function PriceComparePage() {
         next.delete(entryId);
         return next;
       });
-      fetchCompare(platform, page, search, onlyInStock, supplierCount);
+      fetchCompare(platform, page, search, supplierCount);
     } catch {
       toast.error("Ошибка сервера");
     }
@@ -329,23 +310,14 @@ export default function PriceComparePage() {
             Справочник игр
           </Link>
           <input
-            ref={fileInputRef}
+            ref={uploadFileInputRef}
             type="file"
             accept=".xlsx,.xls"
-            multiple
             className="hidden"
-            onChange={(e) => handleUpload(e.target.files)}
+            onChange={(e) => handleFileChosen(e.target.files)}
           />
           <button
-            onClick={() => fileInputRef.current?.click()}
-            disabled={uploading}
-            className="flex items-center gap-2 px-4 py-2.5 bg-primary text-white rounded-xl text-sm font-black hover:opacity-90 transition-opacity disabled:opacity-50"
-          >
-            {uploading ? <Loader2 size={15} className="animate-spin" /> : <Upload size={15} />}
-            Загрузить прайсы
-          </button>
-          <button
-            onClick={() => { fetchCompare(platform, page, search, onlyInStock, supplierCount); fetchPending(); }}
+            onClick={() => { fetchCompare(platform, page, search, supplierCount); fetchPending(); }}
             className="p-2.5 bg-neutral-50 border border-neutral-200 rounded-xl hover:bg-neutral-100 transition-colors"
             title="Обновить"
           >
@@ -354,23 +326,23 @@ export default function PriceComparePage() {
         </div>
       </header>
 
-      {verifPendingFile && (
+      {pendingFile && (
         <div className="fixed inset-0 z-50 bg-black/30 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-5 space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-black text-[#111827]">Формат файла</h3>
-              <button onClick={() => setVerifPendingFile(null)} className="p-1 hover:bg-neutral-50 rounded-lg transition-colors">
+              <button onClick={() => setPendingFile(null)} className="p-1 hover:bg-neutral-50 rounded-lg transition-colors">
                 <X size={16} className="text-neutral-400" />
               </button>
             </div>
             <p className="text-xs text-neutral-400 font-bold">
-              {verifPendingFile.name} — выберите, в каком формате прочитать файл для проверочного столбца
+              {pendingFile.name} — выберите, в каком формате прочитать файл для проверочного столбца
             </p>
             <div className="space-y-2">
               {FORMAT_OPTIONS.map((f) => (
                 <button
                   key={f.key}
-                  onClick={() => uploadVerifFile(f.key)}
+                  onClick={() => uploadPendingFileWithFormat(f.key)}
                   className="w-full text-left px-4 py-2.5 bg-neutral-50 hover:bg-neutral-100 rounded-xl text-xs font-black text-neutral-600 transition-colors"
                 >
                   {f.label}
@@ -468,19 +440,9 @@ export default function PriceComparePage() {
             className="flex-1 min-w-[220px] px-4 py-2 bg-white border border-neutral-200 rounded-xl text-xs font-bold outline-none focus:border-primary/40 transition-all"
           />
 
-          <label className="flex items-center gap-2 px-4 py-2 bg-white border border-neutral-200 rounded-xl text-xs font-bold text-neutral-600 cursor-pointer select-none">
-            <input
-              type="checkbox"
-              checked={onlyInStock}
-              onChange={(e) => setOnlyInStock(e.target.checked)}
-              className="accent-primary"
-            />
-            Только в наличии хотя бы у одного
-          </label>
-
-          {(search || onlyInStock || supplierCount != null) && (
+          {(search || supplierCount != null) && (
             <button
-              onClick={() => { setSearch(""); setOnlyInStock(false); setSupplierCount(null); }}
+              onClick={() => { setSearch(""); setSupplierCount(null); }}
               className="px-3 py-2 text-xs font-black text-neutral-400 hover:text-neutral-600 transition-colors"
             >
               Сбросить
@@ -508,26 +470,15 @@ export default function PriceComparePage() {
                     {orderedSuppliers.map((s) => (
                       <th key={s.slug} className="text-right px-4 py-3 font-black text-[10px] uppercase tracking-widest text-neutral-400">
                         <div className="flex items-center justify-end gap-1.5">
-                          {s.slug === VERIFICATION_SLUG && (
-                            <>
-                              <input
-                                ref={verifFileInputRef}
-                                type="file"
-                                accept=".xlsx,.xls"
-                                className="hidden"
-                                onChange={(e) => handleVerifFileChosen(e.target.files)}
-                              />
-                              <button
-                                type="button"
-                                onClick={() => verifFileInputRef.current?.click()}
-                                disabled={verifUploading}
-                                title="Загрузить файл в проверочный столбец"
-                                className="p-1 rounded-lg hover:bg-neutral-100 text-neutral-400 hover:text-neutral-600 transition-colors disabled:opacity-50"
-                              >
-                                {verifUploading ? <Loader2 size={12} className="animate-spin" /> : <Upload size={12} />}
-                              </button>
-                            </>
-                          )}
+                          <button
+                            type="button"
+                            onClick={() => openUploadFor(s.slug)}
+                            disabled={uploadingSlug === s.slug}
+                            title={`Загрузить прайс для ${s.name}`}
+                            className="p-1 rounded-lg hover:bg-neutral-100 text-neutral-400 hover:text-neutral-600 transition-colors disabled:opacity-50"
+                          >
+                            {uploadingSlug === s.slug ? <Loader2 size={12} className="animate-spin" /> : <Upload size={12} />}
+                          </button>
                           <button
                             type="button"
                             onClick={() => setSortBySupplier((prev) => (prev === s.slug ? null : s.slug))}

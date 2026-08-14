@@ -255,7 +255,7 @@ model PriceUpload {
 
   entries      PriceEntry[]
 
-  @@unique([supplierId, fileHash])
+  @@index([supplierId, fileHash])
   @@index([supplierId, createdAt])
 }
 
