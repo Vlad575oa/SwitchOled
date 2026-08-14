@@ -78,6 +78,7 @@ export default function PriceComparePage() {
   const [aiSuggestions, setAiSuggestions] = useState<Record<number, AiSuggestion>>({});
   const [aiLoading, setAiLoading] = useState(false);
   const [sortBySupplier, setSortBySupplier] = useState<string | null>(null);
+  const [sortByName, setSortByName] = useState<"asc" | "desc" | null>(null);
   const [uploadingSlug, setUploadingSlug] = useState<string | null>(null);
   const [pendingFile, setPendingFile] = useState<File | null>(null);
   const uploadFileInputRef = useRef<HTMLInputElement>(null);
@@ -267,7 +268,11 @@ export default function PriceComparePage() {
   const orderedSuppliers = verifSupplier ? [verifSupplier, ...regularSuppliers] : regularSuppliers;
 
   // Клик по поставщику в шапке сортирует список: сначала его позиции в наличии, потом остальные.
-  const displayedGames = sortBySupplier
+  // Клик по "Игра" — по алфавиту (по клику переключается направление). Оба вида сортировки
+  // взаимоисключающие — включение одной сбрасывает другую.
+  const displayedGames = sortByName
+    ? [...games].sort((a, b) => a.name.localeCompare(b.name, "ru") * (sortByName === "asc" ? 1 : -1))
+    : sortBySupplier
     ? [...games].sort((a, b) => {
         const aOk = a.prices.some((p) => p.supplierSlug === sortBySupplier && p.price != null && p.inStock) ? 0 : 1;
         const bOk = b.prices.some((p) => p.supplierSlug === sortBySupplier && p.price != null && p.inStock) ? 0 : 1;
@@ -427,7 +432,21 @@ export default function PriceComparePage() {
                 <thead>
                   <tr className="bg-neutral-50/50 border-b border-neutral-100">
                     <th className="text-right px-4 py-3 font-black text-[10px] uppercase tracking-widest text-neutral-400 w-12">№</th>
-                    <th className="text-left px-6 py-3 font-black text-[10px] uppercase tracking-widest text-neutral-400">Игра</th>
+                    <th className="text-left px-6 py-3 font-black text-[10px] uppercase tracking-widest text-neutral-400">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSortBySupplier(null);
+                          setSortByName((prev) => (prev === "asc" ? "desc" : prev === "desc" ? null : "asc"));
+                        }}
+                        className={`flex items-center gap-1 hover:text-neutral-700 transition-colors ${
+                          sortByName ? "text-primary" : ""
+                        }`}
+                      >
+                        Игра
+                        <ArrowUpDown size={11} />
+                      </button>
+                    </th>
                     <th className="text-left px-4 py-3 font-black text-[10px] uppercase tracking-widest text-neutral-400">Платформа</th>
                     {orderedSuppliers.map((s) => (
                       <th key={s.slug} className="text-right px-4 py-3 font-black text-[10px] uppercase tracking-widest text-neutral-400">
@@ -443,7 +462,10 @@ export default function PriceComparePage() {
                           </button>
                           <button
                             type="button"
-                            onClick={() => setSortBySupplier((prev) => (prev === s.slug ? null : s.slug))}
+                            onClick={() => {
+                              setSortByName(null);
+                              setSortBySupplier((prev) => (prev === s.slug ? null : s.slug));
+                            }}
                             title="Сортировать: сначала в наличии у этого поставщика"
                             className={`flex items-center gap-1 hover:text-neutral-700 transition-colors ${
                               sortBySupplier === s.slug ? "text-primary" : ""

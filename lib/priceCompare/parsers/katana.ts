@@ -2,6 +2,7 @@ import { normalizeName, cleanText, detectPlatform, parsePrice } from "../normali
 import type { ParsedRow, SupplierParser } from "../types";
 
 const PRICE_HEADER = /цена карго доставкой/i;
+const PLATFORM_CELL = /\bPS ?[45]\b|\bPLAYSTATION ?[45]\b|\bSWITCH ?2?\b|\bNS ?2?\b|\bPSP\b|\bXBOX\b/i;
 
 // Колонки ищутся по заголовку, а не по фиксированной позиции — формат прайса
 // периодически меняется (добавляются/убираются/переставляются столбцы).
@@ -30,6 +31,27 @@ function mapColumns(headerRow: unknown[]): Partial<Record<ColumnKey, number>> {
   return columns;
 }
 
+// У колонки "Платформа" в этом прайсе часто нет текста в заголовке (пустая ячейка),
+// поэтому если по заголовку она не нашлась — ищем колонку, чьи ячейки в данных
+// чаще всего похожи на платформу (PS4/PS5/SWITCH/XBOX/PSP).
+function detectPlatformColumn(rows: unknown[][], headerIdx: number, taken: Set<number>): number | null {
+  const sampleEnd = Math.min(rows.length, headerIdx + 200);
+  const colCount = rows[headerIdx]?.length ?? 0;
+  let best: { idx: number; hits: number } | null = null;
+
+  for (let col = 0; col < colCount; col++) {
+    if (taken.has(col)) continue;
+    let hits = 0;
+    for (let i = headerIdx + 1; i < sampleEnd; i++) {
+      const cell = rows[i]?.[col];
+      if (typeof cell === "string" && PLATFORM_CELL.test(cell)) hits++;
+    }
+    if (hits > 0 && (!best || hits > best.hits)) best = { idx: col, hits };
+  }
+
+  return best?.idx ?? null;
+}
+
 // Заголовок вида: Артикул | (платформа) | Наименование | Цена Карго Доставкой | Заказ | Итого
 export const katanaParser: SupplierParser = {
   key: "katana",
@@ -42,6 +64,12 @@ export const katanaParser: SupplierParser = {
 
     const columns = mapColumns(rows[headerIdx]);
     if (columns.name == null || columns.price == null) return [];
+
+    if (columns.platform == null) {
+      const taken = new Set([columns.sku, columns.name, columns.price].filter((v): v is number => v != null));
+      const detected = detectPlatformColumn(rows, headerIdx, taken);
+      if (detected != null) columns.platform = detected;
+    }
 
     const result: ParsedRow[] = [];
 
