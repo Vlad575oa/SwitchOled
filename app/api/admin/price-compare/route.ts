@@ -33,6 +33,7 @@ export async function GET(request: Request) {
   const search = searchParams.get("search")?.trim();
   const supplierCountParam = searchParams.get("supplierCount");
   const supplierCountFilter = supplierCountParam ? Number(supplierCountParam) : null;
+  const sortSupplierSlug = searchParams.get("sortSupplier")?.trim() || null;
   const page = Math.max(1, Number(searchParams.get("page")) || 1);
 
   const allSuppliers = await prisma.priceSupplier.findMany({
@@ -45,6 +46,22 @@ export async function GET(request: Request) {
     return NextResponse.json({ games: [], suppliers: allSuppliers, page: 1, pageSize: PAGE_SIZE, total: 0 });
   }
 
+  // Игры, которых нет ни у одного другого поставщика (supplierCount = 1), обычным
+  // сравнением по количеству поставщиков всегда уходят в конец и не попадают на
+  // первую страницу — из-за этого клик по заголовку конкретного поставщика ничего
+  // не сортирует, если у него много таких "эксклюзивных" позиций. Когда сортировка
+  // запрошена по конкретному поставщику — сначала поднимаем игры, у которых есть
+  // цена именно от него, независимо от общего числа поставщиков.
+  const sortSupplierId = sortSupplierSlug
+    ? (await prisma.priceSupplier.findUnique({ where: { slug: sortSupplierSlug }, select: { id: true } }))?.id ?? null
+    : null;
+  const sortSupplierUploadId = sortSupplierId
+    ? (await prisma.priceUpload.findFirst({
+        where: { supplierId: sortSupplierId, id: { in: uploadIds } },
+        select: { id: true },
+      }))?.id ?? null
+    : null;
+
   const conditions: Prisma.Sql[] = [];
   if (platform) conditions.push(Prisma.sql`g.platform = ${platform}`);
   if (search) conditions.push(Prisma.sql`g."canonicalName" ILIKE ${`%${search}%`}`);
@@ -56,6 +73,10 @@ export async function GET(request: Request) {
 
   // Считаем и фильтруем по количеству РАЗНЫХ поставщиков, у которых есть эта игра
   // в их текущей (последней) загрузке — а не по числу строк цен.
+  const orderBySql = sortSupplierUploadId
+    ? Prisma.sql`ORDER BY BOOL_OR(pe."uploadId" = ${sortSupplierUploadId}) DESC, "supplierCount" DESC, g."canonicalName" ASC`
+    : Prisma.sql`ORDER BY "supplierCount" DESC, g."canonicalName" ASC`;
+
   const rows = await prisma.$queryRaw<Array<{ id: number; canonicalName: string; platform: string; supplierCount: bigint }>>`
     SELECT g.id, g."canonicalName", g.platform,
       COUNT(DISTINCT pu."supplierId") AS "supplierCount"
@@ -65,7 +86,7 @@ export async function GET(request: Request) {
     ${whereSql}
     GROUP BY g.id
     ${havingSql}
-    ORDER BY "supplierCount" DESC, g."canonicalName" ASC
+    ${orderBySql}
     LIMIT ${PAGE_SIZE} OFFSET ${(page - 1) * PAGE_SIZE}
   `;
 

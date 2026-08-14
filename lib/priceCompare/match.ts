@@ -36,6 +36,24 @@ export type MatchResult = {
   matchScore: number | null;
 };
 
+// Номера частей серии (1-3 цифры — "2", "4", "26"...) — самое частое, что отличает
+// РАЗНЫЕ игры с почти одинаковым названием ("Resident Evil 2" vs "Resident Evil 4
+// Remake"). Длинные числа (4+ цифр) не трогаем — это, как правило, остатки кодов
+// изданий (CUSA/PPSA), которые normalizeName не всегда полностью вычищает.
+function sequelNumbers(normalized: string): string[] {
+  return normalized.match(/\b\d{1,3}\b/g) ?? [];
+}
+
+// Общий длинный префикс ("resident evil ") может дать высокую схожесть по биграммам
+// у двух совершенно разных игр серии, если они отличаются только номером части.
+function hasConflictingSequelNumber(a: string, b: string): boolean {
+  const numsA = sequelNumbers(a);
+  const numsB = sequelNumbers(b);
+  if (numsA.length === 0 || numsB.length === 0) return false;
+  const setB = new Set(numsB);
+  return !numsA.some((n) => setB.has(n));
+}
+
 /**
  * Пытается сопоставить строку прайса с существующим справочником игр:
  * 1) точное совпадение по GameAlias.normalized
@@ -59,6 +77,7 @@ export async function matchRow(row: ParsedRow): Promise<MatchResult> {
 
   let best: { gameId: number; score: number } | null = null;
   for (const candidate of candidates) {
+    if (hasConflictingSequelNumber(row.normalizedName, candidate.normalized)) continue;
     const score = bigramSimilarity(row.normalizedName, candidate.normalized);
     if (score >= FUZZY_THRESHOLD && (!best || score > best.score)) {
       best = { gameId: candidate.gameId, score };

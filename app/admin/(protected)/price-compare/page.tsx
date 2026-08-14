@@ -88,7 +88,8 @@ export default function PriceComparePage() {
     plat: string,
     pageArg: number,
     searchArg: string,
-    supplierCountArg: number | null
+    supplierCountArg: number | null,
+    sortSupplierArg?: string | null
   ) => {
     setLoading(true);
     try {
@@ -96,6 +97,7 @@ export default function PriceComparePage() {
       if (plat !== "Все") params.set("platform", plat);
       if (searchArg.trim()) params.set("search", searchArg.trim());
       if (supplierCountArg != null) params.set("supplierCount", String(supplierCountArg));
+      if (sortSupplierArg) params.set("sortSupplier", sortSupplierArg);
       params.set("page", String(pageArg));
 
       const res = await fetch(`/api/admin/price-compare?${params.toString()}`);
@@ -124,16 +126,16 @@ export default function PriceComparePage() {
   // Смена платформы/поиска/фильтра поставщиков сбрасывает на первую страницу.
   useEffect(() => {
     setPage(1);
-  }, [platform, search, supplierCount]);
+  }, [platform, search, supplierCount, sortBySupplier]);
 
   // Поиск — с дебаунсом, чтобы не дёргать сервер на каждое нажатие клавиши.
   useEffect(() => {
     const timeout = setTimeout(() => {
-      fetchCompare(platform, page, search, supplierCount);
+      fetchCompare(platform, page, search, supplierCount, sortBySupplier);
     }, 300);
     return () => clearTimeout(timeout);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [platform, search, supplierCount, page]);
+  }, [platform, search, supplierCount, page, sortBySupplier]);
 
   useEffect(() => {
     fetchPending();
@@ -178,7 +180,7 @@ export default function PriceComparePage() {
       toast.error(`${file.name}: ошибка сервера`);
     } finally {
       setUploadingSlug(null);
-      fetchCompare(platform, page, search, supplierCount);
+      fetchCompare(platform, page, search, supplierCount, sortBySupplier);
       fetchPending();
     }
   };
@@ -208,7 +210,7 @@ export default function PriceComparePage() {
         delete next[entryId];
         return next;
       });
-      fetchCompare(platform, page, search, supplierCount);
+      fetchCompare(platform, page, search, supplierCount, sortBySupplier);
     } catch {
       toast.error("Ошибка сервера");
     }
@@ -303,7 +305,7 @@ export default function PriceComparePage() {
             onChange={(e) => handleFileChosen(e.target.files)}
           />
           <button
-            onClick={() => { fetchCompare(platform, page, search, supplierCount); fetchPending(); }}
+            onClick={() => { fetchCompare(platform, page, search, supplierCount, sortBySupplier); fetchPending(); }}
             className="p-2.5 bg-neutral-50 border border-neutral-200 rounded-xl hover:bg-neutral-100 transition-colors"
             title="Обновить"
           >
