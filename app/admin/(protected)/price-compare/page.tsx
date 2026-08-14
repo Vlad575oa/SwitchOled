@@ -34,6 +34,15 @@ type PendingEntry = {
 
 type GameOption = { id: number; canonicalName: string; platform: string };
 type SupplierOption = { slug: string; name: string };
+type AiSuggestion = {
+  id: number;
+  decision: "match" | "new" | "skip";
+  gameId?: number;
+  matchedName?: string | null;
+  canonicalName?: string;
+  confidence: number;
+  reason?: string;
+};
 
 const PLATFORMS = ["Все", "PS4", "PS5", "SWITCH", "PSP", "XBOX"];
 const SUPPLIER_COUNT_OPTIONS = [
@@ -66,6 +75,8 @@ export default function PriceComparePage() {
   const [pageSize, setPageSize] = useState(50);
   const [loading, setLoading] = useState(true);
   const [pending, setPending] = useState<PendingEntry[]>([]);
+  const [aiSuggestions, setAiSuggestions] = useState<Record<number, AiSuggestion>>({});
+  const [aiLoading, setAiLoading] = useState(false);
   const [sortBySupplier, setSortBySupplier] = useState<string | null>(null);
   const [uploadingSlug, setUploadingSlug] = useState<string | null>(null);
   const [pendingFile, setPendingFile] = useState<File | null>(null);
@@ -191,9 +202,61 @@ export default function PriceComparePage() {
       }
       toast.success("Сопоставлено");
       setPending((prev) => prev.filter((e) => e.id !== entryId));
+      setAiSuggestions((prev) => {
+        const next = { ...prev };
+        delete next[entryId];
+        return next;
+      });
       fetchCompare(platform, page, search, supplierCount);
     } catch {
       toast.error("Ошибка сервера");
+    }
+  };
+
+  const rejectEntry = async (entryId: number) => {
+    try {
+      const res = await fetch(`/api/admin/price-entries/${entryId}/confirm`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reject: true }),
+      });
+      if (!res.ok) {
+        toast.error("Не удалось отклонить строку");
+        return;
+      }
+      setPending((prev) => prev.filter((e) => e.id !== entryId));
+      setAiSuggestions((prev) => {
+        const next = { ...prev };
+        delete next[entryId];
+        return next;
+      });
+    } catch {
+      toast.error("Ошибка сервера");
+    }
+  };
+
+  const runAiMatch = async () => {
+    if (pending.length === 0) return;
+    setAiLoading(true);
+    try {
+      const res = await fetch("/api/admin/price-entries/ai-match", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ entryIds: pending.map((e) => e.id) }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        toast.error(data.error || "Не удалось разобрать позиции ИИ");
+        return;
+      }
+      const map: Record<number, AiSuggestion> = {};
+      for (const s of data.suggestions || []) map[s.id] = s;
+      setAiSuggestions(map);
+      toast.success(`ИИ предложил варианты для ${Object.keys(map).length} из ${pending.length} позиций`);
+    } catch {
+      toast.error("Ошибка сервера при ИИ-разборе");
+    } finally {
+      setAiLoading(false);
     }
   };
 
@@ -274,15 +337,32 @@ export default function PriceComparePage() {
       <div className="p-8 space-y-6">
         {pending.length > 0 && (
           <div className="bg-amber-50 border border-amber-200 rounded-2xl overflow-hidden">
-            <div className="p-4 border-b border-amber-100 flex items-center gap-3">
-              <AlertCircle size={16} className="text-amber-600" />
-              <h2 className="text-sm font-black text-amber-800">
-                {pending.length} позиций требуют подтверждения
-              </h2>
+            <div className="p-4 border-b border-amber-100 flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <AlertCircle size={16} className="text-amber-600" />
+                <h2 className="text-sm font-black text-amber-800">
+                  {pending.length} позиций требуют подтверждения
+                </h2>
+              </div>
+              <button
+                type="button"
+                onClick={runAiMatch}
+                disabled={aiLoading}
+                className="flex items-center gap-2 px-3 py-1.5 bg-amber-600 text-white rounded-lg text-xs font-black hover:bg-amber-700 transition-colors disabled:opacity-50"
+              >
+                {aiLoading ? <Loader2 size={13} className="animate-spin" /> : null}
+                Разобрать с ИИ
+              </button>
             </div>
             <div className="divide-y divide-amber-100 max-h-96 overflow-y-auto">
               {pending.map((entry) => (
-                <PendingRow key={entry.id} entry={entry} onConfirm={confirmEntry} />
+                <PendingRow
+                  key={entry.id}
+                  entry={entry}
+                  suggestion={aiSuggestions[entry.id]}
+                  onConfirm={confirmEntry}
+                  onReject={rejectEntry}
+                />
               ))}
             </div>
           </div>
@@ -450,10 +530,14 @@ export default function PriceComparePage() {
 
 function PendingRow({
   entry,
+  suggestion,
   onConfirm,
+  onReject,
 }: {
   entry: PendingEntry;
+  suggestion?: AiSuggestion;
   onConfirm: (entryId: number, gameId: number | null, newGame?: { canonicalName: string; platform: string }) => void;
+  onReject: (entryId: number) => void;
 }) {
   const [query, setQuery] = useState("");
   const [options, setOptions] = useState<GameOption[]>([]);
@@ -519,6 +603,52 @@ function PendingRow({
         <p className="text-xs text-neutral-400 font-bold mt-0.5">
           {entry.upload.supplier.name} · {entry.platform || "платформа неизвестна"} · {entry.priceWholesale ?? entry.priceRetail ?? "—"} ₽
         </p>
+        {suggestion && (
+          <div className="mt-1.5 flex items-center gap-2 flex-wrap">
+            {suggestion.decision === "match" && suggestion.gameId && (
+              <>
+                <span className="text-[11px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-md">
+                  ИИ: {suggestion.matchedName ?? `игра #${suggestion.gameId}`} ({Math.round(suggestion.confidence * 100)}%)
+                </span>
+                <button
+                  type="button"
+                  onClick={() => onConfirm(entry.id, suggestion.gameId!)}
+                  className="text-[11px] font-black text-primary hover:underline"
+                >
+                  Принять
+                </button>
+              </>
+            )}
+            {suggestion.decision === "new" && suggestion.canonicalName && (
+              <>
+                <span className="text-[11px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-md">
+                  ИИ: новая игра «{suggestion.canonicalName}» ({Math.round(suggestion.confidence * 100)}%)
+                </span>
+                <button
+                  type="button"
+                  onClick={() => onConfirm(entry.id, null, { canonicalName: suggestion.canonicalName!, platform: entry.platform || "PS5" })}
+                  className="text-[11px] font-black text-emerald-700 hover:underline"
+                >
+                  Принять
+                </button>
+              </>
+            )}
+            {suggestion.decision === "skip" && (
+              <>
+                <span className="text-[11px] font-bold text-neutral-500 bg-neutral-100 px-2 py-0.5 rounded-md">
+                  ИИ: похоже, не игра{suggestion.reason ? ` — ${suggestion.reason}` : ""}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => onReject(entry.id)}
+                  className="text-[11px] font-black text-neutral-500 hover:underline"
+                >
+                  Убрать из очереди
+                </button>
+              </>
+            )}
+          </div>
+        )}
       </div>
 
       <div className="w-64">

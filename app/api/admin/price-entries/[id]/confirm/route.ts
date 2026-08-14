@@ -15,6 +15,16 @@ export async function POST(request: Request, { params }: { params: { id: string 
   const entry = await prisma.priceEntry.findUnique({ where: { id: entryId } });
   if (!entry) return NextResponse.json({ error: "Строка не найдена" }, { status: 404 });
 
+  // Строка не является игрой (аксессуар и т.п.) или заведомо мусорная — просто
+  // убираем из очереди на подтверждение, без привязки к игре и без alias'а.
+  if (body.reject) {
+    const updated = await prisma.priceEntry.update({
+      where: { id: entryId },
+      data: { gameId: null, matchStatus: "rejected" },
+    });
+    return NextResponse.json(updated);
+  }
+
   let gameId: number;
   let gamePlatform: string;
 
