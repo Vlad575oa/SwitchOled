@@ -61,8 +61,10 @@ export async function resolvePendingWithAi(entryIds: number[], signal?: AbortSig
       }
 
       let gameId: number;
+      let gamePlatform: string;
       if (decision.action === "match") {
         gameId = decision.gameId;
+        gamePlatform = games.find((g) => g.id === gameId)?.platform ?? entry.platform ?? "";
       } else {
         // region — nullable, поэтому compound-уникальность через upsert недоступна (Prisma не считает null равным null для unique lookup)
         const existingGame = await prisma.game.findFirst({
@@ -72,14 +74,15 @@ export async function resolvePendingWithAi(entryIds: number[], signal?: AbortSig
           existingGame ??
           (await prisma.game.create({ data: { canonicalName: decision.canonicalName, platform: decision.platform } }));
         gameId = game.id;
+        gamePlatform = game.platform;
         games.push({ id: game.id, canonicalName: game.canonicalName, platform: game.platform });
         if (!existingGame) created++;
       }
 
       await prisma.gameAlias.upsert({
-        where: { normalized: entry.normalizedName },
+        where: { normalized_platform: { normalized: entry.normalizedName, platform: gamePlatform } },
         update: { gameId },
-        create: { gameId, rawText: entry.rawName, normalized: entry.normalizedName, source: "ai" },
+        create: { gameId, rawText: entry.rawName, normalized: entry.normalizedName, platform: gamePlatform, source: "ai" },
       });
 
       await prisma.priceEntry.update({

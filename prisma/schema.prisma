@@ -280,10 +280,16 @@ model GameAlias {
   game       Game     @relation(fields: [gameId], references: [id])
   rawText    String
   normalized String
+  // Денормализовано из Game.platform: то же название игры существует как отдельные
+  // записи на разных платформах (PS4/PS5/SWITCH/...), и alias должен быть уникален
+  // в пределах платформы, а не глобально — иначе строка прайса с платформы A может
+  // случайно сопоставиться с игрой на платформе B при совпадении названия.
+  // "" — платформа не определена парсером (редкий случай, отдельный бакет).
+  platform   String
   source     String   @default("ai") // "ai" | "manual" | "exact"
   createdAt  DateTime @default(now())
 
-  @@unique([normalized])
+  @@unique([normalized, platform])
   @@index([gameId])
 }
 

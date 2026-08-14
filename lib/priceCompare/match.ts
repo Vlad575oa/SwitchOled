@@ -43,8 +43,10 @@ export type MatchResult = {
  * Если ничего не подошло — строка уходит в очередь на подтверждение (pending).
  */
 export async function matchRow(row: ParsedRow): Promise<MatchResult> {
+  // Alias уникален в пределах платформы — "" это бакет для строк с неопределённой
+  // платформой, чтобы не путать их с реальными платформами при точном совпадении.
   const exact = await prisma.gameAlias.findUnique({
-    where: { normalized: row.normalizedName },
+    where: { normalized_platform: { normalized: row.normalizedName, platform: row.platform ?? "" } },
     select: { gameId: true },
   });
   if (exact) return { gameId: exact.gameId, matchStatus: "auto", matchScore: 1 };

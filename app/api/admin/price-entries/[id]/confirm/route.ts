@@ -16,9 +16,13 @@ export async function POST(request: Request, { params }: { params: { id: string 
   if (!entry) return NextResponse.json({ error: "Строка не найдена" }, { status: 404 });
 
   let gameId: number;
+  let gamePlatform: string;
 
   if (body.gameId) {
-    gameId = Number(body.gameId);
+    const game = await prisma.game.findUnique({ where: { id: Number(body.gameId) } });
+    if (!game) return NextResponse.json({ error: "Игра не найдена" }, { status: 404 });
+    gameId = game.id;
+    gamePlatform = game.platform;
   } else if (body.newGame?.canonicalName && body.newGame?.platform) {
     const game = await prisma.game.create({
       data: {
@@ -28,14 +32,15 @@ export async function POST(request: Request, { params }: { params: { id: string 
       },
     });
     gameId = game.id;
+    gamePlatform = game.platform;
   } else {
     return NextResponse.json({ error: "Укажите gameId или newGame" }, { status: 400 });
   }
 
   await prisma.gameAlias.upsert({
-    where: { normalized: entry.normalizedName },
+    where: { normalized_platform: { normalized: entry.normalizedName, platform: gamePlatform } },
     update: { gameId },
-    create: { gameId, rawText: entry.rawName, normalized: entry.normalizedName, source: "manual" },
+    create: { gameId, rawText: entry.rawName, normalized: entry.normalizedName, platform: gamePlatform, source: "manual" },
   });
 
   const updated = await prisma.priceEntry.update({
