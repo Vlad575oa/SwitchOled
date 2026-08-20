@@ -95,6 +95,7 @@ export default async function OrdersPage() {
                       </td>
                       <td className="px-5 py-4 text-xs font-bold text-neutral-700 whitespace-nowrap">
                         {new Date(order.createdAt).toLocaleString("ru-RU", {
+                          timeZone: "Europe/Moscow",
                           day: "2-digit",
                           month: "2-digit",
                           year: "numeric",
