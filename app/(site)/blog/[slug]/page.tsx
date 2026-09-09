@@ -164,10 +164,10 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
             <div className="flex flex-wrap items-center gap-8 py-6 border-y border-neutral-100">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-neutral-900 flex items-center justify-center overflow-hidden">
-                   <img src="https://i.pravatar.cc/100?img=12" alt="author" className="w-full h-full object-cover" />
+                   <img src="/icon-192.png" alt="GameShop24" className="w-full h-full object-cover" />
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-secondary text-xs font-black uppercase tracking-widest">Nintendo Media Team</span>
+                  <span className="text-secondary text-xs font-black uppercase tracking-widest">GameShop24 Team</span>
                   <span className="text-[9px] text-neutral-400 font-bold uppercase tracking-[0.2em]">{format(new Date(post.createdAt), 'dd MMMM yyyy', { locale: ru })}</span>
                 </div>
               </div>

@@ -161,7 +161,7 @@ export default async function BlogPage({
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {posts.map((post, idx) => {
-              const isFeatured = idx === 0 && currentCategory === "Все";
+              const isFeatured = false;
               const readTime = calculateReadingTime(post.content);
               const catColor = CATEGORY_COLORS[post.category ?? ""] ?? "bg-white/20 text-white";
               const catColorCard = CATEGORY_COLORS[post.category ?? ""] ?? "bg-neutral-50 text-neutral-500";
@@ -202,7 +202,7 @@ export default async function BlogPage({
                         <div className="h-8 px-5 bg-primary rounded-full flex items-center gap-2 text-white text-[10px] font-black uppercase tracking-widest group-hover:bg-white group-hover:text-primary transition-all duration-300">
                           Читать <ArrowRight size={12} />
                         </div>
-                        <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest">Nintendo Media</span>
+                        <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest">GameShop24 Team</span>
                       </div>
                     </div>
                   </Link>
@@ -247,11 +247,11 @@ export default async function BlogPage({
 
                     <div className="flex items-center justify-between pt-4 border-t border-neutral-50">
                       <div className="flex items-center gap-2">
-                        <div className="w-6 h-6 rounded-full bg-neutral-100 flex items-center justify-center">
-                          <User size={11} className="text-neutral-400" />
+                        <div className="w-6 h-6 rounded-full bg-neutral-100 flex items-center justify-center overflow-hidden">
+                          <img src="/icon-192.png" alt="GameShop24" className="w-full h-full object-cover" />
                         </div>
                         <span className="text-[9px] font-black text-neutral-400 uppercase tracking-widest">
-                          Nintendo Media
+                          GameShop24 Team
                         </span>
                       </div>
                       <div className="w-8 h-8 rounded-full border border-neutral-100 flex items-center justify-center group-hover:bg-primary group-hover:border-primary group-hover:text-white transition-all duration-300">
