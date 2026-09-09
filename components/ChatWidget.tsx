@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { MessageCircle, X, Send, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -50,6 +51,8 @@ function saveHistory(msgs: Message[]) {
 }
 
 export function ChatWidget() {
+  const pathname = usePathname();
+  const isBlogArticle = /^\/blog\/[^/]+/.test(pathname ?? "");
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
@@ -141,6 +144,8 @@ export function ChatWidget() {
     localStorage.removeItem(STORAGE_KEY);
   };
 
+  if (isBlogArticle) return null;
+
   return (
     <div className={cn(
       "fixed bottom-20 sm:bottom-6 right-4 sm:right-6 z-[70] flex flex-col items-end gap-3 transition-opacity duration-200",
@@ -156,14 +161,14 @@ export function ChatWidget() {
               <div className="w-9 h-9 rounded-xl overflow-hidden shadow-lg shadow-primary/30 flex-shrink-0">
                 <Image
                   src="/kira_avatar.png"
-                  alt="Кира"
+                  alt="Луна"
                   width={36}
                   height={36}
                   className="object-cover scale-125 w-full h-full"
                 />
               </div>
               <div>
-                <p className="text-white font-black text-sm">Кира · ИИ-консультант</p>
+                <p className="text-white font-black text-sm">Луна · ИИ-консультант</p>
                 <p className="text-neutral-400 text-[10px] font-bold">Gameshop24 · Всегда онлайн</p>
               </div>
             </div>
@@ -191,7 +196,7 @@ export function ChatWidget() {
             {messages.length === 0 && (
               <div className="flex flex-col items-center justify-center h-full gap-3 text-center pb-4">
                 <div>
-                  <p className="text-sm font-black text-[#111827]">Привет! Я Кира AI — ваш проводник в мире Nintendo. 🎮✨</p>
+                  <p className="text-sm font-black text-[#111827]">Привет! Я Луна AI — ваш проводник в мире Nintendo. 🎮✨</p>
                   <p className="text-xs text-neutral-400 font-bold mt-1 leading-relaxed">
                     Помогу выбрать идеальную консоль, посоветую лучшие игры для детей и взрослых. Подберу комплект, который подарит максимум удовольствия от игры.
                   </p>
@@ -274,7 +279,7 @@ export function ChatWidget() {
           <span className="max-w-[92px] text-[11px] leading-[1.05] text-center font-black text-white bg-black/50 backdrop-blur-sm px-2.5 py-1.5 rounded-2xl tracking-wide shadow">
             <span className="inline-flex items-center justify-center gap-1">
               <Sparkles size={10} className="shrink-0 text-yellow-400 animate-sparkle" />
-              <span>Кира AI</span>
+              <span>Луна AI</span>
             </span>
           </span>
         )}
@@ -292,7 +297,7 @@ export function ChatWidget() {
           ) : (
             <Image
               src="/kira_avatar.png"
-              alt="Кира"
+              alt="Луна"
               width={48}
               height={48}
               className="w-full h-full object-cover"

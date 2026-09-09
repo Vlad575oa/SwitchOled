@@ -223,7 +223,7 @@ export default async function BlogPage({
                       className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                    <span className={`absolute top-3 left-3 px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest shadow-sm ${catColorCard}`}>
+                    <span className={`absolute top-3 right-3 px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest shadow-sm ${catColorCard}`}>
                       {post.category || "Статья"}
                     </span>
                   </div>
