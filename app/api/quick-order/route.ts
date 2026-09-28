@@ -6,8 +6,9 @@ import { buildRateLimitKey, rateLimit } from "@/lib/rateLimit";
 
 const Schema = z.object({
   name: z.string().trim().min(2).max(80),
-  phone: z.string().trim().min(10).max(24),
+  phone: z.string().trim().min(10).max(24).refine((value) => value.replace(/\D/g, "").length === 11, "Введите полный номер телефона"),
   productId: z.number().int().positive(),
+  consent: z.literal(true),
 });
 
 export async function POST(request: Request) {
@@ -16,7 +17,7 @@ export async function POST(request: Request) {
     if (!limit.allowed) return NextResponse.json({ error: "Попробуйте ещё раз через несколько минут" }, { status: 429 });
 
     const parsed = Schema.safeParse(await request.json());
-    if (!parsed.success) return NextResponse.json({ error: "Введите имя и корректный телефон" }, { status: 400 });
+    if (!parsed.success) return NextResponse.json({ error: "Введите полный телефон и подтвердите согласие" }, { status: 400 });
 
     const product = await prisma.product.findFirst({
       where: { id: parsed.data.productId, isVisible: { not: false } },
