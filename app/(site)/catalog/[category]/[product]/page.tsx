@@ -16,6 +16,7 @@ import { ChevronRight } from "lucide-react";
 import { buildProductMetaDescription, resolveProductMetaTitle } from "@/lib/seo";
 import { CATALOG_SMART_FILTERS } from "@/lib/catalogSmartFilters";
 import { sanitizeRichHtml } from "@/lib/sanitizeHtml";
+import { PageViewTracker } from "@/components/PageViewTracker";
 
 const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || "https://gameshop24.ru").replace("://www.", "://");
 
@@ -178,6 +179,7 @@ export default async function ProductPage({
   return (
     <div className="bg-[#fcfcfc] min-h-screen">
       <main className="container py-8 lg:py-12">
+        <PageViewTracker productId={product.id} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -219,7 +221,7 @@ export default async function ProductPage({
           <h1 className="text-xl sm:text-2xl lg:text-4xl font-black text-secondary leading-tight mb-3 max-w-4xl">
             {product.name}
           </h1>
-          <ProductMeta productId={product.id} />
+          <ProductMeta productId={product.id} fallbackHref={`/catalog/${product.category.slug}`} />
         </div>
 
         {/* Main grid: Gallery + Tabs | Purchase */}

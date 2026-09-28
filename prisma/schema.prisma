@@ -43,6 +43,7 @@ model Product {
   isVisible   Boolean     @default(true)
   orderItems  OrderItem[]
   wishlistItems WishlistItem[]
+  pageViews    PageView[]
   category    Category    @relation(fields: [categoryId], references: [id])
 
   @@index([slug])
@@ -59,12 +60,25 @@ model Order {
   phone       String
   address     String
   comment     String?
+  source      String      @default("checkout")
   paymentId   String?     @unique
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
   userId      Int?
   user        User?       @relation(fields: [userId], references: [id])
   items       OrderItem[]
+}
+
+model PageView {
+  id        Int      @id @default(autoincrement())
+  pageType  String
+  path      String
+  productId Int?
+  createdAt DateTime @default(now())
+  product   Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+
+  @@index([pageType, createdAt])
+  @@index([productId, createdAt])
 }
 
 model OrderItem {

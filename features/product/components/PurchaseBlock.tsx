@@ -6,6 +6,9 @@ import { Info, ShieldCheck } from "lucide-react";
 import { useMemo, useState } from "react";
 import type { ProductVariantOption } from "@/lib/queries";
 import { useSelectedVariantStore } from "@/features/product/store/useSelectedVariantStore";
+import { QuickOrderModal } from "@/features/product/components/QuickOrderModal";
+import { getAvitoUrl } from "@/lib/avitoLinks";
+import { ExternalLink } from "lucide-react";
 
 interface PurchaseBlockProps {
   product: {
@@ -170,10 +173,27 @@ export function PurchaseBlock({ product, variants = [], categorySlug }: Purchase
 
         {/* Actions */}
         <div className="space-y-4 mb-6">
-          <AddToCartButton
-            product={selectedVariant}
-            className="w-full h-14 rounded-2xl text-lg font-black bg-[#FF6B00] hover:bg-[#e65a00] border-none shadow-lg shadow-orange-500/20"
-          />
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+            <AddToCartButton
+              product={selectedVariant}
+              className="w-full h-14 rounded-2xl text-base font-black bg-[#FF6B00] hover:bg-[#e65a00] border-none shadow-lg shadow-orange-500/20"
+            />
+            <QuickOrderModal
+              product={selectedVariant}
+              buttonClassName="w-full h-14 rounded-2xl border border-primary/25 bg-primary/5 px-2 text-sm font-black text-primary hover:bg-primary hover:text-white transition-colors"
+            />
+          </div>
+          {getAvitoUrl(selectedVariant.slug) && (
+            <a
+              href={getAvitoUrl(selectedVariant.slug) ?? "#"}
+              target="_blank"
+              rel="noreferrer"
+              className="flex h-12 w-full items-center justify-center gap-2 rounded-2xl border border-[#00a86b]/25 bg-[#00a86b]/5 px-4 text-sm font-black text-[#008f5b] transition-colors hover:bg-[#00a86b] hover:text-white"
+            >
+              <ExternalLink size={17} />
+              Заказать через Авито
+            </a>
+          )}
           <div className="flex items-center gap-2 px-1 text-sm font-bold text-neutral-400">
              <span className={selectedVariant.inStock ? "text-green-500" : "text-yellow-500"}>
                 {selectedVariant.inStock ? "● В наличии" : "○ Под заказ"}

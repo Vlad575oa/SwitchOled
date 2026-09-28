@@ -1,17 +1,20 @@
 "use client";
 
-import { Heart, GitCompare, Share2, Send, Copy, Check } from "lucide-react";
+import { ArrowLeft, Heart, GitCompare, Share2, Send, Copy, Check } from "lucide-react";
 import { useCompareStore } from "@/features/product/store/useCompareStore";
 import { useWishlistStore } from "@/features/product/store/useWishlistStore";
 import { cn } from "@/lib/utils";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 interface ProductMetaProps {
   productId: number;
+  fallbackHref?: string;
 }
 
-export function ProductMeta({ productId }: ProductMetaProps) {
+export function ProductMeta({ productId, fallbackHref = "/catalog/all" }: ProductMetaProps) {
+  const router = useRouter();
   const inWishlist = useWishlistStore((s) => s.has(productId));
   const toggleWishlist = useWishlistStore((s) => s.toggle);
   const inCompare = useCompareStore((s) => s.has(productId));
@@ -56,6 +59,17 @@ export function ProductMeta({ productId }: ProductMetaProps) {
 
   return (
     <div className="flex flex-wrap items-center gap-3 text-[11px] font-bold text-neutral-400 mb-8 pb-6 border-b border-neutral-100">
+      <button
+        onClick={() => {
+          if (window.history.length > 1) router.back();
+          else router.push(fallbackHref);
+        }}
+        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-neutral-50 text-secondary hover:bg-neutral-100 transition-all"
+      >
+        <ArrowLeft size={14} />
+        <span>Назад</span>
+      </button>
+
       <button
         onClick={() => toggleWishlist(productId)}
         className={cn(

@@ -4,6 +4,7 @@ import { ExpertInsights } from "@/features/home/components/ExpertInsights";
 import loadDynamic from "next/dynamic";
 import { Metadata } from "next";
 import { Suspense } from "react";
+import { PageViewTracker } from "@/components/PageViewTracker";
 
 // force-dynamic required: page reads DB on every request via Catalog + ExpertInsights.
 // Individual queries are cached at the Data Cache layer via unstable_cache (revalidate).
@@ -35,6 +36,7 @@ interface HomePageProps {
 export default async function HomePage({ searchParams }: HomePageProps) {
   return (
     <main className="w-full max-w-[1920px] mx-auto px-6 lg:px-6 2xl:px-4 pt-6 pb-20">
+      <PageViewTracker />
 
       <div id="catalog" className="mb-20 scroll-mt-24">
         <h1 className="sr-only">Прошитые Nintendo Switch — купить в Москве с гарантией</h1>

@@ -206,6 +206,10 @@ export async function Catalog({
             <p className="text-xs text-neutral-400 font-bold uppercase tracking-wider mt-1">
               {totalCount} товаров найдено
             </p>
+            <p className="mt-2 flex items-center gap-1.5 text-[11px] font-bold text-emerald-600">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+              Более 100 довольных клиентов каждый месяц
+            </p>
           </div>
           <div className="flex items-center gap-2 w-full sm:w-auto">
             <div className="lg:hidden">
