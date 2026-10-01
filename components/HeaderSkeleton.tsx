@@ -21,12 +21,15 @@ export function HeaderSkeleton() {
         <div className="hidden lg:block h-10 xl:h-12 w-32 bg-white/[0.06] border border-white/[0.08] rounded-xl shrink-0" />
 
         {/* Search placeholder */}
-        <div className="flex-1 min-w-[150px] max-w-2xl h-10 bg-white/[0.06] rounded-xl" />
+        <div className="flex-1 min-w-0 max-w-2xl h-10 bg-white/[0.06] rounded-xl" />
 
         {/* Icons placeholder */}
         <div className="flex items-center gap-5 lg:gap-6 shrink-0 ml-auto">
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="w-[68px] xl:w-[76px] h-[52px] xl:h-[58px] rounded-xl bg-white/[0.04]" />
+            <div
+              key={i}
+              className={`${i < 4 ? "hidden sm:block" : "block"} w-[68px] xl:w-[76px] h-[52px] xl:h-[58px] rounded-xl bg-white/[0.04]`}
+            />
           ))}
         </div>
       </div>
