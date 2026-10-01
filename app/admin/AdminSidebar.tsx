@@ -28,6 +28,7 @@ const navItems = [
   { label: "Заказы", href: "/admin/orders", icon: ShoppingBag, badge: true, badgeType: "orders" },
   { label: "Заказы в 1 клик", href: "/admin/quick-orders", icon: PhoneCall },
   { label: "Аналитика", href: "/admin/analytics", icon: Eye },
+  { label: "Яндекс Директ", href: "/admin/yandex", icon: BarChart3 },
   { label: "Сравнение цен", href: "/admin/price-compare", icon: BarChart3 },
   { label: "Цвета", href: "/admin/colors", icon: Palette },
   { label: "Блог", href: "/admin/posts", icon: FileText },
