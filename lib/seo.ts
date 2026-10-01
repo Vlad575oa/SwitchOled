@@ -14,8 +14,34 @@ export function truncateByWords(input: string, maxLength: number): string {
 
 export function buildProductMetaTitle(name: string, variantLabel?: string | null): string {
   const label = variantLabel?.trim();
-  const suffix = label && !name.toLowerCase().includes(label.toLowerCase()) ? `, ${label}` : "";
-  return truncateByWords(`${name}${suffix} — купить в Gameshop24`, 70);
+  const normalizedName = name.trim();
+  const storageMatches = normalizedName.match(/\b\d+\s*(?:GB|TB)\b/gi) ?? [];
+  const storage = storageMatches[storageMatches.length - 1]?.replace(/\s+/g, " ") ?? "";
+  const gameCount = normalizedName.match(/\+(\d+)\s*Игр?/i)?.[1] ?? "";
+  const shortName = normalizedName
+    .replace(/^Прошитая\s+/i, "")
+    .replace(/\s*\+\s*\d+\s*Игр?/gi, "")
+    .replace(/\s*32GB\s*\+\s*MicroSD\s*\d+\s*GB/gi, storage ? ` ${storage}` : "")
+    .replace(/\s*\+\s*MicroSD\s*\d+\s*GB/gi, storage ? ` ${storage}` : "")
+    .replace(/\s+/g, " ")
+    .trim();
+  const normalizedColorName = label
+    ? shortName.replace(
+        /(бирюзовый|розовый|серый|синий|желтый|жёлтый|белый|white|black|neon|красный|зелёный|зеленый)/i,
+        label,
+      )
+    : shortName;
+  const variantSuffix = label && !normalizedColorName.toLowerCase().includes(label.toLowerCase())
+    ? `, цвет ${label}`
+    : "";
+  const gameSuffix = gameCount ? `, ${gameCount} игр` : "";
+  const ending = " — Gameshop24";
+
+  // Keep the variant inside the title limit. Truncating the full string used
+  // to remove the color from long product names and create rendered duplicates.
+  const maxNameLength = 70 - ending.length - variantSuffix.length - gameSuffix.length;
+  const compactName = truncateByWords(normalizedColorName, Math.max(24, maxNameLength));
+  return truncateByWords(`${compactName}${variantSuffix}${gameSuffix}${ending}`, 70);
 }
 
 export function resolveProductMetaTitle(

@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { resolveProductMetaTitle } from "@/lib/seo";
 
 const prisma = new PrismaClient();
 
@@ -6,7 +7,7 @@ async function main() {
   console.log("🔍 Starting Advanced SEO Audit...\n");
 
   const [products, posts, categories] = await Promise.all([
-    prisma.product.findMany({ where: { isVisible: { not: false } }, select: { id: true, name: true, slug: true, metaTitle: true, metaDesc: true, description: true, category: { select: { slug: true } } } }),
+    prisma.product.findMany({ where: { isVisible: { not: false } }, select: { id: true, name: true, slug: true, color: true, metaTitle: true, metaDesc: true, description: true, category: { select: { slug: true } } } }),
     prisma.post.findMany({ select: { id: true, title: true, slug: true, metaTitle: true, metaDesc: true, content: true } }),
     prisma.category.findMany({ select: { slug: true } }),
   ]);
@@ -32,7 +33,9 @@ async function main() {
   const duplicateValues = (field: "metaTitle" | "metaDesc") => {
     const groups = new Map<string, string[]>();
     products.forEach((product) => {
-      const value = product[field]?.trim();
+      const value = field === "metaTitle"
+        ? resolveProductMetaTitle(product.metaTitle, product.name, product.color).trim()
+        : product.metaDesc?.trim();
       if (!value) return;
       groups.set(value, [...(groups.get(value) ?? []), product.slug]);
     });
