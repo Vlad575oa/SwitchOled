@@ -1,5 +1,6 @@
 import prisma from "@/lib/prisma";
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowRight, User, Clock } from "lucide-react";
 import { format } from "date-fns";
 import { Metadata } from "next";
@@ -174,9 +175,13 @@ export default async function BlogPage({
                     className="group col-span-1 md:col-span-2 lg:col-span-3 relative rounded-[32px] overflow-hidden bg-neutral-900 min-h-[420px] flex items-end hover:shadow-2xl hover:shadow-neutral-300/60 transition-all duration-500"
                   >
                     {/* Full-bleed image */}
-                    <img
-                      src={post.image || "https://picsum.photos/seed/featured/1200/600"}
+                    <Image
+                      src={post.image || "/images/blog/switch-2-complete-review.webp"}
                       alt={post.title}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 100vw"
+                      quality={78}
+                      loading="lazy"
                       className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
                     />
                     {/* Gradient overlay */}
@@ -217,9 +222,13 @@ export default async function BlogPage({
                 >
                   {/* Image */}
                   <div className="relative overflow-hidden bg-neutral-100 aspect-[16/9]">
-                    <img
-                      src={post.image || "https://picsum.photos/seed/card/800/450"}
+                    <Image
+                      src={post.image || "/images/blog/switch-2-complete-review.webp"}
                       alt={post.title}
+                      fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      quality={72}
+                      loading="lazy"
                       className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -248,7 +257,7 @@ export default async function BlogPage({
                     <div className="flex items-center justify-between pt-4 border-t border-neutral-50">
                       <div className="flex items-center gap-2">
                         <div className="w-6 h-6 rounded-full bg-neutral-100 flex items-center justify-center overflow-hidden">
-                          <img src="/icon-192.png" alt="GameShop24" className="w-full h-full object-cover" />
+                          <Image src="/icon-192.png" alt="GameShop24" width={24} height={24} className="w-full h-full object-cover" />
                         </div>
                         <span className="text-[9px] font-black text-neutral-400 uppercase tracking-widest">
                           GameShop24 Team

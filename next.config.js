@@ -10,7 +10,8 @@ const nextConfig = {
     optimizePackageImports: ['lucide-react'],
   },
   images: {
-    formats: ['image/avif', 'image/webp'],
+    // Blog previews and article images are served as WebP for predictable size and compatibility.
+    formats: ['image/webp'],
     minimumCacheTTL: 2678400,
     imageSizes: [48, 96, 128, 256, 384],
     deviceSizes: [640, 828, 1080, 1200, 1920],

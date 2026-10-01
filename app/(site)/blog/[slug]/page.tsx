@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { format } from "date-fns";
 
@@ -164,7 +165,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
             <div className="flex flex-wrap items-center gap-8 py-6 border-y border-neutral-100">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-neutral-900 flex items-center justify-center overflow-hidden">
-                   <img src="/icon-192.png" alt="GameShop24" className="w-full h-full object-cover" />
+                   <Image src="/icon-192.png" alt="GameShop24" width={40} height={40} className="w-full h-full object-cover" />
                 </div>
                 <div className="flex flex-col">
                   <span className="text-secondary text-xs font-black uppercase tracking-widest">GameShop24 Team</span>
@@ -187,8 +188,12 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
         {/* Cinematic Main Image - even wider */}
         <div className="max-w-6xl mx-auto mb-12 px-0 md:px-4">
           <div className="relative aspect-video md:aspect-[21/9] md:rounded-[40px] overflow-hidden bg-neutral-900 shadow-2xl group transition-transform duration-700 hover:scale-[1.01]">
-            <img
-              src={post.image || "/images/placeholder.jpg"}
+            <Image
+              src={post.image || "/images/blog/switch-2-complete-review.webp"}
+              fill
+              priority
+              sizes="(max-width: 768px) 100vw, 1200px"
+              quality={88}
               className="w-full h-full object-cover md:object-contain"
               alt={post.title}
             />
@@ -272,7 +277,15 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
                  {relatedPosts.map(rel => (
                    <Link key={rel.slug} href={`/blog/${rel.slug}`} className="group flex flex-col">
                       <div className="aspect-video rounded-3xl overflow-hidden shadow-sm border border-neutral-100 mb-6">
-                        <img src={rel.image || ""} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                        <Image
+                          src={rel.image || "/images/blog/switch-2-complete-review.webp"}
+                          alt={rel.title}
+                          fill
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 400px"
+                          quality={72}
+                          loading="lazy"
+                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                        />
                       </div>
                       <h5 className="text-lg font-black text-secondary group-hover:text-primary transition-colors leading-tight line-clamp-2">{rel.title}</h5>
                    </Link>
