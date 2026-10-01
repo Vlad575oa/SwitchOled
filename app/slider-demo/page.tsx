@@ -1,7 +1,7 @@
 import { Slider } from "@/components/ui/Slider";
 
 export const metadata = {
-  title: "Slider Demo | Gameshop24",
+  title: "Slider Demo",
   description: "Testing the premium slider component",
 };
 

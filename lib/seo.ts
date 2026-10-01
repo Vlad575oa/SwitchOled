@@ -12,26 +12,33 @@ export function truncateByWords(input: string, maxLength: number): string {
   return cut.trim().replace(/[.,;:!?-]+$/g, "");
 }
 
-export function buildProductMetaTitle(name: string): string {
-  return truncateByWords(`${name} — Купить в Gameshop24`, 70);
+export function buildProductMetaTitle(name: string, variantLabel?: string | null): string {
+  const label = variantLabel?.trim();
+  const suffix = label && !name.toLowerCase().includes(label.toLowerCase()) ? `, ${label}` : "";
+  return truncateByWords(`${name}${suffix} — купить в Gameshop24`, 70);
 }
 
-export function resolveProductMetaTitle(metaTitle: string | null | undefined, name: string): string {
+export function resolveProductMetaTitle(
+  metaTitle: string | null | undefined,
+  name: string,
+  variantLabel?: string | null
+): string {
   const normalized = metaTitle?.trim() ?? "";
-  if (!normalized || /(?:[-–—|:]\s*)$/.test(normalized)) return buildProductMetaTitle(name);
+  if (!normalized || /(?:[-–—|:]\s*)$/.test(normalized)) return buildProductMetaTitle(name, variantLabel);
   return normalized;
 }
 
 export function buildProductMetaDescription(params: {
   name: string;
   categoryName?: string | null;
+  variantLabel?: string | null;
   sourceDescription?: string | null;
 }) {
-  const raw = stripHtml(params.sourceDescription);
-  if (raw) return truncateByWords(raw, 160);
+  const label = params.variantLabel?.trim();
+  const variantPart = label && !params.name.toLowerCase().includes(label.toLowerCase()) ? `, цвет ${label}` : "";
   const categoryPart = params.categoryName ? `в категории ${params.categoryName}` : "в нашем каталоге";
   return truncateByWords(
-    `${params.name} ${categoryPart}. Официальная гарантия, проверка перед отправкой и быстрая доставка по России.`,
+    `${params.name}${variantPart} — купить ${categoryPart}. Гарантия 1 год, проверка перед отправкой и доставка по России.`,
     160
   );
 }

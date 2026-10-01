@@ -5,7 +5,7 @@ import ContactsClient from "./ContactsClient";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Контакты | Gameshop24",
+  title: "Контакты",
   description: "Свяжитесь с нами в MAX, по телефону или email. Среднее время ответа — 15 минут.",
   alternates: { canonical: "/contacts" },
 };

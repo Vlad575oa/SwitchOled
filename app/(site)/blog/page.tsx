@@ -14,7 +14,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const category = searchParams.category;
   return {
-    title: "Блог игромана | Новости, обзоры и гайды | Gameshop24",
+    title: "Блог игромана | Новости, обзоры и гайды",
     description: "Самые свежие новости из мира консолей, подробные обзоры PS5 Pro, Nintendo Switch 2 и ретро-гейминга.",
     alternates: { canonical: "https://gameshop24.ru/blog" },
     ...(category ? { robots: { index: false, follow: true } } : {}),

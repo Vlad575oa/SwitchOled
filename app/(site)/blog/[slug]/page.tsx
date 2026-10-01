@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   }
   if (!post) return {};
 
-  const title = `${post.metaTitle || post.title} | Блог Gameshop24`;
+  const title = post.metaTitle || post.title;
   const description = post.metaDesc || post.excerpt || "";
 
   return {

@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Оплата | Gameshop24",
+  title: "Оплата",
   description: "Информация об оплате в Gameshop24. Мы принимаем оплату наличными при получении курьеру или в нашем офисе.",
   alternates: { canonical: "/payment" },
 };

@@ -4,7 +4,7 @@ import { CONTACTS } from "@/lib/constants/contacts";
 import { CheckCircle, Wrench, Truck, Clock, ShieldCheck, Star, ArrowLeft } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Сервисный центр Nintendo Switch в Москве | GameShop24",
+  title: "Сервисный центр Nintendo Switch в Москве",
   description: "Специализированный сервисный центр по ремонту Nintendo Switch в Москве. Switch V1/V2, Lite, OLED, Joy-Con. Гарантия до 1 года. Большинство работ за 1–3 часа.",
   alternates: { canonical: "/service" },
 };

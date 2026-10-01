@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import { HomePageLink } from "@/components/HomePageLink";
 
 export const metadata: Metadata = {
-  title: "Возврат и обмен | Gameshop24",
+  title: "Возврат и обмен",
   description: "Условия возврата и обмена в Gameshop24: сроки, порядок обращения, гарантийные случаи и возврат средств.",
   alternates: { canonical: "/refund" },
 };

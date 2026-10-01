@@ -116,12 +116,13 @@ export async function PUT(request: Request, { params }: { params: { id: string }
       );
     }
 
-    const metaTitle = inputMetaTitle || buildProductMetaTitle(name);
+    const metaTitle = inputMetaTitle || buildProductMetaTitle(name, color);
     const metaDesc =
       inputMetaDesc ||
       buildProductMetaDescription({
         name,
         categoryName: category?.name ?? null,
+        variantLabel: color,
         sourceDescription: description ?? "",
       });
 

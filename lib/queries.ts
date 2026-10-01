@@ -210,7 +210,10 @@ export const getProductsNintendoFirst = async (
 
 export const getProductBySlug = cache(async (slug: string) => {
   return safeQuery(
-    () => prisma.product.findUnique({ where: { slug }, include: { category: true } }),
+    () => prisma.product.findFirst({
+      where: { slug, isVisible: { not: false } },
+      include: { category: true },
+    }),
     null
   );
 });

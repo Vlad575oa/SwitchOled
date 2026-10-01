@@ -1,5 +1,5 @@
 import prisma from "@/lib/prisma";
-import { buildProductMetaDescription, buildProductMetaTitle, truncateByWords } from "@/lib/seo";
+import { buildProductMetaDescription, buildProductMetaTitle } from "@/lib/seo";
 
 async function main() {
   const isDryRun = process.argv.includes("--dry-run");
@@ -7,18 +7,16 @@ async function main() {
     where: { isVisible: { not: false } },
     include: { category: true },
     orderBy: [{ inStock: "desc" }, { stock: "desc" }, { updatedAt: "desc" }],
-    take: 30,
   });
 
   let updated = 0;
 
   for (const product of products) {
-    const baseTitle = buildProductMetaTitle(product.name);
-    const uniqueTail = ` • ${product.category.name}`;
-    const metaTitle = truncateByWords(`${baseTitle}${uniqueTail}`, 70);
+    const metaTitle = buildProductMetaTitle(product.name, product.color);
     const metaDesc = buildProductMetaDescription({
       name: product.name,
       categoryName: product.category.name,
+      variantLabel: product.color,
       sourceDescription: product.description ?? "",
     });
 

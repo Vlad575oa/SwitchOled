@@ -4,7 +4,7 @@ import { Star, ArrowLeft } from "lucide-react";
 import { avitoReviews } from "@/lib/data/avito-reviews";
 
 export const metadata: Metadata = {
-  title: "Отзывы покупателей | Gameshop24",
+  title: "Отзывы покупателей",
   description: "Реальные отзывы покупателей GameShop24 с Авито. Рейтинг 5.0 · 3100+ отзывов. Nintendo Switch, PS5, игры.",
   alternates: { canonical: "/reviews" },
 };

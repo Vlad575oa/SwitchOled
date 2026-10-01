@@ -9,7 +9,7 @@ import { HomePageLink } from "@/components/HomePageLink";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Гарантия и возврат | Gameshop24",
+  title: "Гарантия и возврат",
   description: "Гарантия 12 месяцев на консоли. Возврат в течение 14 дней. Бесплатный сервис при заводском браке.",
   alternates: { canonical: "/warranty" },
 };

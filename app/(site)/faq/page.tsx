@@ -6,7 +6,7 @@ import { HomePageLink } from "@/components/HomePageLink";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Вопросы и ответы (FAQ) | Поддержка Gameshop24",
+  title: "Вопросы и ответы (FAQ) | Поддержка",
   description: "Всё о доставке, гарантии и оплате игровых консолей. Ответы на частые вопросы.",
   alternates: { canonical: "/faq" },
 };

@@ -33,7 +33,7 @@ export async function generateMetadata({ params }: LegalPageProps): Promise<Meta
   if (!pageContent) return {};
 
   return {
-    title: `${pageContent.title} | Gameshop24`,
+    title: pageContent.title,
     description: pageContent.description,
     alternates: {
       canonical: `/legal/${params.slug}`

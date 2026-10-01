@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Политика и юридическая информация | Gameshop24",
+  title: "Политика и юридическая информация",
   description: "Юридические документы Gameshop24: оферта, политика конфиденциальности, условия использования и cookie.",
   alternates: { canonical: "/policy" },
 };
@@ -25,4 +25,3 @@ export default function PolicyPage() {
     </div>
   );
 }
-

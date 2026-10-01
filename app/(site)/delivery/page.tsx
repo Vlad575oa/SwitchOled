@@ -1,6 +1,6 @@
 import {
   Truck, MapPin, Clock, Banknote,
-  ShieldCheck, Package, Zap, CheckCircle2
+  ShieldCheck, Package, Zap, CheckCircle2, Navigation, Mail, PackageCheck
 } from "lucide-react";
 import { Metadata } from "next";
 import { getPageContent } from "@/lib/getPageContent";
@@ -9,8 +9,8 @@ import { HomePageLink } from "@/components/HomePageLink";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Доставка и оплата | Gameshop24",
-  description: "Доставка по Москве в день заказа. СДЭК, Boxberry, самовывоз. Оплата наличными при получении или в офисе.",
+  title: "Доставка и оплата",
+  description: "Выберите удобную доставку: СДЭК, Яндекс Доставка, Почта России, Авито Доставка, курьер по Москве или самовывоз. Оплата наличными.",
   alternates: { canonical: "/delivery" },
 };
 
@@ -34,12 +34,45 @@ export default async function DeliveryPage() {
     {
       visible: isEnabled(d.show_sdek),
       icon: Truck,
-      label: "СДЭК / Boxberry",
+      label: "СДЭК",
       subtitle: "По всей России",
       time: d.sdek_time ?? "2–7 рабочих дней",
       price: d.sdek_price ?? "от 250 ₽",
       free: d.sdek_free_from ?? "Точная стоимость при оформлении",
       desc: d.sdek_desc ?? "Доставка до двери или до пункта выдачи. Трек-номер — в SMS сразу после отправки.",
+      accent: false,
+    },
+    {
+      visible: isEnabled(d.show_yandex),
+      icon: Navigation,
+      label: "Яндекс Доставка",
+      subtitle: "Курьерская доставка",
+      time: d.yandex_time ?? "От 1 дня",
+      price: d.yandex_price ?? "По тарифу сервиса",
+      free: d.yandex_free_from ?? "Стоимость согласуем перед отправкой",
+      desc: d.yandex_desc ?? "Курьер заберёт заказ и доставит его до двери. Удобный вариант для Москвы и крупных городов.",
+      accent: false,
+    },
+    {
+      visible: isEnabled(d.show_russian_post),
+      icon: Mail,
+      label: "Почта России",
+      subtitle: "В населённые пункты по всей стране",
+      time: d.russian_post_time ?? "3–10 рабочих дней",
+      price: d.russian_post_price ?? "По тарифу Почты России",
+      free: d.russian_post_free_from ?? "Точную стоимость сообщит менеджер",
+      desc: d.russian_post_desc ?? "Отправим заказ в отделение или до двери, если такая услуга доступна в вашем регионе.",
+      accent: false,
+    },
+    {
+      visible: isEnabled(d.show_avito),
+      icon: PackageCheck,
+      label: "Авито Доставка",
+      subtitle: "При заказе через Авито",
+      time: d.avito_time ?? "По срокам Авито",
+      price: d.avito_price ?? "По тарифу Авито",
+      free: d.avito_free_from ?? "Условия видны при оформлении",
+      desc: d.avito_desc ?? "Выберите Авито Доставку в объявлении — статус отправления и маршрут будут доступны в приложении Авито.",
       accent: false,
     },
     {
@@ -91,11 +124,14 @@ export default async function DeliveryPage() {
           <p className="text-lg md:text-2xl text-neutral-400 font-bold max-w-3xl leading-relaxed">
             {d.hero_text ?? "Каждую консоль упаковываем в двойную коробку. Курьер звонит заранее — вы выбираете удобное время."}
           </p>
+          <p className="text-base md:text-lg text-neutral-500 font-medium max-w-3xl leading-relaxed">
+            Вы можете выбрать любой удобный способ доставки: СДЭК, Яндекс Доставку, Почту России, Авито Доставку, курьера по Москве или самовывоз.
+          </p>
         </div>
 
         {/* Delivery methods */}
         {deliveryMethods.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 mb-20 md:mb-32">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-8 mb-20 md:mb-32">
             {deliveryMethods.map((m) => {
               const Icon = m.icon;
               return (

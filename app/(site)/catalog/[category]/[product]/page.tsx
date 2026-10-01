@@ -41,12 +41,13 @@ export async function generateMetadata({
   const product = await getProductBySlug(params.product);
   if (!product) return { title: "Товар не найден" };
 
-  const title = resolveProductMetaTitle(product.metaTitle, product.name);
+  const title = resolveProductMetaTitle(product.metaTitle, product.name, product.color);
   const description =
     product.metaDesc?.trim() ||
     buildProductMetaDescription({
       name: product.name,
       categoryName: product.category?.name ?? null,
+      variantLabel: product.color,
       sourceDescription: product.description ?? "",
     });
 
