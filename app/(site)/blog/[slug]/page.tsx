@@ -14,6 +14,55 @@ import { sanitizeRichHtml } from "@/lib/sanitizeHtml";
 
 const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || "https://gameshop24.ru").replace("://www.", "://");
 
+const heroActions = [
+  { label: "Купить", href: "/" },
+  { label: "Заказать", href: "/contacts" },
+  { label: "Прошить", href: "/service" },
+  { label: "Доставка", href: "/delivery" },
+];
+const rightHeroActions = [
+  { label: "Доставка", href: "/delivery" },
+  { label: "Прошивка", href: "/service" },
+  { label: "Switch OLED", href: "/catalog/nintendo-switch-oled" },
+  { label: "Switch Lite", href: "/catalog/nintendo-switch-lite" },
+];
+
+function BlogHeroSide({ image, side }: { image: string; side: "left" | "right" }) {
+  return (
+    <div className={`blog-hero-side ${side === "right" ? "blog-hero-side-right" : ""}`}>
+      <Image
+        src={image}
+        alt=""
+        fill
+        sizes="180px"
+        aria-hidden="true"
+        className="blog-hero-side-bg"
+      />
+      <div className="blog-hero-side-content">
+        {side === "left" ? (
+          <div className="blog-hero-actions" aria-label="Навигация по магазину">
+            {heroActions.map(({ label, href }) => (
+              <Link key={label} href={href} className="blog-hero-action">
+                <span className="blog-hero-action-led" />
+                {label}
+              </Link>
+            ))}
+          </div>
+        ) : (
+          <div className="blog-hero-actions" aria-label="Разделы магазина">
+            {rightHeroActions.map(({ label, href }) => (
+              <Link key={label} href={href} className="blog-hero-action">
+                <span className="blog-hero-action-led" />
+                {label}
+              </Link>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const slug = decodeURIComponent(params.slug);
   let post: Awaited<ReturnType<typeof prisma.post.findUnique>> = null;
@@ -187,16 +236,32 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
 
         {/* Cinematic Main Image - even wider */}
         <div className="max-w-6xl mx-auto mb-12 px-0 md:px-4">
-          <div className="relative aspect-video md:aspect-[21/9] md:rounded-[40px] overflow-hidden bg-neutral-900 shadow-2xl group transition-transform duration-700 hover:scale-[1.01]">
+          <div className="blog-hero relative aspect-video md:aspect-[21/9] md:rounded-[40px] overflow-hidden bg-neutral-900 shadow-2xl group transition-transform duration-700 hover:scale-[1.01]">
             <Image
               src={post.image || "/images/blog/switch-2-complete-review.webp"}
               fill
               priority
               sizes="(max-width: 768px) 100vw, 1200px"
               quality={88}
-              className="w-full h-full object-cover md:object-contain"
-              alt={post.title}
+              className="blog-hero-backdrop"
+              alt=""
+              aria-hidden="true"
             />
+            <div className="blog-hero-layout">
+              <BlogHeroSide image={post.image || "/images/blog/switch-2-complete-review.webp"} side="left" />
+              <div className="blog-hero-main">
+                <Image
+                  src={post.image || "/images/blog/switch-2-complete-review.webp"}
+                  fill
+                  priority
+                  sizes="(max-width: 768px) 100vw, 900px"
+                  quality={88}
+                  className="w-full h-full object-cover"
+                  alt={post.title}
+                />
+              </div>
+              <BlogHeroSide image={post.image || "/images/blog/switch-2-complete-review.webp"} side="right" />
+            </div>
           </div>
         </div>
 
@@ -276,7 +341,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                  {relatedPosts.map(rel => (
                    <Link key={rel.slug} href={`/blog/${rel.slug}`} className="group flex flex-col">
-                      <div className="aspect-video rounded-3xl overflow-hidden shadow-sm border border-neutral-100 mb-6">
+                      <div className="relative aspect-video rounded-3xl overflow-hidden shadow-sm border border-neutral-100 mb-6">
                         <Image
                           src={rel.image || "/images/blog/switch-2-complete-review.webp"}
                           alt={rel.title}

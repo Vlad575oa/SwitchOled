@@ -116,7 +116,186 @@ body {
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
+.blog-hero-backdrop {
+  object-fit: cover;
+  filter: blur(18px) saturate(1.25);
+  transform: scale(1.08);
+  opacity: 0.5;
+}
+
+.blog-hero-layout {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(112px, 1fr) minmax(0, 6fr) minmax(112px, 1fr);
+  height: 100%;
+}
+
+.blog-hero-main {
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.35);
+}
+
+.blog-hero-side {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  overflow: hidden;
+  background: #101114;
+  isolation: isolate;
+}
+
+.blog-hero-side-bg {
+  z-index: -2;
+  object-fit: cover;
+  filter: blur(12px) saturate(1.35);
+  opacity: 0.3;
+  transform: scale(1.2);
+}
+
+.blog-hero-side::after {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  content: "";
+  background: linear-gradient(135deg, rgba(10, 11, 16, 0.97), rgba(32, 34, 42, 0.8));
+}
+
+.blog-hero-side-right::after {
+  background: linear-gradient(225deg, rgba(10, 11, 16, 0.97), rgba(32, 34, 42, 0.8));
+}
+
+.blog-hero-side-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 12px;
+}
+
+.blog-hero-actions {
+  display: grid;
+  gap: 7px;
+  width: 100%;
+}
+
+.blog-hero-action {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 28px;
+  padding: 6px 8px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 9px;
+  color: rgba(255, 255, 255, 0.86);
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transition: transform 180ms ease, background 180ms ease, border-color 180ms ease;
+}
+
+.blog-hero-action:hover {
+  border-color: rgba(230, 0, 18, 0.85);
+  background: rgba(230, 0, 18, 0.78);
+  transform: translateX(3px);
+}
+
+.blog-hero-action-led {
+  width: 5px;
+  height: 5px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: #e60012;
+  box-shadow: 0 0 8px rgba(230, 0, 18, 0.95);
+  animation: blog-hero-led 2.4s ease-in-out infinite;
+}
+
+.blog-hero-controller {
+  width: 78px;
+  padding: 9px 7px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 18px;
+  background: linear-gradient(145deg, #3b3d44, #141519 72%);
+  box-shadow: 0 12px 20px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  animation: blog-hero-float 4s ease-in-out infinite;
+}
+
+.blog-hero-controller-screen {
+  display: grid;
+  height: 35px;
+  place-items: center;
+  border: 2px solid #090a0d;
+  border-radius: 6px;
+  color: #ff3442;
+  background: #090b10;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+}
+
+.blog-hero-controller-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 13px 2px 4px;
+}
+
+.blog-hero-dpad,
+.blog-hero-buttons {
+  position: relative;
+  display: block;
+  width: 24px;
+  height: 24px;
+}
+
+.blog-hero-dpad i,
+.blog-hero-buttons i {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #202229;
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.18);
+}
+
+.blog-hero-dpad i:nth-child(1) { left: 8px; top: 0; border-radius: 3px; height: 24px; width: 8px; }
+.blog-hero-dpad i:nth-child(2) { left: 0; top: 8px; border-radius: 3px; width: 24px; height: 8px; }
+.blog-hero-dpad i:nth-child(n+3) { display: none; }
+.blog-hero-buttons i:nth-child(1) { left: 0; top: 8px; background: #e60012; }
+.blog-hero-buttons i:nth-child(2) { right: 0; top: 0; background: #3b82f6; }
+.blog-hero-buttons i:nth-child(3) { right: 0; bottom: 0; background: #facc15; }
+.blog-hero-buttons i:nth-child(4) { left: 0; bottom: 0; background: #22c55e; }
+
+@keyframes blog-hero-float {
+  0%, 100% { transform: translateY(0) rotate(-2deg); }
+  50% { transform: translateY(-7px) rotate(2deg); }
+}
+
+@keyframes blog-hero-led {
+  0%, 100% { opacity: 0.45; }
+  50% { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .blog-hero-controller,
+  .blog-hero-action-led { animation: none; }
+}
+
 /* Mobile table overflow fix for blog article content */
+.article-prose img {
+  position: static !important;
+  display: block;
+  float: none !important;
+  clear: both;
+  width: 100%;
+  max-width: 100%;
+  height: auto !important;
+  object-fit: contain;
+}
+
 @media (max-width: 767px) {
   .article-prose table {
     display: block;
