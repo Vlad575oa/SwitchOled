@@ -19,6 +19,6 @@ assert.deepEqual(getCatalogSmartFilterEntries(visibleSlugs), [
 ]);
 
 assert.equal(
-  getCatalogSmartFilterEntries(["xbox-series-s"]).some((entry) => entry.filter === "s-podpiskoy"),
+  getCatalogSmartFilterEntries(["xbox-series-s"]).some((entry) => String(entry.filter) === "s-podpiskoy"),
   false
 );

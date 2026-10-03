@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { getCategorySlugsVisibleInCatalog } from "../lib/categoryVisibility";
+import { getCatalogSmartFilter } from "../lib/catalogSmartFilters";
 import { resolveProductMetaTitle } from "../lib/seo";
 
 const slugs = getCategorySlugsVisibleInCatalog([
@@ -10,5 +11,8 @@ const slugs = getCategorySlugsVisibleInCatalog([
 ]);
 
 assert.deepEqual(slugs.sort(), ["nintendo", "nintendo-switch", "nintendo-switch-oled"].sort());
-assert.equal(resolveProductMetaTitle("Прошитая Nintendo Switch OLED —", "Прошитая Nintendo Switch OLED"), "Прошитая Nintendo Switch OLED — Купить в Gameshop24");
+assert.equal(resolveProductMetaTitle("Прошитая Nintendo Switch OLED —", "Прошитая Nintendo Switch OLED"), "Nintendo Switch OLED — купить");
 assert.equal(resolveProductMetaTitle("Nintendo Switch OLED купить", "Nintendo Switch OLED"), "Nintendo Switch OLED купить");
+assert.equal(resolveProductMetaTitle("Nintendo Switch OLED — Gameshop24", "Nintendo Switch OLED"), "Nintendo Switch OLED");
+assert.equal(getCatalogSmartFilter("nintendo-switch-oled", "proshitaya")?.title, "Прошитые");
+assert.equal(getCatalogSmartFilter("no-such-category", "proshitaya"), null);

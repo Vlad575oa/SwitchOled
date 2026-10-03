@@ -14,7 +14,7 @@ import { RelatedProducts } from "@/features/product/components/RelatedProducts";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { buildProductMetaDescription, resolveProductMetaTitle } from "@/lib/seo";
-import { CATALOG_SMART_FILTERS } from "@/lib/catalogSmartFilters";
+import { getCatalogSmartFilter } from "@/lib/catalogSmartFilters";
 import { sanitizeRichHtml } from "@/lib/sanitizeHtml";
 import { PageViewTracker } from "@/components/PageViewTracker";
 
@@ -27,10 +27,11 @@ export async function generateMetadata({
 }: {
   params: { product: string; category: string };
 }): Promise<Metadata> {
-  const smartFilter = CATALOG_SMART_FILTERS[params.product];
+  const smartFilter = getCatalogSmartFilter(params.category, params.product);
   if (smartFilter) {
     const category = await getCategoryBySlug(params.category);
-    const title = `${smartFilter.title} ${category?.name || ""} — Купить в Gameshop24`;
+    const categoryName = params.category === "all" ? "игровые консоли" : category?.name;
+    const title = `${smartFilter.title} ${categoryName ?? "товары"} — купить`;
     return {
       title,
       description: smartFilter.desc,
@@ -82,7 +83,7 @@ export default async function ProductPage({
   params: { product: string; category: string };
   searchParams: Record<string, string | undefined>;
 }) {
-  const smartFilter = CATALOG_SMART_FILTERS[params.product];
+  const smartFilter = getCatalogSmartFilter(params.category, params.product);
   
   if (smartFilter) {
     const combinedParams = { ...searchParams };
@@ -123,13 +124,6 @@ export default async function ProductPage({
     url: `${baseUrl}/catalog/${product.category.slug}/${product.slug}`,
     ...(product.sku ? { sku: product.sku } : {}),
     brand: { "@type": "Brand", name: product.brand || "Nintendo" },
-    aggregateRating: {
-      "@type": "AggregateRating",
-      ratingValue: "5.0",
-      reviewCount: "47",
-      bestRating: "5",
-      worstRating: "1",
-    },
     offers: {
       "@type": "Offer",
       url: `${baseUrl}/catalog/${product.category.slug}/${product.slug}`,
@@ -154,29 +148,6 @@ export default async function ProductPage({
     ],
   };
 
-  const faqLd = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": [
-      {
-        "@type": "Question",
-        "name": `Предоставляется ли гарантия на ${product.name}?`,
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Да, на все консоли в нашем магазине предоставляется полная гарантия сроком 1 год. В комплекте идет гарантийный талон."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": `Как осуществляется доставка ${product.name}?`,
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Мы осуществляем быструю доставку курьером по городу и СДЭКом по всей России. Возможен самовывоз из нашего офиса."
-        }
-      }
-    ]
-  };
-
   return (
     <div className="bg-[#fcfcfc] min-h-screen">
       <main className="container py-8 lg:py-12">
@@ -189,11 +160,6 @@ export default async function ProductPage({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
         />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
-        />
-
         {/* Breadcrumbs */}
         <nav className="flex items-center gap-2 text-[10px] font-bold text-neutral-300 uppercase tracking-widest mb-6 overflow-x-auto no-scrollbar whitespace-nowrap">
           <Link href="/" className="hover:text-primary transition-colors">

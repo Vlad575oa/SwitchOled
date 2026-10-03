@@ -35,7 +35,7 @@ export function buildProductMetaTitle(name: string, variantLabel?: string | null
     ? `, цвет ${label}`
     : "";
   const gameSuffix = gameCount ? `, ${gameCount} игр` : "";
-  const ending = " — Gameshop24";
+  const ending = " — купить";
 
   // Keep the variant inside the title limit. Truncating the full string used
   // to remove the color from long product names and create rendered duplicates.
@@ -49,7 +49,7 @@ export function resolveProductMetaTitle(
   name: string,
   variantLabel?: string | null
 ): string {
-  const normalized = metaTitle?.trim() ?? "";
+  const normalized = (metaTitle?.trim() ?? "").replace(/\s*[—|]\s*Gameshop24\s*$/i, "").trim();
   if (!normalized || /(?:[-–—|:]\s*)$/.test(normalized)) return buildProductMetaTitle(name, variantLabel);
   return normalized;
 }

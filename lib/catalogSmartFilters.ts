@@ -31,6 +31,13 @@ const CATALOG_SMART_FILTER_TARGETS = [
   { slug: "all", filter: "v-nalichii" },
 ] as const;
 
+export function getCatalogSmartFilter(categorySlug: string, filterSlug: string) {
+  const target = CATALOG_SMART_FILTER_TARGETS.find(
+    (entry) => entry.slug === categorySlug && entry.filter === filterSlug
+  );
+  return target ? CATALOG_SMART_FILTERS[target.filter] : null;
+}
+
 export function getCatalogSmartFilterEntries(visibleSlugs: string[]) {
   const visible = new Set(visibleSlugs);
 
