@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { getClientIp, rateLimit } from "@/lib/rateLimit";
 
 
 async function buildCatalogSection(): Promise<string> {
@@ -519,6 +520,7 @@ GameShop24 самостоятельно прошивает Nintendo Switch. Эт
 ❌ Если клиент спрашивает про перевод, оплату картой, СБП, ЮKassa, онлайн-оплату — отвечай строго: "У нас оплата только наличными при получении в офисе или курьеру при доставке товара"
 ❌ НИКОГДА не называй, не выдумывай и не направляй в Telegram-ботов, сторонние чат-боты, сервисы или ссылки не относящиеся к магазину GameShop24 — никаких @username ботов, сторонних сайтов, сервисов оплаты. Если клиент говорит что не получил сообщение — скажи: "Передам менеджеру, он свяжется с вами в ближайшее время"
 ❌ Не обещай отправить что-либо сам — ты консультант, а не менеджер. Все действия по оплате и отправке — только живой менеджер
+❌ Не принимай и не проси присылать изображения, фотографии, скриншоты, файлы или любые другие вложения. В чате доступен только текст. Если клиент спрашивает о загрузке — ответь: «Я не принимаю изображения, файлы и другие вложения — я консультант GameShop24. Напишите вопрос текстом, и я помогу выбрать консоль или аксессуары.»
 ❌ Принимай любой контакт клиента: телефон, Telegram, WhatsApp, MAX — что удобнее клиенту`;
 
 interface Message {
@@ -527,6 +529,18 @@ interface Message {
 }
 
 const MAX_MESSAGES_PER_SESSION = 15;
+const MAX_MESSAGE_LENGTH = 2000;
+const UPLOAD_REQUEST_PATTERN = /(?:\b(?:upload|attach|attachment|file|image|photo|picture|screenshot)\b|скриншот|изображени|картинк|файл|фото|фотограф|вложени|загрузить|загрузк|прикрепить|пришлите)/i;
+const UPLOAD_BLOCK_REPLY = "Я не принимаю изображения, файлы и другие вложения — я консультант GameShop24. Напишите вопрос текстом, и я помогу выбрать консоль или аксессуары.";
+
+function isValidMessage(value: unknown): value is Message {
+  if (!value || typeof value !== "object") return false;
+  const message = value as Partial<Message>;
+  return (message.role === "user" || message.role === "assistant") &&
+    typeof message.content === "string" &&
+    message.content.trim().length > 0 &&
+    message.content.length <= MAX_MESSAGE_LENGTH;
+}
 
 async function getOrCreateSession(visitorId: string): Promise<string> {
   let session = await prisma.chatSession.findFirst({ where: { visitorId } });
@@ -544,8 +558,23 @@ export async function POST(req: Request) {
     visitorId?: string;
   };
 
-  if (!messages || !Array.isArray(messages) || messages.length === 0) {
+  if (!messages || !Array.isArray(messages) || messages.length === 0 || messages.length > MAX_MESSAGES_PER_SESSION || !messages.every(isValidMessage)) {
     return NextResponse.json({ error: "messages required" }, { status: 400 });
+  }
+
+  const normalizedVisitorId = typeof visitorId === "string" && visitorId.startsWith("ai_")
+    ? visitorId.slice(0, 100)
+    : "anonymous";
+  const requestLimit = rateLimit(
+    `ai-chat:${getClientIp(req)}:${normalizedVisitorId}`,
+    20,
+    10 * 60 * 1000
+  );
+  if (!requestLimit.allowed) {
+    return NextResponse.json(
+      { error: "Слишком много сообщений. Попробуйте немного позже." },
+      { status: 429, headers: { "Retry-After": String(Math.ceil((requestLimit.resetAt - Date.now()) / 1000)) } }
+    );
   }
 
   const apiKey = process.env.DEEPSEEK_API_KEY;
@@ -556,8 +585,8 @@ export async function POST(req: Request) {
   // Persist to DB if visitorId provided
   let sessionId: string | null = null;
   let msgCount = 0;
-  if (visitorId?.startsWith("ai_")) {
-    sessionId = await getOrCreateSession(visitorId);
+  if (normalizedVisitorId !== "anonymous") {
+    sessionId = await getOrCreateSession(normalizedVisitorId);
 
     msgCount = await prisma.chatMessage.count({ where: { sessionId } });
 
@@ -582,6 +611,22 @@ export async function POST(req: Request) {
       await prisma.chatMessage.create({
         data: { sessionId, content: lastUser.content, sender: "USER" },
       });
+
+      if (UPLOAD_REQUEST_PATTERN.test(lastUser.content)) {
+        await prisma.chatMessage.create({
+          data: { sessionId, content: UPLOAD_BLOCK_REPLY, sender: "ADMIN", isRead: true },
+        });
+        await prisma.chatSession.update({
+          where: { id: sessionId },
+          data: { updatedAt: new Date() },
+        });
+        return NextResponse.json({ reply: UPLOAD_BLOCK_REPLY, sessionId, blocked: true });
+      }
+    }
+  } else {
+    const lastUser = [...messages].reverse().find((m) => m.role === "user");
+    if (lastUser && UPLOAD_REQUEST_PATTERN.test(lastUser.content)) {
+      return NextResponse.json({ reply: UPLOAD_BLOCK_REPLY, blocked: true });
     }
   }
 

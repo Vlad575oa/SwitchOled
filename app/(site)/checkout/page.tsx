@@ -76,6 +76,11 @@ export default function CheckoutPage() {
       });
 
       const result = await response.json();
+      if (!response.ok || !result?.success) {
+        setSubmitError(result?.error || "Ошибка при создании заказа. Попробуйте ещё раз.");
+        return;
+      }
+
       const confirmationUrl = result?.data?.confirmationUrl;
       if (confirmationUrl) {
         window.location.href = confirmationUrl;
@@ -106,26 +111,26 @@ export default function CheckoutPage() {
   }
 
   return (
-    <main className="container px-4 sm:px-6 py-12 lg:py-20 max-w-4xl">
-      <h1 className="text-4xl font-black text-secondary mb-12">Оформление заказа</h1>
+    <main className="container px-4 sm:px-6 py-6 sm:py-12 lg:py-20 max-w-4xl">
+      <h1 className="text-2xl sm:text-4xl font-black text-secondary mb-6 sm:mb-12">Оформление заказа</h1>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-16">
-        <div className="space-y-8">
+      <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16">
+        <div className="space-y-5 md:space-y-8">
           <h2 className="text-2xl font-black text-secondary">Ваши данные</h2>
 
-          <div className="space-y-6">
+          <div className="space-y-4 md:space-y-6">
             <div>
-              <label className="block text-sm font-bold text-neutral-400 mb-2">Имя Фамилия</label>
+              <label className="block text-sm font-bold text-neutral-400 mb-1.5 md:mb-2">Имя Фамилия</label>
               <input
                 {...register("name", { required: "Введите имя" })}
-                className={`w-full px-6 py-4 bg-neutral-50 rounded-2xl border-none focus:ring-2 focus:ring-primary/20 transition-all font-bold ${errors.name ? "ring-2 ring-red-500/20" : ""}`}
+                className={`w-full px-4 py-3 md:px-6 md:py-4 bg-neutral-50 rounded-2xl border-none focus:ring-2 focus:ring-primary/20 transition-all font-bold ${errors.name ? "ring-2 ring-red-500/20" : ""}`}
                 placeholder="Иван Иванов"
               />
               {errors.name && <p className="text-xs font-bold text-red-500 mt-1">{errors.name.message}</p>}
             </div>
 
             <div>
-              <label className="block text-sm font-bold text-neutral-400 mb-2">Телефон</label>
+              <label className="block text-sm font-bold text-neutral-400 mb-1.5 md:mb-2">Телефон</label>
               <input
                 {...register("phone", {
                   required: "Введите номер телефона",
@@ -155,7 +160,7 @@ export default function CheckoutPage() {
                     resetPhoneValidationToast();
                   }
                 }}
-                className={`w-full px-6 py-4 bg-neutral-50 rounded-2xl border-none focus:ring-2 focus:ring-primary/20 transition-all font-bold ${errors.phone ? "ring-2 ring-red-500/20" : ""}`}
+                className={`w-full px-4 py-3 md:px-6 md:py-4 bg-neutral-50 rounded-2xl border-none focus:ring-2 focus:ring-primary/20 transition-all font-bold ${errors.phone ? "ring-2 ring-red-500/20" : ""}`}
                 inputMode="tel"
                 placeholder="+8(983)777-33-33"
               />
@@ -189,14 +194,14 @@ export default function CheckoutPage() {
             </label>
 
             <div>
-              <label className="block text-sm font-bold text-neutral-400 mb-2">
+              <label className="block text-sm font-bold text-neutral-400 mb-1.5 md:mb-2">
                 {isPickup ? "Адрес самовывоза" : "Адрес доставки"}
               </label>
               <textarea
                 {...register("address", { required: "Введите адрес доставки" })}
                 rows={isPickup ? 2 : 4}
                 readOnly={isPickup}
-                className={`w-full px-6 py-4 rounded-2xl border-none focus:ring-2 focus:ring-primary/20 transition-all font-bold ${
+                className={`w-full px-4 py-3 md:px-6 md:py-4 rounded-2xl border-none focus:ring-2 focus:ring-primary/20 transition-all font-bold ${
                   isPickup ? "bg-primary/5 text-secondary cursor-default" : "bg-neutral-50"
                 } ${errors.address ? "ring-2 ring-red-500/20" : ""}`}
                 placeholder="Город, улица, дом, квартира"
@@ -205,31 +210,12 @@ export default function CheckoutPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-bold text-neutral-400 mb-2">Комментарий к заказу <span className="font-medium">(необязательно)</span></label>
-              <textarea
+              <label className="block text-sm font-bold text-neutral-400 mb-1.5 md:mb-2">Комментарий к заказу <span className="font-medium">(необязательно)</span></label>
+              <input
                 {...register("comment")}
-                rows={3}
-                className="w-full px-6 py-4 bg-neutral-50 rounded-2xl border-none focus:ring-2 focus:ring-primary/20 transition-all font-bold"
+                className="w-full px-4 py-3 md:px-6 md:py-4 bg-neutral-50 rounded-2xl border-none focus:ring-2 focus:ring-primary/20 transition-all font-bold"
                 placeholder="Пожелания, уточнения по заказу..."
               />
-            </div>
-
-            {/* Consent */}
-            <div>
-              <label className="flex items-start gap-3 cursor-pointer">
-                <input
-                  type="checkbox"
-                  {...register("consent", { required: "Необходимо дать согласие на обработку персональных данных" })}
-                  className="mt-0.5 w-5 h-5 rounded border-neutral-300 accent-primary flex-shrink-0 cursor-pointer"
-                />
-                <span className="text-sm font-medium text-neutral-600 leading-snug">
-                  Я даю своё согласие на обработку персональных данных в соответствии с{" "}
-                  <Link href="/legal/privacy" className="text-primary underline underline-offset-2 hover:no-underline">
-                    Политикой конфиденциальности
-                  </Link>
-                </span>
-              </label>
-              {errors.consent && <p className="text-xs font-bold text-red-500 mt-1">{errors.consent.message}</p>}
             </div>
 
           </div>
@@ -266,6 +252,23 @@ export default function CheckoutPage() {
             >
               {loading ? "Обработка..." : "Завершить оформление"}
             </Button>
+
+            <div className="mt-4">
+              <label className="flex items-start gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  {...register("consent", { required: "Необходимо дать согласие на обработку персональных данных" })}
+                  className="mt-0.5 w-5 h-5 rounded border-neutral-300 accent-primary flex-shrink-0 cursor-pointer"
+                />
+                <span className="text-sm font-medium text-neutral-600 leading-snug">
+                  Я даю своё согласие на обработку персональных данных в соответствии с{" "}
+                  <Link href="/legal/privacy" className="text-primary underline underline-offset-2 hover:no-underline">
+                    Политикой конфиденциальности
+                  </Link>
+                </span>
+              </label>
+              {errors.consent && <p className="text-xs font-bold text-red-500 mt-1">{errors.consent.message}</p>}
+            </div>
 
             <p className="text-[10px] text-neutral-500 font-bold text-center mt-6 uppercase tracking-wider">
               Оплата наличными при получении

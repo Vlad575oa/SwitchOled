@@ -65,7 +65,7 @@ export async function createOrderAction(input: CreateOrderInput): Promise<Action
           data: { stock: { decrement: item.quantity } },
         });
         if (count === 0) {
-          throw new Error(`Товар "${product.name}" недоступен или закончился`);
+          throw new Error(`Товар "${product.name}" недоступен или закончился. Удалите его из корзины или выберите другой вариант.`);
         }
 
         const updatedProduct = await tx.product.findUnique({ where: { id: item.productId }, select: { stock: true } });

@@ -120,12 +120,15 @@ export function ChatWidget() {
         setMessages(final);
         saveHistory(final);
       } else {
+        const errorData = await res.json().catch(() => null);
         const errMsg: Message = {
           role: "assistant",
-          content: "Извините, что-то пошло не так. Попробуйте ещё раз.",
+          content: errorData?.error || "Извините, что-то пошло не так. Попробуйте ещё раз.",
           id: makeId(),
         };
-        setMessages([...updated, errMsg]);
+        const final = [...updated, errMsg];
+        setMessages(final);
+        saveHistory(final);
       }
     } catch {
       const errMsg: Message = {
@@ -259,7 +262,7 @@ export function ChatWidget() {
                   handleSend();
                 }
               }}
-              placeholder="Спросите что-нибудь..."
+              placeholder="Напишите вопрос текстом..."
               className="flex-1 px-4 py-2.5 bg-neutral-50 border border-neutral-100 rounded-2xl text-base sm:text-sm font-medium text-[#111827] placeholder:text-neutral-300 outline-none focus:border-primary/30 focus:bg-white transition-all"
             />
             <button

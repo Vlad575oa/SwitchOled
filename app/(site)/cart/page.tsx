@@ -34,25 +34,25 @@ export default function CartPage() {
   }
 
   return (
-    <main className="container py-12 lg:py-20">
-      <h1 className="text-4xl font-black text-secondary mb-12">Корзина</h1>
+    <main className="container px-4 sm:px-6 py-6 sm:py-12 lg:py-20">
+      <h1 className="text-2xl sm:text-4xl font-black text-secondary mb-6 sm:mb-12">Корзина</h1>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-16">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-16">
         {/* Items List */}
-        <div className="lg:col-span-2 space-y-8">
+        <div className="lg:col-span-2 space-y-5 md:space-y-8">
           {items.map((item) => (
-            <div key={item.id} className="flex gap-3 sm:gap-6 pb-8 border-b border-neutral-100 last:border-0 relative">
-              <div className="w-20 h-20 sm:w-32 sm:h-32 bg-neutral-50 rounded-2xl sm:rounded-3xl overflow-hidden border border-neutral-100 flex-shrink-0 relative">
-                <Image src={item.image} alt={item.name} fill className="object-contain p-4" />
+            <div key={item.id} className="flex flex-wrap gap-3 sm:gap-6 pb-5 sm:pb-8 border-b border-neutral-100 last:border-0 relative">
+              <div className="w-16 h-16 sm:w-32 sm:h-32 bg-neutral-50 rounded-2xl sm:rounded-3xl overflow-hidden border border-neutral-100 flex-shrink-0 relative">
+                <Image src={item.image} alt={item.name} fill className="object-contain p-2 sm:p-4" />
               </div>
 
-              <div className="flex-1 flex flex-col justify-between py-1">
+              <div className="flex-1 min-w-0 flex flex-col justify-between sm:py-1">
                 <div>
-                  <Link href={`/catalog/any/${item.slug}`} className="text-lg font-bold text-secondary hover:text-primary transition-colors line-clamp-1">
+                  <Link href={`/catalog/any/${item.slug}`} className="block text-sm sm:text-lg leading-snug font-bold text-secondary hover:text-primary transition-colors whitespace-normal break-words">
                     {item.name}
                   </Link>
-                  <div className="flex items-center gap-2 mt-1">
-                    <p className="text-sm font-bold text-primary">{formatPrice(item.price)}</p>
+                  <div className="flex flex-wrap items-center gap-2 mt-1.5 sm:mt-1">
+                    <p className="text-xs sm:text-sm font-bold text-primary">{formatPrice(item.price)}</p>
                     {item.inStock !== false ? (
                       <span className="text-[9px] font-black uppercase tracking-wider text-green-500">● В наличии</span>
                     ) : (
@@ -61,35 +61,35 @@ export default function CartPage() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-6">
-                  <div className="flex items-center bg-neutral-100 rounded-xl p-1">
+                <div className="flex items-center gap-3 sm:gap-6 mt-3 sm:mt-0">
+                  <div className="flex items-center bg-neutral-100 rounded-xl p-0.5 sm:p-1">
                     <button
                       onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                      className="p-2 hover:bg-white rounded-lg transition-colors text-neutral-500"
+                      className="p-1.5 sm:p-2 hover:bg-white rounded-lg transition-colors text-neutral-500"
                     >
-                      <Minus size={16} />
+                      <Minus size={14} className="sm:w-4 sm:h-4" />
                     </button>
-                    <span className="w-8 text-center text-sm font-black text-secondary">{item.quantity || 1}</span>
+                    <span className="w-7 sm:w-8 text-center text-xs sm:text-sm font-black text-secondary">{item.quantity || 1}</span>
                     <button
                       onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                      className="p-2 hover:bg-white rounded-lg transition-colors text-neutral-500"
+                      className="p-1.5 sm:p-2 hover:bg-white rounded-lg transition-colors text-neutral-500"
                     >
-                      <Plus size={16} />
+                      <Plus size={14} className="sm:w-4 sm:h-4" />
                     </button>
                   </div>
 
                   <button
                     onClick={() => removeItem(item.id)}
-                    className="text-sm font-bold text-neutral-400 hover:text-red-600 flex items-center gap-1 transition-colors"
+                    className="text-xs sm:text-sm font-bold text-neutral-400 hover:text-red-600 flex items-center gap-1 transition-colors"
                   >
-                    <Trash2 size={16} />
+                    <Trash2 size={14} className="sm:w-4 sm:h-4" />
                     Удалить
                   </button>
                 </div>
               </div>
 
-              <div className="text-right shrink-0">
-                <p className="text-base sm:text-lg font-black text-secondary">
+              <div className="order-3 basis-full sm:order-none sm:basis-auto text-right flex items-center justify-end sm:block shrink-0">
+                <p className="text-sm sm:text-lg font-black text-secondary">
                   {formatPrice((item.price) * (item.quantity || 1))}
                 </p>
               </div>
@@ -99,10 +99,10 @@ export default function CartPage() {
 
         {/* Summary */}
         <div className="space-y-6">
-          <div className="bg-neutral-50 p-8 rounded-[40px] border border-neutral-100">
-            <h2 className="text-2xl font-black text-secondary mb-8">Итого</h2>
+          <div className="bg-neutral-50 p-5 sm:p-8 rounded-3xl sm:rounded-[40px] border border-neutral-100">
+            <h2 className="text-2xl font-black text-secondary mb-5 sm:mb-8">Итого</h2>
             
-            <div className="space-y-4 mb-10">
+            <div className="space-y-4 mb-6 sm:mb-10">
               <div className="flex justify-between text-neutral-500 font-bold">
                 <span>Товары ({totalItems()})</span>
                 <span>{formatPrice(totalPrice())}</span>
