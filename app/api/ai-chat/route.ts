@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { createHash } from "node:crypto";
 import prisma from "@/lib/prisma";
 import { getClientIp, rateLimit } from "@/lib/rateLimit";
 
@@ -530,8 +531,10 @@ interface Message {
 
 const MAX_MESSAGES_PER_SESSION = 15;
 const MAX_MESSAGE_LENGTH = 2000;
+const REPEATED_MESSAGE_LIMIT = 10;
 const UPLOAD_REQUEST_PATTERN = /(?:\b(?:upload|attach|attachment|file|image|photo|picture|screenshot)\b|скриншот|изображени|картинк|файл|фото|фотограф|вложени|загрузить|загрузк|прикрепить|пришлите)/i;
 const UPLOAD_BLOCK_REPLY = "Я не принимаю изображения, файлы и другие вложения — я консультант GameShop24. Напишите вопрос текстом, и я помогу выбрать консоль или аксессуары.";
+const REPEATED_BLOCK_REPLY = "Похоже, сообщение повторяется. Ира отвечает на вопросы по товарам и консультирует по выбору консоли. Напишите новый вопрос текстом — я помогу.";
 
 function isValidMessage(value: unknown): value is Message {
   if (!value || typeof value !== "object") return false;
@@ -540,6 +543,11 @@ function isValidMessage(value: unknown): value is Message {
     typeof message.content === "string" &&
     message.content.trim().length > 0 &&
     message.content.length <= MAX_MESSAGE_LENGTH;
+}
+
+function getMessageFingerprint(content: string): string {
+  const normalized = content.toLowerCase().replace(/[!?.,:;()[\]{}"'`]+/g, "").replace(/\s+/g, " ").trim();
+  return createHash("sha256").update(normalized).digest("hex").slice(0, 16);
 }
 
 async function getOrCreateSession(visitorId: string): Promise<string> {
@@ -560,6 +568,18 @@ export async function POST(req: Request) {
 
   if (!messages || !Array.isArray(messages) || messages.length === 0 || messages.length > MAX_MESSAGES_PER_SESSION || !messages.every(isValidMessage)) {
     return NextResponse.json({ error: "messages required" }, { status: 400 });
+  }
+
+  const lastUserMessage = [...messages].reverse().find((message) => message.role === "user");
+  if (lastUserMessage) {
+    const repeatedLimit = rateLimit(
+      `ai-chat-repeat:${getClientIp(req)}:${getMessageFingerprint(lastUserMessage.content)}`,
+      REPEATED_MESSAGE_LIMIT,
+      10 * 60 * 1000
+    );
+    if (!repeatedLimit.allowed) {
+      return NextResponse.json({ reply: REPEATED_BLOCK_REPLY, blocked: true });
+    }
   }
 
   const normalizedVisitorId = typeof visitorId === "string" && visitorId.startsWith("ai_")
