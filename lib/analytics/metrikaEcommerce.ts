@@ -36,6 +36,15 @@ function ymCall(...args: unknown[]) {
   }
 }
 
+export function trackMetrikaGoal(goal: string, params?: Record<string, unknown>) {
+  if (!goal) return;
+  if (params) {
+    ymCall(METRIKA_ID, "reachGoal", goal, params);
+  } else {
+    ymCall(METRIKA_ID, "reachGoal", goal);
+  }
+}
+
 interface PurchaseInput {
   orderId: string | number;
   items: EcommerceProductInput[];
@@ -78,7 +87,7 @@ export function trackEcommerceAddToCart(product: EcommerceProductInput, source: 
   if (typeof window === "undefined") return;
 
   // reachGoal fires regardless of ecommerce consent — used for goal counting
-  ymCall(METRIKA_ID, "reachGoal", "add_to_cart", {
+  trackMetrikaGoal("add_to_cart", {
     product_id: String(product.id),
     product_name: product.name,
     source,

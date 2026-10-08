@@ -3,6 +3,7 @@
 import { FormEvent, useState } from "react";
 import { X, PhoneCall, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
+import { trackMetrikaGoal } from "@/lib/analytics/metrikaEcommerce";
 
 type Props = { product: { id: number; name: string }; buttonClassName?: string };
 
@@ -43,6 +44,11 @@ export function QuickOrderModal({ product, buttonClassName }: Props) {
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Не удалось отправить заявку");
+      trackMetrikaGoal("quick_order", {
+        product_id: String(product.id),
+        product_name: product.name,
+        source: "quick_order",
+      });
       setSent(true);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Не удалось отправить заявку");
