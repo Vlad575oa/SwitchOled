@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="2080" height="760" viewBox="0 0 2080 760">
+  <defs><linearGradient id="redGlow" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e30620"/><stop offset="1" stop-color="#29292f"/></linearGradient></defs>
+  <rect width="2080" height="760" fill="#111114"/>
+  
+<g transform="translate(0 86)">
+  <rect width="1000" height="588" rx="30" fill="#29292f"/>
+  <circle cx="900" cy="92" r="8" fill="#e30620" opacity=".9"/><circle cx="930" cy="92" r="8" fill="#f5c400" opacity=".9"/><circle cx="960" cy="92" r="8" fill="#23a7db" opacity=".9"/>
+  <rect x="80" y="164" width="158" height="158" rx="42" fill="#e30620"/>
+  <text x="159" y="278" text-anchor="middle" fill="white" font-size="104" font-weight="800" font-family="Arial, Helvetica, sans-serif">G</text>
+  <text x="292" y="204" fill="#8b8b93" font-size="28" letter-spacing="10" font-weight="700" font-family="Arial, Helvetica, sans-serif">PREMIUM STORE</text>
+  <text x="292" y="290" fill="#f8f8f8" font-size="70" font-weight="800" letter-spacing="-2" font-family="Arial, Helvetica, sans-serif">GAMESHOP<tspan fill="#e30620">24</tspan></text>
+  <text x="82" y="420" fill="#f8f8f8" font-size="29" font-weight="700" font-family="Arial, Helvetica, sans-serif">NINTENDO SWITCH</text>
+  <text x="82" y="470" fill="#8b8b93" font-size="24" font-family="Arial, Helvetica, sans-serif">ПРОДАЖА  •  ПРОШИВКА  •  НАСТРОЙКА</text>
+  <path d="M82 518 H918" stroke="#e30620" stroke-width="5"/>
+  <text x="82" y="550" fill="#8b8b93" font-size="18" letter-spacing="3" font-family="Arial, Helvetica, sans-serif">gameshop24.ru</text>
+</g>
+<g transform="translate(1080 86)">
+  <rect width="1000" height="588" rx="30" fill="#29292f"/>
+  <path d="M0 0 H1000 V588 H0 Z" fill="url(#redGlow)" opacity=".16"/>
+  <text x="80" y="84" fill="#f8f8f8" font-size="25" font-weight="700" letter-spacing="4" font-family="Arial, Helvetica, sans-serif">КОНСОЛИ И СЕРВИС</text>
+  <text x="80" y="142" fill="#f8f8f8" font-size="40" font-weight="800" font-family="Arial, Helvetica, sans-serif">GAMESHOP<tspan fill="#e30620">24</tspan></text>
+  <rect x="80" y="190" width="300" height="300" rx="16" fill="white"/>
+  <image href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAaQAAAGkCAYAAAB+TFE1AAAAAklEQVR4AewaftIAAAoVSURBVO3BAQ5l220ksCqh979lTTbwPcBxcq3nJtkkG87Z3fyKtnm1u3nRNvxru5sXbfO13c3X2oZbJgBwwAQADpgAwAETADhgAgAHTADggAkAHDABgAMmAHDABAAOmADAARMAOGACAAdMAOCAP/k37G74Z23zS9rma23zK3Y3f4Pdzdfa5tXu5mu7G/5Z27yYAMABEwA4YAIAB0wA4IAJABwwAYADJgBwwAQADpgAwAETADhgAgAHTADggAkAHPAn/wFt80t2N7+ibb62u3nVNi92N19rm1+yu+GWtvklu5svTQDggAkAHDABgAMmAHDABAAOmADAARMAOGACAAdMAOCACQAcMAGAAyYAcMAEAA6YAMABfwL/prZ5tbv5Wtt8bXfzom1etc2L3c2rtoFXEwA4YAIAB0wA4IAJABwwAYADJgBwwAQADpgAwAETADhgAgAHTADggAkAHDABgAP+hP8qu5uvtc3X2uZru5u/Qdt8bXcDEwA4YAIAB0wA4IAJABwwAYADJgBwwAQADpgAwAETADhgAgAHTADggAkAHDABgAMmAHDAn/wH7G7477G7edU2L3Y3r9rmRdt8bXfzqm2+trt50Tavdje/YnfDP5sAwAETADhgAgAHTADggAkAHDABgAMmAHDABAAOmADAARMAOGACAAdMAOCACQAc8Cf/hrbhlrZ5tbt50Tavdjcv2ubV7uZF27za3bxom1e7mxdtw7/WNvzvmwDAARMAOGACAAdMAOCACQAcMAGAAyYAcMAEAA6YAMABEwA4YAIAB0wA4IAJABwwAYADuv8jAP8L2uZruxv+O0wA4IAJABwwAYADJgBwwAQADpgAwAETADhgAgAHTADggAkAHDABgAMmAHDABAAO+JMf0zZf2928aJuv7W6+1jZf2918rW2+trv5Wtt8bXfDv9Y2X9vdfGkCAAdMAOCACQAcMAGAAyYAcMAEAA6YAMABEwA4YAIAB0wA4IAJABwwAYADJgBwwAQADmiSzaPdzYu2ebW74Za2ebW7+Ru0zdd2N7+ibV7tbn5F27za3XytbV7sbl5MAOCACQAcMAGAAyYAcMAEAA6YAMABEwA4YAIAB0wA4IAJABwwAYADJgBwwAQADviTv0TbvNrdvGibV7ubF23zanfzK9rml+xuvtY2L3Y3X9vdvGob/lnbvNrdfGkCAAdMAOCACQAcMAGAAyYAcMAEAA6YAMABEwA4YAIAB0wA4IAJABwwAYADJgBwwAQADviT/4DdzS9pmxe7m1dt82J386ptXuxu+L/RNq92Ny/a5pfsbn5F27xqmxe7m6+1zYsJABwwAYADJgBwwAQADpgAwAETADhgAgAHTADggAkAHDABgAMmAHDABAAOmADAAU2y+dju5m/QNq92N7+ibfi/sbt51TYvdjdfa5tfsrv5Wtu82N28apsXu5sXEwA4YAIAB0wA4IAJABwwAYADJgBwwAQADpgAwAETADhgAgAHTADggAkAHDABgAMmAHBA93/kUdu82N3wr7XN13Y3/LO2+dru5mtt82p38yva5tXu5kXbvNrdvGibV7ubF23zYgIAB0wA4IAJABwwAYADJgBwwAQADpgAwAETADhgAgAHTADggAkAHDABgAMmAHBA93/kh7QN/2x387W2+dru5lXbvNjdfK1tXu1uvtY2X9vdfK1tXuxuXrXNi93N19rmxQQADpgAwAETADhgAgAHTADggAkAHDABgAMmAHDABAAOmADAARMAOGACAAdMAOCACQAc8Cf/hrb5FbubV23zYnfztbb5JbubF23zS9qGf7a7+SW7mxdt87W2+dru5sUEAA6YAMABEwA4YAIAB0wA4IAJABwwAYADJgBwwAQADpgAwAETADhgAgAHTADggCbZ/JDdzYu2ebW7edE2X9vd/A3a5tXu5kXbfG138zdom1e7m79B27zY3bxqmxe7mxcTADhgAgAHTADggAkAHDABgAMmAHDABAAOmADAARMAOGACAAdMAOCACQAcMAGAAyYAcECTbB7tbl60zavdzYu2+dru5m/QNq92N19rmxe7m1dt8yt2N6/a5sXu5lXbvNjdvGqbv8Hu5ksTADhgAgAHTADggAkAHDABgAMmAHDABAAOmADAARMAOGACAAdMAOCACQAcMAGAA5pkwzm7mxdt80t2N7+ibV7tbv4GbfNid/NL2ubF7uZv0DYvJgBwwAQADpgAwAETADhgAgAHTADggAkAHDABgAMmAHDABAAOmADAARMAOGACAAdMAOCAP+H/a3fDf4+24Z+1zS9pm6/tbl60zavdzYu2ebW7+dIEAA6YAMABEwA4YAIAB0wA4IAJABwwAYADJgBwwAQADpgAwAETADhgAgAHTADggD/5MbubX9E2v2R387W2ebG7ebW7+Ru0za9om1/SNvzvmwDAARMAOGACAAdMAOCACQAcMAGAAyYAcMAEAA6YAMABEwA4YAIAB0wA4IAJABwwAYADuv8j/Ndom1e7mxdt87Xdzau2ebG7edU2v2J387W2ebW7+RVt8zfY3byYAMABEwA4YAIAB0wA4IAJABwwAYADJgBwwAQADpgAwAETADhgAgAHTADggAkAHPCnbbhnd/O1tnmxu/la27za3fwNdjcv2uZv0Davdjdf2928aJtXu5svTQDggAkAHDABgAMmAHDABAAOmADAARMAOGACAAdMAOCACQAcMAGAAyYAcMAEAA6YAMABf/Jv2N3wz9rma7ubX9I2v6JtXu1uvtY2/LPdzS9pmxe7m1dt86UJABwwAYADJgBwwAQADpgAwAETADhgAgAHTADggAkAHDABgAMmAHDABAAOmADAAX/yH9A2v2R38yva5tXu5kXbvNrdvGibV23zYnfzqm1e7G6+trt51TZfa5u/we7ma7ubF23zYgIAB0wA4IAJABwwAYADJgBwwAQADpgAwAETADhgAgAHTADggAkAHDABgAMmAHDABAAO+BP4QbubV23zom2+1javdjdf2938Ddrmxe7mVdv8it3NiwkAHDABgAMmAHDABAAOmADAARMAOGACAAdMAOCACQAcMAGAAyYAcMAEAA6YAMABf8J/ld3Nq7b5Wtu82N38kt3N19rma7ubF23ztd3N19rma7ubV23zom1eTADggAkAHDABgAMmAHDABAAOmADAARMAOGACAAdMAOCACQAcMAGAAyYAcMAEAA6YAMABf/IfsLvhv8fu5mtt82p387W2+RW7m1dt82J387W2ebW7edE2r3Y3L9rm1e7mRdu8mADAARMAOGACAAdMAOCACQAcMAGAAyYAcMAEAA6YAMABEwA4YAIAB0wA4IAJABzQJBvO2d18rW1e7G6+1jZf2938DdqG/x67m18xAYADJgBwwAQADpgAwAETADhgAgAHTADggAkAHDABgAMmAHDABAAOmADAARMAOOD/AWhbDHgTMyUAAAAAAElFTkSuQmCC" x="105" y="215" width="250" height="250" preserveAspectRatio="none"/>
+  <text x="230" y="530" text-anchor="middle" fill="#8b8b93" font-size="20" font-family="Arial, Helvetica, sans-serif">QR НА САЙТ</text>
+  <g transform="translate(470 205)">
+    <text x="0" y="0" fill="#e30620" font-size="24" font-weight="800" font-family="Arial, Helvetica, sans-serif">СВЯЗАТЬСЯ</text>
+    <text x="0" y="62" fill="#f8f8f8" font-size="30" font-weight="700" font-family="Arial, Helvetica, sans-serif">+7 926 676 34 88</text>
+    <text x="0" y="122" fill="#f8f8f8" font-size="25" font-family="Arial, Helvetica, sans-serif">Telegram: @GameShopHelp</text>
+    <text x="0" y="195" fill="#e30620" font-size="24" font-weight="800" font-family="Arial, Helvetica, sans-serif">АДРЕС</text>
+    <text x="0" y="245" fill="#f8f8f8" font-size="24" font-family="Arial, Helvetica, sans-serif">Москва, Митинская 10,</text>
+    <text x="0" y="282" fill="#f8f8f8" font-size="24" font-family="Arial, Helvetica, sans-serif">корп. 1</text>
+    <path d="M0 330 H430" stroke="#e30620" stroke-width="4"/>
+    <text x="0" y="375" fill="#8b8b93" font-size="20" font-family="Arial, Helvetica, sans-serif">gameshop24.ru</text>
+  </g>
+</g>
+</svg>
