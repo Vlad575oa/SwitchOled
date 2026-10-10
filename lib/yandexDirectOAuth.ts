@@ -13,7 +13,7 @@ export async function startYandexDirectOAuth(request: Request) {
     return NextResponse.redirect(new URL("/admin/login", request.url));
   }
 
-  const clientId = process.env.YANDEX_DIRECT_CLIENT_ID?.trim();
+  const clientId = process.env.YANDEX_DIRECT_CLIENT_ID?.trim() || process.env.YANDEX_CLIENT_ID?.trim();
   if (!clientId) {
     return NextResponse.redirect(new URL("/admin/yandex?yandexError=missing_client_id", request.url));
   }
@@ -50,8 +50,8 @@ export async function handleYandexDirectOAuthCallback(request: Request) {
   }
 
   const code = url.searchParams.get("code");
-  const clientId = process.env.YANDEX_DIRECT_CLIENT_ID?.trim();
-  const clientSecret = process.env.YANDEX_DIRECT_CLIENT_SECRET?.trim();
+  const clientId = process.env.YANDEX_DIRECT_CLIENT_ID?.trim() || process.env.YANDEX_CLIENT_ID?.trim();
+  const clientSecret = process.env.YANDEX_DIRECT_CLIENT_SECRET?.trim() || process.env.YANDEX_CLIENT_SECRET?.trim();
   if (!code || !clientId || !clientSecret) {
     return NextResponse.redirect(new URL("/admin/yandex?yandexError=oauth_config", request.url));
   }

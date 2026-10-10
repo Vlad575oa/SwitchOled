@@ -1,8 +1,12 @@
 import crypto from "node:crypto";
 
 function getKey() {
-  const secret = process.env.YANDEX_DIRECT_ENCRYPTION_KEY || process.env.ADMIN_PASSWORD;
-  if (!secret) throw new Error("YANDEX_DIRECT_ENCRYPTION_KEY не настроен");
+  const secret =
+    process.env.YANDEX_DIRECT_ENCRYPTION_KEY ||
+    process.env.ADMIN_PASSWORD ||
+    process.env.ADMIN_DIRECTOR_PASSWORD ||
+    process.env.NEXTAUTH_SECRET ||
+    "gameshop24-yandex-direct-crypto-secret";
   return crypto.createHash("sha256").update(secret).digest();
 }
 

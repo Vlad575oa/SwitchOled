@@ -24,9 +24,12 @@ export type DirectQueryRow = {
 };
 
 async function getDirectConfig(accountId?: string) {
-  const account = accountId ? await prisma.yandexDirectAccount.findUnique({ where: { id: accountId } }) : null;
+  let account = accountId ? await prisma.yandexDirectAccount.findUnique({ where: { id: accountId } }) : null;
+  if (!account) {
+    account = await prisma.yandexDirectAccount.findFirst({ orderBy: { updatedAt: "desc" } });
+  }
   const token = account ? decryptYandexSecret(account.accessToken) : process.env.YANDEX_DIRECT_OAUTH_TOKEN?.trim();
-  if (!token) throw new Error("YANDEX_DIRECT_OAUTH_TOKEN не настроен");
+  if (!token) throw new Error("Рекламный аккаунт Яндекс Директа не подключен");
   return {
     token,
     clientLogin: account?.login || process.env.YANDEX_DIRECT_CLIENT_LOGIN?.trim(),
@@ -131,6 +134,8 @@ export async function getDirectSearchQueryReport(input: {
   return parseTsv(raw);
 }
 
-export function isDirectConfigured() {
-  return Boolean(process.env.YANDEX_DIRECT_OAUTH_TOKEN?.trim());
+export async function isDirectConfigured() {
+  if (process.env.YANDEX_DIRECT_OAUTH_TOKEN?.trim()) return true;
+  const count = await prisma.yandexDirectAccount.count();
+  return count > 0;
 }
