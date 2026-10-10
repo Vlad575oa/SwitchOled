@@ -9,6 +9,8 @@ const Schema = z.object({
   phone: z.string().trim().min(10).max(24).refine((value) => value.replace(/\D/g, "").length === 11, "Введите полный номер телефона"),
   productId: z.number().int().positive(),
   consent: z.literal(true),
+  yandexClientId: z.string().trim().max(120).optional(),
+  yclid: z.string().trim().max(255).optional(),
 });
 
 export async function POST(request: Request) {
@@ -31,6 +33,8 @@ export async function POST(request: Request) {
       phone: parsed.data.phone,
       address: "Быстрый заказ — адрес уточнить по телефону",
       comment: "Заявка «Заказать в 1 клик»",
+      yandexClientId: parsed.data.yandexClientId,
+      yclid: parsed.data.yclid,
       items: [{ productId: product.id, quantity: 1 }],
     });
     if (!result.success) return NextResponse.json({ error: result.error }, { status: 400 });

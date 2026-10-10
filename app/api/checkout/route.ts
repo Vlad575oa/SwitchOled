@@ -11,6 +11,8 @@ const CheckoutSchema = z.object({
   phone: z.string().trim().min(10).max(24),
   address: z.string().trim().min(6).max(240),
   comment: z.string().trim().max(500).optional(),
+  yandexClientId: z.string().trim().max(120).optional(),
+  yclid: z.string().trim().max(255).optional(),
   items: z.array(z.object({
     id: z.number().int().positive(),
     quantity: z.number().int().positive().max(20),
@@ -48,6 +50,8 @@ export async function POST(req: Request) {
       address,
       comment,
       userId,
+      yandexClientId: parsed.data.yandexClientId,
+      yclid: parsed.data.yclid,
       items: items.map((item) => ({
         productId: item.id,
         quantity: item.quantity,

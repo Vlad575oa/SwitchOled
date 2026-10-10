@@ -4,6 +4,7 @@ import { FormEvent, useState } from "react";
 import { X, PhoneCall, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import { trackMetrikaGoal } from "@/lib/analytics/metrikaEcommerce";
+import { getYandexAttribution } from "@/lib/analytics/yandexAttribution";
 
 type Props = { product: { id: number; name: string }; buttonClassName?: string };
 
@@ -37,10 +38,11 @@ export function QuickOrderModal({ product, buttonClassName }: Props) {
     setError("");
     setLoading(true);
     try {
+      const yandexAttribution = await getYandexAttribution();
       const response = await fetch("/api/quick-order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, phone, productId: product.id, consent }),
+        body: JSON.stringify({ name, phone, productId: product.id, consent, ...yandexAttribution }),
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Не удалось отправить заявку");

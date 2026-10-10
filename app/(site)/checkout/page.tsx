@@ -10,6 +10,7 @@ import { formatPrice } from "@/lib/utils";
 import { formatPhoneInput, hasValidPhoneLength } from "@/lib/phone";
 import { ShoppingBag, MapPin } from "lucide-react";
 import { toast } from "sonner";
+import { getYandexAttribution } from "@/lib/analytics/yandexAttribution";
 
 const PICKUP_ADDRESS = "Москва, Митинская 10, корп. 1 (м. Волоколамская)";
 
@@ -63,6 +64,7 @@ export default function CheckoutPage() {
     setLoading(true);
     setSubmitError(null);
     try {
+      const yandexAttribution = await getYandexAttribution();
       const response = await fetch("/api/checkout", {
         method: "POST",
         body: JSON.stringify({
@@ -72,6 +74,7 @@ export default function CheckoutPage() {
           comment: data.comment || undefined,
           items,
           totalAmount: finalTotal,
+          ...yandexAttribution,
         }),
       });
 

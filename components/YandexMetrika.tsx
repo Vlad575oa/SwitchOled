@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import { COOKIE_CONSENT_EVENT, hasAnalyticsConsent } from "@/lib/analytics/cookieConsent";
+import { rememberYandexAttribution } from "@/lib/analytics/yandexAttribution";
 
 declare global {
   interface Window {
@@ -38,6 +39,8 @@ export default function YandexMetrika() {
   }, [pathname]);
 
   useEffect(() => {
+    rememberYandexAttribution();
+
     const isProd = process.env.NODE_ENV === "production";
     const host = window.location.hostname;
     const ua = navigator.userAgent || "";

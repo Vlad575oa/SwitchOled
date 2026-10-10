@@ -18,6 +18,8 @@ interface CreateOrderInput {
   comment?: string | null;
   items: OrderItemInput[];
   userId?: number | null;
+  yandexClientId?: string | null;
+  yclid?: string | null;
 }
 
 export type ActionResponse<T> =
@@ -98,6 +100,8 @@ export async function createOrderAction(input: CreateOrderInput): Promise<Action
           phone: input.phone,
           address: input.address,
           comment: input.comment ?? null,
+          yandexClientId: input.yandexClientId ?? null,
+          yclid: input.yclid ?? null,
           totalAmount: serverTotal,
           status: "pending",
           userId: input.userId ?? null,

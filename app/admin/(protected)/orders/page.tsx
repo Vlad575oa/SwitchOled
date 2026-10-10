@@ -6,6 +6,7 @@ import { OrderDeleteButton } from "./OrderDeleteButton";
 import { CopyButton } from "@/components/ui/CopyButton";
 import { cookies } from "next/headers";
 import { ADMIN_COOKIE, verifyAdminSession } from "@/lib/adminSession";
+import { YandexConversionButton } from "./YandexConversionButton";
 
 export const dynamic = "force-dynamic";
 
@@ -38,7 +39,7 @@ export default async function OrdersPage() {
           <table className="w-full min-w-[900px] text-left">
             <thead>
               <tr className="border-b border-neutral-100">
-                {["#", "Клиент", "Телефон", "Адрес", "Комментарий", "Товары", "Сумма", "Статус", "Дата", ""].map((h) => (
+                {["#", "Клиент", "Телефон", "Адрес", "Комментарий", "Товары", "Сумма", "Статус", "Дата", "Яндекс", ""].map((h) => (
                   <th key={h} className="px-5 py-3.5 text-[9px] font-black uppercase tracking-widest text-neutral-400">{h}</th>
                 ))}
               </tr>
@@ -46,7 +47,7 @@ export default async function OrdersPage() {
             <tbody>
               {orders.length === 0 ? (
                 <tr>
-                  <td colSpan={10} className="px-5 py-20 text-center">
+                  <td colSpan={11} className="px-5 py-20 text-center">
                     <ShoppingBag size={40} className="mx-auto mb-3 text-neutral-200" />
                     <p className="text-neutral-400 font-bold text-sm">Заказов пока нет</p>
                   </td>
@@ -102,6 +103,14 @@ export default async function OrdersPage() {
                           hour: "2-digit",
                           minute: "2-digit",
                         })}
+                      </td>
+                      <td className="px-5 py-4">
+                        <YandexConversionButton
+                          orderId={order.id}
+                          status={order.status}
+                          sentAt={order.yandexConversionSentAt?.toISOString()}
+                          hasAttribution={Boolean(order.yandexClientId || order.yclid)}
+                        />
                       </td>
                       <td className="px-5 py-4">
                         {canDeleteOrders ? (

@@ -62,6 +62,10 @@ model Order {
   comment     String?
   source      String      @default("checkout")
   paymentId   String?     @unique
+  yandexClientId String?
+  yclid        String?
+  yandexConversionSentAt DateTime?
+  yandexConversionUploadId String?
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
   userId      Int?
