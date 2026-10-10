@@ -1,6 +1,6 @@
 import prisma from "@/lib/prisma";
 import Link from "next/link";
-import { Package, ShoppingBag, FileText, TrendingUp, Plus, ArrowRight, Clock, ShoppingCart, LayoutGrid } from "lucide-react";
+import { Package, ShoppingBag, FileText, TrendingUp, Plus, ArrowRight, Clock, ShoppingCart, LayoutGrid, Eye } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
 import { groupCartEventsByDate } from "@/lib/admin/cartEventStats";
 import { ClearCartEventsButton } from "./ClearCartEventsButton";
@@ -11,10 +11,11 @@ export default async function AdminDashboard() {
   let productsCount = 0, ordersCount = 0, postsCount = 0, recentOrders: any[] = [], monthRevenue = 0;
   let cartTotal = 0, cartGrid = 0, cartPage = 0;
   let topCartProducts: { productId: number; _count: { id: number }; name?: string }[] = [];
+  let topArticleViews: { path: string; _count: { id: number }; title: string }[] = [];
   let cartByDate: ReturnType<typeof groupCartEventsByDate> = [];
   let dbError = false;
   try {
-    const [pc, oc, bc, ro, revenue, cartAll, cartGridCount, cartPageCount, topCart, cartEvents] = await Promise.all([
+    const [pc, oc, bc, ro, revenue, cartAll, cartGridCount, cartPageCount, topCart, cartEvents, topArticles] = await Promise.all([
       prisma.product.count(),
       prisma.order.count(),
       prisma.post.count(),
@@ -33,6 +34,13 @@ export default async function AdminDashboard() {
         select: { createdAt: true, source: true },
         orderBy: { createdAt: "desc" },
       }),
+      prisma.pageView.groupBy({
+        by: ["path"],
+        where: { pageType: "article" },
+        _count: { id: true },
+        orderBy: { _count: { id: "desc" } },
+        take: 5,
+      }),
     ]);
     productsCount = pc; ordersCount = oc; postsCount = bc; recentOrders = ro;
     monthRevenue = revenue._sum.totalAmount ?? 0;
@@ -47,6 +55,17 @@ export default async function AdminDashboard() {
     });
     const nameMap = Object.fromEntries(products.map((p) => [p.id, p.name]));
     topCartProducts = topCart.map((r) => ({ ...r, name: nameMap[r.productId] }));
+
+    const articleSlugs = topArticles.map((item) => item.path.replace(/^\/blog\//, "").split("?")[0]);
+    const posts = await prisma.post.findMany({
+      where: { slug: { in: articleSlugs } },
+      select: { slug: true, title: true },
+    });
+    const titleMap = new Map(posts.map((post) => [post.slug, post.title]));
+    topArticleViews = topArticles.map((item) => {
+      const slug = articleSlugs.find((candidate) => `/blog/${candidate}` === item.path) ?? item.path;
+      return { ...item, title: titleMap.get(slug) ?? item.path };
+    });
   } catch {
     dbError = true;
   }
@@ -182,6 +201,46 @@ export default async function AdminDashboard() {
               <p className="text-center text-xs text-neutral-400 font-bold py-4">
                 Данных пока нет — статистика накапливается с момента деплоя
               </p>
+            )}
+          </div>
+        </div>
+
+        {/* Top blog articles */}
+        <div className="bg-white rounded-2xl border border-neutral-100 shadow-sm overflow-hidden">
+          <div className="px-6 py-4 border-b border-neutral-100 flex items-center gap-3">
+            <div className="w-8 h-8 rounded-xl bg-purple-50 flex items-center justify-center">
+              <Eye size={15} className="text-purple-500" />
+            </div>
+            <div>
+              <h2 className="text-sm font-black text-[#111827]">Топ-5 статей по переходам</h2>
+              <p className="text-[10px] text-neutral-400 font-bold">За всё время · собственная статистика сайта</p>
+            </div>
+          </div>
+          <div className="p-6">
+            {topArticleViews.length === 0 ? (
+              <p className="py-4 text-center text-xs text-neutral-400 font-bold">
+                Данные появятся после первых переходов на статьи
+              </p>
+            ) : (
+              <div className="space-y-3">
+                {topArticleViews.map((item, index) => (
+                  <div key={item.path} className="flex items-center gap-3">
+                    <span className="w-7 h-7 rounded-full bg-neutral-100 text-xs font-black text-neutral-500 flex items-center justify-center shrink-0">
+                      {index + 1}
+                    </span>
+                    <a
+                      href={item.path}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="flex-1 text-sm font-bold text-[#111827] truncate hover:text-primary transition-colors"
+                      title={item.title}
+                    >
+                      {item.title}
+                    </a>
+                    <span className="text-sm font-black text-primary shrink-0">{item._count.id} переходов</span>
+                  </div>
+                ))}
+              </div>
             )}
           </div>
         </div>

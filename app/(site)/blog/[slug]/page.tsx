@@ -11,6 +11,7 @@ import { Metadata } from "next";
 import { marked } from "marked";
 import { Prisma } from "@prisma/client";
 import { sanitizeRichHtml } from "@/lib/sanitizeHtml";
+import { PageViewTracker } from "@/components/PageViewTracker";
 
 const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || "https://gameshop24.ru").replace("://www.", "://");
 
@@ -176,6 +177,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
 
   return (
     <article className="bg-[#fcfcfd] min-h-screen pt-6 pb-20">
+      <PageViewTracker pageType="article" />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}

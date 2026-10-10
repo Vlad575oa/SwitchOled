@@ -3,7 +3,7 @@ import { z } from "zod";
 import prisma from "@/lib/prisma";
 
 const Schema = z.object({
-  pageType: z.enum(["home", "product"]),
+  pageType: z.enum(["home", "product", "article"]),
   path: z.string().trim().min(1).max(500),
   productId: z.number().int().positive().optional(),
 });
