@@ -1,10 +1,12 @@
+# syntax=docker/dockerfile:1.7
+
 FROM node:20-bookworm AS base
 
 FROM base AS deps
 WORKDIR /app
 COPY package.json package-lock.json ./
-COPY prisma ./prisma/
-RUN npm ci --ignore-scripts
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci --ignore-scripts
 
 FROM base AS builder
 WORKDIR /app
