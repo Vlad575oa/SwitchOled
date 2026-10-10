@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Контакты",
-  description: "Свяжитесь с нами в MAX, по телефону или email. Среднее время ответа — 15 минут.",
+  description: "Свяжитесь с нами в MAX, по телефону, email или через чат поддержки. Среднее время ответа — 15 минут.",
   alternates: { canonical: "/contacts" },
 };
 

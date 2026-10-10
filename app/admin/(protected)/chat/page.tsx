@@ -170,8 +170,8 @@ export default function AdminChatPage() {
     <>
       <header className="bg-white border-b border-neutral-100 px-8 py-5 flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-black text-[#111827]">Чат с пользователями</h1>
-          <p className="text-xs text-neutral-400 font-bold mt-0.5">{sessions.length} диалогов{totalUnread > 0 ? ` · ${totalUnread} непрочитанных` : ""}</p>
+          <h1 className="text-xl font-black text-[#111827]">Чат с поддержкой</h1>
+          <p className="text-xs text-neutral-400 font-bold mt-0.5">Заказы и вопросы клиентов · {sessions.length} диалогов{totalUnread > 0 ? ` · ${totalUnread} непрочитанных` : ""}</p>
         </div>
       </header>
 
@@ -267,6 +267,9 @@ export default function AdminChatPage() {
                         <div className="min-w-0">
                           <div className="flex items-center gap-1.5">
                             <p className="text-xs font-black text-[#111827] truncate">{s.name ?? `Гость ${s.visitorId.slice(0, 8)}`}</p>
+                            {s.visitorId.startsWith("support_") && (
+                              <span className="flex-shrink-0 text-[9px] font-black px-1.5 py-0.5 rounded-md bg-amber-100 text-amber-700">ПОДДЕРЖКА</span>
+                            )}
                             {s.visitorId.startsWith("ai_") && (
                               <span className="flex-shrink-0 text-[9px] font-black px-1.5 py-0.5 rounded-md bg-violet-100 text-violet-600">🤖 AI</span>
                             )}
@@ -315,6 +318,9 @@ export default function AdminChatPage() {
                 <div>
                   <div className="flex items-center gap-2">
                     <p className="text-sm font-black text-[#111827]">{selected?.name ?? `Гость ${selected?.visitorId.slice(0, 8)}`}</p>
+                    {selected?.visitorId.startsWith("support_") && (
+                      <span className="text-[10px] font-black px-2 py-0.5 rounded-lg bg-amber-100 text-amber-700">Поддержка</span>
+                    )}
                     {selected?.visitorId.startsWith("ai_") && (
                       <span className="text-[10px] font-black px-2 py-0.5 rounded-lg bg-violet-100 text-violet-600">🤖 ИИ-диалог</span>
                     )}

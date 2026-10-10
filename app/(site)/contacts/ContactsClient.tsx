@@ -6,6 +6,7 @@ import {
   Send, Building2, CheckCircle2
 } from "lucide-react";
 import { CONTACTS } from "@/lib/constants/contacts";
+import { SupportChat } from "@/components/SupportChat";
 
 interface ContactsData {
   phone?: string;
@@ -185,6 +186,26 @@ export default function ContactsClient({ data }: { data: ContactsData }) {
             Открыть в 2ГИС
           </a>
         </div>
+
+        <a
+          href="#support-chat"
+          className="mb-16 flex flex-col gap-5 rounded-[28px] border border-primary/15 bg-primary/[0.04] p-6 transition-all hover:border-primary/30 hover:bg-primary/[0.07] sm:flex-row sm:items-center sm:justify-between sm:p-8"
+        >
+          <div className="flex items-center gap-4">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary text-white shadow-lg shadow-primary/20">
+              <MessageCircle size={22} />
+            </div>
+            <div>
+              <p className="text-lg font-black text-secondary">Чат с поддержкой</p>
+              <p className="mt-1 text-sm font-bold text-neutral-400">Сделать заказ или задать любой вопрос менеджеру</p>
+            </div>
+          </div>
+          <span className="inline-flex items-center justify-center rounded-xl bg-secondary px-5 py-3 text-xs font-black uppercase tracking-wider text-white sm:shrink-0">
+            Открыть чат
+          </span>
+        </a>
+
+        <SupportChat className="mb-16" />
 
         {/* Form + hours */}
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-16">

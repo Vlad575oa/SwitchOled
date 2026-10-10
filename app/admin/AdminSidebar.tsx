@@ -32,7 +32,7 @@ const navItems = [
   { label: "Цвета", href: "/admin/colors", icon: Palette },
   { label: "Блог", href: "/admin/posts", icon: FileText },
   { label: "FAQ", href: "/admin/faq", icon: HelpCircle },
-  { label: "Чат", href: "/admin/chat", icon: MessageSquare, badge: true, badgeType: "chat" },
+  { label: "Поддержка", href: "/admin/chat", icon: MessageSquare, badge: true, badgeType: "chat" },
   { label: "Страницы", href: "/admin/pages", icon: Layers },
   { label: "Правовые", href: "/admin/legal", icon: Scale },
 ];

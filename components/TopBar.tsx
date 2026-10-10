@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { MapPin, ShieldCheck, Award, Truck } from "lucide-react";
+import { MapPin, ShieldCheck, Award, MessageCircle, Truck } from "lucide-react";
 import { MaxContactLink } from "./MaxContactLink";
 import { CONTACTS } from "@/lib/constants/contacts";
 
@@ -218,6 +218,13 @@ export const TopBar = ({ workingHours = "09:00 — 21:00" }: { workingHours?: st
 
           {/* Right: Action Buttons */}
           <div className="hidden lg:flex items-center gap-3 shrink-0">
+            <Link
+              href="/contacts#support-chat"
+              className="flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/5 px-2.5 py-1 text-primary transition-all hover:border-primary/50 hover:bg-primary/10 active:scale-95"
+            >
+              <MessageCircle size={13} className="shrink-0" />
+              <span className="text-[12px] xl:text-[13px] font-bold uppercase tracking-tight">Чат поддержки</span>
+            </Link>
             <Link
               href="/delivery"
               className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-900 border border-emerald-300 hover:bg-emerald-100 hover:border-emerald-400 transition-all active:scale-95"

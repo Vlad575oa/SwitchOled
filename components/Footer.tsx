@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Phone, Mail, MapPin } from "lucide-react";
+import { MessageCircle, Phone, Mail, MapPin } from "lucide-react";
 import { MaxContactLink } from "./MaxContactLink";
 import { CONTACTS } from "@/lib/constants/contacts";
 import { PWAInstallButton } from "./PWAInstallButton";
@@ -108,6 +108,15 @@ export const Footer = ({ workingHours = "09:00 — 21:00", currentYear }: Footer
                                 <div>
                                     <p className="text-[13px] xl:text-[14px] font-black text-white">{CONTACTS.email}</p>
                                     <p className="text-[10px] xl:text-[11px] font-bold text-neutral-400 uppercase tracking-widest">Email</p>
+                                </div>
+                            </Link>
+                            <Link href="/contacts#support-chat" className="flex items-center gap-3 group/item">
+                                <div className="w-8 h-8 rounded-lg bg-primary/15 flex items-center justify-center shrink-0 group-hover/item:bg-primary/25 transition-colors">
+                                    <MessageCircle size={13} className="text-primary" />
+                                </div>
+                                <div>
+                                    <p className="text-[13px] xl:text-[14px] font-black text-white group-hover/item:text-primary transition-colors">Чат с поддержкой</p>
+                                    <p className="text-[10px] xl:text-[11px] font-bold text-neutral-400 uppercase tracking-widest">Заказ или вопрос</p>
                                 </div>
                             </Link>
                             <div className="flex items-center gap-3">
