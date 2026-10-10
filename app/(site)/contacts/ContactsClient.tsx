@@ -1,9 +1,8 @@
 "use client";
 
-import { useState } from "react";
 import {
   MessageCircle, Phone, Mail, MapPin, Clock,
-  Send, Building2, CheckCircle2
+  Building2
 } from "lucide-react";
 import { CONTACTS } from "@/lib/constants/contacts";
 import { SupportChat } from "@/components/SupportChat";
@@ -23,21 +22,7 @@ interface ContactsData {
   partner_email?: string;
 }
 
-const topics = [
-  "Вопрос по заказу",
-  "Гарантийный случай",
-  "Возврат / обмен",
-  "Консультация по товару",
-  "Сотрудничество",
-  "Другое",
-];
-
 export default function ContactsClient({ data }: { data: ContactsData }) {
-  const [sent, setSent] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [form, setForm] = useState({ name: "", email: "", topic: "", message: "" });
-
   const phone = data.phone ?? CONTACTS.phoneDisplay;
   const email = data.email ?? CONTACTS.email;
   const address = data.address ?? CONTACTS.address;
@@ -94,28 +79,6 @@ export default function ContactsClient({ data }: { data: ContactsData }) {
 
   const partnerPhone = data.partner_phone ?? "8 (926) 676-34-88";
   const partnerEmail = data.partner_email ?? "partner@gameshop24.ru";
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSubmitting(true);
-    setError(null);
-    try {
-      const res = await fetch("/api/contacts", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
-      if (res.ok) {
-        setSent(true);
-      } else {
-        setError("Не удалось отправить сообщение. Попробуйте позже.");
-      }
-    } catch {
-      setError("Нет соединения с сервером.");
-    } finally {
-      setSubmitting(false);
-    }
-  };
 
   return (
     <div className="bg-white min-h-screen pt-6 pb-28">
@@ -207,92 +170,8 @@ export default function ContactsClient({ data }: { data: ContactsData }) {
 
         <SupportChat className="mb-16" />
 
-        {/* Form + hours */}
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-16">
-
-          {/* Form */}
-          <div className="lg:col-span-3 bg-neutral-50 rounded-[32px] p-8 md:p-10">
-            <h2 className="text-2xl font-black text-secondary mb-6">Напишите нам</h2>
-
-            {sent ? (
-              <div className="flex flex-col items-center justify-center gap-4 py-16 text-center">
-                <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center">
-                  <CheckCircle2 size={32} className="text-green-600" />
-                </div>
-                <h3 className="text-xl font-black text-secondary">Сообщение отправлено!</h3>
-                <p className="text-neutral-400 font-bold max-w-xs">Мы ответим в ближайшее время. Обычно — в течение 15 минут.</p>
-                <button
-                  onClick={() => { setSent(false); setForm({ name: "", email: "", topic: "", message: "" }); }}
-                  className="mt-2 text-primary font-black text-sm hover:underline"
-                >
-                  Отправить ещё одно
-                </button>
-              </div>
-            ) : (
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-[10px] font-black uppercase tracking-widest text-neutral-400 block mb-2">Ваше имя *</label>
-                    <input
-                      required
-                      value={form.name}
-                      onChange={(e) => setForm({ ...form, name: e.target.value })}
-                      placeholder="Иван"
-                      className="w-full bg-white border border-neutral-100 rounded-2xl px-5 py-3.5 text-sm font-bold text-secondary placeholder:text-neutral-200 focus:outline-none focus:border-primary/40 focus:ring-2 focus:ring-primary/10 transition-all"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-[10px] font-black uppercase tracking-widest text-neutral-400 block mb-2">Email *</label>
-                    <input
-                      required
-                      type="email"
-                      value={form.email}
-                      onChange={(e) => setForm({ ...form, email: e.target.value })}
-                      placeholder="ivan@mail.ru"
-                      className="w-full bg-white border border-neutral-100 rounded-2xl px-5 py-3.5 text-sm font-bold text-secondary placeholder:text-neutral-200 focus:outline-none focus:border-primary/40 focus:ring-2 focus:ring-primary/10 transition-all"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label className="text-[10px] font-black uppercase tracking-widest text-neutral-400 block mb-2">Тема *</label>
-                  <select
-                    required
-                    value={form.topic}
-                    onChange={(e) => setForm({ ...form, topic: e.target.value })}
-                    className="w-full bg-white border border-neutral-100 rounded-2xl px-5 py-3.5 text-sm font-bold text-secondary focus:outline-none focus:border-primary/40 focus:ring-2 focus:ring-primary/10 transition-all appearance-none"
-                  >
-                    <option value="" disabled>Выберите тему...</option>
-                    {topics.map((t) => <option key={t} value={t}>{t}</option>)}
-                  </select>
-                </div>
-                <div>
-                  <label className="text-[10px] font-black uppercase tracking-widest text-neutral-400 block mb-2">Сообщение *</label>
-                  <textarea
-                    required
-                    rows={4}
-                    value={form.message}
-                    onChange={(e) => setForm({ ...form, message: e.target.value })}
-                    placeholder="Опишите ваш вопрос..."
-                    className="w-full bg-white border border-neutral-100 rounded-2xl px-5 py-3.5 text-sm font-bold text-secondary placeholder:text-neutral-200 focus:outline-none focus:border-primary/40 focus:ring-2 focus:ring-primary/10 transition-all resize-none"
-                  />
-                </div>
-                {error && (
-                  <p className="text-xs font-bold text-red-500">{error}</p>
-                )}
-                <button
-                  type="submit"
-                  disabled={submitting}
-                  className="w-full flex items-center justify-center gap-3 px-8 py-4 bg-primary text-white rounded-2xl font-black uppercase tracking-widest text-sm hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-primary/20 disabled:opacity-60 disabled:pointer-events-none"
-                >
-                  <Send size={16} />
-                  {submitting ? "Отправка..." : "Отправить сообщение"}
-                </button>
-              </form>
-            )}
-          </div>
-
-          {/* Hours + details */}
-          <div className="lg:col-span-2 flex flex-col gap-5">
+        {/* Hours + details */}
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 mb-16">
             <div className="bg-neutral-50 rounded-[28px] p-8">
               <div className="flex items-center gap-3 mb-6">
                 <Clock size={18} className="text-primary" />
@@ -311,7 +190,7 @@ export default function ContactsClient({ data }: { data: ContactsData }) {
               </div>
             </div>
 
-            <div className="bg-neutral-50 rounded-[28px] p-8 flex-grow">
+            <div className="bg-neutral-50 rounded-[28px] p-8">
               <div className="flex items-center gap-3 mb-6">
                 <Building2 size={18} className="text-primary" />
                 <h3 className="font-black text-secondary">Реквизиты</h3>
@@ -337,7 +216,6 @@ export default function ContactsClient({ data }: { data: ContactsData }) {
                 </a>
               </div>
             </div>
-          </div>
         </div>
 
       </div>
