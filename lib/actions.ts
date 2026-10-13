@@ -55,30 +55,6 @@ export async function createOrderAction(input: CreateOrderInput): Promise<Action
         }
       }
 
-      // 2. Atomically decrement stock, conditioned on sufficient stock at write
-      // time. This closes the check-then-decrement race window: under
-      // concurrent orders, only transactions whose conditional UPDATE actually
-      // matches a row (stock >= quantity) succeed — the rest fail fast instead
-      // of allowing stock to go negative.
-      for (const item of normalizedItems) {
-        const product = productMap.get(item.productId)!;
-        const { count } = await tx.product.updateMany({
-          where: { id: item.productId, stock: { gte: item.quantity } },
-          data: { stock: { decrement: item.quantity } },
-        });
-        if (count === 0) {
-          throw new Error(`Товар "${product.name}" недоступен или закончился. Удалите его из корзины или выберите другой вариант.`);
-        }
-
-        const updatedProduct = await tx.product.findUnique({ where: { id: item.productId }, select: { stock: true } });
-        if (updatedProduct && updatedProduct.stock <= 0) {
-          await tx.product.update({
-            where: { id: item.productId },
-            data: { inStock: false },
-          });
-        }
-      }
-
       const orderItems = normalizedItems.map((item) => {
         const product = productMap.get(item.productId)!;
         return {

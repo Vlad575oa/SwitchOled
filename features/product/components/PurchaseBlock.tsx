@@ -176,11 +176,11 @@ export function PurchaseBlock({ product, variants = [], categorySlug }: Purchase
           <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
             <AddToCartButton
               product={selectedVariant}
-              className="w-full h-14 rounded-2xl text-base font-black bg-[#FF6B00] hover:bg-[#e65a00] border-none shadow-lg shadow-orange-500/20"
+              className="w-full h-14 rounded-2xl px-2.5 sm:px-3 text-sm font-black bg-[#FF6B00] hover:bg-[#e65a00] border-none shadow-lg shadow-orange-500/20 whitespace-nowrap"
             />
             <QuickOrderModal
               product={selectedVariant}
-              buttonClassName="w-full h-14 rounded-2xl border border-primary/25 bg-primary/5 px-2 text-sm font-black text-primary hover:bg-primary hover:text-white transition-colors"
+              buttonClassName="w-full h-14 rounded-2xl border border-primary/25 bg-primary/5 px-2 text-sm font-black text-primary hover:bg-primary hover:text-white transition-colors whitespace-nowrap"
             />
           </div>
           {getAvitoUrl(selectedVariant.slug) && (

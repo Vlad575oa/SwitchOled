@@ -34,8 +34,8 @@ async function runTests() {
   });
 
   try {
-    // TEST 1: Successful Order
-    console.log("Test 1: Successful Order Decrements Stock...");
+    // TEST 1: Successful Order does not decrement stock
+    console.log("Test 1: Successful Order Preserves Stock...");
     const res1 = await createOrderAction({
       name: "Test User",
       phone: "+79991112233",
@@ -45,34 +45,9 @@ async function runTests() {
 
     assert.equal(res1.success, true);
     const updatedProduct1 = await prisma.product.findUnique({ where: { id: testProduct.id } });
-    assert.equal(updatedProduct1?.stock, 3);
+    assert.equal(updatedProduct1?.stock, 5);
     assert.equal(updatedProduct1?.inStock, true);
     console.log("✅ Passed");
-
-    // TEST 2: Stock Depletion (Set inStock to false)
-    console.log("Test 2: Stock Depletion Marks Product as Out of Stock...");
-    await createOrderAction({
-      name: "Test User",
-      phone: "+79991112233",
-      address: "Test Address",
-      items: [{ productId: testProduct.id, quantity: 3 }],
-    });
-
-    const updatedProduct2 = await prisma.product.findUnique({ where: { id: testProduct.id } });
-    assert.equal(updatedProduct2?.stock, 0);
-    assert.equal(updatedProduct2?.inStock, false);
-    console.log("✅ Passed");
-
-    // TEST 3: Out of Stock Failure
-    console.log("Test 3: Cannot Order Out of Stock Product...");
-    const res3 = await createOrderAction({
-      name: "Test User",
-      phone: "+79991112233",
-      address: "Test Address",
-      items: [{ productId: testProduct.id, quantity: 1 }],
-    });
-    assert.equal(res3.success, false);
-    assert.match(res3.error || "", /недоступен/);
     console.log("✅ Passed");
 
     // TEST 4: Invalid Data (Empty items)

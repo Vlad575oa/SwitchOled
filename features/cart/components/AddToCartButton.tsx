@@ -7,6 +7,8 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { trackEcommerceAddToCart } from "@/lib/analytics/metrikaEcommerce";
 
+import { cn } from "@/lib/utils";
+
 interface AddToCartButtonProps {
   product: {
     id: number;
@@ -55,18 +57,19 @@ export const AddToCartButton = ({ product, className }: AddToCartButtonProps) =>
 
   return (
     <Button 
-      size="lg" 
       className={cn(
-        "rounded-2xl h-16 transition-all gap-3",
+        "rounded-2xl h-14 px-3 sm:px-4 transition-all gap-2 text-sm font-black whitespace-nowrap",
         isAdded && "bg-green-600 hover:bg-green-700",
         className
       )}
       onClick={handleAdd}
     >
-      {isAdded ? <Check size={20} /> : <ShoppingCart size={20} />}
-      <span>{isAdded ? "В корзине" : "В корзину"}</span>
+      {isAdded ? (
+        <Check size={18} className="shrink-0" />
+      ) : (
+        <ShoppingCart size={18} className="shrink-0" />
+      )}
+      <span className="whitespace-nowrap">{isAdded ? "В корзине" : "В корзину"}</span>
     </Button>
   );
 };
-
-import { cn } from "@/lib/utils";
