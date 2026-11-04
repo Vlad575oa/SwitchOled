@@ -12,7 +12,7 @@ interface ProductCardMediaProps {
 }
 
 export function ProductCardMedia({ images, name, eagerImage = false }: ProductCardMediaProps) {
-  const safeImages = images.length > 0 ? images : ["/placeholder.jpg"];
+  const safeImages = images.length > 0 ? images : ["/images/placeholder.webp"];
   const [activeIndex, setActiveIndex] = useState(0);
 
   const handleScroll = (event: UIEvent<HTMLDivElement>) => {

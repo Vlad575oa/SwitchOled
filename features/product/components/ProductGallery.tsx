@@ -66,7 +66,7 @@ export function ProductGallery({ images: initialImages, name }: ProductGalleryPr
         onTouchEnd={onTouchEnd}
       >
         <Image
-          src={images[activeIndex] || "/placeholder.jpg"}
+          src={images[activeIndex] || "/images/placeholder.webp"}
           alt={`${name} — Оригинальное фото в Gameshop24`}
           title={`${name} — Купить с гарантией 1 год`}
           fill

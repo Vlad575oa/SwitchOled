@@ -22,6 +22,10 @@ const nextConfig = {
       },
       {
         protocol: 'https',
+        hostname: 's3.twcstorage.ru',
+      },
+      {
+        protocol: 'https',
         hostname: 's3.ru1.storage.beget.cloud',
       },
     ],
@@ -54,9 +58,9 @@ const nextConfig = {
               "default-src 'self'",
               "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://mc.yandex.ru https://yastatic.net",
               "style-src 'self' 'unsafe-inline'",
-              "img-src 'self' data: blob: https://s3.ru1.storage.beget.cloud https://i.pravavar.cc https://mc.yandex.ru",
+              "img-src 'self' data: blob: https://s3.twcstorage.ru https://s3.ru1.storage.beget.cloud https://i.pravavar.cc https://mc.yandex.ru",
               "font-src 'self' data:",
-              "connect-src 'self' https://mc.yandex.ru https://s3.ru1.storage.beget.cloud",
+              "connect-src 'self' https://mc.yandex.ru https://s3.twcstorage.ru https://s3.ru1.storage.beget.cloud",
               "frame-src 'none'",
               "object-src 'none'",
               "base-uri 'self'",

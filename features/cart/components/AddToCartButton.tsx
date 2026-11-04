@@ -31,7 +31,7 @@ export const AddToCartButton = ({ product, className }: AddToCartButtonProps) =>
       name: product.name,
       slug: product.slug,
       price: product.price,
-      image: product.images?.[0] || "/placeholder.jpg",
+      image: product.images?.[0] || "/images/placeholder.webp",
       quantity: 1,
       inStock: product.inStock !== false,
     });

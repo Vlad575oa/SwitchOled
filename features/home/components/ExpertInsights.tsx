@@ -54,7 +54,7 @@ export async function ExpertInsights() {
           >
             <div className="aspect-video overflow-hidden relative">
               <Image
-                src={post.image || "/images/placeholder.jpg"}
+                src={post.image || "/images/placeholder.webp"}
                 alt={post.title}
                 fill
                 sizes="(max-width: 640px) calc(100vw - 48px), (max-width: 768px) calc(100vw - 48px), 33vw"

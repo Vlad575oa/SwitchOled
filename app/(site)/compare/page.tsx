@@ -251,7 +251,7 @@ export default function ComparePage() {
                           {/* Image */}
                           <Link href={`/catalog/${p.category?.slug}/${p.slug}`}>
                             <div className="relative h-24 mb-2">
-                              <Image src={p.images[0] || "/placeholder.jpg"} alt={p.name} fill className="object-contain" />
+                              <Image src={p.images[0] || "/images/placeholder.webp"} alt={p.name} fill className="object-contain" />
                             </div>
                           </Link>
 
@@ -269,7 +269,7 @@ export default function ComparePage() {
                           <div className="flex gap-1 mt-auto">
                             <button
                               onClick={() => {
-                                addToCart({ id: p.id, name: p.name, slug: p.slug, price: p.price, image: p.images[0] || "/placeholder.jpg", quantity: 1 });
+                                addToCart({ id: p.id, name: p.name, slug: p.slug, price: p.price, image: p.images[0] || "/images/placeholder.webp", quantity: 1 });
                                 trackEcommerceAddToCart({ id: p.id, name: p.name, price: p.price }, "catalog_grid");
                                 toast.success("Добавлено в корзину", { description: p.name, duration: 2000 });
                               }}
@@ -356,7 +356,7 @@ export default function ComparePage() {
                           </button>
                           <Link href={`/catalog/${p.category?.slug}/${p.slug}`}>
                             <div className="relative h-36 mb-3">
-                              <Image src={p.images[0] || "/placeholder.jpg"} alt={p.name} fill className="object-contain" />
+                              <Image src={p.images[0] || "/images/placeholder.webp"} alt={p.name} fill className="object-contain" />
                             </div>
                           </Link>
                           <Link href={`/catalog/${p.category?.slug}/${p.slug}`}>
@@ -368,7 +368,7 @@ export default function ComparePage() {
                           <div className="flex gap-2">
                             <button
                               onClick={() => {
-                                addToCart({ id: p.id, name: p.name, slug: p.slug, price: p.price, image: p.images[0] || "/placeholder.jpg", quantity: 1 });
+                                addToCart({ id: p.id, name: p.name, slug: p.slug, price: p.price, image: p.images[0] || "/images/placeholder.webp", quantity: 1 });
                                 trackEcommerceAddToCart({ id: p.id, name: p.name, price: p.price }, "catalog_grid");
                                 toast.success("Добавлено в корзину", { description: p.name, duration: 2000 });
                               }}
