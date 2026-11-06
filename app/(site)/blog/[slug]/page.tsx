@@ -12,6 +12,7 @@ import { marked } from "marked";
 import { Prisma } from "@prisma/client";
 import { sanitizeRichHtml } from "@/lib/sanitizeHtml";
 import { PageViewTracker } from "@/components/PageViewTracker";
+import { getBlogImage } from "@/lib/blogImages";
 
 const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || "https://gameshop24.ru").replace("://www.", "://");
 
@@ -76,6 +77,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 
   const title = post.metaTitle || post.title;
   const description = post.metaDesc || post.excerpt || "";
+  const image = getBlogImage(post);
 
   return {
     title,
@@ -86,7 +88,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     openGraph: {
       title,
       description,
-      images: post.image ? [{ url: post.image, width: 1200, height: 630, alt: post.title }] : [],
+      images: [{ url: image, width: 1200, height: 630, alt: post.title }],
       type: 'article',
       publishedTime: post.createdAt.toISOString(),
       modifiedTime: post.updatedAt.toISOString(),
@@ -95,7 +97,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       card: 'summary_large_image',
       title,
       description,
-      images: post.image ? [post.image] : [],
+      images: [image],
     }
   };
 }
@@ -112,12 +114,14 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
 
   if (!post) notFound();
 
+  const postImage = getBlogImage(post);
+
   const articleSchema = {
     "@context": "https://schema.org",
     "@type": "Article",
     "headline": post.title,
     "description": post.excerpt || "",
-    "image": post.image ? [post.image] : [],
+    "image": [postImage],
     "datePublished": post.createdAt.toISOString(),
     "dateModified": post.updatedAt.toISOString(),
     "author": {
@@ -240,7 +244,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
         <div className="max-w-6xl mx-auto mb-12 px-0 md:px-4">
           <div className="blog-hero relative aspect-video md:aspect-[21/9] md:rounded-[40px] overflow-hidden bg-neutral-900 shadow-2xl group transition-transform duration-700 hover:scale-[1.01]">
             <Image
-              src={post.image || "/images/blog/switch-2-complete-review.webp"}
+              src={postImage}
               fill
               priority
               sizes="(max-width: 768px) 100vw, 1200px"
@@ -250,10 +254,10 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
               aria-hidden="true"
             />
             <div className="blog-hero-layout">
-              <BlogHeroSide image={post.image || "/images/blog/switch-2-complete-review.webp"} side="left" />
+              <BlogHeroSide image={postImage} side="left" />
               <div className="blog-hero-main">
                 <Image
-                  src={post.image || "/images/blog/switch-2-complete-review.webp"}
+                  src={postImage}
                   fill
                   priority
                   sizes="(max-width: 768px) 100vw, 900px"
@@ -262,7 +266,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
                   alt={post.title}
                 />
               </div>
-              <BlogHeroSide image={post.image || "/images/blog/switch-2-complete-review.webp"} side="right" />
+              <BlogHeroSide image={postImage} side="right" />
             </div>
           </div>
         </div>
@@ -345,7 +349,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
                    <Link key={rel.slug} href={`/blog/${rel.slug}`} className="group flex flex-col">
                       <div className="relative aspect-video rounded-3xl overflow-hidden shadow-sm border border-neutral-100 mb-6">
                         <Image
-                          src={rel.image || "/images/blog/switch-2-complete-review.webp"}
+                          src={getBlogImage(rel)}
                           alt={rel.title}
                           fill
                           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 400px"

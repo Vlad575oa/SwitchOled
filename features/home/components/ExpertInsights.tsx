@@ -3,6 +3,7 @@ import Image from "next/image";
 import { ArrowRight, Clock } from "lucide-react";
 import { unstable_cache } from "next/cache";
 import prisma from "@/lib/prisma";
+import { getBlogImage } from "@/lib/blogImages";
 
 const getRecentPosts = unstable_cache(
   async () => {
@@ -54,7 +55,7 @@ export async function ExpertInsights() {
           >
             <div className="aspect-video overflow-hidden relative">
               <Image
-                src={post.image || "/images/placeholder.webp"}
+                src={getBlogImage(post)}
                 alt={post.title}
                 fill
                 sizes="(max-width: 640px) calc(100vw - 48px), (max-width: 768px) calc(100vw - 48px), 33vw"

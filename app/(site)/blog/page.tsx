@@ -5,6 +5,7 @@ import { ArrowRight, User, Clock } from "lucide-react";
 import { format } from "date-fns";
 import { Metadata } from "next";
 import { HomePageLink } from "@/components/HomePageLink";
+import { getBlogImage } from "@/lib/blogImages";
 
 export const revalidate = 1800;
 
@@ -95,7 +96,7 @@ export default async function BlogPage({
       "headline": post.title,
       "url": `${baseUrl}/blog/${post.slug}`,
       "datePublished": post.createdAt.toISOString(),
-      "image": post.image || "",
+      "image": getBlogImage(post),
     })),
   };
 
@@ -176,7 +177,7 @@ export default async function BlogPage({
                   >
                     {/* Full-bleed image */}
                     <Image
-                      src={post.image || "/images/blog/switch-2-complete-review.webp"}
+                      src={getBlogImage(post)}
                       alt={post.title}
                       fill
                       sizes="(max-width: 768px) 100vw, 100vw"
@@ -223,7 +224,7 @@ export default async function BlogPage({
                   {/* Image */}
                   <div className="relative overflow-hidden bg-neutral-100 aspect-[16/9]">
                     <Image
-                      src={post.image || "/images/blog/switch-2-complete-review.webp"}
+                      src={getBlogImage(post)}
                       alt={post.title}
                       fill
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"

@@ -1,5 +1,6 @@
 import { ImageResponse } from "next/og";
 import prisma from "@/lib/prisma";
+import { getBlogImage } from "@/lib/blogImages";
 
 export const runtime = "nodejs";
 export const revalidate = 3600;
@@ -18,7 +19,7 @@ export default async function OGImage({
 
   const title = post?.title ?? "Блог Gameshop24";
   const category = post?.category ?? "Материал";
-  const imageUrl = post?.image ?? null;
+  const imageUrl = post ? getBlogImage(post) : null;
   const date = post?.createdAt
     ? new Date(post.createdAt).toLocaleDateString("ru-RU", {
         day: "numeric",

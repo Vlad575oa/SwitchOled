@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { getBlogImage } from "@/lib/blogImages";
 
 export async function GET(req: Request) {
   try {
@@ -32,7 +33,7 @@ export async function GET(req: Request) {
       ...raw.filter((p) => !isNintendo(p)),
     ].slice(0, limit);
 
-    return NextResponse.json(posts);
+    return NextResponse.json(posts.map((post) => ({ ...post, image: getBlogImage(post) })));
   } catch {
     return NextResponse.json([]);
   }
