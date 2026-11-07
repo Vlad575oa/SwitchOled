@@ -1,6 +1,7 @@
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import crypto from "crypto";
 import sharp from "sharp";
+import { buildS3ObjectUrl } from "./imageUrls";
 
 const BUCKET = process.env.S3_BUCKET!;
 const ENDPOINT = process.env.S3_ENDPOINT!;
@@ -66,7 +67,7 @@ export async function uploadImagesToS3(
       })
     );
 
-    urls.push(`${PUBLIC_URL}/${BUCKET}/${key}`);
+    urls.push(buildS3ObjectUrl(PUBLIC_URL, BUCKET, key));
   }
 
   return urls;

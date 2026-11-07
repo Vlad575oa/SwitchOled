@@ -3,8 +3,16 @@ import { unstable_cache } from "next/cache";
 import prisma from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 import { getCategorySlugsVisibleInCatalog } from "@/lib/categoryVisibility";
+import { normalizeS3ObjectUrl } from "@/lib/imageUrls";
 
 const VISIBLE: Prisma.ProductWhereInput = { isVisible: { not: false } };
+
+const normalizeProductImages = <T extends { images: string[] }>(product: T): T => ({
+  ...product,
+  images: product.images.map((image) =>
+    normalizeS3ObjectUrl(image, process.env.S3_BUCKET ?? "")
+  ),
+});
 
 const safeQuery = async <T>(fn: () => Promise<T>, fallback: T): Promise<T> => {
   try {
@@ -170,13 +178,16 @@ export const getProducts = async (
   take: number
 ) => {
   return safeQuery(
-    () => prisma.product.findMany({
-      where: { AND: [VISIBLE, where] },
-      orderBy: [{ inStock: "desc" }, orderBy],
-      skip,
-      take,
-      include: { category: true },
-    }),
+    async () => {
+      const products = await prisma.product.findMany({
+        where: { AND: [VISIBLE, where] },
+        orderBy: [{ inStock: "desc" }, orderBy],
+        skip,
+        take,
+        include: { category: true },
+      });
+      return products.map(normalizeProductImages);
+    },
     []
   );
 };
@@ -204,40 +215,49 @@ export const getProductsNintendoFirst = async (
       return b.createdAt.getTime() - a.createdAt.getTime();
     });
 
-    return prioritized.slice(skip, skip + take);
+    return prioritized.slice(skip, skip + take).map(normalizeProductImages);
   }, []);
 };
 
 export const getProductBySlug = cache(async (slug: string) => {
   return safeQuery(
-    () => prisma.product.findFirst({
-      where: { slug, isVisible: { not: false } },
-      include: { category: true },
-    }),
+    async () => {
+      const product = await prisma.product.findFirst({
+        where: { slug, isVisible: { not: false } },
+        include: { category: true },
+      });
+      return product ? normalizeProductImages(product) : null;
+    },
     null
   );
 });
 
 export const getNewProducts = cache(async (take: number = 8) => {
   return safeQuery(
-    () => prisma.product.findMany({
-      where: { ...VISIBLE, isNew: true },
-      take,
-      orderBy: { createdAt: "desc" },
-      include: { category: true },
-    }),
+    async () => {
+      const products = await prisma.product.findMany({
+        where: { ...VISIBLE, isNew: true },
+        take,
+        orderBy: { createdAt: "desc" },
+        include: { category: true },
+      });
+      return products.map(normalizeProductImages);
+    },
     []
   );
 });
 
 export const getAllProducts = cache(async (take: number = 48) => {
   return safeQuery(
-    () => prisma.product.findMany({
-      where: VISIBLE,
-      take,
-      orderBy: { createdAt: "desc" },
-      include: { category: true },
-    }),
+    async () => {
+      const products = await prisma.product.findMany({
+        where: VISIBLE,
+        take,
+        orderBy: { createdAt: "desc" },
+        include: { category: true },
+      });
+      return products.map(normalizeProductImages);
+    },
     []
   );
 });
@@ -476,7 +496,9 @@ export const getProductVariants = cache(async (productId: number) => {
         priceOld: item.priceOld ?? null,
         showOtherPaymentPrice: item.showOtherPaymentPrice ?? false,
         inStock: item.inStock,
-        images: item.images,
+        images: item.images.map((image) =>
+          normalizeS3ObjectUrl(image, process.env.S3_BUCKET ?? "")
+        ),
         memory: readAttribute(item.attributes, ATTRIBUTE_MEMORY_KEYS),
         color: colorName,
         colorHex,

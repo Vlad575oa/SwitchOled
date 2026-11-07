@@ -3,6 +3,7 @@ import prisma from "@/lib/prisma";
 import { cookies } from "next/headers";
 import { ADMIN_COOKIE, verifyAdminSession } from "@/lib/adminSession";
 import { uploadImagesToS3 } from "@/lib/s3";
+import { normalizeS3ObjectUrl } from "@/lib/imageUrls";
 import { buildProductMetaDescription, buildProductMetaTitle } from "@/lib/seo";
 
 function normalizeSlug(s: string) {
@@ -73,7 +74,11 @@ export async function PUT(request: Request, { params }: { params: { id: string }
     const attributes = Object.fromEntries(attributesList.map((a) => [a.key, a.value]));
 
     const existingImagesRaw = fd.get("existingImages") as string;
-    const existingImages: string[] = existingImagesRaw ? JSON.parse(existingImagesRaw) : [];
+    const existingImages: string[] = existingImagesRaw
+      ? JSON.parse(existingImagesRaw).map((image: string) =>
+          normalizeS3ObjectUrl(image, process.env.S3_BUCKET ?? "")
+        )
+      : [];
 
     const newFiles = fd.getAll("images") as File[];
     const newUrls = newFiles.length ? await uploadImagesToS3(newFiles, "products") : [];

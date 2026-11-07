@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { normalizeS3ObjectUrl } from "@/lib/imageUrls";
 import { ProductCard } from "./ProductCard";
 
 interface RelatedProductsProps {
@@ -19,6 +20,13 @@ export async function RelatedProducts({ categorySlug, excludeId, limit = 6 }: Re
   } catch {
     return null;
   }
+
+  products = products.map((product) => ({
+    ...product,
+    images: product.images.map((image: string) =>
+      normalizeS3ObjectUrl(image, process.env.S3_BUCKET ?? "")
+    ),
+  }));
 
   if (!products.length) return null;
 

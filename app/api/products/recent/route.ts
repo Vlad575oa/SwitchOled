@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { normalizeS3ObjectUrl } from "@/lib/imageUrls";
 
 export async function GET(request: Request) {
   try {
@@ -23,7 +24,15 @@ export async function GET(request: Request) {
 
     // Return in the same order as requested IDs
     const map = new Map(products.map((p) => [p.id, p]));
-    const ordered = ids.map((id) => map.get(id)).filter(Boolean);
+    const ordered = ids
+      .map((id) => map.get(id))
+      .filter((product): product is NonNullable<typeof product> => Boolean(product))
+      .map((product) => ({
+        ...product,
+        images: product.images.map((image) =>
+          normalizeS3ObjectUrl(image, process.env.S3_BUCKET ?? "")
+        ),
+      }));
 
     return NextResponse.json(ordered);
   } catch {
