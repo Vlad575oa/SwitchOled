@@ -161,7 +161,7 @@ export default async function ProductPage({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
         />
         {/* Breadcrumbs */}
-        <nav className="flex items-center gap-2 text-[10px] font-bold text-neutral-300 uppercase tracking-widest mb-6 overflow-x-auto no-scrollbar whitespace-nowrap">
+        <nav className="product-mobile-gutter flex items-center gap-2 text-[10px] font-bold text-neutral-300 uppercase tracking-widest mb-6 overflow-x-auto no-scrollbar whitespace-nowrap">
           <Link href="/" className="hover:text-primary transition-colors">
             Главная
           </Link>
@@ -184,7 +184,7 @@ export default async function ProductPage({
         <TrackView productId={product.id} />
 
         {/* Product name */}
-        <div className="mb-4">
+        <div className="product-mobile-gutter mb-4">
           <h1 className="text-xl sm:text-2xl lg:text-4xl font-black text-secondary leading-tight mb-3 max-w-4xl">
             {product.name}
           </h1>

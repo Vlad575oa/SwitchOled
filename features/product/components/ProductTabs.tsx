@@ -88,7 +88,7 @@ export function ProductTabs({ description, attributes, productName }: ProductTab
   const totalAttrs = Object.values(groups).flat().length;
 
   return (
-    <div className="mt-12">
+    <div className="product-mobile-gutter mt-12">
       {/* Tab Navigation */}
       <div className="flex gap-1 mb-8 bg-neutral-100 p-1 rounded-2xl w-fit">
         {TABS.map((tab) => (

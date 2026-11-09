@@ -297,6 +297,10 @@ body {
 }
 
 @media (max-width: 767px) {
+  .product-mobile-gutter {
+    padding-inline: 0.75rem;
+  }
+
   .article-prose table {
     display: block;
     overflow-x: auto;
