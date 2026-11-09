@@ -124,6 +124,16 @@ const PLATFORMS: PlatformGroup[][] = [
         { label: "Подарочные карты", href: "/catalog/accessories?q=card" },
       ],
     },
+    {
+      title: "Игры",
+      href: "/catalog/games",
+      emoji: "🎮",
+      color: "bg-pink-50 text-pink-600",
+      links: [
+        { label: "Все игры", href: "/catalog/games" },
+        { label: "Предзаказы", href: "/catalog/games?status=onOrder", badge: "NEW" },
+      ],
+    },
   ],
 ];
 

@@ -6,7 +6,7 @@ import { CONTACTS } from "@/lib/constants/contacts";
 import { getPageContent } from "@/lib/getPageContent";
 import { getCategorySlugsWithProducts } from "@/lib/queries";
 import { unstable_cache } from "next/cache";
-import { ALL_QUICK_LINKS } from "@/lib/constants/quickLinks";
+import { getActiveQuickLinks } from "@/lib/constants/quickLinks";
 import dynamic from "next/dynamic";
 import { DeferredRender } from "@/components/DeferredRender";
 
@@ -68,8 +68,8 @@ export default async function SiteLayout({
     console.error("CATEGORY QUICK FILTERS ERROR:", error);
     return [] as string[];
   });
-  const activeQuickSlugs = (enabledSlugs.length > 0 ? enabledSlugs : ALL_QUICK_LINKS.map((l) => l.slug))
-    .filter((slug) => slug === "all" || slugsWithProducts.includes(slug));
+  const activeQuickSlugs = getActiveQuickLinks(enabledSlugs, slugsWithProducts)
+    .map((link) => link.slug);
 
   return (
     <>
