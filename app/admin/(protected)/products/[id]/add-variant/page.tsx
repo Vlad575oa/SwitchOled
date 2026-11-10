@@ -2,6 +2,7 @@ import prisma from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import { ProductForm } from "../../ProductForm";
 import type { VariantRow } from "../../ProductForm";
+import { AVITO_URL_KEY } from "@/lib/productAttributes";
 
 export const dynamic = "force-dynamic";
 
@@ -43,6 +44,7 @@ export default async function AddVariantPage({ params }: { params: { id: string 
       showOtherPaymentPrice: source.showOtherPaymentPrice ?? false,
       stock: String(source.stock),
       inStock: source.inStock,
+      avitoUrl: rawAttrs[AVITO_URL_KEY] ?? "",
       images: source.images,
       newImages: [],
       newPreviews: [],
@@ -59,6 +61,7 @@ export default async function AddVariantPage({ params }: { params: { id: string 
       showOtherPaymentPrice: false,
       stock: "10",
       inStock: true,
+      avitoUrl: "",
       images: [],
       newImages: [],
       newPreviews: [],
@@ -66,7 +69,7 @@ export default async function AddVariantPage({ params }: { params: { id: string 
   ];
 
   const sharedAttrs = Object.entries(rawAttrs)
-    .filter(([k]) => !STRIP_KEYS.has(k))
+    .filter(([k]) => !STRIP_KEYS.has(k) && k !== AVITO_URL_KEY)
     .map(([key, value]) => ({ key, value: String(value) }));
 
   return (

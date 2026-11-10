@@ -1,4 +1,5 @@
 import { cache } from "react";
+import { readAvitoUrl } from "@/lib/productAttributes";
 import { unstable_cache } from "next/cache";
 import prisma from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
@@ -357,6 +358,7 @@ export interface ProductVariantOption {
   memory: string | null;
   color: string | null;
   colorHex: string | null;
+  avitoUrl: string | null;
 }
 
 const ATTRIBUTE_MEMORY_KEYS = ["Накопитель", "Объём", "Объем"] as const;
@@ -502,6 +504,7 @@ export const getProductVariants = cache(async (productId: number) => {
         memory: readAttribute(item.attributes, ATTRIBUTE_MEMORY_KEYS),
         color: colorName,
         colorHex,
+        avitoUrl: readAvitoUrl(item.attributes),
       };
     });
 

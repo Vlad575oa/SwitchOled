@@ -8,6 +8,7 @@ import type { ProductVariantOption } from "@/lib/queries";
 import { useSelectedVariantStore } from "@/features/product/store/useSelectedVariantStore";
 import { QuickOrderModal } from "@/features/product/components/QuickOrderModal";
 import { getAvitoUrl } from "@/lib/avitoLinks";
+import { readAvitoUrl } from "@/lib/productAttributes";
 import { ExternalLink } from "lucide-react";
 
 interface PurchaseBlockProps {
@@ -22,6 +23,7 @@ interface PurchaseBlockProps {
     inStock: boolean;
     brand?: string | null;
     images: string[];
+    attributes?: unknown;
   };
   variants?: ProductVariantOption[];
   categorySlug?: string;
@@ -40,6 +42,7 @@ type VariantCardItem = {
   memory: string | null;
   color: string | null;
   colorHex: string | null;
+  avitoUrl: string | null;
 };
 
 const pickBestMatch = (
@@ -80,6 +83,7 @@ export function PurchaseBlock({ product, variants = [], categorySlug }: Purchase
           memory: null,
           color: null,
           colorHex: null,
+          avitoUrl: readAvitoUrl(product.attributes),
         },
       ];
     }
@@ -138,6 +142,8 @@ export function PurchaseBlock({ product, variants = [], categorySlug }: Purchase
     }
   };
 
+  const avitoUrl = selectedVariant.avitoUrl ?? getAvitoUrl(selectedVariant.slug);
+
   const onMemoryChange = (memory: string) => {
     const next = pickBestMatch(variantItems, memory, selectedVariant.color);
     applyVariant(next);
@@ -183,11 +189,11 @@ export function PurchaseBlock({ product, variants = [], categorySlug }: Purchase
               buttonClassName="w-full h-14 rounded-2xl border border-primary/25 bg-primary/5 px-2 text-sm font-black text-primary hover:bg-primary hover:text-white transition-colors whitespace-nowrap"
             />
           </div>
-          {getAvitoUrl(selectedVariant.slug) && (
+          {avitoUrl && (
             <a
-              href={getAvitoUrl(selectedVariant.slug) ?? "#"}
+              href={avitoUrl}
               target="_blank"
-              rel="noreferrer"
+              rel="noopener noreferrer nofollow"
               className="flex h-12 w-full items-center justify-center gap-2 rounded-2xl border border-[#00a86b]/25 bg-[#00a86b]/5 px-4 text-sm font-black text-[#008f5b] transition-colors hover:bg-[#00a86b] hover:text-white"
             >
               <ExternalLink size={17} />

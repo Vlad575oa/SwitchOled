@@ -3,8 +3,8 @@
 import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { buildProductSearchWhere } from "@/lib/search";
+import { AVITO_URL_KEY, VARIANT_GROUP_KEY } from "@/lib/productAttributes";
 
-const VARIANT_GROUP_KEY = "__variantGroupId";
 
 interface OrderItemInput {
   productId: number;
@@ -152,8 +152,9 @@ export async function duplicateProductAction(id: number): Promise<ActionResponse
     // Create duplicate (excluding ID and timestamps)
     const { id: _, createdAt, updatedAt, ...rest } = original as any;
     const originalAttrs = (original.attributes ?? {}) as Record<string, unknown>;
-    // Strip __variantGroupId so the copy groups by Platform like the rest of the family
-    const { [VARIANT_GROUP_KEY]: _vgId, ...attrsWithoutGroupId } = originalAttrs;
+    // Strip __variantGroupId so the copy groups by Platform like the rest of the family;
+    // the Avito link belongs to the original listing, so it is not copied either
+    const { [VARIANT_GROUP_KEY]: _vgId, [AVITO_URL_KEY]: _avito, ...attrsWithoutGroupId } = originalAttrs;
 
     const duplicate = await prisma.product.create({
       data: {

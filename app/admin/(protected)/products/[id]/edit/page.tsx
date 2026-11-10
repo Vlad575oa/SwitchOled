@@ -2,6 +2,7 @@ import prisma from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import { ProductForm } from "../../ProductForm";
 import type { VariantRow } from "../../ProductForm";
+import { AVITO_URL_KEY, VARIANT_GROUP_KEY } from "@/lib/productAttributes";
 
 export const dynamic = "force-dynamic";
 
@@ -11,7 +12,6 @@ const BUNDLE_MARKERS = [
   "hogwarts", "zelda", "mario", "spider",
 ];
 const MEMORY_KEYS = ["Накопитель", "Объём", "Объем"];
-const VARIANT_GROUP_KEY = "__variantGroupId";
 
 const isBase = (name: string, slug: string) => {
   const src = `${name} ${slug}`.toLowerCase();
@@ -75,6 +75,7 @@ export default async function EditProductPage({ params }: { params: { id: string
       showOtherPaymentPrice: s.showOtherPaymentPrice ?? false,
       stock: String(s.stock),
       inStock: s.inStock,
+      avitoUrl: a[AVITO_URL_KEY] ?? "",
       images: s.images,
       newImages: [],
       newPreviews: [],
@@ -84,7 +85,7 @@ export default async function EditProductPage({ params }: { params: { id: string
   // Shared attrs: strip Цвет / Накопитель keys (they live in variants table)
   const STRIP_KEYS = new Set(["Цвет", "Накопитель", "Объём", "Объем"]);
   const sharedAttrs = Object.entries(rawAttrs)
-    .filter(([k]) => !STRIP_KEYS.has(k))
+    .filter(([k]) => !STRIP_KEYS.has(k) && k !== AVITO_URL_KEY)
     .map(([key, value]) => ({ key, value: String(value) }));
 
   return (

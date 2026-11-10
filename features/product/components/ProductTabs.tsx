@@ -7,6 +7,7 @@ import {
   Zap, Shield, Package, Star
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { publicAttributes } from "@/lib/productAttributes";
 
 interface ProductTabsProps {
   description: string | null;
@@ -84,7 +85,7 @@ type TabId = typeof TABS[number]["id"];
 export function ProductTabs({ description, attributes, productName }: ProductTabsProps) {
   const [activeTab, setActiveTab] = useState<TabId>("description");
 
-  const groups = attributes ? groupAttributes(attributes) : {};
+  const groups = attributes ? groupAttributes(publicAttributes(attributes)) : {};
   const totalAttrs = Object.values(groups).flat().length;
 
   return (

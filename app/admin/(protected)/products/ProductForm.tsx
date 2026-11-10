@@ -7,6 +7,12 @@ import {
   ArrowLeft, Trash2, Plus, Save, Info, Tag, Settings2,
   Search, Layers, ChevronDown, Package, Upload,
 } from "lucide-react";
+import {
+  AVITO_URL_KEY,
+  VARIANT_GROUP_KEY,
+  isServiceAttr,
+  isValidAvitoUrl,
+} from "@/lib/productAttributes";
 
 interface Category {
   id: number;
@@ -33,6 +39,7 @@ export interface VariantRow {
   showOtherPaymentPrice: boolean;
   stock: string;
   inStock: boolean;
+  avitoUrl: string;
   images: string[];
   newImages: File[];
   newPreviews: string[];
@@ -70,11 +77,10 @@ const MEMORY_OPTIONS = [
 
 const COLOR_ATTR_KEYS = ["Цвет"];
 const MEMORY_ATTR_KEYS = ["Накопитель", "Объём", "Объем"];
-const VARIANT_GROUP_KEY = "__variantGroupId";
 
 const EMPTY_VARIANT: VariantRow = {
   name: "", slug: "", sku: "", color: "", colorHex: "", memory: "", price: "", priceOld: "", showOtherPaymentPrice: false, stock: "10",
-  inStock: true, images: [], newImages: [], newPreviews: [], _deleted: false,
+  inStock: true, avitoUrl: "", images: [], newImages: [], newPreviews: [], _deleted: false,
 };
 
 const inputCls = "w-full px-4 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-sm font-bold text-[#111827] placeholder:text-neutral-300 outline-none focus:bg-white focus:border-primary/30 transition-all";
@@ -243,6 +249,10 @@ export const ProductForm = ({
       setError("Slug обязателен для каждого варианта");
       return;
     }
+    if (active.some((v) => v.avitoUrl.trim() && !isValidAvitoUrl(v.avitoUrl.trim()))) {
+      setError("Ссылка на Авито должна вести на avito.ru");
+      return;
+    }
     const slugs = active.map((v) => normalizeSlug(v.slug));
     if (new Set(slugs).size !== slugs.length) {
       setError("Slug вариантов должны быть уникальными");
@@ -263,6 +273,7 @@ export const ProductForm = ({
     const sharedAttrsBase = attrsWithGroup.filter(
       (a) =>
         a.key &&
+        a.key !== AVITO_URL_KEY &&
         !COLOR_ATTR_KEYS.includes(a.key) &&
         !MEMORY_ATTR_KEYS.includes(a.key)
     );
@@ -280,6 +291,7 @@ export const ProductForm = ({
           ...sharedAttrsBase,
           ...(v.color ? [{ key: "Цвет", value: v.color }] : []),
           ...(v.memory ? [{ key: "Накопитель", value: v.memory }] : []),
+          ...(v.avitoUrl.trim() ? [{ key: AVITO_URL_KEY, value: v.avitoUrl.trim() }] : []),
         ];
 
         const data = new FormData();
@@ -342,6 +354,7 @@ export const ProductForm = ({
   };
 
   const activeVariants = variants.filter((v) => !v._deleted);
+  const hasVisibleAttrs = attrs.some((a) => !isServiceAttr(a.key));
   const pageTitle = isEdit
     ? activeVariants[0]?.name || "Редактирование товара"
     : isVariant
@@ -614,6 +627,20 @@ export const ProductForm = ({
                       </div>
                     </div>
 
+                    <div>
+                      <label className={labelCls}>Ссылка на Авито</label>
+                      <input
+                        type="url"
+                        className={inputCls}
+                        value={v.avitoUrl}
+                        onChange={(e) => setVariant(realIdx, "avitoUrl", e.target.value)}
+                        placeholder="https://www.avito.ru/moskva/igry_pristavki_i_programmy/..."
+                      />
+                      <p className="text-[10px] text-neutral-400 font-bold mt-1">
+                        Если заполнено, в карточке появится кнопка «Заказать через Авито»
+                      </p>
+                    </div>
+
                     {/* Images */}
                     <div>
                       <label className={labelCls}>Фотографии</label>
@@ -682,7 +709,7 @@ export const ProductForm = ({
             <p className="text-[10px] text-neutral-400 font-bold mb-4">
              Цвет, память и MicroSD указываются в вариантах выше. Здесь — всё остальное (Платформа, Процессор и т.д.)
             </p>
-            {attrs.length === 0 ? (
+            {!hasVisibleAttrs ? (
               <div className="border-2 border-dashed border-neutral-100 rounded-xl py-10 text-center">
                 <Settings2 size={28} className="mx-auto mb-2 text-neutral-200" />
                 <p className="text-xs text-neutral-400 font-bold">Нет характеристик</p>
@@ -696,7 +723,7 @@ export const ProductForm = ({
                   <p className="text-[9px] font-black uppercase tracking-widest text-neutral-400 px-1">Параметр</p>
                   <p className="text-[9px] font-black uppercase tracking-widest text-neutral-400 px-1">Значение</p>
                 </div>
-                {attrs.map((a, idx) => (
+                {attrs.map((a, idx) => isServiceAttr(a.key) ? null : (
                   <div key={idx} className="grid grid-cols-[1fr_1fr_32px] gap-2">
                     <input
                       value={a.key}

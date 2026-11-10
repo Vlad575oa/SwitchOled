@@ -10,6 +10,7 @@ import { useCartStore } from "@/features/cart/store/useCartStore";
 import { useWishlistStore } from "@/features/product/store/useWishlistStore";
 import { toast } from "sonner";
 import { trackEcommerceAddToCart } from "@/lib/analytics/metrikaEcommerce";
+import { publicAttributes } from "@/lib/productAttributes";
 
 interface Product {
   id: number;
@@ -66,7 +67,7 @@ export default function ComparePage() {
 
   // Dynamically collect all attribute keys
   const dynamicAttrKeys = Array.from(
-    new Set(products.flatMap((p) => Object.keys(p.attributes || {})))
+    new Set(products.flatMap((p) => Object.keys(publicAttributes(p.attributes))))
   );
 
   const allAttrs = [
