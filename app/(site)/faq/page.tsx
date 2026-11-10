@@ -40,6 +40,10 @@ export default async function FAQPage() {
           <HomePageLink />
         </div>
 
+        <h1 className="text-4xl md:text-5xl font-black text-secondary tracking-tight mb-10">
+          Вопросы и ответы
+        </h1>
+
 
         {/* Categories + Accordion (client) */}
         <FAQClient faqs={faqs} />

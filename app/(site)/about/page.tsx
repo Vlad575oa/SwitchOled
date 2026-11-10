@@ -11,7 +11,7 @@ import { HomePageLink } from "@/components/HomePageLink";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "О компании",
+  title: { absolute: "О компании Gameshop24 — прошитые консоли с гарантией" },
   description: "Gameshop24 — магазин для тех, кто живёт играми. Основан в 2017 году командой геймеров. Только оригинальная техника, гарантия и поддержка 24/7.",
   alternates: { canonical: "/about" },
 };

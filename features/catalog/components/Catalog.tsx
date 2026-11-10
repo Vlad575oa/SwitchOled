@@ -29,6 +29,8 @@ interface CatalogProps {
   searchParams: Record<string, string | undefined>;
   pageSize?: number;
   gridClassName?: string;
+  /** h2 when the page already has its own h1 (home page, smart filter pages). */
+  headingLevel?: "h1" | "h2";
 }
 
 export async function Catalog({
@@ -36,7 +38,9 @@ export async function Catalog({
   searchParams,
   pageSize = 12,
   gridClassName = "grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-[3px] sm:gap-4",
+  headingLevel = "h1",
 }: CatalogProps) {
+  const Heading = headingLevel;
   const { q, priceMin, priceMax, color, memory, status, sort, page = "1" } = searchParams;
   const skip = (parseInt(page) - 1) * pageSize;
   let categorySlugs =
@@ -200,9 +204,9 @@ export async function Catalog({
       <div className="flex-1 min-w-0">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
           <div>
-            <h1 className="text-3xl font-black text-secondary leading-tight">
+            <Heading className="text-3xl font-black text-secondary leading-tight">
               {categoryData?.name ?? "Каталог"}
-            </h1>
+            </Heading>
             <p className="text-xs text-neutral-400 font-bold uppercase tracking-wider mt-1">
               {totalCount} товаров найдено
             </p>

@@ -26,6 +26,7 @@ export const metadata: Metadata = {
     description: "Прошитые Nintendo Switch OLED и Lite с гарантией 1 год. 45+ конфигураций от 27 000 ₽. 100+ игр в комплекте.",
     url: "/",
     type: "website",
+    images: [{ url: "/og-default.jpg", width: 1200, height: 630, alt: "Прошитые Nintendo Switch — Gameshop24" }],
   },
 };
 
@@ -45,6 +46,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
             category="all"
             searchParams={searchParams}
             pageSize={8}
+            headingLevel="h2"
             gridClassName="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-[3px] sm:gap-4"
           />
         </Suspense>

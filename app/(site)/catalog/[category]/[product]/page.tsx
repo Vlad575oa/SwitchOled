@@ -13,7 +13,7 @@ import { MobileStickyCart } from "@/features/product/components/MobileStickyCart
 import { RelatedProducts } from "@/features/product/components/RelatedProducts";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
-import { buildProductMetaDescription, resolveProductMetaTitle } from "@/lib/seo";
+import { brandedTitle, buildProductMetaDescription, resolveProductMetaTitle } from "@/lib/seo";
 import { getCatalogSmartFilter } from "@/lib/catalogSmartFilters";
 import { sanitizeRichHtml } from "@/lib/sanitizeHtml";
 import { PageViewTracker } from "@/components/PageViewTracker";
@@ -33,8 +33,8 @@ export async function generateMetadata({
     const categoryName = params.category === "all" ? "игровые консоли" : category?.name;
     const title = `${smartFilter.title} ${categoryName ?? "товары"} — купить`;
     return {
-      title,
-      description: smartFilter.desc,
+      title: brandedTitle(title),
+      description: smartFilter.metaDesc(categoryName ?? "товары"),
       alternates: { canonical: `${baseUrl}/catalog/${params.category}/${params.product}` },
     };
   }
@@ -57,7 +57,7 @@ export async function generateMetadata({
     : undefined;
 
   return {
-    title,
+    title: brandedTitle(title),
     description,
     alternates: { canonical: `${baseUrl}/catalog/${product.category.slug}/${product.slug}` },
     openGraph: {
@@ -86,6 +86,8 @@ export default async function ProductPage({
   const smartFilter = getCatalogSmartFilter(params.category, params.product);
   
   if (smartFilter) {
+    const smartFilterCategory = await getCategoryBySlug(params.category);
+    const smartFilterCategoryName = params.category === "all" ? "" : smartFilterCategory?.name ?? "";
     const combinedParams = { ...searchParams };
     if (smartFilter.q) combinedParams.q = smartFilter.q;
     if (smartFilter.status) combinedParams.status = smartFilter.status;
@@ -100,10 +102,12 @@ export default async function ProductPage({
               <ChevronRight size={10} />
               <Link href={`/catalog/${params.category}`} className="hover:text-primary transition-colors">{params.category}</Link>
             </nav>
-            <h1 className="text-4xl font-black text-secondary uppercase italic">{smartFilter.title}</h1>
+            <h1 className="text-4xl font-black text-secondary uppercase italic">
+              {smartFilter.title} {smartFilterCategoryName}
+            </h1>
             <p className="text-neutral-400 font-medium mt-2">{smartFilter.desc}</p>
          </div>
-         <Catalog category={params.category} searchParams={combinedParams} />
+         <Catalog category={params.category} searchParams={combinedParams} headingLevel="h2" />
       </main>
     );
   }

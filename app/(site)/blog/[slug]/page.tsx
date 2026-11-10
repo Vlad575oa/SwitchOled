@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { brandedTitle } from "@/lib/seo";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { format } from "date-fns";
@@ -80,7 +81,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   const image = getBlogImage(post);
 
   return {
-    title,
+    title: brandedTitle(title),
     description,
     alternates: {
       canonical: `${baseUrl}/blog/${slug}`
