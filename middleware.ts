@@ -80,6 +80,11 @@ export async function middleware(request: NextRequest) {
 
   // /admin routes — protection handled by layout (Node.js runtime, not Edge)
   // /api/admin routes — protection handled inside each route handler
+  if (normalizedPath === '/admin' || normalizedPath.startsWith('/admin/')) {
+    const response = withSecurityHeaders(NextResponse.next());
+    response.headers.set('X-Robots-Tag', 'noindex, nofollow');
+    return response;
+  }
 
   // Protect /account routes — server-side redirect to login
   if (normalizedPath.startsWith('/account')) {
