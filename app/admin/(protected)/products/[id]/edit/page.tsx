@@ -76,6 +76,8 @@ export default async function EditProductPage({ params }: { params: { id: string
       stock: String(s.stock),
       inStock: s.inStock,
       avitoUrl: a[AVITO_URL_KEY] ?? "",
+      metaTitle: s.metaTitle ?? "",
+      metaDesc: s.metaDesc ?? "",
       images: s.images,
       newImages: [],
       newPreviews: [],
@@ -99,8 +101,6 @@ export default async function EditProductPage({ params }: { params: { id: string
         categoryId: String(product.categoryId),
         isNew: product.isNew,
         isSale: product.isSale,
-        metaTitle: product.metaTitle ?? "",
-        metaDesc: product.metaDesc ?? "",
       }}
       initialVariants={initialVariants}
     />

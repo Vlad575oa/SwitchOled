@@ -45,6 +45,8 @@ export default async function AddVariantPage({ params }: { params: { id: string 
       stock: String(source.stock),
       inStock: source.inStock,
       avitoUrl: rawAttrs[AVITO_URL_KEY] ?? "",
+      metaTitle: source.metaTitle ?? "",
+      metaDesc: source.metaDesc ?? "",
       images: source.images,
       newImages: [],
       newPreviews: [],
@@ -62,6 +64,8 @@ export default async function AddVariantPage({ params }: { params: { id: string 
       stock: "10",
       inStock: true,
       avitoUrl: "",
+      metaTitle: "",
+      metaDesc: "",
       images: [],
       newImages: [],
       newPreviews: [],
@@ -83,8 +87,6 @@ export default async function AddVariantPage({ params }: { params: { id: string 
         categoryId: String(source.categoryId),
         isNew: source.isNew,
         isSale: source.isSale,
-        metaTitle: "",
-        metaDesc: "",
       }}
       initialVariants={initialVariants}
     />

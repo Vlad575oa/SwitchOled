@@ -40,6 +40,8 @@ export interface VariantRow {
   stock: string;
   inStock: boolean;
   avitoUrl: string;
+  metaTitle: string;
+  metaDesc: string;
   images: string[];
   newImages: File[];
   newPreviews: string[];
@@ -52,8 +54,6 @@ interface SharedForm {
   categoryId: string;
   isNew: boolean;
   isSale: boolean;
-  metaTitle: string;
-  metaDesc: string;
 }
 
 interface ColorOption {
@@ -80,7 +80,7 @@ const MEMORY_ATTR_KEYS = ["Накопитель", "Объём", "Объем"];
 
 const EMPTY_VARIANT: VariantRow = {
   name: "", slug: "", sku: "", color: "", colorHex: "", memory: "", price: "", priceOld: "", showOtherPaymentPrice: false, stock: "10",
-  inStock: true, avitoUrl: "", images: [], newImages: [], newPreviews: [], _deleted: false,
+  inStock: true, avitoUrl: "", metaTitle: "", metaDesc: "", images: [], newImages: [], newPreviews: [], _deleted: false,
 };
 
 const inputCls = "w-full px-4 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-sm font-bold text-[#111827] placeholder:text-neutral-300 outline-none focus:bg-white focus:border-primary/30 transition-all";
@@ -135,8 +135,6 @@ export const ProductForm = ({
     categoryId: initial.categoryId ?? "",
     isNew: initial.isNew ?? false,
     isSale: initial.isSale ?? false,
-    metaTitle: initial.metaTitle ?? "",
-    metaDesc: initial.metaDesc ?? "",
   });
 
   const [attrs, setAttrs] = useState<Attribute[]>(initialAttrs ?? []);
@@ -309,8 +307,9 @@ export const ProductForm = ({
         data.append("isNew", String(form.isNew));
         data.append("isSale", String(form.isSale));
         data.append("stock", v.stock);
-        data.append("metaTitle", form.metaTitle);
-        data.append("metaDesc", form.metaDesc);
+        // SEO is per variant: a shared value would give every variant the same title
+        data.append("metaTitle", v.metaTitle.trim());
+        data.append("metaDesc", v.metaDesc.trim());
         data.append("attributes", JSON.stringify(variantAttrs));
         data.append("slug", normalizeSlug(v.slug));
 
@@ -837,30 +836,43 @@ export const ProductForm = ({
             </button>
           </div>
           {showSEO && (
-            <section className="bg-[#111827] rounded-2xl p-6 space-y-4">
-              <div>
-                <label className="block text-[10px] font-black uppercase tracking-widest text-neutral-500 mb-1.5">
-                  Meta Title
-                </label>
-                <input
-                  className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-sm font-bold text-white placeholder:text-neutral-600 outline-none focus:border-white/20"
-                  value={form.metaTitle}
-                  onChange={(e) => set("metaTitle", e.target.value)}
-                  placeholder="SEO заголовок"
-                />
-              </div>
-              <div>
-                <label className="block text-[10px] font-black uppercase tracking-widest text-neutral-500 mb-1.5">
-                  Meta Description
-                </label>
-                <textarea
-                  className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-sm font-bold text-white placeholder:text-neutral-600 outline-none resize-none"
-                  rows={4}
-                  value={form.metaDesc}
-                  onChange={(e) => set("metaDesc", e.target.value)}
-                  placeholder="Краткое SEO описание"
-                />
-              </div>
+            <section className="bg-[#111827] rounded-2xl p-6 space-y-6">
+              <p className="text-[10px] font-bold text-neutral-500">
+                Заполняется для каждого варианта отдельно. Пустое поле — заголовок и описание соберутся из названия варианта.
+              </p>
+              {activeVariants.map((v, displayIdx) => {
+                const realIdx = variants.indexOf(v);
+                return (
+                  <div key={realIdx} className="space-y-3">
+                    <p className="text-xs font-black text-white">
+                      Вариант {displayIdx + 1}{v.name ? `: ${v.name}` : ""}
+                    </p>
+                    <div>
+                      <label className="block text-[10px] font-black uppercase tracking-widest text-neutral-500 mb-1.5">
+                        Meta Title
+                      </label>
+                      <input
+                        className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-sm font-bold text-white placeholder:text-neutral-600 outline-none focus:border-white/20"
+                        value={v.metaTitle}
+                        onChange={(e) => setVariant(realIdx, "metaTitle", e.target.value)}
+                        placeholder="SEO заголовок"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-black uppercase tracking-widest text-neutral-500 mb-1.5">
+                        Meta Description
+                      </label>
+                      <textarea
+                        className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-sm font-bold text-white placeholder:text-neutral-600 outline-none resize-none"
+                        rows={3}
+                        value={v.metaDesc}
+                        onChange={(e) => setVariant(realIdx, "metaDesc", e.target.value)}
+                        placeholder="Краткое SEO описание"
+                      />
+                    </div>
+                  </div>
+                );
+              })}
             </section>
           )}
 
