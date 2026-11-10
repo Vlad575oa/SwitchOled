@@ -24,6 +24,18 @@ const NINTENDO_SWITCH_CARD_PRODUCT_IDS = [
   197, 45, 56, 63, 65,
 ];
 
+// Every visible game (including subcategories of /catalog/games) joins the feed automatically.
+const GAMES_CATEGORY_SLUG = "games";
+
 export async function GET() {
-  return buildYmlFeedResponse({ id: { in: NINTENDO_SWITCH_CARD_PRODUCT_IDS } });
+  return buildYmlFeedResponse({
+    OR: [
+      { id: { in: NINTENDO_SWITCH_CARD_PRODUCT_IDS } },
+      {
+        category: {
+          OR: [{ slug: GAMES_CATEGORY_SLUG }, { parent: { slug: GAMES_CATEGORY_SLUG } }],
+        },
+      },
+    ],
+  });
 }
