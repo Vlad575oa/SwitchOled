@@ -1,14 +1,14 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import prisma from "@/lib/prisma";
-import { SESSION_COOKIE } from "@/lib/auth";
+import { SESSION_COOKIE, sessionIdsForToken } from "@/lib/auth";
 
 async function resolveUserId() {
   const token = cookies().get(SESSION_COOKIE)?.value;
   if (!token) return null;
 
-  const session = await prisma.session.findUnique({
-    where: { id: token },
+  const session = await prisma.session.findFirst({
+    where: { id: { in: sessionIdsForToken(token) } },
     select: { userId: true, expires: true },
   });
 

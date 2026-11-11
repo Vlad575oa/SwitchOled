@@ -4,7 +4,7 @@ import { z } from "zod";
 import { buildRateLimitKey, rateLimit } from "@/lib/rateLimit";
 import { cookies } from "next/headers";
 import prisma from "@/lib/prisma";
-import { SESSION_COOKIE } from "@/lib/auth";
+import { SESSION_COOKIE, sessionIdsForToken } from "@/lib/auth";
 
 const CheckoutSchema = z.object({
   name: z.string().trim().min(2).max(80),
@@ -34,8 +34,8 @@ export async function POST(req: Request) {
     let userId: number | null = null;
 
     if (sessionToken) {
-      const session = await prisma.session.findUnique({
-        where: { id: sessionToken },
+      const session = await prisma.session.findFirst({
+        where: { id: { in: sessionIdsForToken(sessionToken) } },
         select: { userId: true, expires: true },
       });
       if (session && session.expires > new Date()) {

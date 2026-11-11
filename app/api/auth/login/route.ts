@@ -5,6 +5,7 @@ import { z } from "zod";
 import {
   verifyPassword,
   generateSessionToken,
+  hashSessionToken,
   getSessionExpiry,
   SESSION_COOKIE,
 } from "@/lib/auth";
@@ -55,10 +56,11 @@ export async function POST(request: Request) {
     }
 
     const token = generateSessionToken();
+    const tokenHash = hashSessionToken(token);
     await prisma.session.create({
       data: {
-        id: token,
-        sessionToken: token,
+        id: tokenHash,
+        sessionToken: tokenHash,
         userId: user.id,
         expires: getSessionExpiry(),
       },
