@@ -40,17 +40,6 @@ export function hashSessionToken(token: string): string {
   return crypto.createHmac("sha256", secret).update(token).digest("hex");
 }
 
-// Session ids to look up for a cookie token. The raw token is a transitional
-// fallback for sessions created before hashing (deployed 2026-11-11);
-// they expire within 30 days, so drop the fallback after 2026-12-12.
-export function sessionIdsForToken(token: string): string[] {
-  const ids = [token];
-  if (process.env.NEXTAUTH_SECRET) {
-    ids.unshift(hashSessionToken(token));
-  }
-  return ids;
-}
-
 export function getSessionExpiry(): Date {
   const date = new Date();
   date.setDate(date.getDate() + 30);

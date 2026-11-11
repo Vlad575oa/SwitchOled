@@ -1,15 +1,15 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import prisma from "@/lib/prisma";
-import { SESSION_COOKIE, sessionIdsForToken } from "@/lib/auth";
+import { SESSION_COOKIE, hashSessionToken } from "@/lib/auth";
 
 export async function GET() {
   try {
     const token = cookies().get(SESSION_COOKIE)?.value;
     if (!token) return NextResponse.json([], { status: 401 });
 
-    const session = await prisma.session.findFirst({
-      where: { id: { in: sessionIdsForToken(token) } },
+    const session = await prisma.session.findUnique({
+      where: { id: hashSessionToken(token) },
       select: { userId: true, expires: true },
     });
 
