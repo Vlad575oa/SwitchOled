@@ -193,7 +193,7 @@ export const getProducts = async (
   );
 };
 
-// Returns products with Nintendo/Switch categories first, then rest by newest
+// Returns in-stock products first, with Nintendo/Switch categories prioritized within each group.
 export const getProductsNintendoFirst = async (
   where: Prisma.ProductWhereInput,
   skip: number,
@@ -207,11 +207,12 @@ export const getProductsNintendoFirst = async (
     });
 
     const prioritized = rows.sort((a, b) => {
+      if (a.inStock !== b.inStock) return a.inStock ? -1 : 1;
+
       const aPriority = /nintendo|switch/i.test(a.category?.slug ?? "") ? 0 : 1;
       const bPriority = /nintendo|switch/i.test(b.category?.slug ?? "") ? 0 : 1;
 
       if (aPriority !== bPriority) return aPriority - bPriority;
-      if (a.inStock !== b.inStock) return a.inStock ? -1 : 1;
 
       return b.createdAt.getTime() - a.createdAt.getTime();
     });
