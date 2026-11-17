@@ -48,6 +48,14 @@ export interface VariantRow {
   _deleted: boolean;
 }
 
+type MediaItem =
+  | { id: string; kind: "existing"; url: string }
+  | { id: string; kind: "new"; file: File; preview: string };
+
+interface InternalVariantRow extends VariantRow {
+  media: MediaItem[];
+}
+
 interface SharedForm {
   id?: number;
   description: string;
@@ -78,10 +86,24 @@ const MEMORY_OPTIONS = [
 const COLOR_ATTR_KEYS = ["Цвет"];
 const MEMORY_ATTR_KEYS = ["Накопитель", "Объём", "Объем"];
 
-const EMPTY_VARIANT: VariantRow = {
+const EMPTY_VARIANT: InternalVariantRow = {
   name: "", slug: "", sku: "", color: "", colorHex: "", memory: "", price: "", priceOld: "", showOtherPaymentPrice: false, stock: "10",
-  inStock: true, avitoUrl: "", metaTitle: "", metaDesc: "", images: [], newImages: [], newPreviews: [], _deleted: false,
+  inStock: true, avitoUrl: "", metaTitle: "", metaDesc: "", images: [], newImages: [], newPreviews: [], media: [], _deleted: false,
 };
+
+const buildMediaItems = (v: Omit<VariantRow, "_deleted">): MediaItem[] => [
+  ...v.images.map((url, idx) => ({
+    id: `existing-${idx}-${url}`,
+    kind: "existing" as const,
+    url,
+  })),
+  ...v.newImages.map((file, idx) => ({
+    id: `new-${idx}-${file.name}`,
+    kind: "new" as const,
+    file,
+    preview: v.newPreviews[idx] ?? URL.createObjectURL(file),
+  })),
+];
 
 const inputCls = "w-full px-4 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-sm font-bold text-[#111827] placeholder:text-neutral-300 outline-none focus:bg-white focus:border-primary/30 transition-all";
 const labelCls = "block text-[10px] font-black uppercase tracking-widest text-neutral-400 mb-1.5";
@@ -138,15 +160,17 @@ export const ProductForm = ({
   });
 
   const [attrs, setAttrs] = useState<Attribute[]>(initialAttrs ?? []);
-  const [variants, setVariants] = useState<VariantRow[]>(
+  const [variants, setVariants] = useState<InternalVariantRow[]>(
     initialVariants
-      ? initialVariants.map((v) => ({ ...v, _deleted: false }))
+      ? initialVariants.map((v) => ({ ...v, media: buildMediaItems(v), _deleted: false }))
       : [{ ...EMPTY_VARIANT }]
   );
   const [saving, setSaving] = useState(false);
   const [showSEO, setShowSEO] = useState(false);
   const [error, setError] = useState("");
   const [slugErrors, setSlugErrors] = useState<Record<number, string>>({});
+  const [dragMedia, setDragMedia] = useState<{ variantIdx: number; fromIdx: number } | null>(null);
+  const [dragOverMedia, setDragOverMedia] = useState<{ variantIdx: number; overIdx: number } | null>(null);
 
   const variantFileRef = useRef<HTMLInputElement>(null);
   const currentVariantIdx = useRef<number>(-1);
@@ -188,16 +212,19 @@ export const ProductForm = ({
     const idx = currentVariantIdx.current;
     if (idx < 0) return;
     const files = Array.from(e.target.files ?? []);
+    if (files.length === 0) return;
+    const added: MediaItem[] = files.map((file, fileIdx) => ({
+      id: `new-${Date.now()}-${fileIdx}-${Math.random().toString(36).slice(2, 7)}`,
+      kind: "new",
+      file,
+      preview: URL.createObjectURL(file),
+    }));
     setVariants((p) =>
       p.map((v, i) =>
         i === idx
           ? {
               ...v,
-              newImages: [...v.newImages, ...files],
-              newPreviews: [
-                ...v.newPreviews,
-                ...files.map((f) => URL.createObjectURL(f)),
-              ],
+              media: [...v.media, ...added],
             }
           : v
       )
@@ -205,25 +232,32 @@ export const ProductForm = ({
     e.target.value = "";
   };
 
-  const removeVariantExistingImage = (vIdx: number, url: string) =>
+  const removeVariantMedia = (vIdx: number, mediaId: string) => {
     setVariants((p) =>
-      p.map((v, i) =>
-        i === vIdx ? { ...v, images: v.images.filter((u) => u !== url) } : v
-      )
+      p.map((v, i) => {
+        if (i !== vIdx) return v;
+        const target = v.media.find((m) => m.id === mediaId);
+        if (target?.kind === "new") {
+          URL.revokeObjectURL(target.preview);
+        }
+        return { ...v, media: v.media.filter((m) => m.id !== mediaId) };
+      })
     );
+  };
 
-  const removeVariantNewImage = (vIdx: number, imgIdx: number) =>
+  const reorderVariantMedia = (vIdx: number, fromIdx: number, toIdx: number) => {
+    if (fromIdx === toIdx) return;
     setVariants((p) =>
-      p.map((v, i) =>
-        i === vIdx
-          ? {
-              ...v,
-              newImages: v.newImages.filter((_, j) => j !== imgIdx),
-              newPreviews: v.newPreviews.filter((_, j) => j !== imgIdx),
-            }
-          : v
-      )
+      p.map((v, i) => {
+        if (i !== vIdx) return v;
+        const next = [...v.media];
+        const [moved] = next.splice(fromIdx, 1);
+        if (!moved) return v;
+        next.splice(toIdx, 0, moved);
+        return { ...v, media: next };
+      })
     );
+  };
 
   const handleSubmit = async () => {
     if (!form.categoryId) {
@@ -313,9 +347,18 @@ export const ProductForm = ({
         data.append("attributes", JSON.stringify(variantAttrs));
         data.append("slug", normalizeSlug(v.slug));
 
+        const existingImages = v.media
+          .filter((m): m is Extract<MediaItem, { kind: "existing" }> => m.kind === "existing")
+          .map((m) => m.url);
+        const newFiles = v.media
+          .filter((m): m is Extract<MediaItem, { kind: "new" }> => m.kind === "new")
+          .map((m) => m.file);
+        const imageOrder = v.media.map((m) => m.kind);
+
         if (v.id) {
-          data.append("existingImages", JSON.stringify(v.images));
-          v.newImages.forEach((f) => data.append("images", f));
+          data.append("existingImages", JSON.stringify(existingImages));
+          data.append("imageOrder", JSON.stringify(imageOrder));
+          newFiles.forEach((f) => data.append("images", f));
           const res = await fetch(`/api/admin/products/${v.id}`, {
             method: "PUT",
             body: data,
@@ -328,7 +371,7 @@ export const ProductForm = ({
             throw new Error(d.error ?? "Ошибка обновления");
           }
         } else {
-          v.newImages.forEach((f) => data.append("images", f));
+          newFiles.forEach((f) => data.append("images", f));
           const res = await fetch("/api/admin/products", {
             method: "POST",
             body: data,
@@ -456,7 +499,6 @@ export const ProductForm = ({
             <div className="space-y-4">
               {activeVariants.map((v, displayIdx) => {
                 const realIdx = variants.indexOf(v);
-                const allImages = [...v.images, ...v.newPreviews];
                 return (
                   <div
                     key={realIdx}
@@ -642,32 +684,89 @@ export const ProductForm = ({
 
                     {/* Images */}
                     <div>
-                      <label className={labelCls}>Фотографии</label>
+                      <div className="flex items-center justify-between mb-1.5">
+                        <label className={labelCls + " mb-0"}>Фотографии</label>
+                        {v.media.length > 1 && (
+                          <span className="text-[10px] text-neutral-400 font-bold">
+                            Перетащите, чтобы поменять местами (первое — главное)
+                          </span>
+                        )}
+                      </div>
                       <div className="flex flex-wrap gap-2">
-                        {v.images.map((url) => (
-                          <div key={url} className="group relative w-16 h-16 rounded-xl overflow-hidden border border-neutral-100 bg-neutral-50">
-                            <img src={url} alt="" className="w-full h-full object-contain p-1" />
-                            <button
-                              onClick={() => removeVariantExistingImage(realIdx, url)}
-                              className="absolute top-0.5 right-0.5 p-0.5 bg-red-500 text-white rounded opacity-0 group-hover:opacity-100 transition-opacity"
+                        {v.media.map((item, imgIdx) => {
+                          const src = item.kind === "existing" ? item.url : item.preview;
+                          const isDragging =
+                            dragMedia?.variantIdx === realIdx && dragMedia.fromIdx === imgIdx;
+                          const isDropTarget =
+                            dragMedia?.variantIdx === realIdx &&
+                            dragMedia.fromIdx !== imgIdx &&
+                            dragOverMedia?.variantIdx === realIdx &&
+                            dragOverMedia.overIdx === imgIdx;
+
+                          return (
+                            <div
+                              key={item.id}
+                              draggable
+                              onDragStart={(e) => {
+                                setDragMedia({ variantIdx: realIdx, fromIdx: imgIdx });
+                                e.dataTransfer.effectAllowed = "move";
+                                e.dataTransfer.setData("text/plain", String(imgIdx));
+                              }}
+                              onDragOver={(e) => {
+                                if (!dragMedia || dragMedia.variantIdx !== realIdx) return;
+                                e.preventDefault();
+                                e.dataTransfer.dropEffect = "move";
+                                if (dragOverMedia?.variantIdx !== realIdx || dragOverMedia.overIdx !== imgIdx) {
+                                  setDragOverMedia({ variantIdx: realIdx, overIdx: imgIdx });
+                                }
+                              }}
+                              onDrop={(e) => {
+                                e.preventDefault();
+                                if (dragMedia && dragMedia.variantIdx === realIdx && dragMedia.fromIdx !== imgIdx) {
+                                  reorderVariantMedia(realIdx, dragMedia.fromIdx, imgIdx);
+                                }
+                                setDragMedia(null);
+                                setDragOverMedia(null);
+                              }}
+                              onDragEnd={() => {
+                                setDragMedia(null);
+                                setDragOverMedia(null);
+                              }}
+                              className={`group relative w-16 h-16 rounded-xl overflow-hidden border transition-all cursor-grab active:cursor-grabbing select-none ${
+                                item.kind === "new"
+                                  ? "border-blue-200 bg-blue-50"
+                                  : "border-neutral-100 bg-neutral-50"
+                              } ${isDragging ? "opacity-40 scale-95" : ""} ${
+                                isDropTarget ? "ring-2 ring-primary border-primary scale-105" : ""
+                              }`}
                             >
-                              <Trash2 size={8} />
-                            </button>
-                          </div>
-                        ))}
-                        {v.newPreviews.map((url, imgIdx) => (
-                          <div key={imgIdx} className="group relative w-16 h-16 rounded-xl overflow-hidden border border-blue-200 bg-blue-50">
-                            <img src={url} alt="" className="w-full h-full object-contain p-1" />
-                            <button
-                              onClick={() => removeVariantNewImage(realIdx, imgIdx)}
-                              className="absolute top-0.5 right-0.5 p-0.5 bg-red-500 text-white rounded opacity-0 group-hover:opacity-100 transition-opacity"
-                            >
-                              <Trash2 size={8} />
-                            </button>
-                          </div>
-                        ))}
-                        {allImages.length < 10 && (
+                              <img
+                                src={src}
+                                alt=""
+                                draggable={false}
+                                className="w-full h-full object-contain p-1 pointer-events-none"
+                              />
+                              {imgIdx === 0 && (
+                                <span className="absolute bottom-0.5 left-0.5 px-1 py-0.5 rounded bg-black/65 text-white text-[7px] font-black uppercase leading-none pointer-events-none">
+                                  Главн.
+                                </span>
+                              )}
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  removeVariantMedia(realIdx, item.id);
+                                }}
+                                className="absolute top-0.5 right-0.5 p-0.5 bg-red-500 text-white rounded opacity-0 group-hover:opacity-100 transition-opacity"
+                              >
+                                <Trash2 size={8} />
+                              </button>
+                            </div>
+                          );
+                        })}
+                        {v.media.length < 10 && (
                           <button
+                            type="button"
                             onClick={() => openImagePicker(realIdx)}
                             className="w-16 h-16 border-2 border-dashed border-neutral-200 rounded-xl flex flex-col items-center justify-center gap-1 text-neutral-400 hover:border-primary/30 hover:text-primary hover:bg-primary/5 transition-all"
                           >

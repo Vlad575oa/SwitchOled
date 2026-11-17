@@ -82,7 +82,19 @@ export async function PUT(request: Request, { params }: { params: { id: string }
 
     const newFiles = fd.getAll("images") as File[];
     const newUrls = newFiles.length ? await uploadImagesToS3(newFiles, "products") : [];
-    const images = [...existingImages, ...newUrls];
+    const imageOrderRaw = fd.get("imageOrder") as string | null;
+    let images: string[];
+    if (imageOrderRaw) {
+      const order: ("existing" | "new")[] = JSON.parse(imageOrderRaw);
+      let eIdx = 0;
+      let nIdx = 0;
+      images = order
+        .map((kind) => (kind === "existing" ? existingImages[eIdx++] : newUrls[nIdx++]))
+        .filter((u): u is string => Boolean(u));
+      images.push(...existingImages.slice(eIdx), ...newUrls.slice(nIdx));
+    } else {
+      images = [...existingImages, ...newUrls];
+    }
 
     const childCount = await prisma.category.count({ where: { parentId: categoryId } });
     if (childCount > 0) {
