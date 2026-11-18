@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { Info } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
 import { ProductCardActions } from "./ProductCardActions";
 import type { ProductCardProduct } from "./ProductCard";
@@ -46,38 +45,29 @@ export function ProductCardClient({ product, eagerImage = false }: ProductCardCl
         {product.isSale && <span className="bg-white text-black border border-black px-2.5 py-0.5 rounded-full">Sale</span>}
       </div>
 
-      <Link href={productUrl} className="block">
+      <Link href={productUrl} className="flex flex-col flex-1">
         <ProductCardMedia images={product.images} name={product.name} eagerImage={eagerImage} />
 
-        <div className="flex flex-col flex-1">
-          <div className="mb-2">
-            <p className="text-[10px] sm:text-xs text-neutral-400 font-bold uppercase leading-tight tracking-wide">При оплате наличными</p>
-            <p className="text-xl font-bold text-secondary leading-none my-1">
-              {formatPrice(product.price)}
-            </p>
-            {product.showOtherPaymentPrice && (
-              <>
-                <div className="flex items-center gap-1 mt-0.5">
-                  <p className="text-[10px] text-neutral-400 font-bold">Другие способы оплаты</p>
-                  <Info size={10} className="text-neutral-300" />
-                </div>
-                <p className="text-xs font-bold text-neutral-400 mt-0.5">
-                  {formatPrice(paymentMethodsPrice)}
-                </p>
-              </>
-            )}
-          </div>
-
-          <div className="flex items-center mb-0.5">
-            {product.inStock !== false ? (
-              <span className="text-[12px] font-semibold uppercase tracking-[0.12em] leading-none text-green-600">● В наличии</span>
-            ) : (
-              <span className="text-[12px] font-black uppercase tracking-[0.18em] leading-none text-neutral-400">● Под заказ</span>
-            )}
-          </div>
-
-          <div className="text-[14px] font-normal text-secondary leading-[1.35] mb-0 flex-none">
+        <div className="flex flex-col flex-1 pt-2">
+          <div className="text-[14px] font-normal text-secondary leading-[1.35] flex-none">
             {renderProductName(product.name)}
+          </div>
+
+          {/* Stock on the left, price on the right — pinned to the bottom of the card */}
+          <div className="mt-auto pt-3 flex items-end justify-between gap-2">
+            {product.inStock !== false ? (
+              <span className="pb-1 text-[11px] sm:text-[12px] font-semibold uppercase tracking-[0.08em] leading-none text-green-600 whitespace-nowrap">● В наличии</span>
+            ) : (
+              <span className="pb-1 text-[11px] sm:text-[12px] font-semibold uppercase tracking-[0.08em] leading-none text-neutral-400 whitespace-nowrap">● Под заказ</span>
+            )}
+            <div className="text-right">
+              <p className="text-[18px] sm:text-xl font-bold text-secondary leading-none whitespace-nowrap">
+                {formatPrice(product.price)}
+              </p>
+              <p className="mt-1 text-[10px] sm:text-[11px] text-neutral-400 leading-none whitespace-nowrap">
+                {product.showOtherPaymentPrice ? `${formatPrice(paymentMethodsPrice)} — другие способы` : "наличными"}
+              </p>
+            </div>
           </div>
         </div>
       </Link>
