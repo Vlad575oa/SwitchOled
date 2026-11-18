@@ -81,7 +81,7 @@ export const Slider = React.forwardRef<
         {internalValues.map((_, i) => (
           <SliderPrimitive.Thumb 
             key={i} 
-            className="block h-6 w-6 rounded-full border-[5px] border-white bg-primary shadow-[0_4px_12px_rgba(0,112,209,0.4)] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 transition-all cursor-grab active:cursor-grabbing hover:scale-115 active:scale-90" 
+            className="block h-6 w-6 rounded-full border-[5px] border-white bg-primary shadow-[0_4px_12px_rgba(17,17,17,0.4)] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 transition-all cursor-grab active:cursor-grabbing hover:scale-115 active:scale-90" 
           />
         ))}
       </SliderPrimitive.Root>

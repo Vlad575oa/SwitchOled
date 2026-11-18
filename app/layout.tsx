@@ -1,21 +1,14 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Roboto } from "next/font/google";
+import { Manrope } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
 import { CONTACTS } from "@/lib/constants/contacts";
 import dynamic from "next/dynamic";
 
-const fontSans = Inter({
+const fontSans = Manrope({
   subsets: ["latin", "cyrillic"],
   weight: ["400", "500", "600", "700"],
   variable: "--font-sans",
-  display: "swap",
-});
-
-const fontDisplay = Roboto({
-  subsets: ["latin", "cyrillic"],
-  weight: ["300", "400"],
-  variable: "--font-display",
   display: "swap",
 });
 
@@ -172,7 +165,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ru" className={`${fontSans.variable} ${fontDisplay.variable}`}>
+    <html lang="ru" className={fontSans.variable}>
       <head>
         <link rel="dns-prefetch" href="//mc.yandex.ru" />
         <link rel="preconnect" href="https://s3.twcstorage.ru" />

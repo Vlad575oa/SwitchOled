@@ -67,8 +67,11 @@ export const QuickFilters = ({ enabledSlugs }: QuickFiltersProps) => {
 
   const fadeCls = "absolute top-0 bottom-0 z-10 w-16 pointer-events-none flex items-center";
 
+  // Home page shows categories inside the catalog block; the strip would break the hero notch.
+  if (pathname === "/") return null;
+
   return (
-    <div className="relative z-40 bg-white border-b border-surface-soft lg:sticky lg:top-[156px]">
+    <div className="relative z-40 bg-white">
       <div className="relative">
         {canScrollLeft && (
           <div className={cn(fadeCls, "left-0 bg-gradient-to-r from-white to-transparent")}>

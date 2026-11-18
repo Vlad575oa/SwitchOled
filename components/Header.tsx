@@ -3,12 +3,13 @@
 import { useCartStore } from "@/features/cart/store/useCartStore";
 import { useWishlistStore } from "@/features/product/store/useWishlistStore";
 import { useCompareStore } from "@/features/product/store/useCompareStore";
-import { ShoppingCart, Menu, User, LogOut, Package, Heart, Scale, MapPin } from "lucide-react";
+import { ShoppingCart, Search as SearchIcon, Heart, Phone, Plus, X, User } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import dynamic from "next/dynamic";
+import { createPortal } from "react-dom";
 import { CONTACTS } from "@/lib/constants/contacts";
 
 const Search = dynamic(
@@ -27,13 +28,44 @@ interface CurrentUser {
   email?: string | null;
 }
 
+const NAV_LINKS = [
+  { label: "О нас", href: "/about" },
+  { label: "Блог", href: "/blog" },
+  { label: "Доставка", href: "/delivery" },
+  { label: "Сервис", href: "/service" },
+];
+
+const MENU_LINKS = [
+  { label: "Весь каталог", href: "/catalog/all" },
+  { label: "Nintendo Switch OLED", href: "/catalog/nintendo-switch-oled" },
+  { label: "Nintendo Switch Lite", href: "/catalog/nintendo-switch-lite" },
+  { label: "Игры", href: "/catalog/games" },
+  { label: "О нас", href: "/about" },
+  { label: "Блог", href: "/blog" },
+  { label: "Доставка и оплата", href: "/delivery" },
+  { label: "Гарантия", href: "/warranty" },
+  { label: "Сервисный центр", href: "/service" },
+  { label: "Сравнение", href: "/compare" },
+  { label: "Контакты", href: "/contacts" },
+];
+
+const Logo = () => (
+  <Link href="/" className="flex items-center gap-2 shrink-0" aria-label="Gameshop24 — на главную">
+    <span className="w-[18px] h-[18px] rounded-full border-[4.5px] border-black" />
+    <span className="text-[17px] sm:text-[18px] font-semibold tracking-[-0.01em] text-black">Gameshop24</span>
+  </Link>
+);
+
+// Minimal navigation whose left/right groups are "notch" tabs: on the home page
+// the hero slides underneath, so the tabs read as cut-outs in the hero corners.
 export const Header = () => {
   const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
   const [user, setUser] = useState<CurrentUser | null>(null);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [megaMenuOpen, setMegaMenuOpen] = useState(false);
-  const [searchReady, setSearchReady] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const totalItems = useCartStore((state) => state.totalItems());
   const clearCart = useCartStore((s) => s.clearCart);
@@ -41,18 +73,12 @@ export const Header = () => {
   const wishlistSynced = useWishlistStore((s) => s.synced);
   const syncWishlist = useWishlistStore((s) => s.syncWithAccount);
   const clearWishlist = useWishlistStore((s) => s.clear);
-  const compareCount = useCompareStore((s) => s.count());
   const clearCompare = useCompareStore((s) => s.clear);
   const router = useRouter();
 
   useEffect(() => {
     setMounted(true);
     fetch("/api/auth/me").then((r) => r.json()).then(setUser).catch(() => {});
-  }, []);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setSearchReady(true), 1800);
-    return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {
@@ -68,6 +94,16 @@ export const Header = () => {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
+  useEffect(() => {
+    setMenuOpen(false);
+    setSearchOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [menuOpen]);
+
   const handleLogout = async () => {
     await fetch("/api/auth/logout", { method: "POST" });
     setUser(null);
@@ -78,162 +114,107 @@ export const Header = () => {
     router.refresh();
   };
 
-  const iconBtn = "flex flex-col items-center justify-center w-[68px] xl:w-[76px] h-[52px] xl:h-[58px] rounded-lg hover:bg-white/[0.08] transition-all group relative";
-  const iconLabel = "text-[10px] xl:text-[11px] font-semibold text-white uppercase tracking-wide mt-1 transition-colors text-center";
+  const navLink = "text-[15px] font-medium text-black hover:text-black/60 transition-colors whitespace-nowrap";
+  const cartLabel = `(${mounted ? totalItems : 0})`;
 
   return (
-    <header className="relative z-50 h-[76px] xl:h-[88px] flex items-center bg-black lg:sticky lg:top-[80px]">
-      <div className="relative w-full max-w-[1920px] mx-auto px-4 lg:pl-6 lg:pr-4 2xl:pl-4 2xl:pr-4 flex items-center gap-2 xl:gap-6">
-
-        {/* Logo */}
-        <Link href="/" className="flex items-center gap-2.5 group shrink-0">
-          <div className="hidden lg:flex w-9 h-9 xl:w-11 xl:h-11 bg-primary rounded-full items-center justify-center transition-colors group-hover:bg-primary-pressed overflow-hidden relative">
-            <span className="text-white font-bold text-lg xl:text-xl leading-none z-10 select-none">G</span>
-          </div>
-          <div className="hidden lg:flex flex-col leading-none">
-            <span className="text-[9px] xl:text-[10px] font-black text-white/30 uppercase tracking-[0.2em]">Premium Store</span>
-            <span className="font-display text-[19px] xl:text-[22px] font-light text-white tracking-[0.02em] leading-tight">
-              Gameshop<span className="text-[#53b1ff]">24</span>
-            </span>
-          </div>
-        </Link>
-
-        {/* Catalog */}
-        <button
-          onClick={() => setMegaMenuOpen((v) => !v)}
-          className={cn(
-            "hidden lg:flex items-center gap-2 px-5 xl:px-6 h-10 xl:h-12 border rounded-full font-bold text-[13px] xl:text-[14px] uppercase tracking-[0.03em] transition-all group shrink-0",
-            megaMenuOpen
-              ? "bg-white/15 border-white/20 text-white"
-              : "bg-white/[0.06] border-white/[0.08] text-white/70 hover:bg-white/10 hover:text-white hover:border-white/15"
-          )}
-        >
-          <Menu size={14} className={cn("transition-transform duration-200", megaMenuOpen && "rotate-90")} />
-          <span>Каталог</span>
-        </button>
-        {megaMenuOpen && <CatalogMegaMenu onClose={() => setMegaMenuOpen(false)} />}
-
-
-
-        <a
-          href={CONTACTS.yandexMapsUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="sm:hidden inline-flex items-center gap-1.5 px-2.5 py-2 rounded-2xl text-white border border-white/12 bg-white/[0.06] hover:bg-white/[0.1] transition-colors shrink-0"
-          title={CONTACTS.address}
-        >
-          <MapPin size={13} className="text-white/80 shrink-0" />
-          <span className="flex flex-col leading-[1.02]">
-            <span className="text-[9px] font-bold uppercase tracking-tight">Москва</span>
-            <span className="text-[9px] font-bold uppercase tracking-tight">Шоурум</span>
-          </span>
-        </a>
-
-        {/* Search */}
-        <div
-          className="flex-1 min-w-0 sm:min-w-[150px] lg:flex-none lg:w-full lg:max-w-[760px] lg:absolute lg:left-1/2 lg:-translate-x-1/2"
-          onMouseEnter={() => setSearchReady(true)}
-          onFocusCapture={() => setSearchReady(true)}
-          onTouchStart={() => setSearchReady(true)}
-        >
-          {searchReady ? (
-            <Search />
-          ) : (
+    <header className="relative z-40 px-3 pt-2">
+      <div className="relative flex items-start justify-between h-12">
+        {/* Left tab */}
+        <div className="notch-tl flex items-center gap-6 lg:gap-7 h-12 pr-5 lg:pr-8 pl-2 sm:pl-4">
+          <Logo />
+          <nav className="hidden lg:flex items-center gap-6">
             <button
               type="button"
-              aria-label="Открыть поиск"
-              onClick={() => setSearchReady(true)}
-              className="w-full h-11 rounded-[14px] bg-white border-2 border-neutral-200 text-left px-4 text-[16px] lg:text-[14px] text-neutral-400 font-medium"
+              onClick={() => setMegaMenuOpen((v) => !v)}
+              className={cn(navLink, "inline-flex items-center gap-1")}
+              aria-expanded={megaMenuOpen}
             >
-              Искать в Gameshop24...
+              Каталог <Plus size={15} className={cn("transition-transform", megaMenuOpen && "rotate-45")} />
             </button>
-          )}
+            {NAV_LINKS.map((l) => (
+              <Link key={l.href} href={l.href} className={navLink}>{l.label}</Link>
+            ))}
+          </nav>
         </div>
 
-        {/* Icons */}
-        <div className="flex items-center gap-5 lg:gap-6 shrink-0 ml-auto">
-
-          {/* Auth */}
-          <div className="relative" ref={menuRef}>
-            {mounted && user ? (
-              <button onClick={() => setUserMenuOpen(!userMenuOpen)} className={iconBtn}>
-                <div className="relative">
-                  <User size={18} className="text-white transition-colors" />
-                  <div className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-green-400 rounded-full ring-2 ring-black" />
-                </div>
-                <span className={iconLabel}>{user.name?.split(" ")[0] ?? "Профиль"}</span>
-                {userMenuOpen && (
-                  <div className="absolute top-[calc(100%+6px)] right-0 w-56 rounded-2xl shadow-2xl p-1.5 z-[60] animate-in fade-in slide-in-from-top-2 bg-[#121314] border border-white/[0.08]">
-                    <div className="px-4 py-3 mb-1 rounded-xl bg-white/[0.04]">
-                      <p className="text-[9px] font-bold text-white/30 uppercase tracking-widest">Личный кабинет</p>
-                      <p className="text-sm font-black text-white mt-1 truncate">{user.name ?? user.email}</p>
-                    </div>
-                    <ul className="space-y-0.5">
-                      <li>
-                        <Link href="/account/orders" className="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-bold text-white/50 hover:text-white hover:bg-white/5 rounded-xl transition-all">
-                          <Package size={14} className="text-white/25" /> Мои заказы
-                        </Link>
-                      </li>
-                      <li>
-                        <Link href="/wishlist" className="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-bold text-white/50 hover:text-white hover:bg-white/5 rounded-xl transition-all">
-                          <Heart size={14} className="text-white/25" /> Избранное
-                        </Link>
-                      </li>
-                      <li className="pt-1 border-t border-white/[0.06]">
-                        <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-bold text-primary hover:bg-primary/10 rounded-xl transition-all">
-                          <LogOut size={14} /> Выход
-                        </button>
-                      </li>
-                    </ul>
-                  </div>
-                )}
+        {/* Right tab */}
+        <div className="notch-tr flex items-center gap-4 sm:gap-5 h-12 pl-5 lg:pl-8 pr-2 sm:pr-4">
+          <button type="button" onClick={() => setSearchOpen((v) => !v)} aria-label="Поиск" className="text-black hover:text-black/60 transition-colors">
+            {searchOpen ? <X size={18} /> : <SearchIcon size={18} />}
+          </button>
+          <a href={`tel:${CONTACTS.phoneHref}`} className="hidden xl:inline text-[15px] font-medium text-black hover:text-black/60 transition-colors">
+            {CONTACTS.phoneDisplay}
+          </a>
+          <a href={`tel:${CONTACTS.phoneHref}`} aria-label="Позвонить" className="xl:hidden text-black">
+            <Phone size={17} />
+          </a>
+          <Link href="/wishlist" className="hidden sm:inline-flex items-center gap-1 text-[15px] font-medium text-black hover:text-black/60 transition-colors" aria-label="Избранное">
+            <Heart size={18} />({mounted ? wishlistCount : 0})
+          </Link>
+          <Link href="/cart" className="inline-flex items-center gap-1 text-[15px] font-medium text-black hover:text-black/60 transition-colors" aria-label="Корзина">
+            <ShoppingCart size={18} />{cartLabel}
+          </Link>
+          {mounted && user && (
+            <div className="relative hidden sm:block" ref={menuRef}>
+              <button type="button" onClick={() => setUserMenuOpen((v) => !v)} aria-label="Профиль" className="text-black hover:text-black/60 transition-colors">
+                <User size={18} />
               </button>
-            ) : (
-              null
-            )}
-          </div>
-
-          {/* Wishlist */}
-          <Link href="/wishlist" className={cn(iconBtn, "hidden sm:flex", pathname === "/wishlist" && "bg-primary/10 border border-primary/20")}>
-            <div className="relative">
-              <Heart size={18} className={cn("transition-colors", mounted && wishlistCount > 0 ? "text-red-400 fill-red-400" : "text-white")} />
-              {mounted && wishlistCount > 0 && (
-                <span className="absolute -top-1.5 -right-2 bg-red-500 text-white text-[8px] font-black min-w-[14px] h-[14px] px-1 rounded-full ring-2 ring-black flex items-center justify-center">
-                  {wishlistCount}
-                </span>
+              {userMenuOpen && (
+                <div className="absolute top-[calc(100%+12px)] right-0 w-56 rounded-xl bg-white border border-neutral-200 shadow-xl p-1.5 z-[60]">
+                  <p className="px-3 py-2 text-sm font-semibold text-black truncate">{user.name ?? user.email}</p>
+                  <Link href="/account/orders" className="block px-3 py-2 text-sm text-black/70 hover:text-black hover:bg-neutral-100 rounded-lg">Мои заказы</Link>
+                  <Link href="/wishlist" className="block px-3 py-2 text-sm text-black/70 hover:text-black hover:bg-neutral-100 rounded-lg">Избранное</Link>
+                  <button type="button" onClick={handleLogout} className="w-full text-left px-3 py-2 text-sm text-black/70 hover:text-black hover:bg-neutral-100 rounded-lg">Выйти</button>
+                </div>
               )}
             </div>
-            <span className={iconLabel}>Избранное</span>
-          </Link>
-
-          {/* Compare */}
-          <Link href="/compare" className={cn(iconBtn, "hidden sm:flex", pathname === "/compare" && "bg-primary/10 border border-primary/20")}>
-            <div className="relative">
-              <Scale size={18} className={cn("transition-colors", mounted && compareCount > 0 ? "text-blue-400" : "text-white")} />
-              {mounted && compareCount > 0 && (
-                <span className="absolute -top-1.5 -right-2 bg-blue-500 text-white text-[8px] font-black min-w-[14px] h-[14px] px-1 rounded-full ring-2 ring-black flex items-center justify-center">
-                  {compareCount}
-                </span>
-              )}
-            </div>
-            <span className={iconLabel}>Сравнить</span>
-          </Link>
-
-          {/* Cart */}
-          <Link href="/cart" className={cn(iconBtn, pathname === "/cart" && "bg-primary/10 border border-primary/20 hover:bg-primary/20 hover:border-primary/35")}>
-            <div className="relative">
-              <ShoppingCart size={18} className={cn("transition-colors", mounted && totalItems > 0 ? "text-primary" : "text-white")} />
-              {mounted && totalItems > 0 && (
-                <span className="absolute -top-1.5 -right-2 bg-primary text-white text-[8px] font-black min-w-[14px] h-[14px] px-1 rounded-full ring-2 ring-black shadow-lg shadow-primary/30 flex items-center justify-center">
-                  {totalItems}
-                </span>
-              )}
-            </div>
-            <span className={cn(iconLabel, "group-hover:text-primary")}>Корзина</span>
-          </Link>
-
+          )}
+          <button type="button" onClick={() => setMenuOpen(true)} className="lg:hidden text-[15px] font-medium text-black">
+            Меню
+          </button>
         </div>
+
+        {megaMenuOpen && (
+          <div className="absolute left-0 right-0 top-full">
+            <CatalogMegaMenu onClose={() => setMegaMenuOpen(false)} />
+          </div>
+        )}
+
+        {searchOpen && (
+          <div className="absolute left-0 right-0 top-[calc(100%+12px)] z-50 flex justify-center">
+            <div className="w-full max-w-[760px] rounded-2xl bg-white p-3 shadow-2xl border border-neutral-200">
+              <Search />
+            </div>
+          </div>
+        )}
       </div>
+
+      {/* Mobile menu */}
+      {menuOpen && mounted && createPortal(
+        <div className="fixed inset-0 z-[200] bg-white flex flex-col lg:hidden">
+          <div className="flex items-center justify-between h-16 px-5">
+            <Logo />
+            <button type="button" onClick={() => setMenuOpen(false)} className="text-[15px] font-medium text-black">
+              Закрыть
+            </button>
+          </div>
+          <nav className="flex-1 overflow-y-auto px-5 pb-6">
+            {MENU_LINKS.map((l) => (
+              <Link key={l.href} href={l.href} className="flex items-center justify-between py-3.5 border-b border-neutral-100 text-[19px] font-medium text-black">
+                {l.label}
+              </Link>
+            ))}
+          </nav>
+          <div className="px-5 pb-[max(20px,env(safe-area-inset-bottom))] space-y-3">
+            <a href={`tel:${CONTACTS.phoneHref}`} className="flex items-center justify-center h-12 rounded-xl bg-black text-white text-[16px] font-semibold">
+              {CONTACTS.phoneDisplay}
+            </a>
+            <p className="text-center text-[13px] text-black/50">{CONTACTS.address}</p>
+          </div>
+        </div>,
+        document.body
+      )}
     </header>
   );
 };

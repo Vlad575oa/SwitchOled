@@ -10,12 +10,12 @@ module.exports = {
       center: true,
     },
     extend: {
-      // PlayStation-style tokens: design-md/design-md/playstation/DESIGN.md
+      // Minimal monochrome storefront tokens
       colors: {
         primary: {
-          DEFAULT: "#0070d1",
-          pressed: "#0064b7",
-          active: "#004d8d",
+          DEFAULT: "#111111",
+          pressed: "#2b2b2b",
+          active: "#000000",
         },
         commerce: {
           DEFAULT: "#d53b00",
@@ -28,8 +28,9 @@ module.exports = {
           elevated: "#181818",
         },
         surface: {
-          soft: "#f3f3f3",
-          card: "#f5f7fa",
+          soft: "#f5f5f5",
+          card: "#f2f2f2",
+          tile: "#ececec",
         },
       },
       fontFamily: {
@@ -37,10 +38,10 @@ module.exports = {
         display: ["var(--font-display)", "Arial", "Helvetica", "sans-serif"],
       },
       borderRadius: {
-        lg: "8px",
-        xl: "8px",
-        "2xl": "8px",
-        "3xl": "16px",
+        lg: "10px",
+        xl: "12px",
+        "2xl": "16px",
+        "3xl": "20px",
       },
       keyframes: {
         marquee: {

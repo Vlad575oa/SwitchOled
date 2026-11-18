@@ -10,12 +10,12 @@
 
   --text-primary: #000000;
   --text-secondary: rgba(0, 0, 0, 0.6);
-  --text-muted: #6b6b6b;
+  --text-muted: #8a8a8a;
 
-  --primary: #0070d1;
-  --primary-glow: rgba(0, 112, 209, 0.15);
-  --primary-soft: rgba(0, 112, 209, 0.06);
-  --accent: #d53b00;
+  --primary: #111111;
+  --primary-glow: rgba(17, 17, 17, 0.12);
+  --primary-soft: rgba(17, 17, 17, 0.05);
+  --accent: #111111;
 
   --border: #e5e5e5;
   --border-strong: #D1D5DB;
@@ -32,18 +32,27 @@
   --glass-border: rgba(255,255,255,0.6);
   --glass-dark-bg: #ffffff;
   --glass-dark-border: rgba(0,0,0,0.06);
-  --grad-accent: linear-gradient(135deg, #0070d1 0%, #121314 100%);
+  --grad-accent: linear-gradient(135deg, #111111 0%, #121314 100%);
 }
 
-/* PlayStation-style display headings: light weight, airy tracking */
-h1, h2 {
-  font-family: var(--font-display), Arial, Helvetica, sans-serif;
+/* Calm headings: medium weight, slight negative tracking */
+h1.font-black, h1.font-extrabold, h2.font-black, h2.font-extrabold {
+  font-weight: 500;
+  letter-spacing: -0.01em;
 }
-h1.font-black, h1.font-extrabold, h1.font-bold, h1.font-semibold,
-h2.font-black, h2.font-extrabold, h2.font-bold, h2.font-semibold {
-  font-weight: 300;
-  letter-spacing: 0.1px;
+
+/* Notch tabs: a white tab cut into the corner of a rounded media block,
+   with concave fillets so the cut flows into the media edge. */
+.notch-tl, .notch-tr { position: relative; background: var(--bg-base); }
+.notch-tl { border-bottom-right-radius: 20px; }
+.notch-tr { border-bottom-left-radius: 20px; }
+.notch-tl::before, .notch-tl::after, .notch-tr::before, .notch-tr::after {
+  content: ""; position: absolute; width: 20px; height: 20px; pointer-events: none;
 }
+.notch-tl::after { top: 0; right: -20px; background: radial-gradient(circle at 100% 100%, transparent 19.5px, var(--bg-base) 20px); }
+.notch-tl::before { left: 0; bottom: -20px; background: radial-gradient(circle at 100% 100%, transparent 19.5px, var(--bg-base) 20px); }
+.notch-tr::after { top: 0; left: -20px; background: radial-gradient(circle at 0 100%, transparent 19.5px, var(--bg-base) 20px); }
+.notch-tr::before { right: 0; bottom: -20px; background: radial-gradient(circle at 0 100%, transparent 19.5px, var(--bg-base) 20px); }
 
 body {
   color: var(--text-primary);
@@ -207,8 +216,8 @@ body {
 }
 
 .blog-hero-action:hover {
-  border-color: rgba(0, 112, 209, 0.85);
-  background: rgba(0, 112, 209, 0.78);
+  border-color: rgba(17, 17, 17, 0.85);
+  background: rgba(17, 17, 17, 0.78);
   transform: translateX(3px);
 }
 
@@ -217,8 +226,8 @@ body {
   height: 5px;
   flex: 0 0 auto;
   border-radius: 50%;
-  background: #0070d1;
-  box-shadow: 0 0 8px rgba(0, 112, 209, 0.95);
+  background: #111111;
+  box-shadow: 0 0 8px rgba(17, 17, 17, 0.95);
   animation: blog-hero-led 2.4s ease-in-out infinite;
 }
 
@@ -238,7 +247,7 @@ body {
   place-items: center;
   border: 2px solid #090a0d;
   border-radius: 6px;
-  color: #53b1ff;
+  color: #bdbdbd;
   background: #090b10;
   font-size: 9px;
   font-weight: 900;
@@ -273,7 +282,7 @@ body {
 .blog-hero-dpad i:nth-child(1) { left: 8px; top: 0; border-radius: 3px; height: 24px; width: 8px; }
 .blog-hero-dpad i:nth-child(2) { left: 0; top: 8px; border-radius: 3px; width: 24px; height: 8px; }
 .blog-hero-dpad i:nth-child(n+3) { display: none; }
-.blog-hero-buttons i:nth-child(1) { left: 0; top: 8px; background: #0070d1; }
+.blog-hero-buttons i:nth-child(1) { left: 0; top: 8px; background: #111111; }
 .blog-hero-buttons i:nth-child(2) { right: 0; top: 0; background: #3b82f6; }
 .blog-hero-buttons i:nth-child(3) { right: 0; bottom: 0; background: #facc15; }
 .blog-hero-buttons i:nth-child(4) { left: 0; bottom: 0; background: #22c55e; }

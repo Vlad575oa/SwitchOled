@@ -5,7 +5,8 @@ import loadDynamic from "next/dynamic";
 import { Metadata } from "next";
 import { Suspense } from "react";
 import { PageViewTracker } from "@/components/PageViewTracker";
-import { HeroBand, ShowcaseBand, WhyBand } from "@/features/home/components/PlayStationBands";
+import { HeroSlider } from "@/features/home/components/HeroSlider";
+import { FeatureBar, Favorites } from "@/features/home/components/HomeSections";
 
 // force-dynamic required: page reads DB on every request via Catalog + ExpertInsights.
 // Individual queries are cached at the Data Cache layer via unstable_cache (revalidate).
@@ -39,10 +40,14 @@ export default async function HomePage({ searchParams }: HomePageProps) {
   return (
     <main className="w-full">
       <PageViewTracker />
-      <HeroBand />
-      <ShowcaseBand />
+      <h1 className="sr-only">Прошитые Nintendo Switch — купить в Москве с гарантией</h1>
+      <HeroSlider />
+      <FeatureBar />
+      <Suspense fallback={null}>
+        <Favorites />
+      </Suspense>
 
-      <div id="catalog" className="w-full max-w-[1920px] mx-auto px-6 lg:px-6 2xl:px-4 pt-12 lg:pt-16 pb-16 lg:pb-24 scroll-mt-24">
+      <div id="catalog" className="w-full max-w-[1920px] mx-auto px-6 lg:px-6 2xl:px-4 pt-10 lg:pt-14 pb-16 lg:pb-24 scroll-mt-24">
         <Suspense fallback={<CatalogSkeleton count={8} />}>
           <Catalog
             category="all"
@@ -54,9 +59,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
         </Suspense>
       </div>
 
-      <WhyBand />
-
-      <div className="w-full max-w-[1920px] mx-auto px-6 lg:px-6 2xl:px-4 pt-16 lg:pt-24 pb-20">
+      <div className="w-full max-w-[1920px] mx-auto px-3 lg:px-6 2xl:px-4 pb-20">
         <Suspense fallback={null}>
           <ExpertInsights />
         </Suspense>

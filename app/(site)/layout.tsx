@@ -1,4 +1,4 @@
-import { TopBar } from "@/components/TopBar";
+import { AnnouncementBar } from "@/components/AnnouncementBar";
 import { Footer } from "@/components/Footer";
 import { HeaderSkeleton } from "@/components/HeaderSkeleton";
 import { Suspense } from "react";
@@ -73,7 +73,7 @@ export default async function SiteLayout({
 
   return (
     <>
-      <TopBar workingHours={workingHours} />
+      <AnnouncementBar />
       <Header />
       <QuickFilters enabledSlugs={activeQuickSlugs} />
       <main className="flex-grow">

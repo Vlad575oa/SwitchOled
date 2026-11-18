@@ -99,7 +99,7 @@ export const Search = () => {
       {/* Ozon-style Search Bar */}
       <div className={cn(
         "flex items-center h-11 bg-white border-2 rounded-[14px] transition-all duration-300 overflow-hidden",
-        isOpen ? "border-primary shadow-[0_0_0_4px_rgba(0,112,209,0.1)]" : "border-neutral-200"
+        isOpen ? "border-primary shadow-[0_0_0_4px_rgba(17,17,17,0.1)]" : "border-neutral-200"
       )}>
         {/* Input Area */}
         <div className="flex-1 relative flex items-center px-3 h-full">
