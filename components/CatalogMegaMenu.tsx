@@ -18,6 +18,14 @@ interface PlatformGroup {
   links: SubLink[];
 }
 
+// Static class names so Tailwind generates them (dynamic `grid-cols-${n}` is purged).
+const GRID_COLS: Record<number, string> = {
+  1: "grid gap-6 grid-cols-1",
+  2: "grid gap-6 grid-cols-2",
+  3: "grid gap-6 grid-cols-3",
+  4: "grid gap-6 grid-cols-2 md:grid-cols-4",
+};
+
 // Extract category slug from href (ignores query params)
 const hrefToSlug = (href: string): string => {
   if (href === "/catalog/all") return "all";
@@ -195,76 +203,63 @@ export function CatalogMegaMenu({ onClose }: CatalogMegaMenuProps) {
   return (
     <>
       {/* Backdrop */}
-      <div className="fixed inset-0 top-[68px] bg-black/40 backdrop-blur-sm z-40 animate-in fade-in duration-150" onClick={onClose} />
+      <div className="fixed inset-0 bg-black/20 z-40 animate-in fade-in duration-150" onClick={onClose} />
 
-      {/* Panel */}
+      {/* Panel: compact dropdown card under the "Каталог" button */}
       <div
         ref={ref}
-        className="absolute left-0 right-0 top-full z-50 animate-in fade-in slide-in-from-top-2 duration-200"
+        className="absolute left-0 top-2 z-50 w-[min(860px,calc(100vw-24px))] rounded-2xl bg-white border border-neutral-200 shadow-xl p-6 animate-in fade-in slide-in-from-top-1 duration-150"
       >
-        <div className="bg-white border-b border-neutral-100 shadow-2xl">
-          <div className="container px-4 py-8">
+        <button
+          onClick={onClose}
+          aria-label="Закрыть"
+          className="absolute top-3 right-3 w-7 h-7 rounded-full hover:bg-neutral-100 flex items-center justify-center text-neutral-400 transition-colors"
+        >
+          <X size={14} />
+        </button>
 
-            {/* Close */}
-            <button
-              onClick={onClose}
-              className="absolute top-4 right-6 w-8 h-8 rounded-full bg-neutral-100 hover:bg-neutral-200 flex items-center justify-center text-neutral-400 transition-all"
-            >
-              <X size={14} />
-            </button>
-
-            <div className={`grid gap-8 grid-cols-${Math.min(finalColumns.length, 4) || 4} justify-items-center`}>
-              {finalColumns.map((column, colIdx) => (
-                <div
-                  key={colIdx}
-                  className="space-y-8"
-                >
-                  {column.map((group) => {
-                    const visibleLinks = filterLinks(group.links);
-                    return (
-                      <div key={group.title}>
-                        {/* Platform Header */}
-                        <Link
-                          href={group.href}
-                          onClick={onClose}
-                          className="flex items-center justify-center gap-2.5 mb-3 group"
-                        >
-                          <div className={`w-9 h-9 rounded-xl flex items-center justify-center text-base ${group.color}`}>
-                            {group.emoji}
-                          </div>
-                          <span className="font-black text-base text-secondary group-hover:text-primary transition-colors">
-                            {group.title}
-                          </span>
-                        </Link>
-
-                        {/* Subcategory links */}
-                        <ul className="space-y-2 pl-1">
-                          {visibleLinks.map((link) => (
-                            <li key={link.label}>
-                              <Link
-                                href={link.href}
-                                onClick={onClose}
-                                className="flex items-center justify-center gap-2 text-sm font-bold text-neutral-400 hover:text-primary transition-colors"
-                              >
-                                <span className="w-1 h-1 rounded-full bg-neutral-200 shrink-0" />
-                                {link.label}
-                                {link.badge && (
-                                  <span className="ml-1 px-1.5 py-0.5 bg-primary text-white text-[8px] font-black rounded-full uppercase tracking-wide">
-                                    {link.badge}
-                                  </span>
-                                )}
-                              </Link>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    );
-                  })}
-                </div>
-              ))}
+        <div className={GRID_COLS[Math.min(finalColumns.length, 4)] ?? GRID_COLS[4]}>
+          {finalColumns.map((column, colIdx) => (
+            <div key={colIdx} className="space-y-5">
+              {column.map((group) => {
+                const visibleLinks = filterLinks(group.links);
+                return (
+                  <div key={group.title}>
+                    <Link
+                      href={group.href}
+                      onClick={onClose}
+                      className="flex items-center gap-2 mb-2 group"
+                    >
+                      <span className={`w-7 h-7 rounded-lg flex items-center justify-center text-[13px] ${group.color}`}>
+                        {group.emoji}
+                      </span>
+                      <span className="text-[14px] font-semibold text-black group-hover:text-black/60 transition-colors">
+                        {group.title}
+                      </span>
+                    </Link>
+                    <ul className="space-y-1.5 pl-9">
+                      {visibleLinks.map((link) => (
+                        <li key={link.label}>
+                          <Link
+                            href={link.href}
+                            onClick={onClose}
+                            className="inline-flex items-center gap-1.5 text-[13px] text-black/55 hover:text-black transition-colors"
+                          >
+                            {link.label}
+                            {link.badge && (
+                              <span className="px-1.5 py-0.5 bg-black text-white text-[9px] font-semibold rounded-full uppercase">
+                                {link.badge}
+                              </span>
+                            )}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                );
+              })}
             </div>
-
-          </div>
+          ))}
         </div>
       </div>
     </>
