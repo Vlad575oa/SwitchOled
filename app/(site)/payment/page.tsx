@@ -2,7 +2,7 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Оплата наличными при получении — курьеру или в офисе",
-  description: "Информация об оплате в Gameshop24. Мы принимаем оплату наличными при получении курьеру или в нашем офисе.",
+  description: "Информация об оплате в Switch OLED. Мы принимаем оплату наличными при получении курьеру или в нашем офисе.",
   alternates: { canonical: "/payment" },
 };
 
@@ -12,7 +12,7 @@ export default function PaymentPage() {
       <div className="container max-w-4xl">
         <h1 className="text-4xl font-black text-secondary mb-6 uppercase">Оплата</h1>
         <div className="space-y-4 text-neutral-600 font-medium leading-relaxed">
-          <p>В магазине Gameshop24 оплата производится исключительно <strong>наличными</strong>.</p>
+          <p>В магазине Switch OLED оплата производится исключительно <strong>наличными</strong>.</p>
           <p>Вы можете оплатить ваш заказ следующими способами:</p>
           <ul className="list-disc pl-6 space-y-2">
             <li><strong>Наличными курьеру</strong> при получении заказа (для Москвы и МО).</li>

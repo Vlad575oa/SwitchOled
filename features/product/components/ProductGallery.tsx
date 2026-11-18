@@ -67,7 +67,7 @@ export function ProductGallery({ images: initialImages, name }: ProductGalleryPr
       >
         <Image
           src={images[activeIndex] || "/images/placeholder.webp"}
-          alt={`${name} — Оригинальное фото в Gameshop24`}
+          alt={`${name} — Оригинальное фото в Switch OLED`}
           title={`${name} — Купить с гарантией 1 год`}
           fill
           className="object-contain p-6 md:p-10"

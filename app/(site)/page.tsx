@@ -18,17 +18,17 @@ const RecentlyViewed = loadDynamic(
 );
 
 export const metadata: Metadata = {
-  title: { absolute: "Прошитые Nintendo Switch — купить в Москве | Gameshop24" },
+  title: { absolute: "Прошитые Nintendo Switch — купить в Москве | Switch OLED" },
   description: "Прошитые Nintendo Switch OLED и Lite с гарантией 1 год. 45+ конфигураций от 27 000 ₽. 100+ игр в комплекте. Доставка в день заказа по Москве.",
   alternates: {
     canonical: "/",
   },
   openGraph: {
-    title: "Прошитые Nintendo Switch — купить в Москве | Gameshop24",
+    title: "Прошитые Nintendo Switch — купить в Москве | Switch OLED",
     description: "Прошитые Nintendo Switch OLED и Lite с гарантией 1 год. 45+ конфигураций от 27 000 ₽. 100+ игр в комплекте.",
     url: "/",
     type: "website",
-    images: [{ url: "/og-default.jpg", width: 1200, height: 630, alt: "Прошитые Nintendo Switch — Gameshop24" }],
+    images: [{ url: "/og-default.jpg", width: 1200, height: 630, alt: "Прошитые Nintendo Switch — Switch OLED" }],
   },
 };
 

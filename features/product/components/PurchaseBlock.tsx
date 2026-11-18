@@ -324,7 +324,7 @@ export function PurchaseBlock({ product, variants = [], categorySlug }: Purchase
       <div className="bg-white border border-neutral-100 rounded-2xl p-4 flex items-center gap-4">
           <div className="w-10 h-10 rounded-full bg-neutral-100 flex items-center justify-center font-black text-neutral-400 text-xs">IS</div>
           <div>
-              <p className="text-sm font-black text-secondary leading-tight">Gameshop24</p>
+              <p className="text-sm font-black text-secondary leading-tight">Switch OLED</p>
               <p className="text-[10px] text-neutral-400 font-bold">Официальный продавец</p>
           </div>
       </div>

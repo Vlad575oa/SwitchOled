@@ -18,7 +18,7 @@ import { getCatalogSmartFilter } from "@/lib/catalogSmartFilters";
 import { sanitizeRichHtml } from "@/lib/sanitizeHtml";
 import { PageViewTracker } from "@/components/PageViewTracker";
 
-const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || "https://gameshop24.ru").replace("://www.", "://");
+const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || "https://switcholed.ru").replace("://www.", "://");
 
 export const revalidate = 1800;
 
@@ -137,7 +137,7 @@ export default async function ProductPage({
       availability: product.inStock
         ? "https://schema.org/InStock"
         : "https://schema.org/OutOfStock",
-      seller: { "@type": "Organization", name: "Gameshop24", url: baseUrl },
+      seller: { "@type": "Organization", name: "Switch OLED", url: baseUrl },
     },
   };
 

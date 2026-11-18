@@ -121,7 +121,7 @@ export async function getDirectSearchQueryReport(input: {
         "Conversions",
         "CostPerConversion",
       ],
-      ReportName: `GameShop24 search queries ${input.dateFrom} ${input.dateTo}`,
+      ReportName: `Switch OLED search queries ${input.dateFrom} ${input.dateTo}`,
       ReportType: "SEARCH_QUERY_PERFORMANCE_REPORT",
       DateRangeType: "CUSTOM_DATE",
       DateFrom: input.dateFrom,

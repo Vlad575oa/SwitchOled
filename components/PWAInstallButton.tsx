@@ -99,8 +99,8 @@ export function PWAInstallButton() {
                   <span className="text-white font-black text-xl italic leading-none">G</span>
                 </div>
                 <div>
-                  <p className="text-white font-black text-[15px]">Gameshop24</p>
-                  <p className="text-neutral-400 text-[11px]">gameshop24.ru</p>
+                  <p className="text-white font-black text-[15px]">Switch OLED</p>
+                  <p className="text-neutral-400 text-[11px]">switcholed.ru</p>
                 </div>
               </div>
               <button

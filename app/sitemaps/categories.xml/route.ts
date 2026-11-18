@@ -3,7 +3,7 @@ import prisma from "@/lib/prisma";
 import { getCategorySlugsVisibleInCatalog } from "@/lib/categoryVisibility";
 import { getCatalogSmartFilterEntries } from "@/lib/catalogSmartFilters";
 
-const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || "https://gameshop24.ru").replace("://www.", "://");
+const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || "https://switcholed.ru").replace("://www.", "://");
 
 export const dynamic = "force-dynamic";
 

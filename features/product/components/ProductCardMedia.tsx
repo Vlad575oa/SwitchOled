@@ -76,7 +76,7 @@ export function ProductCardMedia({ images, name, eagerImage = false }: ProductCa
             <Image
               key={`${img}-desktop-${index}`}
               src={img}
-              alt={`${name} — Фото ${index + 1} в Gameshop24`}
+              alt={`${name} — Фото ${index + 1} в Switch OLED`}
               title={`${name} — Ракурс ${index + 1}`}
               fill
               sizes="(max-width: 640px) 46vw, (max-width: 1024px) 30vw, (max-width: 1280px) 22vw, 16vw"

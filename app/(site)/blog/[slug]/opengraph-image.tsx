@@ -17,7 +17,7 @@ export default async function OGImage({
     where: { slug },
   });
 
-  const title = post?.title ?? "Блог Gameshop24";
+  const title = post?.title ?? "Блог Switch OLED";
   const category = post?.category ?? "Материал";
   const imageUrl = post ? getBlogImage(post) : null;
   const date = post?.createdAt
@@ -116,7 +116,7 @@ export default async function OGImage({
                 />
               </div>
               <span style={{ fontSize: 26, fontWeight: 900, color: "#ffffff", letterSpacing: -1 }}>
-                Gameshop24
+                Switch OLED
               </span>
             </div>
             <div

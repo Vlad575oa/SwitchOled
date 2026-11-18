@@ -172,7 +172,7 @@ export function ChatWidget() {
               </div>
               <div>
                 <p className="text-white font-black text-sm">Ира AI · ИИ-консультант</p>
-                <p className="text-neutral-400 text-[10px] font-bold">Gameshop24 · Всегда онлайн</p>
+                <p className="text-neutral-400 text-[10px] font-bold">Switch OLED · Всегда онлайн</p>
               </div>
             </div>
             <div className="flex items-center gap-2">

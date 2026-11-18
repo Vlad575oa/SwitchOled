@@ -18,7 +18,7 @@ export async function middleware(request: NextRequest) {
   const { pathname, hostname, search } = request.nextUrl;
   const normalizedPath =
     pathname.length > 1 && pathname.endsWith("/") ? pathname.replace(/\/+$/, "") : pathname;
-  const canonicalOrigin = hostname === "www.gameshop24.ru" ? "https://gameshop24.ru" : request.nextUrl.origin;
+  const canonicalOrigin = hostname === "www.switcholed.ru" ? "https://switcholed.ru" : request.nextUrl.origin;
 
   const withSecurityHeaders = (response: NextResponse) => {
     response.headers.set("X-Frame-Options", "DENY");
@@ -67,7 +67,7 @@ export async function middleware(request: NextRequest) {
 
   // Canonicalize host + trailing slash in a single redirect (except root)
   const hasTrailingSlash = pathname.length > 1 && pathname.endsWith("/");
-  if (hostname === "www.gameshop24.ru" || hasTrailingSlash) {
+  if (hostname === "www.switcholed.ru" || hasTrailingSlash) {
     const target = new URL(`${canonicalOrigin}${normalizedPath}${search}`);
     return withSecurityHeaders(NextResponse.redirect(target, 301));
   }

@@ -58,7 +58,7 @@ export default async function WarrantyPage() {
   const accessoriesPeriod = d.accessories_period ?? "6 месяцев";
   const returnPeriod = d.return_period ?? "14 дней";
   const maxHref = d.telegram ?? "https://max.ru/u/f9LHodD0cOJQaSenuFWGazoHqG8RNEoO3xSyNKPTXj1s3tyqlHkFoF5UzUo";
-  const emailHref = `mailto:${d.email ?? "shop@gameshop24.ru"}`;
+  const emailHref = `mailto:${d.email ?? "info@switcholed.ru"}`;
 
   const guarantees = [
     {

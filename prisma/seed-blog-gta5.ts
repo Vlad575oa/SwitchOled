@@ -10,13 +10,13 @@ const posts = [
     isPublished: true,
     excerpt: "GTA 5 на Nintendo Switch OLED — большая игра в портативном формате. Рассказываем, как заказать новую консоль, уже подготовленную к игре, с GTA 5 и другими играми по вашему выбору.",
     image: "https://s3.ru1.storage.beget.cloud/5484d8765845-nintendo-s3-storage/images/blog/gta5-switch-oled-nintendo-switch.webp",
-    metaTitle: "Nintendo Switch OLED с GTA 5 | Купить консоль с играми — GameShop24",
-    metaDesc: "Новая Nintendo Switch OLED с предустановленной GTA 5 и другими играми на выбор. Прошивка, проверка и гарантия от GameShop24.",
+    metaTitle: "Nintendo Switch OLED с GTA 5 | Купить консоль с играми — Switch OLED",
+    metaDesc: "Новая Nintendo Switch OLED с предустановленной GTA 5 и другими играми на выбор. Прошивка, проверка и гарантия от Switch OLED.",
     content: `**GTA 5 на Nintendo Switch OLED — одна из самых интересных возможностей для тех, кто хочет совместить большую игру с портативным форматом.**
 
 Представьте: любимая игра, большой открытый мир, знакомые персонажи и возможность играть не только перед телевизором, но и там, где удобно именно вам.
 
-В GameShop24 вы можете приобрести новую [Nintendo Switch OLED 256GB](/catalog/nintendo-switch-oled/nintendo-switch-oled-neon-256gb-az) или [Nintendo Switch OLED 512GB](/catalog/nintendo-switch-oled/nintendo-switch-oled-neon-512gb-az), предварительно подготовленную к игре. А главное — мы можем установить **GTA 5 и другие совместимые игры по вашему выбору**.
+В Switch OLED вы можете приобрести новую [Nintendo Switch OLED 256GB](/catalog/nintendo-switch-oled/nintendo-switch-oled-neon-256gb-az) или [Nintendo Switch OLED 512GB](/catalog/nintendo-switch-oled/nintendo-switch-oled-neon-512gb-az), предварительно подготовленную к игре. А главное — мы можем установить **GTA 5 и другие совместимые игры по вашему выбору**.
 
 ---
 
@@ -78,7 +78,7 @@ Nintendo Switch OLED проверяется перед выдачей, а уст
 
 ---
 
-## Nintendo Switch OLED с GTA 5 от GameShop24
+## Nintendo Switch OLED с GTA 5 от Switch OLED
 
 Если вы ищете новую Nintendo Switch OLED с GTA 5, у нас можно заказать готовую консоль — [256 ГБ](/catalog/nintendo-switch-oled/nintendo-switch-oled-neon-256gb-az) или [512 ГБ](/catalog/nintendo-switch-oled/nintendo-switch-oled-neon-512gb-az) — с игрой и дополнить комплект другими выбранными играми.
 
@@ -88,7 +88,7 @@ Nintendo Switch OLED проверяется перед выдачей, а уст
 
 [Смотреть Nintendo Switch OLED →](/catalog/nintendo-switch-oled)
 
-**GameShop24 — Nintendo Switch OLED, подготовленная для вашей игры.**`,
+**Switch OLED — Nintendo Switch OLED, подготовленная для вашей игры.**`,
   },
 ];
 

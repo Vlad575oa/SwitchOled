@@ -25,7 +25,7 @@ const bannerText = Buffer.from(`
   </defs>
   <rect width="800" height="450" fill="url(#shade)"/>
   <rect x="48" y="52" width="8" height="270" rx="4" fill="#e31e24"/>
-  <text x="82" y="112" fill="#ffffff" font-family="Arial, sans-serif" font-size="30" font-weight="700">Gameshop24</text>
+  <text x="82" y="112" fill="#ffffff" font-family="Arial, sans-serif" font-size="30" font-weight="700">Switch OLED</text>
   <text x="82" y="180" fill="#ffffff" font-family="Arial, sans-serif" font-size="34" font-weight="700">Прошитые Nintendo Switch</text>
   <text x="82" y="228" fill="#ffdc4a" font-family="Arial, sans-serif" font-size="32" font-weight="700">с играми</text>
   <text x="82" y="292" fill="#ffffff" font-family="Arial, sans-serif" font-size="25" font-weight="600">Доставка по всей России</text>

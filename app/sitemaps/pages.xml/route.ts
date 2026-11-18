@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || "https://gameshop24.ru").replace("://www.", "://");
+const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || "https://switcholed.ru").replace("://www.", "://");
 
 const pages = [
   "/",

@@ -1,4 +1,3 @@
-import { AnnouncementBar } from "@/components/AnnouncementBar";
 import { Footer } from "@/components/Footer";
 import { HeaderSkeleton } from "@/components/HeaderSkeleton";
 import { Suspense } from "react";
@@ -73,7 +72,6 @@ export default async function SiteLayout({
 
   return (
     <>
-      <AnnouncementBar />
       <Header />
       <QuickFilters enabledSlugs={activeQuickSlugs} />
       <main className="flex-grow">

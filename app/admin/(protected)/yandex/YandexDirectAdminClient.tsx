@@ -85,7 +85,7 @@ export default function YandexDirectAdminClient() {
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [selectedAccountId, setSelectedAccountId] = useState<string | null>(null);
   const [oauthConfigured, setOauthConfigured] = useState(false);
-  const [redirectUri, setRedirectUri] = useState("https://gameshop24.ru/api/yandex-direct/oauth/callback");
+  const [redirectUri, setRedirectUri] = useState("https://switcholed.ru/api/yandex-direct/oauth/callback");
   const [mcpEndpoint, setMcpEndpoint] = useState("https://mcp.directassist.pro/mcp");
 
   // Data

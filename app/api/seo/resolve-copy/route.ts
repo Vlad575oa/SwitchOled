@@ -35,7 +35,7 @@ export async function GET(request: Request) {
     }
 
     return NextResponse.json({
-      targetUrl: `https://gameshop24.ru/catalog/${product.category.slug}/${product.slug}`,
+      targetUrl: `https://switcholed.ru/catalog/${product.category.slug}/${product.slug}`,
     });
   } catch {
     return NextResponse.json({ targetUrl: null });

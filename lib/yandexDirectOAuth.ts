@@ -6,7 +6,7 @@ import { encryptYandexSecret } from "@/lib/yandexDirectCrypto";
 
 export const YANDEX_DIRECT_REDIRECT_URI =
   process.env.YANDEX_DIRECT_REDIRECT_URI?.trim() ||
-  "https://gameshop24.ru/api/yandex-direct/oauth/callback";
+  "https://switcholed.ru/api/yandex-direct/oauth/callback";
 
 export async function startYandexDirectOAuth(request: Request) {
   if (!await verifyAdminSession(cookies().get(ADMIN_COOKIE)?.value)) {

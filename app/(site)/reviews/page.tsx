@@ -5,7 +5,7 @@ import { avitoReviews } from "@/lib/data/avito-reviews";
 
 export const metadata: Metadata = {
   title: "Отзывы покупателей",
-  description: "Реальные отзывы покупателей GameShop24 с Авито. Рейтинг 5.0 · 3100+ отзывов. Nintendo Switch, PS5, игры.",
+  description: "Реальные отзывы покупателей Switch OLED с Авито. Рейтинг 5.0 · 3100+ отзывов. Nintendo Switch, PS5, игры.",
   alternates: { canonical: "/reviews" },
 };
 

@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import type { Prisma } from "@prisma/client";
 import prisma from "@/lib/prisma";
 
-const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || "https://gameshop24.ru").replace("://www.", "://");
+const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || "https://switcholed.ru").replace("://www.", "://");
 
 function xmlEscape(value: string): string {
   return value
@@ -93,8 +93,8 @@ ${vendorTag}
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <yml_catalog date="${ymlDate}">
   <shop>
-    <name>Gameshop24</name>
-    <company>Gameshop24</company>
+    <name>Switch OLED</name>
+    <company>Switch OLED</company>
     <url>${xmlEscape(baseUrl)}</url>
     <currencies>
       <currency id="RUB" rate="1"/>

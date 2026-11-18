@@ -89,7 +89,7 @@ export default function MessengerExitNotice() {
         </h3>
 
         <p className="text-sm text-neutral-600 leading-relaxed">
-          Вы покидаете сайт Gameshop24 и переходите в другое приложение. Обратите внимание, что при переходе ваш номер телефона и данные профиля станут доступны мессенджеру.
+          Вы покидаете сайт Switch OLED и переходите в другое приложение. Обратите внимание, что при переходе ваш номер телефона и данные профиля станут доступны мессенджеру.
         </p>
 
         <div className="mt-5 flex items-center justify-end gap-2">

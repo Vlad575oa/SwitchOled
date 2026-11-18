@@ -2,7 +2,7 @@ export const CONTACTS = {
   phoneDisplay: "7(926)676-34-88",
   phoneHref: "+79266763488",
   telegramUrl: "https://t.me/+79266763488",
-  email: "shop@gameshop24.ru",
+  email: "info@switcholed.ru",
   address: "Москва, Митинская 10, корп. 1",
   city: "Москва",
   workingHours: "10:00 — 21:00",

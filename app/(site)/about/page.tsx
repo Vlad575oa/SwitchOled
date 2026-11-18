@@ -11,8 +11,8 @@ import { HomePageLink } from "@/components/HomePageLink";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: { absolute: "О компании Gameshop24 — прошитые консоли с гарантией" },
-  description: "Gameshop24 — магазин для тех, кто живёт играми. Основан в 2017 году командой геймеров. Только оригинальная техника, гарантия и поддержка 24/7.",
+  title: { absolute: "О компании Switch OLED — прошитые консоли с гарантией" },
+  description: "Switch OLED — магазин для тех, кто живёт играми. Основан в 2017 году командой геймеров. Только оригинальная техника, гарантия и поддержка 24/7.",
   alternates: { canonical: "/about" },
 };
 
@@ -72,7 +72,7 @@ export default async function AboutPage() {
 
               <div className="max-w-xl md:max-w-2xl space-y-6">
                 <p className="text-xl md:text-3xl text-secondary font-black leading-[1.3] tracking-tight">
-                  {d.hero_text1 ?? "Gameshop24 начинался с двух друзей и десяти консолей, привезённых из Европы."}
+                  {d.hero_text1 ?? "Switch OLED начинался с двух друзей и десяти консолей, привезённых из Европы."}
                 </p>
                 <div className="h-px w-20 bg-neutral-100" />
                 <p className="text-base md:text-xl text-neutral-500 font-bold leading-relaxed">
@@ -96,7 +96,7 @@ export default async function AboutPage() {
               <div className="relative aspect-[4/5] rounded-lg overflow-hidden shadow-2xl shadow-neutral-200">
                 <Image
                   src="/about_hero_cinematic.png"
-                  alt="Gameshop24 Heritage"
+                  alt="Switch OLED Heritage"
                   fill
                   className="object-cover"
                 />

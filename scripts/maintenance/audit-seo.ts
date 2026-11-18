@@ -49,11 +49,11 @@ async function main() {
 
   // 2. Audit Internal Links
   console.log("\n--- Internal Link Audit ---");
-  const linkRegex = /\[.*?\]\((?:\/|https?:\/\/gameshop24\.ru)(\/[a-zA-Z0-9\-\/]*)\)/g;
+  const linkRegex = /\[.*?\]\((?:\/|https?:\/\/switcholed\.ru)(\/[a-zA-Z0-9\-\/]*)\)/g;
 
   const checkLinks = (text: string, sourceName: string) => {
-    // Regex matches [text](/path) or [text](https://gameshop24.ru/path)
-    const internalLinkRegex = /\[.*?\]\((?:\/|https?:\/\/gameshop24\.ru)([\w\-\/]+)\)/g;
+    // Regex matches [text](/path) or [text](https://switcholed.ru/path)
+    const internalLinkRegex = /\[.*?\]\((?:\/|https?:\/\/switcholed\.ru)([\w\-\/]+)\)/g;
     let match;
     const broken = [];
     while ((match = internalLinkRegex.exec(text)) !== null) {

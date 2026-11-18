@@ -19,19 +19,19 @@ const MessengerExitNotice = dynamic(() => import("@/components/MessengerExitNoti
   ssr: false,
 });
 
-const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || "https://gameshop24.ru").replace("://www.", "://");
+const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || "https://switcholed.ru").replace("://www.", "://");
 
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
   title: {
-    default: "Gameshop24 | Магазин игровых консолей и аксессуаров",
-    template: "%s | Gameshop24"
+    default: "Switch OLED | Магазин игровых консолей и аксессуаров",
+    template: "%s | Switch OLED"
   },
   description: "Лучший выбор PlayStation, Xbox и Nintendo в России. Оригинальная продукция, официальная гарантия, быстрая доставка и лучшие цены на игровые приставки.",
-  keywords: ["Nintendo Switch", "PlayStation 5", "Xbox Series X", "купить консоль", "игровой магазин", "Gameshop24"],
-  authors: [{ name: "Gameshop24 Team" }],
-  creator: "Gameshop24",
-  publisher: "Gameshop24",
+  keywords: ["Nintendo Switch", "PlayStation 5", "Xbox Series X", "купить консоль", "игровой магазин", "Switch OLED"],
+  authors: [{ name: "Switch OLED Team" }],
+  creator: "Switch OLED",
+  publisher: "Switch OLED",
   formatDetection: {
     email: false,
     address: false,
@@ -41,17 +41,17 @@ export const metadata: Metadata = {
     canonical: "/",
   },
   openGraph: {
-    title: "Gameshop24 | Магазин игровых консолей",
+    title: "Switch OLED | Магазин игровых консолей",
     description: "Лучший выбор PlayStation, Xbox и Nintendo с доставкой по всей России.",
     url: baseUrl,
-    siteName: "Gameshop24",
+    siteName: "Switch OLED",
     locale: "ru_RU",
     type: "website",
-    images: [{ url: `${baseUrl}/og-default.jpg`, width: 1200, height: 630, alt: "Gameshop24 — магазин игровых консолей" }],
+    images: [{ url: `${baseUrl}/og-default.jpg`, width: 1200, height: 630, alt: "Switch OLED — магазин игровых консолей" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Gameshop24 | Магазин игровых консолей",
+    title: "Switch OLED | Магазин игровых консолей",
     description: "Лучший выбор PlayStation, Xbox и Nintendo с доставкой по всей России.",
     images: [`${baseUrl}/og-default.jpg`],
   },
@@ -85,7 +85,7 @@ const organizationSchema = {
     {
       "@type": "Organization",
       "@id": `${baseUrl}/#organization`,
-      "name": "Gameshop24",
+      "name": "Switch OLED",
       "url": baseUrl,
       "logo": {
         "@type": "ImageObject",
@@ -119,7 +119,7 @@ const organizationSchema = {
       "@type": "WebSite",
       "@id": `${baseUrl}/#website`,
       "url": baseUrl,
-      "name": "Gameshop24",
+      "name": "Switch OLED",
       "publisher": { "@id": `${baseUrl}/#organization` },
       "potentialAction": {
         "@type": "SearchAction",
@@ -133,7 +133,7 @@ const organizationSchema = {
     {
       "@type": "LocalBusiness",
       "@id": `${baseUrl}/#localbusiness`,
-      "name": "Gameshop24",
+      "name": "Switch OLED",
       "url": baseUrl,
       "telephone": CONTACTS.phoneDisplay,
       "priceRange": "₽₽₽",
@@ -176,7 +176,7 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/apple-icon.png" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-        <meta name="apple-mobile-web-app-title" content="Gameshop24" />
+        <meta name="apple-mobile-web-app-title" content="Switch OLED" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="theme-color" content="#e8002d" />
         <script

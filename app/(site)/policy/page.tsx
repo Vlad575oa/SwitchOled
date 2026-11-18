@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Политика и юридическая информация",
-  description: "Юридические документы Gameshop24: оферта, политика конфиденциальности, условия использования и cookie.",
+  description: "Юридические документы Switch OLED: оферта, политика конфиденциальности, условия использования и cookie.",
   alternates: { canonical: "/policy" },
 };
 

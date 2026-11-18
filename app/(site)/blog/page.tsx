@@ -18,7 +18,7 @@ export async function generateMetadata({
   return {
     title: "Блог игромана | Новости, обзоры и гайды",
     description: "Самые свежие новости из мира консолей, подробные обзоры PS5 Pro, Nintendo Switch 2 и ретро-гейминга.",
-    alternates: { canonical: "https://gameshop24.ru/blog" },
+    alternates: { canonical: "https://switcholed.ru/blog" },
     ...(category ? { robots: { index: false, follow: true } } : {}),
   };
 }
@@ -79,16 +79,16 @@ export default async function BlogPage({
 
   const categories = ["Все", "Обзоры", "Гайды", "Новости", "Слухи"];
 
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://gameshop24.ru";
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://switcholed.ru";
   const blogListSchema = {
     "@context": "https://schema.org",
     "@type": "Blog",
-    "name": "Блог Gameshop24",
+    "name": "Блог Switch OLED",
     "url": `${baseUrl}/blog`,
     "description": "Новости, обзоры и гайды из мира Nintendo, PlayStation и Xbox",
     "publisher": {
       "@type": "Organization",
-      "name": "Gameshop24",
+      "name": "Switch OLED",
       "url": baseUrl,
     },
     "blogPost": posts.slice(0, 10).map((post) => ({
@@ -208,7 +208,7 @@ export default async function BlogPage({
                         <div className="h-8 px-5 bg-primary rounded-full flex items-center gap-2 text-white text-[10px] font-black uppercase tracking-widest group-hover:bg-white group-hover:text-primary transition-all duration-300">
                           Читать <ArrowRight size={12} />
                         </div>
-                        <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest">GameShop24 Team</span>
+                        <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest">Switch OLED Team</span>
                       </div>
                     </div>
                   </Link>
@@ -258,10 +258,10 @@ export default async function BlogPage({
                     <div className="flex items-center justify-between pt-4 border-t border-neutral-50">
                       <div className="flex items-center gap-2">
                         <div className="w-6 h-6 rounded-full bg-neutral-100 flex items-center justify-center overflow-hidden">
-                          <Image src="/icon-192.png" alt="GameShop24" width={24} height={24} className="w-full h-full object-cover" />
+                          <Image src="/icon-192.png" alt="Switch OLED" width={24} height={24} className="w-full h-full object-cover" />
                         </div>
                         <span className="text-[9px] font-black text-neutral-400 uppercase tracking-widest">
-                          GameShop24 Team
+                          Switch OLED Team
                         </span>
                       </div>
                       <div className="w-8 h-8 rounded-full border border-neutral-100 flex items-center justify-center group-hover:bg-primary group-hover:border-primary group-hover:text-white transition-all duration-300">

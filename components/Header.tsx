@@ -50,9 +50,9 @@ const MENU_LINKS = [
 ];
 
 const Logo = () => (
-  <Link href="/" className="flex items-center gap-2 shrink-0" aria-label="Gameshop24 — на главную">
+  <Link href="/" className="flex items-center gap-2 shrink-0" aria-label="Switch OLED — на главную">
     <span className="w-[18px] h-[18px] rounded-full border-[4.5px] border-black" />
-    <span className="text-[17px] sm:text-[18px] font-semibold tracking-[-0.01em] text-black">Gameshop24</span>
+    <span className="text-[17px] sm:text-[18px] font-semibold tracking-[-0.01em] text-black">Switch OLED</span>
   </Link>
 );
 
@@ -118,7 +118,7 @@ export const Header = () => {
   const cartLabel = `(${mounted ? totalItems : 0})`;
 
   return (
-    <header className="relative z-40 px-3 pt-2">
+    <header className="relative z-40 px-3 pt-3">
       <div className="relative flex items-start justify-between h-12">
         {/* Left tab */}
         <div className="notch-tl flex items-center gap-6 lg:gap-7 h-12 pr-5 lg:pr-8 pl-2 sm:pl-4">
@@ -146,7 +146,7 @@ export const Header = () => {
           <a href={`tel:${CONTACTS.phoneHref}`} className="hidden xl:inline text-[15px] font-medium text-black hover:text-black/60 transition-colors">
             {CONTACTS.phoneDisplay}
           </a>
-          <a href={`tel:${CONTACTS.phoneHref}`} aria-label="Позвонить" className="xl:hidden text-black">
+          <a href={`tel:${CONTACTS.phoneHref}`} aria-label="Позвонить" className="hidden sm:inline xl:hidden text-black">
             <Phone size={17} />
           </a>
           <Link href="/wishlist" className="hidden sm:inline-flex items-center gap-1 text-[15px] font-medium text-black hover:text-black/60 transition-colors" aria-label="Избранное">

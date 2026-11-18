@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 
 const KEY = process.env.INDEXNOW_KEY!;
-const HOST = (process.env.NEXT_PUBLIC_APP_URL || "https://gameshop24.ru").replace(/\/$/, "");
+const HOST = (process.env.NEXT_PUBLIC_APP_URL || "https://switcholed.ru").replace(/\/$/, "");
 
 function safeEqual(a: string, b: string): boolean {
   const left = crypto.createHash("sha256").update(a).digest();

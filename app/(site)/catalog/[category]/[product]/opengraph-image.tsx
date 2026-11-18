@@ -13,7 +13,7 @@ export default async function OGImage({
 }) {
   const product = await getProductBySlug(params.product);
 
-  const name = product?.name ?? "Gameshop24";
+  const name = product?.name ?? "Switch OLED";
   const price = product?.price
     ? `${(product.price / 100).toLocaleString("ru-RU")} ₽`
     : null;
@@ -79,7 +79,7 @@ export default async function OGImage({
               />
             </div>
             <span style={{ fontSize: 22, fontWeight: 900, color: "#2d2d2d", letterSpacing: -0.5 }}>
-              Gameshop24
+              Switch OLED
             </span>
           </div>
 

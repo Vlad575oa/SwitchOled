@@ -34,8 +34,8 @@ const nextConfig = {
     return [
       {
         source: '/:path*',
-        has: [{ type: 'host', value: 'www.gameshop24.ru' }],
-        destination: 'https://gameshop24.ru/:path*',
+        has: [{ type: 'host', value: 'www.switcholed.ru' }],
+        destination: 'https://switcholed.ru/:path*',
         statusCode: 301,
       },
     ];

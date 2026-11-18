@@ -174,7 +174,7 @@ export function SupportChat({ className }: { className?: string }) {
               <MessageCircle size={23} />
             </div>
             <div>
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/45">Gameshop24</p>
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/45">Switch OLED</p>
               <h2 className="text-2xl font-black tracking-tight">Чат с поддержкой</h2>
             </div>
           </div>

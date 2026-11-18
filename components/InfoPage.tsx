@@ -30,7 +30,7 @@ export function generateInfoMetadata(slug: string): Metadata {
   if (!pageContent) return {};
 
   return {
-    title: `${pageContent.title} | Gameshop24`,
+    title: `${pageContent.title} | Switch OLED`,
     description: pageContent.description,
     alternates: {
       canonical: `/${slug}`
@@ -51,7 +51,7 @@ export const InfoPage = ({ slug }: { slug: string }) => {
         <article>
           <div className="mb-12 space-y-4">
              <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/5 rounded-full text-primary text-[10px] font-black uppercase tracking-widest">
-              GAMESHOP24
+              SWITCH OLED
             </div>
             <h1 className="text-5xl font-black tracking-tight text-secondary">{pageContent.title}</h1>
           </div>

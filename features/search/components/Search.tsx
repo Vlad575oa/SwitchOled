@@ -108,7 +108,7 @@ export const Search = () => {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onFocus={() => setIsOpen(true)}
-            placeholder="Искать в Gameshop24..."
+            placeholder="Искать в Switch OLED..."
             onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
             className="w-full bg-transparent border-none focus:ring-0 outline-none text-[16px] lg:text-[14px] font-medium text-secondary ml-1 placeholder:text-neutral-400"
           />

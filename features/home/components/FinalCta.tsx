@@ -20,7 +20,7 @@ export const FinalCta = () => {
           Готовы начать<br />свой новый квест?
         </h3>
         <p className="text-white/70 font-bold mb-10 text-sm md:text-base uppercase tracking-widest">
-          Присоединяйтесь к тысячам довольных геймеров Gameshop24
+          Присоединяйтесь к тысячам довольных геймеров Switch OLED
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <Link 

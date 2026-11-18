@@ -15,7 +15,7 @@ import { sanitizeRichHtml } from "@/lib/sanitizeHtml";
 import { PageViewTracker } from "@/components/PageViewTracker";
 import { getBlogImage } from "@/lib/blogImages";
 
-const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || "https://gameshop24.ru").replace("://www.", "://");
+const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || "https://switcholed.ru").replace("://www.", "://");
 
 const heroActions = [
   { label: "Купить", href: "/" },
@@ -127,12 +127,12 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
     "dateModified": post.updatedAt.toISOString(),
     "author": {
       "@type": "Organization",
-      "name": "Gameshop24",
+      "name": "Switch OLED",
       "url": baseUrl,
     },
     "publisher": {
       "@type": "Organization",
-      "name": "Gameshop24",
+      "name": "Switch OLED",
       "url": baseUrl,
       "logo": {
         "@type": "ImageObject",
@@ -221,10 +221,10 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
             <div className="flex flex-wrap items-center gap-8 py-6 border-y border-neutral-100">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-neutral-900 flex items-center justify-center overflow-hidden">
-                   <Image src="/icon-192.png" alt="GameShop24" width={40} height={40} className="w-full h-full object-cover" />
+                   <Image src="/icon-192.png" alt="Switch OLED" width={40} height={40} className="w-full h-full object-cover" />
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-secondary text-xs font-black uppercase tracking-widest">GameShop24 Team</span>
+                  <span className="text-secondary text-xs font-black uppercase tracking-widest">Switch OLED Team</span>
                   <span className="text-[9px] text-neutral-400 font-bold uppercase tracking-[0.2em]">{format(new Date(post.createdAt), 'dd MMMM yyyy', { locale: ru })}</span>
                 </div>
               </div>

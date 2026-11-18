@@ -12,11 +12,11 @@ export function truncateByWords(input: string, maxLength: number): string {
   return cut.trim().replace(/[.,;:!?-]+$/g, "");
 }
 
-const BRAND_SUFFIX = " | Gameshop24";
+const BRAND_SUFFIX = " | Switch OLED";
 const TITLE_LIMIT = 70;
 
 /**
- * The root layout appends " | Gameshop24" to every title. Long titles skip the
+ * The root layout appends " | Switch OLED" to every title. Long titles skip the
  * brand instead, so search results don't cut the meaningful part.
  */
 export function brandedTitle(title: string): string | { absolute: string } {
@@ -60,7 +60,7 @@ export function resolveProductMetaTitle(
   name: string,
   variantLabel?: string | null
 ): string {
-  const normalized = (metaTitle?.trim() ?? "").replace(/\s*[—|]\s*Gameshop24\s*$/i, "").trim();
+  const normalized = (metaTitle?.trim() ?? "").replace(/\s*[—|]\s*Switch OLED\s*$/i, "").trim();
   if (!normalized || /(?:[-–—|:]\s*)$/.test(normalized)) return buildProductMetaTitle(name, variantLabel);
   return normalized;
 }

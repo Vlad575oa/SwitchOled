@@ -58,7 +58,7 @@ export const Footer = ({ workingHours = "09:00 — 21:00", currentYear }: Footer
                     <div className="order-2 lg:order-1 flex flex-col">
                         <Link href="/" className="flex items-center gap-2 self-start">
                             <span className="w-[18px] h-[18px] rounded-full border-[4.5px] border-white" />
-                            <span className="text-[18px] font-semibold tracking-[-0.01em]">Gameshop24</span>
+                            <span className="text-[18px] font-semibold tracking-[-0.01em]">Switch OLED</span>
                         </Link>
                         <p className="mt-4 max-w-[380px] text-[15px] leading-[1.55] text-white/55">
                             Прошитые Nintendo Switch с гарантией. Настраиваем, устанавливаем игры и обслуживаем консоли в Москве с 1997 года.
@@ -76,7 +76,7 @@ export const Footer = ({ workingHours = "09:00 — 21:00", currentYear }: Footer
                             >
                                 Написать в чат <ArrowUpRight size={16} />
                             </Link>
-                            <p className="mt-4 text-[15px] text-white/80">© {currentYear} Gameshop24</p>
+                            <p className="mt-4 text-[15px] text-white/80">© {currentYear} Switch OLED</p>
                             <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1">
                                 {LEGAL.map((l) => (
                                     <Link key={l.href} href={l.href} className="text-[12px] text-white/40 hover:text-white/70 transition-colors">

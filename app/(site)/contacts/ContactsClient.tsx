@@ -78,7 +78,7 @@ export default function ContactsClient({ data }: { data: ContactsData }) {
   ];
 
   const partnerPhone = data.partner_phone ?? "8 (926) 676-34-88";
-  const partnerEmail = data.partner_email ?? "partner@gameshop24.ru";
+  const partnerEmail = data.partner_email ?? "info@switcholed.ru";
 
   return (
     <div className="bg-white min-h-screen pt-6 pb-28">

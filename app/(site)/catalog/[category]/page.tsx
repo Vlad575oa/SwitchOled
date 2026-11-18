@@ -11,7 +11,7 @@ import {
 
 export const dynamic = "force-dynamic";
 
-const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://gameshop24.ru";
+const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://switcholed.ru";
 
 export async function generateMetadata({
   params,
@@ -30,8 +30,8 @@ export async function generateMetadata({
           },
         });
   const title = category
-    ? `${category.name} — Купить недорого в Gameshop24`
-    : "Каталог игровых консолей | Gameshop24";
+    ? `${category.name} — Купить недорого в Switch OLED`
+    : "Каталог игровых консолей | Switch OLED";
   
   const description = `Большой выбор товаров в категории ${category?.name ?? "Каталог"}. Лучшие цены, официальная гарантия и быстрая доставка по всей России.`;
 
