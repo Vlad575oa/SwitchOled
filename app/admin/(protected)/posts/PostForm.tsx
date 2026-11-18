@@ -25,8 +25,8 @@ const defaultInitial: PostFormProps["initial"] = {
   category: "Статья", isPublished: false, metaTitle: "", metaDesc: "",
 };
 
-const inputCls = "w-full px-4 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-sm font-bold text-[#111827] placeholder:text-neutral-300 outline-none focus:bg-white focus:border-primary/30 transition-all";
-const labelCls = "block text-[10px] font-black uppercase tracking-widest text-neutral-400 mb-1.5";
+const inputCls = "w-full px-4 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-sm font-bold text-[#111111] placeholder:text-neutral-300 outline-none focus:bg-white focus:border-primary/30 transition-all";
+const labelCls = "block text-[10px] font-semibold uppercase tracking-widest text-neutral-400 mb-1.5";
 
 export const PostForm = ({ initial = defaultInitial }: PostFormProps) => {
   const router = useRouter();
@@ -88,21 +88,21 @@ export const PostForm = ({ initial = defaultInitial }: PostFormProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F4F5F7]">
+    <div className="min-h-screen bg-[#f5f5f5]">
       <header className="bg-white border-b border-neutral-100 px-8 py-4 flex items-center justify-between sticky top-0 z-40">
         <div className="flex items-center gap-4">
-          <Link href="/admin/posts" className="w-9 h-9 rounded-xl bg-neutral-50 border border-neutral-200 flex items-center justify-center text-neutral-400 hover:text-[#111827] transition-colors">
+          <Link href="/admin/posts" className="w-9 h-9 rounded-xl bg-neutral-50 border border-neutral-200 flex items-center justify-center text-neutral-400 hover:text-[#111111] transition-colors">
             <ArrowLeft size={16} />
           </Link>
           <div>
-            <p className="text-[10px] font-black uppercase tracking-widest text-neutral-400">Блог / {isEdit ? "Редактирование" : "Новая статья"}</p>
-            <h1 className="text-lg font-black text-[#111827] leading-tight">{form.title || "Без названия"}</h1>
+            <p className="text-[10px] font-semibold uppercase tracking-widest text-neutral-400">Блог / {isEdit ? "Редактирование" : "Новая статья"}</p>
+            <h1 className="text-lg font-semibold text-[#111111] leading-tight">{form.title || "Без названия"}</h1>
           </div>
         </div>
         <div className="flex items-center gap-3">
           <button
             onClick={() => setPreview(!preview)}
-            className="flex items-center gap-2 px-4 py-2 bg-white border border-neutral-200 text-neutral-500 text-sm font-black rounded-xl hover:bg-neutral-50 transition-all"
+            className="flex items-center gap-2 px-4 py-2 bg-white border border-neutral-200 text-neutral-500 text-sm font-semibold rounded-xl hover:bg-neutral-50 transition-all"
           >
             {preview ? <EyeOff size={14} /> : <Eye size={14} />}
             {preview ? "Редактор" : "Превью"}
@@ -110,14 +110,14 @@ export const PostForm = ({ initial = defaultInitial }: PostFormProps) => {
           <button
             onClick={() => { set("isPublished", false); handleSubmit(); }}
             disabled={saving}
-            className="px-4 py-2 bg-white border border-neutral-200 text-neutral-500 text-sm font-black rounded-xl hover:bg-neutral-50 transition-all disabled:opacity-60"
+            className="px-4 py-2 bg-white border border-neutral-200 text-neutral-500 text-sm font-semibold rounded-xl hover:bg-neutral-50 transition-all disabled:opacity-60"
           >
             Черновик
           </button>
           <button
             onClick={() => { set("isPublished", true); handleSubmit(); }}
             disabled={saving}
-            className="flex items-center gap-2 px-5 py-2 bg-primary text-white text-sm font-black rounded-xl hover:bg-red-700 transition-all shadow-lg shadow-primary/20 disabled:opacity-60"
+            className="flex items-center gap-2 px-5 py-2 bg-primary text-white text-sm font-semibold rounded-xl hover:bg-red-700 transition-all shadow-lg shadow-primary/20 disabled:opacity-60"
           >
             <Save size={14} />
             {saving ? "Сохранение..." : "Опубликовать"}
@@ -160,7 +160,7 @@ export const PostForm = ({ initial = defaultInitial }: PostFormProps) => {
               />
             ) : (
               <textarea
-                className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl text-sm font-mono text-[#111827] placeholder:text-neutral-300 outline-none focus:bg-white focus:border-primary/30 transition-all resize-none"
+                className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl text-sm font-mono text-[#111111] placeholder:text-neutral-300 outline-none focus:bg-white focus:border-primary/30 transition-all resize-none"
                 rows={20}
                 value={form.content}
                 onChange={(e) => set("content", e.target.value)}
@@ -172,7 +172,7 @@ export const PostForm = ({ initial = defaultInitial }: PostFormProps) => {
 
         <div className="space-y-5">
           <section className="bg-white rounded-2xl border border-neutral-100 shadow-sm p-6 space-y-4">
-            <h2 className="text-sm font-black text-[#111827]">Настройки</h2>
+            <h2 className="text-sm font-semibold text-[#111111]">Настройки</h2>
             <div>
               <label className={labelCls}>Категория</label>
               <select className={inputCls} value={form.category} onChange={(e) => set("category", e.target.value)}>
@@ -194,7 +194,7 @@ export const PostForm = ({ initial = defaultInitial }: PostFormProps) => {
           </section>
 
           <section className="bg-white rounded-2xl border border-neutral-100 shadow-sm p-6 space-y-4">
-            <h2 className="text-sm font-black text-[#111827]">Обложка</h2>
+            <h2 className="text-sm font-semibold text-[#111111]">Обложка</h2>
             <div
               onClick={() => fileRef.current?.click()}
               className="aspect-video border-2 border-dashed border-neutral-200 rounded-xl overflow-hidden cursor-pointer hover:border-primary/30 transition-colors relative group"
@@ -218,22 +218,22 @@ export const PostForm = ({ initial = defaultInitial }: PostFormProps) => {
 
           {/* SEO toggle */}
           <div className="flex items-center justify-between pb-2">
-            <h2 className="text-sm font-black text-[#111827] flex items-center gap-2">
+            <h2 className="text-sm font-semibold text-[#111111] flex items-center gap-2">
               <Search size={15} className="text-neutral-400" /> SEO настройки
             </h2>
             <button
               type="button"
               onClick={() => setShowSEO(!showSEO)}
-              className="text-[10px] font-black uppercase tracking-widest text-primary bg-primary/5 px-3 py-1.5 rounded-lg hover:bg-primary/10 transition-colors"
+              className="text-[10px] font-semibold uppercase tracking-widest text-primary bg-primary/5 px-3 py-1.5 rounded-lg hover:bg-primary/10 transition-colors"
             >
               {showSEO ? "Скрыть" : "Настроить"}
             </button>
           </div>
 
           {showSEO && (
-            <section className="bg-[#111827] rounded-2xl p-6 space-y-4">
+            <section className="bg-[#111111] rounded-2xl p-6 space-y-4">
               <div>
-                <label className="block text-[10px] font-black uppercase tracking-widest text-neutral-500 mb-1.5">Meta Title</label>
+                <label className="block text-[10px] font-semibold uppercase tracking-widest text-neutral-500 mb-1.5">Meta Title</label>
                 <input
                   className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-sm font-bold text-white placeholder:text-neutral-600 outline-none focus:border-white/20"
                   value={form.metaTitle}
@@ -243,7 +243,7 @@ export const PostForm = ({ initial = defaultInitial }: PostFormProps) => {
                 <p className="text-[9px] text-neutral-600 font-bold mt-2">Если пусто, будет использован заголовок статьи</p>
               </div>
               <div>
-                <label className="block text-[10px] font-black uppercase tracking-widest text-neutral-500 mb-1.5">Meta Description</label>
+                <label className="block text-[10px] font-semibold uppercase tracking-widest text-neutral-500 mb-1.5">Meta Description</label>
                 <textarea
                   className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-sm font-bold text-white placeholder:text-neutral-600 outline-none resize-none focus:border-white/20"
                   rows={3}

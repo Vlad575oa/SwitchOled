@@ -100,7 +100,7 @@ export default function ColorsPage() {
     <>
       <header className="bg-white border-b border-neutral-100 px-8 py-5 flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-black text-[#111827]">Управление цветами</h1>
+          <h1 className="text-xl font-semibold text-[#111111]">Управление цветами</h1>
           <p className="text-xs text-neutral-400 font-bold mt-0.5">Цвета для фильтров на сайте</p>
         </div>
       </header>
@@ -108,22 +108,22 @@ export default function ColorsPage() {
       <div className="p-8 max-w-4xl">
         <div className="bg-white rounded-2xl border border-neutral-100 shadow-sm overflow-hidden mb-8">
           <div className="p-6 border-b border-neutral-50 bg-neutral-50/30">
-            <h2 className="text-sm font-black text-[#111827] flex items-center gap-2">
+            <h2 className="text-sm font-semibold text-[#111111] flex items-center gap-2">
               <Plus size={15} className="text-primary" /> Добавить новый цвет
             </h2>
           </div>
           <div className="p-6 flex flex-wrap items-end gap-4">
             <div className="space-y-1.5 flex-1 min-w-[200px]">
-              <label className="text-[10px] font-black uppercase tracking-widest text-neutral-400 px-1">Название (как в базе)</label>
+              <label className="text-[10px] font-semibold uppercase tracking-widest text-neutral-400 px-1">Название (как в базе)</label>
               <input
                 value={newName}
                 onChange={(e) => setNewName(e.target.value)}
                 placeholder="Напр: Neon Red"
-                className="w-full px-4 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-sm font-bold text-[#111827] outline-none focus:bg-white focus:border-primary/40 transition-all"
+                className="w-full px-4 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-sm font-bold text-[#111111] outline-none focus:bg-white focus:border-primary/40 transition-all"
               />
             </div>
             <div className="space-y-1.5 w-32">
-              <label className="text-[10px] font-black uppercase tracking-widest text-neutral-400 px-1">HEX код</label>
+              <label className="text-[10px] font-semibold uppercase tracking-widest text-neutral-400 px-1">HEX код</label>
               <div className="flex items-center gap-2">
                 <input
                   type="color"
@@ -135,13 +135,13 @@ export default function ColorsPage() {
                   value={newHex}
                   onChange={(e) => setNewHex(e.target.value)}
                   placeholder="#ffffff"
-                  className="flex-1 min-w-0 px-2 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-xs font-mono text-[#111827] outline-none focus:bg-white focus:border-primary/40 transition-all"
+                  className="flex-1 min-w-0 px-2 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-xs font-mono text-[#111111] outline-none focus:bg-white focus:border-primary/40 transition-all"
                 />
               </div>
             </div>
             <button
               onClick={handleAdd}
-              className="bg-[#111827] text-white px-6 py-2.5 rounded-xl font-black uppercase tracking-widest text-[11px] shadow-lg shadow-black/10 hover:bg-neutral-800 transition-all active:scale-95 h-[46px]"
+              className="bg-[#111111] text-white px-6 py-2.5 rounded-xl font-semibold uppercase tracking-widest text-[11px] shadow-lg shadow-black/10 hover:bg-neutral-800 transition-all active:scale-95 h-[46px]"
             >
               Добавить
             </button>
@@ -152,10 +152,10 @@ export default function ColorsPage() {
           <table className="w-full text-left">
             <thead>
               <tr className="border-b border-neutral-100 bg-neutral-50/50">
-                <th className="px-6 py-3.5 text-[9px] font-black uppercase tracking-widest text-neutral-400 w-16">Кружок</th>
-                <th className="px-6 py-3.5 text-[9px] font-black uppercase tracking-widest text-neutral-400">Название</th>
-                <th className="px-6 py-3.5 text-[9px] font-black uppercase tracking-widest text-neutral-400 w-48">HEX код</th>
-                <th className="px-6 py-3.5 text-[9px] font-black uppercase tracking-widest text-neutral-400 w-24"></th>
+                <th className="px-6 py-3.5 text-[9px] font-semibold uppercase tracking-widest text-neutral-400 w-16">Кружок</th>
+                <th className="px-6 py-3.5 text-[9px] font-semibold uppercase tracking-widest text-neutral-400">Название</th>
+                <th className="px-6 py-3.5 text-[9px] font-semibold uppercase tracking-widest text-neutral-400 w-48">HEX код</th>
+                <th className="px-6 py-3.5 text-[9px] font-semibold uppercase tracking-widest text-neutral-400 w-24"></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-neutral-50">
@@ -188,7 +188,7 @@ export default function ColorsPage() {
                           const val = e.target.value;
                           setColors((prev) => prev.map((item) => item.id === c.id ? { ...item, name: val } : item));
                         }}
-                        className="w-full bg-transparent border-none text-sm font-bold text-[#111827] outline-none focus:ring-0 p-0"
+                        className="w-full bg-transparent border-none text-sm font-bold text-[#111111] outline-none focus:ring-0 p-0"
                       />
                     </td>
                     <td className="px-6 py-4">

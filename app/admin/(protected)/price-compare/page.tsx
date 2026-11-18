@@ -286,13 +286,13 @@ export default function PriceComparePage() {
     <>
       <header className="bg-white border-b border-neutral-100 px-8 py-5 flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-black text-[#111827]">Сравнение цен на игры</h1>
+          <h1 className="text-xl font-semibold text-[#111111]">Сравнение цен на игры</h1>
           <p className="text-xs text-neutral-400 font-bold mt-0.5">Загрузите прайсы поставщиков и сравните минимальную цену</p>
         </div>
         <div className="flex items-center gap-3">
           <Link
             href="/admin/price-compare/games"
-            className="flex items-center gap-2 px-4 py-2.5 bg-white border border-neutral-200 text-neutral-600 rounded-xl text-sm font-black hover:bg-neutral-50 transition-colors"
+            className="flex items-center gap-2 px-4 py-2.5 bg-white border border-neutral-200 text-neutral-600 rounded-xl text-sm font-semibold hover:bg-neutral-50 transition-colors"
           >
             <BookOpen size={15} />
             Справочник игр
@@ -318,7 +318,7 @@ export default function PriceComparePage() {
         <div className="fixed inset-0 z-50 bg-black/30 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-5 space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-black text-[#111827]">Формат файла</h3>
+              <h3 className="text-sm font-semibold text-[#111111]">Формат файла</h3>
               <button onClick={() => setPendingFile(null)} className="p-1 hover:bg-neutral-50 rounded-lg transition-colors">
                 <X size={16} className="text-neutral-400" />
               </button>
@@ -331,7 +331,7 @@ export default function PriceComparePage() {
                 <button
                   key={f.key}
                   onClick={() => uploadPendingFileWithFormat(f.key)}
-                  className="w-full text-left px-4 py-2.5 bg-neutral-50 hover:bg-neutral-100 rounded-xl text-xs font-black text-neutral-600 transition-colors"
+                  className="w-full text-left px-4 py-2.5 bg-neutral-50 hover:bg-neutral-100 rounded-xl text-xs font-semibold text-neutral-600 transition-colors"
                 >
                   {f.label}
                 </button>
@@ -347,7 +347,7 @@ export default function PriceComparePage() {
             <div className="p-4 border-b border-amber-100 flex items-center justify-between gap-3">
               <div className="flex items-center gap-3">
                 <AlertCircle size={16} className="text-amber-600" />
-                <h2 className="text-sm font-black text-amber-800">
+                <h2 className="text-sm font-semibold text-amber-800">
                   {pending.length} позиций требуют подтверждения
                 </h2>
               </div>
@@ -355,7 +355,7 @@ export default function PriceComparePage() {
                 type="button"
                 onClick={runAiMatch}
                 disabled={aiLoading}
-                className="flex items-center gap-2 px-3 py-1.5 bg-amber-600 text-white rounded-lg text-xs font-black hover:bg-amber-700 transition-colors disabled:opacity-50"
+                className="flex items-center gap-2 px-3 py-1.5 bg-amber-600 text-white rounded-lg text-xs font-semibold hover:bg-amber-700 transition-colors disabled:opacity-50"
               >
                 {aiLoading ? <Loader2 size={13} className="animate-spin" /> : null}
                 Разобрать с ИИ
@@ -381,7 +381,7 @@ export default function PriceComparePage() {
               <button
                 key={p}
                 onClick={() => setPlatform(p)}
-                className={`px-4 py-2 rounded-xl text-xs font-black transition-colors ${
+                className={`px-4 py-2 rounded-xl text-xs font-semibold transition-colors ${
                   platform === p ? "bg-primary text-white" : "bg-white border border-neutral-200 text-neutral-500 hover:bg-neutral-50"
                 }`}
               >
@@ -393,7 +393,7 @@ export default function PriceComparePage() {
           <select
             value={supplierCount == null ? "" : String(supplierCount)}
             onChange={(e) => setSupplierCount(e.target.value === "" ? null : Number(e.target.value))}
-            className="px-3 py-2 bg-white border border-neutral-200 rounded-xl text-xs font-black text-neutral-500 outline-none focus:border-primary/40 transition-all cursor-pointer"
+            className="px-3 py-2 bg-white border border-neutral-200 rounded-xl text-xs font-semibold text-neutral-500 outline-none focus:border-primary/40 transition-all cursor-pointer"
           >
             {SUPPLIER_COUNT_OPTIONS.map((opt) => (
               <option key={opt.label} value={opt.value == null ? "" : String(opt.value)}>
@@ -412,7 +412,7 @@ export default function PriceComparePage() {
           {(search || supplierCount != null) && (
             <button
               onClick={() => { setSearch(""); setSupplierCount(null); }}
-              className="px-3 py-2 text-xs font-black text-neutral-400 hover:text-neutral-600 transition-colors"
+              className="px-3 py-2 text-xs font-semibold text-neutral-400 hover:text-neutral-600 transition-colors"
             >
               Сбросить
             </button>
@@ -433,8 +433,8 @@ export default function PriceComparePage() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="bg-neutral-50/50 border-b border-neutral-100">
-                    <th className="text-right px-4 py-3 font-black text-[10px] uppercase tracking-widest text-neutral-400 w-12">№</th>
-                    <th className="text-left px-6 py-3 font-black text-[10px] uppercase tracking-widest text-neutral-400">
+                    <th className="text-right px-4 py-3 font-semibold text-[10px] uppercase tracking-widest text-neutral-400 w-12">№</th>
+                    <th className="text-left px-6 py-3 font-semibold text-[10px] uppercase tracking-widest text-neutral-400">
                       <button
                         type="button"
                         onClick={() => {
@@ -449,9 +449,9 @@ export default function PriceComparePage() {
                         <ArrowUpDown size={11} />
                       </button>
                     </th>
-                    <th className="text-left px-4 py-3 font-black text-[10px] uppercase tracking-widest text-neutral-400">Платформа</th>
+                    <th className="text-left px-4 py-3 font-semibold text-[10px] uppercase tracking-widest text-neutral-400">Платформа</th>
                     {orderedSuppliers.map((s) => (
-                      <th key={s.slug} className="text-right px-4 py-3 font-black text-[10px] uppercase tracking-widest text-neutral-400">
+                      <th key={s.slug} className="text-right px-4 py-3 font-semibold text-[10px] uppercase tracking-widest text-neutral-400">
                         <div className="flex items-center justify-end gap-1.5">
                           <button
                             type="button"
@@ -485,7 +485,7 @@ export default function PriceComparePage() {
                   {displayedGames.map((g, index) => (
                     <tr key={g.gameId} className="hover:bg-neutral-50/30">
                       <td className="px-4 py-3 text-right text-neutral-400 font-bold">{(page - 1) * pageSize + index + 1}</td>
-                      <td className="px-6 py-3 font-bold text-[#111827]">{g.name}</td>
+                      <td className="px-6 py-3 font-bold text-[#111111]">{g.name}</td>
                       <td className="px-4 py-3 text-neutral-500 font-bold">{g.platform}</td>
                       {orderedSuppliers.map((s) => {
                         const entry = g.prices.find((p) => p.supplierSlug === s.slug);
@@ -534,7 +534,7 @@ export default function PriceComparePage() {
               >
                 <ChevronLeft size={15} className="text-neutral-500" />
               </button>
-              <span className="text-xs font-black text-neutral-500 px-2">
+              <span className="text-xs font-semibold text-neutral-500 px-2">
                 {page} / {totalPages}
               </span>
               <button
@@ -623,7 +623,7 @@ function PendingRow({
   return (
     <div className="p-4 flex items-center gap-3 flex-wrap">
       <div className="flex-1 min-w-[240px]">
-        <p className="font-bold text-[#111827] text-sm">{entry.rawName}</p>
+        <p className="font-bold text-[#111111] text-sm">{entry.rawName}</p>
         <p className="text-xs text-neutral-400 font-bold mt-0.5">
           {entry.upload.supplier.name} · {entry.platform || "платформа неизвестна"} · {entry.priceWholesale ?? entry.priceRetail ?? "—"} ₽
         </p>
@@ -637,7 +637,7 @@ function PendingRow({
                 <button
                   type="button"
                   onClick={() => onConfirm(entry.id, suggestion.gameId!)}
-                  className="text-[11px] font-black text-primary hover:underline"
+                  className="text-[11px] font-semibold text-primary hover:underline"
                 >
                   Принять
                 </button>
@@ -651,7 +651,7 @@ function PendingRow({
                 <button
                   type="button"
                   onClick={() => onConfirm(entry.id, null, { canonicalName: suggestion.canonicalName!, platform: entry.platform || "PS5" })}
-                  className="text-[11px] font-black text-emerald-700 hover:underline"
+                  className="text-[11px] font-semibold text-emerald-700 hover:underline"
                 >
                   Принять
                 </button>
@@ -665,7 +665,7 @@ function PendingRow({
                 <button
                   type="button"
                   onClick={() => onReject(entry.id)}
-                  className="text-[11px] font-black text-neutral-500 hover:underline"
+                  className="text-[11px] font-semibold text-neutral-500 hover:underline"
                 >
                   Убрать из очереди
                 </button>
@@ -707,7 +707,7 @@ function PendingRow({
                   key={g.id}
                   type="button"
                   onMouseDown={() => handlePick(g)}
-                  className="w-full text-left px-3 py-2 text-xs font-bold text-[#111827] hover:bg-neutral-50 transition-colors"
+                  className="w-full text-left px-3 py-2 text-xs font-bold text-[#111111] hover:bg-neutral-50 transition-colors"
                 >
                   {g.canonicalName} ({g.platform})
                 </button>
@@ -720,13 +720,13 @@ function PendingRow({
       <button
         onClick={handleConfirmSelected}
         disabled={!selected}
-        className="px-4 py-2 bg-primary text-white rounded-xl text-xs font-black disabled:opacity-30 hover:opacity-90 transition-opacity"
+        className="px-4 py-2 bg-primary text-white rounded-xl text-xs font-semibold disabled:opacity-30 hover:opacity-90 transition-opacity"
       >
         Подтвердить
       </button>
       <button
         onClick={handleConfirmNew}
-        className="px-3 py-2 bg-white border border-neutral-200 text-neutral-500 rounded-xl text-xs font-black hover:bg-neutral-50 transition-colors whitespace-nowrap"
+        className="px-3 py-2 bg-white border border-neutral-200 text-neutral-500 rounded-xl text-xs font-semibold hover:bg-neutral-50 transition-colors whitespace-nowrap"
         title={`Создать новую игру "${entry.rawName}"`}
       >
         + Новая

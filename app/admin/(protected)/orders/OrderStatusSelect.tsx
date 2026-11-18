@@ -35,7 +35,7 @@ export const OrderStatusSelect = ({ orderId, status, statusMap }: Props) => {
         value={current}
         onChange={handleChange}
         disabled={loading}
-        className={`appearance-none text-[9px] font-black uppercase tracking-widest px-2.5 py-1.5 rounded-full cursor-pointer outline-none ${s.cls} disabled:opacity-60`}
+        className={`appearance-none text-[9px] font-semibold uppercase tracking-widest px-2.5 py-1.5 rounded-full cursor-pointer outline-none ${s.cls} disabled:opacity-60`}
       >
         {Object.entries(statusMap).map(([val, { label }]) => (
           <option key={val} value={val}>{label}</option>

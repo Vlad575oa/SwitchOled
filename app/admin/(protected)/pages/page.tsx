@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import { Save, Layers, Phone, Truck, ShieldCheck, Info, ChevronDown, Home } from "lucide-react";
 import { ALL_QUICK_LINKS } from "@/lib/constants/quickLinks";
 
-const inputCls = "w-full px-4 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-sm font-bold text-[#111827] placeholder:text-neutral-300 outline-none focus:bg-white focus:border-primary/30 transition-all";
-const labelCls = "block text-[10px] font-black uppercase tracking-widest text-neutral-400 mb-1.5";
+const inputCls = "w-full px-4 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-sm font-bold text-[#111111] placeholder:text-neutral-300 outline-none focus:bg-white focus:border-primary/30 transition-all";
+const labelCls = "block text-[10px] font-semibold uppercase tracking-widest text-neutral-400 mb-1.5";
 
 // ── About sub-groups ──────────────────────────────────────────────
 const ABOUT_GROUPS = [
@@ -355,7 +355,7 @@ export default function PagesPage() {
             checked={(data[sectionKey]?.[field.key] ?? "true") === "true"}
             onChange={(e) => setField(sectionKey, field.key, String(e.target.checked))}
           />
-          <span className="text-sm font-black text-[#111827]">{field.label}</span>
+          <span className="text-sm font-semibold text-[#111111]">{field.label}</span>
         </label>
       ) : field.type === "textarea" ? (
         <>
@@ -388,7 +388,7 @@ export default function PagesPage() {
             onClick={() => toggleGroup(group.key)}
             className="w-full flex items-center justify-between px-6 py-4 text-left hover:bg-neutral-50/60 transition-colors"
           >
-            <span className="text-sm font-black text-[#111827]">{group.label}</span>
+            <span className="text-sm font-semibold text-[#111111]">{group.label}</span>
             <ChevronDown
               size={16}
               className={`text-neutral-400 transition-transform duration-200 ${openGroups[group.key] ? "rotate-180" : ""}`}
@@ -407,7 +407,7 @@ export default function PagesPage() {
   return (
     <>
       <header className="bg-white border-b border-neutral-100 px-8 py-5">
-        <h1 className="text-xl font-black text-[#111827] flex items-center gap-2">
+        <h1 className="text-xl font-semibold text-[#111111] flex items-center gap-2">
           <Layers size={18} className="text-primary" /> Редактор страниц
         </h1>
         <p className="text-xs text-neutral-400 font-bold mt-0.5">Изменяйте контент статических страниц сайта</p>
@@ -421,10 +421,10 @@ export default function PagesPage() {
               <button
                 key={s.key}
                 onClick={() => setActiveSection(s.key)}
-                className={`w-full flex items-center gap-3 px-4 py-3.5 text-left text-sm font-black transition-all border-b border-neutral-50 last:border-0 ${
+                className={`w-full flex items-center gap-3 px-4 py-3.5 text-left text-sm font-semibold transition-all border-b border-neutral-50 last:border-0 ${
                   activeSection === s.key
                     ? "bg-primary/5 text-primary"
-                    : "text-neutral-500 hover:bg-neutral-50 hover:text-[#111827]"
+                    : "text-neutral-500 hover:bg-neutral-50 hover:text-[#111111]"
                 }`}
               >
                 <s.icon size={15} className={activeSection === s.key ? "text-primary" : "text-neutral-400"} />
@@ -438,7 +438,7 @@ export default function PagesPage() {
             <a
               href={section.previewUrl}
               target="_blank"
-              className="mt-3 w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-xs font-black text-neutral-500 hover:text-primary hover:border-primary/30 transition-all"
+              className="mt-3 w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-xs font-semibold text-neutral-500 hover:text-primary hover:border-primary/30 transition-all"
             >
               Просмотр страницы ↗
             </a>
@@ -451,13 +451,13 @@ export default function PagesPage() {
             <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-100">
               <div className="flex items-center gap-2">
                 <section.icon size={16} className="text-primary" />
-                <h2 className="text-sm font-black text-[#111827]">Страница: {section.label}</h2>
+                <h2 className="text-sm font-semibold text-[#111111]">Страница: {section.label}</h2>
               </div>
               <div className="flex flex-col items-end gap-1">
                 <button
                   onClick={() => saveSection(section.key)}
                   disabled={saving === section.key}
-                  className={`flex items-center gap-2 px-5 py-2 text-white text-xs font-black rounded-xl transition-all shadow-lg disabled:opacity-60 ${saveError ? "bg-red-500 shadow-red-200" : "bg-primary hover:bg-red-700 shadow-primary/20"}`}
+                  className={`flex items-center gap-2 px-5 py-2 text-white text-xs font-semibold rounded-xl transition-all shadow-lg disabled:opacity-60 ${saveError ? "bg-red-500 shadow-red-200" : "bg-primary hover:bg-red-700 shadow-primary/20"}`}
                 >
                   <Save size={13} />
                   {saving === section.key ? "Сохранение..." : saved === section.key ? "Сохранено ✓" : "Сохранить"}
@@ -472,7 +472,7 @@ export default function PagesPage() {
             {(section as any).isHome ? (
               <div className="p-6 space-y-5">
                 <div>
-                  <p className="text-sm font-black text-[#111827] mb-1">Быстрые фильтры (строка под поиском)</p>
+                  <p className="text-sm font-semibold text-[#111111] mb-1">Быстрые фильтры (строка под поиском)</p>
                   <p className="text-xs text-neutral-400 font-medium mb-4">Выберите категории, которые отображаются в строке быстрых фильтров. Снимите галочку — категория исчезнет.</p>
                   <div className="space-y-2">
                     {ALL_QUICK_LINKS.map((link) => {
@@ -491,7 +491,7 @@ export default function PagesPage() {
                             className="w-4 h-4 accent-primary rounded"
                           />
                           <div className="flex-1">
-                            <p className={`text-sm font-black ${enabled ? "text-[#111827]" : "text-neutral-400"}`}>{link.label}</p>
+                            <p className={`text-sm font-semibold ${enabled ? "text-[#111111]" : "text-neutral-400"}`}>{link.label}</p>
                             <p className="text-[11px] text-neutral-400 font-medium mt-0.5">{link.href}</p>
                           </div>
                         </label>
@@ -501,13 +501,13 @@ export default function PagesPage() {
                 </div>
                 {/* Preview */}
                 <div>
-                  <p className="text-[10px] font-black uppercase tracking-widest text-neutral-400 mb-2">Предпросмотр строки</p>
+                  <p className="text-[10px] font-semibold uppercase tracking-widest text-neutral-400 mb-2">Предпросмотр строки</p>
                   <div className="bg-neutral-50 rounded-xl px-4 py-3 flex items-center gap-1 flex-wrap border border-neutral-100">
                     {ALL_QUICK_LINKS.filter((l) => enabledSlugs.includes(l.slug)).length === 0 ? (
                       <span className="text-xs text-neutral-400 font-medium">Нет выбранных — отобразятся все</span>
                     ) : (
                       ALL_QUICK_LINKS.filter((l) => enabledSlugs.includes(l.slug)).map((link, i) => (
-                        <span key={link.slug} className={`text-[12px] whitespace-nowrap px-2.5 py-1.5 rounded-lg ${i === 0 ? "font-black text-[#111827]" : "font-bold text-neutral-400"}`}>
+                        <span key={link.slug} className={`text-[12px] whitespace-nowrap px-2.5 py-1.5 rounded-lg ${i === 0 ? "font-semibold text-[#111111]" : "font-bold text-neutral-400"}`}>
                           {link.label}
                         </span>
                       ))

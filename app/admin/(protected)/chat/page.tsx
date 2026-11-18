@@ -170,7 +170,7 @@ export default function AdminChatPage() {
     <>
       <header className="bg-white border-b border-neutral-100 px-8 py-5 flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-black text-[#111827]">Чат с поддержкой</h1>
+          <h1 className="text-xl font-semibold text-[#111111]">Чат с поддержкой</h1>
           <p className="text-xs text-neutral-400 font-bold mt-0.5">Заказы и вопросы клиентов · {sessions.length} диалогов{totalUnread > 0 ? ` · ${totalUnread} непрочитанных` : ""}</p>
         </div>
       </header>
@@ -185,8 +185,8 @@ export default function AdminChatPage() {
                 key={val}
                 onClick={() => setFilter(val as "all" | "unread" | "resolved")}
                 className={cn(
-                  "px-3 py-2 rounded-lg text-[11px] font-black uppercase tracking-widest transition-all mb-2",
-                  filter === val ? "bg-[#111827] text-white" : "text-neutral-400 hover:text-[#111827]"
+                  "px-3 py-2 rounded-lg text-[11px] font-semibold uppercase tracking-widest transition-all mb-2",
+                  filter === val ? "bg-[#111111] text-white" : "text-neutral-400 hover:text-[#111111]"
                 )}
               >
                 {label}
@@ -203,9 +203,9 @@ export default function AdminChatPage() {
                   type="checkbox"
                   checked={allChecked}
                   onChange={toggleCheckAll}
-                  className="w-3.5 h-3.5 accent-[#111827] cursor-pointer"
+                  className="w-3.5 h-3.5 accent-[#111111] cursor-pointer"
                 />
-                <span className="text-[11px] font-black text-neutral-400 uppercase tracking-widest">
+                <span className="text-[11px] font-semibold text-neutral-400 uppercase tracking-widest">
                   {allChecked ? "Снять все" : "Выбрать все"}
                 </span>
               </label>
@@ -215,7 +215,7 @@ export default function AdminChatPage() {
                 <button
                   onClick={handleBulkDelete}
                   disabled={deletingBulk}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-500 text-white text-[11px] font-black hover:bg-red-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm shadow-red-200"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-500 text-white text-[11px] font-semibold hover:bg-red-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm shadow-red-200"
                 >
                   <Trash2 size={11} />
                   Удалить ({checkedIds.size})
@@ -261,17 +261,17 @@ export default function AdminChatPage() {
                   >
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex items-center gap-2 min-w-0">
-                        <div className="w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center text-xs font-black text-neutral-400 flex-shrink-0">
+                        <div className="w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center text-xs font-semibold text-neutral-400 flex-shrink-0">
                           {(s.name ?? s.visitorId.slice(0, 2)).toUpperCase().slice(0, 2)}
                         </div>
                         <div className="min-w-0">
                           <div className="flex items-center gap-1.5">
-                            <p className="text-xs font-black text-[#111827] truncate">{s.name ?? `Гость ${s.visitorId.slice(0, 8)}`}</p>
+                            <p className="text-xs font-semibold text-[#111111] truncate">{s.name ?? `Гость ${s.visitorId.slice(0, 8)}`}</p>
                             {s.visitorId.startsWith("support_") && (
-                              <span className="flex-shrink-0 text-[9px] font-black px-1.5 py-0.5 rounded-md bg-amber-100 text-amber-700">ПОДДЕРЖКА</span>
+                              <span className="flex-shrink-0 text-[9px] font-semibold px-1.5 py-0.5 rounded-md bg-amber-100 text-amber-700">ПОДДЕРЖКА</span>
                             )}
                             {s.visitorId.startsWith("ai_") && (
-                              <span className="flex-shrink-0 text-[9px] font-black px-1.5 py-0.5 rounded-md bg-violet-100 text-violet-600">🤖 AI</span>
+                              <span className="flex-shrink-0 text-[9px] font-semibold px-1.5 py-0.5 rounded-md bg-violet-100 text-violet-600">🤖 AI</span>
                             )}
                           </div>
                           <p className="text-[10px] text-neutral-400 font-bold truncate mt-0.5">
@@ -284,7 +284,7 @@ export default function AdminChatPage() {
                           {formatDistanceToNow(new Date(s.updatedAt), { locale: ru, addSuffix: true })}
                         </p>
                         {s.unreadCount > 0 && (
-                          <span className="w-5 h-5 rounded-full bg-primary text-white text-[9px] font-black flex items-center justify-center">
+                          <span className="w-5 h-5 rounded-full bg-primary text-white text-[9px] font-semibold flex items-center justify-center">
                             {s.unreadCount}
                           </span>
                         )}
@@ -317,12 +317,12 @@ export default function AdminChatPage() {
               <div className="bg-white border-b border-neutral-100 px-6 py-4 flex items-center justify-between">
                 <div>
                   <div className="flex items-center gap-2">
-                    <p className="text-sm font-black text-[#111827]">{selected?.name ?? `Гость ${selected?.visitorId.slice(0, 8)}`}</p>
+                    <p className="text-sm font-semibold text-[#111111]">{selected?.name ?? `Гость ${selected?.visitorId.slice(0, 8)}`}</p>
                     {selected?.visitorId.startsWith("support_") && (
-                      <span className="text-[10px] font-black px-2 py-0.5 rounded-lg bg-amber-100 text-amber-700">Поддержка</span>
+                      <span className="text-[10px] font-semibold px-2 py-0.5 rounded-lg bg-amber-100 text-amber-700">Поддержка</span>
                     )}
                     {selected?.visitorId.startsWith("ai_") && (
-                      <span className="text-[10px] font-black px-2 py-0.5 rounded-lg bg-violet-100 text-violet-600">🤖 ИИ-диалог</span>
+                      <span className="text-[10px] font-semibold px-2 py-0.5 rounded-lg bg-violet-100 text-violet-600">🤖 ИИ-диалог</span>
                     )}
                   </div>
                   {selected?.email && <p className="text-xs text-neutral-400 font-bold">{selected.email}</p>}
@@ -330,7 +330,7 @@ export default function AdminChatPage() {
                 <button
                   onClick={() => selected && handleResolve(selected.id, selected.isResolved)}
                   className={cn(
-                    "flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black transition-all",
+                    "flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all",
                     selected?.isResolved
                       ? "bg-neutral-100 text-neutral-400 hover:bg-neutral-200"
                       : "bg-green-50 text-green-600 hover:bg-green-100"
@@ -362,7 +362,7 @@ export default function AdminChatPage() {
                         {isNewDay && (
                           <div className="flex items-center gap-3 my-4">
                             <div className="flex-1 h-px bg-neutral-200" />
-                            <span className="text-[10px] font-black text-neutral-400 uppercase tracking-widest whitespace-nowrap">{dateLabel}</span>
+                            <span className="text-[10px] font-semibold text-neutral-400 uppercase tracking-widest whitespace-nowrap">{dateLabel}</span>
                             <div className="flex-1 h-px bg-neutral-200" />
                           </div>
                         )}
@@ -372,7 +372,7 @@ export default function AdminChatPage() {
                               "max-w-[70%] px-4 py-2.5 rounded-2xl text-sm font-bold",
                               msg.sender === "ADMIN"
                                 ? "bg-primary text-white rounded-br-sm"
-                                : "bg-white border border-neutral-100 text-[#111827] rounded-bl-sm shadow-sm"
+                                : "bg-white border border-neutral-100 text-[#111111] rounded-bl-sm shadow-sm"
                             )}
                           >
                             <p className="leading-relaxed">{msg.content}</p>
@@ -400,7 +400,7 @@ export default function AdminChatPage() {
                     }}
                     placeholder="Написать ответ... (Enter — отправить, Shift+Enter — новая строка)"
                     rows={2}
-                    className="flex-1 resize-none px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-2xl text-sm font-bold text-[#111827] placeholder:text-neutral-300 outline-none focus:border-primary/30 focus:bg-white transition-all"
+                    className="flex-1 resize-none px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-2xl text-sm font-bold text-[#111111] placeholder:text-neutral-300 outline-none focus:border-primary/30 focus:bg-white transition-all"
                   />
                   <button
                     onClick={handleSend}

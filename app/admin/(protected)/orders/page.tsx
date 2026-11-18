@@ -29,7 +29,7 @@ export default async function OrdersPage() {
   return (
     <>
       <header className="bg-white border-b border-neutral-100 px-8 py-5">
-        <h1 className="text-xl font-black text-[#111827]">Заказы</h1>
+        <h1 className="text-xl font-semibold text-[#111111]">Заказы</h1>
         <p className="text-xs text-neutral-400 font-bold mt-0.5">{orders.length} заказов</p>
       </header>
 
@@ -40,7 +40,7 @@ export default async function OrdersPage() {
             <thead>
               <tr className="border-b border-neutral-100">
                 {["#", "Клиент", "Телефон", "Адрес", "Комментарий", "Товары", "Сумма", "Статус", "Дата", "Яндекс", ""].map((h) => (
-                  <th key={h} className="px-5 py-3.5 text-[9px] font-black uppercase tracking-widest text-neutral-400">{h}</th>
+                  <th key={h} className="px-5 py-3.5 text-[9px] font-semibold uppercase tracking-widest text-neutral-400">{h}</th>
                 ))}
               </tr>
             </thead>

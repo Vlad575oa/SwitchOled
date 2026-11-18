@@ -27,7 +27,7 @@ export function ProductStockToggleButton({ productId, inStock }: { productId: nu
         type="button"
         onClick={() => setStock(true)}
         disabled={pending}
-        className={`px-2.5 py-0.5 rounded-full text-[7px] font-black uppercase tracking-widest whitespace-nowrap transition-colors ${
+        className={`px-2.5 py-0.5 rounded-full text-[7px] font-semibold uppercase tracking-widest whitespace-nowrap transition-colors ${
           isInStock ? "bg-green-100 text-green-700" : "text-neutral-400 hover:text-green-700"
         }`}
       >
@@ -37,7 +37,7 @@ export function ProductStockToggleButton({ productId, inStock }: { productId: nu
         type="button"
         onClick={() => setStock(false)}
         disabled={pending}
-        className={`px-2.5 py-0.5 rounded-full text-[7px] font-black uppercase tracking-widest whitespace-nowrap transition-colors ${
+        className={`px-2.5 py-0.5 rounded-full text-[7px] font-semibold uppercase tracking-widest whitespace-nowrap transition-colors ${
           !isInStock ? "bg-neutral-200 text-neutral-600" : "text-neutral-400 hover:text-neutral-600"
         }`}
       >

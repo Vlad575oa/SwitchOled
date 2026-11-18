@@ -103,19 +103,19 @@ export default async function ProductsPage({ searchParams }: Props) {
     <>
       <header className="bg-white border-b border-neutral-100 px-8 py-5 flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-black text-[#111827]">Товары</h1>
+          <h1 className="text-xl font-semibold text-[#111111]">Товары</h1>
           <p className="text-xs text-neutral-400 font-bold mt-0.5">{products.length} позиций</p>
         </div>
         <div className="flex items-center gap-2">
           <a
             href="/api/admin/products/export"
-            className="flex items-center gap-2 bg-white border border-neutral-200 text-neutral-700 text-xs font-black uppercase tracking-widest px-4 py-2.5 rounded-xl hover:bg-neutral-50 transition-all"
+            className="flex items-center gap-2 bg-white border border-neutral-200 text-neutral-700 text-xs font-semibold uppercase tracking-widest px-4 py-2.5 rounded-xl hover:bg-neutral-50 transition-all"
           >
             <FileSpreadsheet size={14} /> Выгрузить в Excel
           </a>
           <Link
             href="/admin/products/new"
-            className="flex items-center gap-2 bg-primary text-white text-xs font-black uppercase tracking-widest px-5 py-2.5 rounded-xl hover:bg-red-700 transition-all shadow-lg shadow-primary/20"
+            className="flex items-center gap-2 bg-primary text-white text-xs font-semibold uppercase tracking-widest px-5 py-2.5 rounded-xl hover:bg-red-700 transition-all shadow-lg shadow-primary/20"
           >
             <Plus size={14} /> Добавить
           </Link>
@@ -129,10 +129,10 @@ export default async function ProductsPage({ searchParams }: Props) {
           <Link
             href="/admin/products"
             className={cn(
-              "px-4 py-2 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all",
+              "px-4 py-2 rounded-xl text-[11px] font-semibold uppercase tracking-widest transition-all",
               !categorySlug
-                ? "bg-[#111827] text-white shadow-lg shadow-black/10"
-                : "bg-white border border-neutral-200 text-neutral-400 hover:text-[#111827] hover:border-neutral-300"
+                ? "bg-[#111111] text-white shadow-lg shadow-black/10"
+                : "bg-white border border-neutral-200 text-neutral-400 hover:text-[#111111] hover:border-neutral-300"
             )}
           >
             Все
@@ -142,7 +142,7 @@ export default async function ProductsPage({ searchParams }: Props) {
               key={cat.id}
               href={`/admin/products?category=${cat.slug}${q ? `&q=${q}` : ""}${sort !== "newest" ? `&sort=${sort}` : ""}${visibility !== "all" ? `&visibility=${visibility}` : ""}${stock !== "all" ? `&stock=${stock}` : ""}`}
               className={cn(
-                "px-4 py-2 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all",
+                "px-4 py-2 rounded-xl text-[11px] font-semibold uppercase tracking-widest transition-all",
                 categorySlug === cat.slug
                   ? "bg-primary text-white shadow-lg shadow-primary/20"
                   : "bg-white border border-neutral-200 text-neutral-400 hover:text-primary hover:border-primary/30"
@@ -161,13 +161,13 @@ export default async function ProductsPage({ searchParams }: Props) {
               name="q"
               defaultValue={q}
               placeholder="Поиск по названию, артикулу или slug..."
-              className="w-full pl-9 pr-4 py-2.5 bg-white border border-neutral-200 rounded-xl text-sm font-bold text-[#111827] placeholder:text-neutral-300 outline-none focus:border-primary/30"
+              className="w-full pl-9 pr-4 py-2.5 bg-white border border-neutral-200 rounded-xl text-sm font-bold text-[#111111] placeholder:text-neutral-300 outline-none focus:border-primary/30"
             />
           </div>
           <select
             name="sort"
             defaultValue={sort}
-            className="px-3 py-2.5 bg-white border border-neutral-200 rounded-xl text-xs font-black text-[#111827] outline-none focus:border-primary/30"
+            className="px-3 py-2.5 bg-white border border-neutral-200 rounded-xl text-xs font-semibold text-[#111111] outline-none focus:border-primary/30"
           >
             <option value="newest">Сначала новые</option>
             <option value="price-asc">Цена: по возрастанию</option>
@@ -176,7 +176,7 @@ export default async function ProductsPage({ searchParams }: Props) {
           <select
             name="visibility"
             defaultValue={visibility}
-            className="px-3 py-2.5 bg-white border border-neutral-200 rounded-xl text-xs font-black text-[#111827] outline-none focus:border-primary/30"
+            className="px-3 py-2.5 bg-white border border-neutral-200 rounded-xl text-xs font-semibold text-[#111111] outline-none focus:border-primary/30"
           >
             <option value="all">Все товары</option>
             <option value="shown">Только показанные</option>
@@ -185,14 +185,14 @@ export default async function ProductsPage({ searchParams }: Props) {
           <select
             name="stock"
             defaultValue={stock}
-            className="px-3 py-2.5 bg-white border border-neutral-200 rounded-xl text-xs font-black text-[#111827] outline-none focus:border-primary/30"
+            className="px-3 py-2.5 bg-white border border-neutral-200 rounded-xl text-xs font-semibold text-[#111111] outline-none focus:border-primary/30"
           >
             <option value="all">Любое наличие</option>
             <option value="inStock">В наличии</option>
             <option value="outOfStock">Под заказ</option>
           </select>
           {categorySlug && <input type="hidden" name="category" value={categorySlug} />}
-          <button type="submit" className="px-5 py-2.5 bg-[#111827] text-white text-xs font-black rounded-xl hover:bg-neutral-800 transition-all">
+          <button type="submit" className="px-5 py-2.5 bg-[#111111] text-white text-xs font-semibold rounded-xl hover:bg-neutral-800 transition-all">
             Найти
           </button>
         </form>

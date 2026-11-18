@@ -105,8 +105,8 @@ const buildMediaItems = (v: Omit<VariantRow, "_deleted">): MediaItem[] => [
   })),
 ];
 
-const inputCls = "w-full px-4 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-sm font-bold text-[#111827] placeholder:text-neutral-300 outline-none focus:bg-white focus:border-primary/30 transition-all";
-const labelCls = "block text-[10px] font-black uppercase tracking-widest text-neutral-400 mb-1.5";
+const inputCls = "w-full px-4 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-sm font-bold text-[#111111] placeholder:text-neutral-300 outline-none focus:bg-white focus:border-primary/30 transition-all";
+const labelCls = "block text-[10px] font-semibold uppercase tracking-widest text-neutral-400 mb-1.5";
 
 const calcOtherPrice = (price: string) => {
   const n = parseFloat(price);
@@ -404,21 +404,21 @@ export const ProductForm = ({
       : "Добавить товар";
 
   return (
-    <div className="min-h-screen bg-[#F4F5F7]">
+    <div className="min-h-screen bg-[#f5f5f5]">
       {/* Top bar */}
       <header className="bg-white border-b border-neutral-100 px-8 py-4 flex items-center justify-between sticky top-0 z-40">
         <div className="flex items-center gap-4">
           <Link
             href="/admin/products"
-            className="w-9 h-9 rounded-xl bg-neutral-50 border border-neutral-200 flex items-center justify-center text-neutral-400 hover:text-[#111827] transition-colors"
+            className="w-9 h-9 rounded-xl bg-neutral-50 border border-neutral-200 flex items-center justify-center text-neutral-400 hover:text-[#111111] transition-colors"
           >
             <ArrowLeft size={16} />
           </Link>
           <div>
-            <p className="text-[10px] font-black uppercase tracking-widest text-neutral-400">
+            <p className="text-[10px] font-semibold uppercase tracking-widest text-neutral-400">
               Товары / {isEdit ? "Редактирование" : isVariant ? "Новый вариант" : "Новый товар"}
             </p>
-            <h1 className="text-lg font-black text-[#111827] leading-tight">
+            <h1 className="text-lg font-semibold text-[#111111] leading-tight">
               {pageTitle}
             </h1>
           </div>
@@ -426,14 +426,14 @@ export const ProductForm = ({
         <div className="flex items-center gap-3">
           <Link
             href="/admin/products"
-            className="px-4 py-2 bg-white border border-neutral-200 text-neutral-500 text-sm font-black rounded-xl hover:bg-neutral-50 transition-all"
+            className="px-4 py-2 bg-white border border-neutral-200 text-neutral-500 text-sm font-semibold rounded-xl hover:bg-neutral-50 transition-all"
           >
             Отмена
           </Link>
           <button
             onClick={handleSubmit}
             disabled={saving}
-            className="flex items-center gap-2 px-5 py-2 bg-primary text-white text-sm font-black rounded-xl hover:bg-red-700 transition-all shadow-lg shadow-primary/20 disabled:opacity-60"
+            className="flex items-center gap-2 px-5 py-2 bg-primary text-white text-sm font-semibold rounded-xl hover:bg-red-700 transition-all shadow-lg shadow-primary/20 disabled:opacity-60"
           >
             <Save size={14} />
             {saving ? "Сохранение..." : isEdit ? "Сохранить" : "Опубликовать"}
@@ -445,7 +445,7 @@ export const ProductForm = ({
         <div className="mx-8 mt-4 bg-blue-50 border border-blue-200 px-5 py-4 rounded-xl flex items-start gap-3">
           <Layers size={16} className="text-blue-400 flex-shrink-0 mt-0.5" />
           <div>
-            <p className="text-xs font-black text-blue-700 mb-0.5">Создание варианта товара</p>
+            <p className="text-xs font-semibold text-blue-700 mb-0.5">Создание варианта товара</p>
             <p className="text-xs font-bold text-blue-500">
               Источник: <span className="text-blue-700">«{sourceProductName}»</span>
             </p>
@@ -467,7 +467,7 @@ export const ProductForm = ({
         <div className="xl:col-span-2 space-y-5">
           {/* Basic info */}
           <section className="bg-white rounded-2xl border border-neutral-100 shadow-sm p-6 space-y-5">
-            <h2 className="text-sm font-black text-[#111827] flex items-center gap-2">
+            <h2 className="text-sm font-semibold text-[#111111] flex items-center gap-2">
               <Info size={15} className="text-primary" /> Основная информация
             </h2>
             <div>
@@ -485,12 +485,12 @@ export const ProductForm = ({
           {/* Variants table */}
           <section className="bg-white rounded-2xl border border-neutral-100 shadow-sm p-6">
             <div className="flex items-center justify-between mb-5">
-              <h2 className="text-sm font-black text-[#111827] flex items-center gap-2">
+              <h2 className="text-sm font-semibold text-[#111111] flex items-center gap-2">
                 <Package size={15} className="text-orange-500" /> Варианты товара
               </h2>
               <button
                 onClick={addVariant}
-                className="flex items-center gap-1.5 text-xs font-black text-primary hover:text-red-700 transition-colors"
+                className="flex items-center gap-1.5 text-xs font-semibold text-primary hover:text-red-700 transition-colors"
               >
                 <Plus size={13} /> Добавить вариант
               </button>
@@ -507,11 +507,11 @@ export const ProductForm = ({
                     {/* Row header */}
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <span className="text-[10px] font-black uppercase tracking-widest text-neutral-400">
+                        <span className="text-[10px] font-semibold uppercase tracking-widest text-neutral-400">
                           Вариант {displayIdx + 1}
                         </span>
                         {!v.inStock && (
-                          <span className="text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full bg-neutral-200 text-neutral-500">
+                          <span className="text-[9px] font-semibold uppercase tracking-widest px-2 py-0.5 rounded-full bg-neutral-200 text-neutral-500">
                             Под заказ
                           </span>
                         )}
@@ -747,7 +747,7 @@ export const ProductForm = ({
                                 className="w-full h-full object-contain p-1 pointer-events-none"
                               />
                               {imgIdx === 0 && (
-                                <span className="absolute bottom-0.5 left-0.5 px-1 py-0.5 rounded bg-black/65 text-white text-[7px] font-black uppercase leading-none pointer-events-none">
+                                <span className="absolute bottom-0.5 left-0.5 px-1 py-0.5 rounded bg-black/65 text-white text-[7px] font-semibold uppercase leading-none pointer-events-none">
                                   Главн.
                                 </span>
                               )}
@@ -771,7 +771,7 @@ export const ProductForm = ({
                             className="w-16 h-16 border-2 border-dashed border-neutral-200 rounded-xl flex flex-col items-center justify-center gap-1 text-neutral-400 hover:border-primary/30 hover:text-primary hover:bg-primary/5 transition-all"
                           >
                             <Upload size={14} />
-                            <span className="text-[8px] font-black uppercase">Фото</span>
+                            <span className="text-[8px] font-semibold uppercase">Фото</span>
                           </button>
                         )}
                       </div>
@@ -794,12 +794,12 @@ export const ProductForm = ({
           {/* Characteristics */}
           <section className="bg-white rounded-2xl border border-neutral-100 shadow-sm p-6">
             <div className="flex items-center justify-between mb-5">
-              <h2 className="text-sm font-black text-[#111827] flex items-center gap-2">
+              <h2 className="text-sm font-semibold text-[#111111] flex items-center gap-2">
                 <Settings2 size={15} className="text-purple-500" /> Характеристики
               </h2>
               <button
                 onClick={addAttr}
-                className="flex items-center gap-1.5 text-xs font-black text-primary hover:text-red-700 transition-colors"
+                className="flex items-center gap-1.5 text-xs font-semibold text-primary hover:text-red-700 transition-colors"
               >
                 <Plus size={13} /> Добавить строку
               </button>
@@ -811,15 +811,15 @@ export const ProductForm = ({
               <div className="border-2 border-dashed border-neutral-100 rounded-xl py-10 text-center">
                 <Settings2 size={28} className="mx-auto mb-2 text-neutral-200" />
                 <p className="text-xs text-neutral-400 font-bold">Нет характеристик</p>
-                <button onClick={addAttr} className="mt-3 text-xs font-black text-primary">
+                <button onClick={addAttr} className="mt-3 text-xs font-semibold text-primary">
                   + Добавить первую
                 </button>
               </div>
             ) : (
               <div className="space-y-2">
                 <div className="grid grid-cols-[1fr_1fr_32px] gap-2 mb-1">
-                  <p className="text-[9px] font-black uppercase tracking-widest text-neutral-400 px-1">Параметр</p>
-                  <p className="text-[9px] font-black uppercase tracking-widest text-neutral-400 px-1">Значение</p>
+                  <p className="text-[9px] font-semibold uppercase tracking-widest text-neutral-400 px-1">Параметр</p>
+                  <p className="text-[9px] font-semibold uppercase tracking-widest text-neutral-400 px-1">Значение</p>
                 </div>
                 {attrs.map((a, idx) => isServiceAttr(a.key) ? null : (
                   <div key={idx} className="grid grid-cols-[1fr_1fr_32px] gap-2">
@@ -852,7 +852,7 @@ export const ProductForm = ({
         <div className="space-y-5">
           {/* Category */}
           <section className="bg-white rounded-2xl border border-neutral-100 shadow-sm p-6 space-y-5">
-            <h2 className="text-sm font-black text-[#111827] flex items-center gap-2">
+            <h2 className="text-sm font-semibold text-[#111111] flex items-center gap-2">
               <Tag size={15} className="text-orange-500" /> Категория и статус
             </h2>
 
@@ -906,7 +906,7 @@ export const ProductForm = ({
                 { key: "isSale", label: "Метка «Акция»" },
               ].map(({ key, label }) => (
                 <label key={key} className="flex items-center justify-between cursor-pointer group">
-                  <span className="text-sm font-bold text-neutral-600 group-hover:text-[#111827] transition-colors">
+                  <span className="text-sm font-bold text-neutral-600 group-hover:text-[#111111] transition-colors">
                     {label}
                   </span>
                   <button
@@ -923,19 +923,19 @@ export const ProductForm = ({
 
           {/* SEO */}
           <div className="flex items-center justify-between pb-2">
-            <h2 className="text-sm font-black text-[#111827] flex items-center gap-2">
+            <h2 className="text-sm font-semibold text-[#111111] flex items-center gap-2">
               <Search size={15} className="text-neutral-400" /> SEO настройки
             </h2>
             <button
               type="button"
               onClick={() => setShowSEO(!showSEO)}
-              className="text-[10px] font-black uppercase tracking-widest text-primary bg-primary/5 px-3 py-1.5 rounded-lg hover:bg-primary/10 transition-colors"
+              className="text-[10px] font-semibold uppercase tracking-widest text-primary bg-primary/5 px-3 py-1.5 rounded-lg hover:bg-primary/10 transition-colors"
             >
               {showSEO ? "Скрыть" : "Настроить"}
             </button>
           </div>
           {showSEO && (
-            <section className="bg-[#111827] rounded-2xl p-6 space-y-6">
+            <section className="bg-[#111111] rounded-2xl p-6 space-y-6">
               <p className="text-[10px] font-bold text-neutral-500">
                 Заполняется для каждого варианта отдельно. Пустое поле — заголовок и описание соберутся из названия варианта.
               </p>
@@ -943,11 +943,11 @@ export const ProductForm = ({
                 const realIdx = variants.indexOf(v);
                 return (
                   <div key={realIdx} className="space-y-3">
-                    <p className="text-xs font-black text-white">
+                    <p className="text-xs font-semibold text-white">
                       Вариант {displayIdx + 1}{v.name ? `: ${v.name}` : ""}
                     </p>
                     <div>
-                      <label className="block text-[10px] font-black uppercase tracking-widest text-neutral-500 mb-1.5">
+                      <label className="block text-[10px] font-semibold uppercase tracking-widest text-neutral-500 mb-1.5">
                         Meta Title
                       </label>
                       <input
@@ -958,7 +958,7 @@ export const ProductForm = ({
                       />
                     </div>
                     <div>
-                      <label className="block text-[10px] font-black uppercase tracking-widest text-neutral-500 mb-1.5">
+                      <label className="block text-[10px] font-semibold uppercase tracking-widest text-neutral-500 mb-1.5">
                         Meta Description
                       </label>
                       <textarea
@@ -977,7 +977,7 @@ export const ProductForm = ({
 
           {isEdit && initial.id && (
             <section className="bg-white rounded-2xl border border-neutral-100 shadow-sm p-6">
-              <p className="text-[10px] font-black uppercase tracking-widest text-neutral-400 mb-3">
+              <p className="text-[10px] font-semibold uppercase tracking-widest text-neutral-400 mb-3">
                 Варианты в группе
               </p>
               <p className="text-xs font-bold text-neutral-500">

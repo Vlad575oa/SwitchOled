@@ -6,8 +6,8 @@ import {
   Plus, Trash2, GripVertical, ChevronDown, ExternalLink
 } from "lucide-react";
 
-const inputCls = "w-full px-4 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-sm font-bold text-[#111827] placeholder:text-neutral-300 outline-none focus:bg-white focus:border-primary/30 transition-all";
-const labelCls = "block text-[10px] font-black uppercase tracking-widest text-neutral-400 mb-1.5";
+const inputCls = "w-full px-4 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-sm font-bold text-[#111111] placeholder:text-neutral-300 outline-none focus:bg-white focus:border-primary/30 transition-all";
+const labelCls = "block text-[10px] font-semibold uppercase tracking-widest text-neutral-400 mb-1.5";
 
 interface Section {
   title: string;
@@ -124,7 +124,7 @@ export default function LegalPage() {
   return (
     <>
       <header className="bg-white border-b border-neutral-100 px-8 py-5">
-        <h1 className="text-xl font-black text-[#111827] flex items-center gap-2">
+        <h1 className="text-xl font-semibold text-[#111111] flex items-center gap-2">
           <Scale size={18} className="text-primary" /> Правовые документы
         </h1>
         <p className="text-xs text-neutral-400 font-bold mt-0.5">Редактируйте публичные правовые страницы сайта</p>
@@ -141,8 +141,8 @@ export default function LegalPage() {
                 <button
                   key={doc.slug}
                   onClick={() => setActiveSlug(doc.slug)}
-                  className={`w-full flex items-center gap-3 px-4 py-3.5 text-left text-sm font-black transition-all border-b border-neutral-50 last:border-0 ${
-                    active ? "bg-primary/5 text-primary" : "text-neutral-500 hover:bg-neutral-50 hover:text-[#111827]"
+                  className={`w-full flex items-center gap-3 px-4 py-3.5 text-left text-sm font-semibold transition-all border-b border-neutral-50 last:border-0 ${
+                    active ? "bg-primary/5 text-primary" : "text-neutral-500 hover:bg-neutral-50 hover:text-[#111111]"
                   }`}
                 >
                   <Icon size={15} className={active ? "text-primary" : "text-neutral-400"} />
@@ -155,7 +155,7 @@ export default function LegalPage() {
           <a
             href={activeDoc.url}
             target="_blank"
-            className="mt-3 w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-xs font-black text-neutral-500 hover:text-primary hover:border-primary/30 transition-all"
+            className="mt-3 w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-xs font-semibold text-neutral-500 hover:text-primary hover:border-primary/30 transition-all"
           >
             <ExternalLink size={12} />
             Просмотр страницы
@@ -169,12 +169,12 @@ export default function LegalPage() {
             <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-100">
               <div className="flex items-center gap-2">
                 <activeDoc.icon size={16} className="text-primary" />
-                <h2 className="text-sm font-black text-[#111827]">{activeDoc.label}</h2>
+                <h2 className="text-sm font-semibold text-[#111111]">{activeDoc.label}</h2>
               </div>
               <button
                 onClick={() => saveDoc(activeSlug)}
                 disabled={saving === activeSlug}
-                className="flex items-center gap-2 px-5 py-2 bg-primary text-white text-xs font-black rounded-xl hover:bg-red-700 transition-all shadow-lg shadow-primary/20 disabled:opacity-60"
+                className="flex items-center gap-2 px-5 py-2 bg-primary text-white text-xs font-semibold rounded-xl hover:bg-red-700 transition-all shadow-lg shadow-primary/20 disabled:opacity-60"
               >
                 <Save size={13} />
                 {saving === activeSlug ? "Сохранение..." : saved === activeSlug ? "Сохранено ✓" : "Сохранить"}
@@ -218,7 +218,7 @@ export default function LegalPage() {
                         onClick={() => toggleSection(sKey)}
                         className="flex-1 flex items-center justify-between text-left"
                       >
-                        <span className="text-sm font-black text-[#111827] truncate">
+                        <span className="text-sm font-semibold text-[#111111] truncate">
                           {section.title || `Раздел ${si + 1}`}
                         </span>
                         <ChevronDown
@@ -270,7 +270,7 @@ export default function LegalPage() {
                           ))}
                           <button
                             onClick={() => addParagraph(si)}
-                            className="flex items-center gap-2 px-4 py-2 text-xs font-black text-primary bg-primary/5 rounded-xl hover:bg-primary/10 transition-colors"
+                            className="flex items-center gap-2 px-4 py-2 text-xs font-semibold text-primary bg-primary/5 rounded-xl hover:bg-primary/10 transition-colors"
                           >
                             <Plus size={13} />
                             Добавить абзац
@@ -287,7 +287,7 @@ export default function LegalPage() {
             <div className="p-6 border-t border-neutral-50">
               <button
                 onClick={addSection}
-                className="w-full flex items-center justify-center gap-2 px-5 py-3 border-2 border-dashed border-neutral-200 rounded-xl text-sm font-black text-neutral-400 hover:border-primary/40 hover:text-primary hover:bg-primary/5 transition-all"
+                className="w-full flex items-center justify-center gap-2 px-5 py-3 border-2 border-dashed border-neutral-200 rounded-xl text-sm font-semibold text-neutral-400 hover:border-primary/40 hover:text-primary hover:bg-primary/5 transition-all"
               >
                 <Plus size={16} />
                 Добавить раздел

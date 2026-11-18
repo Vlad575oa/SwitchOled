@@ -49,14 +49,14 @@ export default function AdminLoginPage() {
               <Lock size={32} className="text-white -rotate-12" />
             </div>
             <div className="space-y-2">
-              <h1 className="text-3xl font-black text-white tracking-tight">Вход в систему</h1>
+              <h1 className="text-3xl font-semibold text-white tracking-tight">Вход в систему</h1>
               <p className="text-neutral-400 text-sm font-medium">Безопасный доступ к управлению магазином</p>
             </div>
           </div>
 
           <form onSubmit={handleLogin} className="space-y-6">
             <div className="space-y-2">
-              <label className="text-[10px] font-black uppercase tracking-widest text-neutral-500 ml-4">Секретный пароль</label>
+              <label className="text-[10px] font-semibold uppercase tracking-widest text-neutral-500 ml-4">Секретный пароль</label>
               <div className="relative group">
                 <input 
                   type={showPassword ? "text" : "password"}
@@ -77,7 +77,7 @@ export default function AdminLoginPage() {
             </div>
 
             {error && (
-              <div className="bg-red-500/10 border border-red-500/20 text-red-500 text-xs font-black py-4 px-6 rounded-2xl animate-in fade-in slide-in-from-top-2">
+              <div className="bg-red-500/10 border border-red-500/20 text-red-500 text-xs font-semibold py-4 px-6 rounded-2xl animate-in fade-in slide-in-from-top-2">
                 {error}
               </div>
             )}
@@ -85,7 +85,7 @@ export default function AdminLoginPage() {
             <button 
               type="submit"
               disabled={isLoading || !password}
-              className="w-full bg-primary hover:bg-red-600 text-white font-black py-5 rounded-3xl flex items-center justify-center gap-3 transition-all hover:scale-[1.02] active:scale-95 shadow-xl shadow-primary/20 disabled:opacity-50 disabled:scale-100"
+              className="w-full bg-primary hover:bg-red-600 text-white font-semibold py-5 rounded-3xl flex items-center justify-center gap-3 transition-all hover:scale-[1.02] active:scale-95 shadow-xl shadow-primary/20 disabled:opacity-50 disabled:scale-100"
             >
               {isLoading ? (
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -97,7 +97,7 @@ export default function AdminLoginPage() {
 
           <div className="mt-12 flex items-center justify-center gap-2 text-neutral-500">
             <ShieldCheck size={14} />
-            <span className="text-[10px] font-black uppercase tracking-widest">End-to-End Encrypted</span>
+            <span className="text-[10px] font-semibold uppercase tracking-widest">End-to-End Encrypted</span>
           </div>
         </div>
       </div>

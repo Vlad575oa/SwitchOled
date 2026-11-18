@@ -78,7 +78,7 @@ export function InlinePriceEditor({ products: initialProducts, canDelete }: Inli
           <button
             onClick={handleSave}
             disabled={saving}
-            className="flex items-center gap-2 bg-[#111827] text-white px-6 py-3 rounded-2xl font-black uppercase tracking-widest text-xs shadow-2xl hover:bg-neutral-800 transition-all active:scale-95 disabled:opacity-50"
+            className="flex items-center gap-2 bg-[#111111] text-white px-6 py-3 rounded-2xl font-semibold uppercase tracking-widest text-xs shadow-2xl hover:bg-neutral-800 transition-all active:scale-95 disabled:opacity-50"
           >
             {saving ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
             Сохранить изменения
@@ -91,14 +91,14 @@ export function InlinePriceEditor({ products: initialProducts, canDelete }: Inli
           <thead>
             <tr className="border-b border-neutral-100 bg-neutral-50/50">
               {["ID", "Фото", "Название", "Категория", "Цена (₽)", ""].map((h) => (
-                <th key={h} className="px-5 py-3.5 text-[9px] font-black uppercase tracking-widest text-neutral-400">{h}</th>
+                <th key={h} className="px-5 py-3.5 text-[9px] font-semibold uppercase tracking-widest text-neutral-400">{h}</th>
               ))}
             </tr>
           </thead>
           <tbody>
             {initialProducts.map((p) => (
               <tr key={p.id} className={`border-b border-neutral-50 last:border-0 transition-colors ${p.isVisible === false ? "opacity-60 bg-neutral-50/80" : "hover:bg-neutral-50/30"}`}>
-                <td className="px-5 py-3 text-[10px] font-black text-neutral-400">#{p.id}</td>
+                <td className="px-5 py-3 text-[10px] font-semibold text-neutral-400">#{p.id}</td>
                 <td className="px-5 py-3">
                   <div className="w-12 h-12 rounded-xl overflow-hidden bg-white border border-neutral-100 flex-shrink-0">
                     {p.images[0] ? (
@@ -111,7 +111,7 @@ export function InlinePriceEditor({ products: initialProducts, canDelete }: Inli
                   </div>
                 </td>
                 <td className="px-5 py-3 max-w-[400px]">
-                  <p className="text-xs font-black leading-4 text-[#111827] line-clamp-2">{p.name}</p>
+                  <p className="text-xs font-semibold leading-4 text-[#111111] line-clamp-2">{p.name}</p>
                   <p className="text-[10px] text-neutral-400 font-bold mt-0.5">{p.slug}</p>
                   {p.sku && <p className="text-[10px] text-neutral-400 font-bold">Артикул: {p.sku}</p>}
                 </td>
@@ -122,9 +122,9 @@ export function InlinePriceEditor({ products: initialProducts, canDelete }: Inli
                       type="number"
                       value={prices[p.id]}
                       onChange={(e) => handleChange(p.id, e.target.value)}
-                      className="w-full pl-3 pr-7 py-2 bg-neutral-50 border border-neutral-200 rounded-lg text-sm font-black text-[#111827] outline-none focus:bg-white focus:border-primary/40 focus:ring-4 focus:ring-primary/5 transition-all"
+                      className="w-full pl-3 pr-7 py-2 bg-neutral-50 border border-neutral-200 rounded-lg text-sm font-semibold text-[#111111] outline-none focus:bg-white focus:border-primary/40 focus:ring-4 focus:ring-primary/5 transition-all"
                     />
-                    <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] font-black text-neutral-300">₽</span>
+                    <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] font-semibold text-neutral-300">₽</span>
                   </div>
                   <div className="mt-2">
                     <ProductStockToggleButton productId={p.id} inStock={p.inStock} />

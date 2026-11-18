@@ -72,9 +72,9 @@ export default async function AdminDashboard() {
 
   const statusLabel: Record<string, { label: string; cls: string }> = {
     pending: { label: "Ожидает", cls: "bg-yellow-100 text-yellow-700" },
-    paid: { label: "Оплачен", cls: "bg-green-100 text-green-700" },
-    failed: { label: "Отменён", cls: "bg-red-100 text-red-600" },
-    success: { label: "Выполнен", cls: "bg-blue-100 text-blue-700" },
+    paid: { label: "Оплачен", cls: "bg-black/[0.04] text-black" },
+    failed: { label: "Отменён", cls: "bg-black/[0.04] text-black" },
+    success: { label: "Выполнен", cls: "bg-black/[0.04] text-black" },
   };
 
   return (
@@ -82,12 +82,12 @@ export default async function AdminDashboard() {
       {/* Top bar */}
       <header className="bg-white border-b border-neutral-100 px-8 py-5 flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-black text-[#111827]">Дашборд</h1>
+          <h1 className="text-xl font-semibold text-[#111111]">Дашборд</h1>
           <p className="text-xs text-neutral-400 font-bold mt-0.5">Обзор магазина</p>
         </div>
         <Link
           href="/admin/products/new"
-          className="flex items-center gap-2 bg-primary text-white text-xs font-black uppercase tracking-widest px-5 py-2.5 rounded-xl hover:bg-red-700 transition-all shadow-lg shadow-primary/20"
+          className="flex items-center gap-2 bg-primary text-white text-xs font-semibold uppercase tracking-widest px-5 py-2.5 rounded-xl hover:bg-red-700 transition-all shadow-lg shadow-primary/20"
         >
           <Plus size={14} /> Новый товар
         </Link>
@@ -95,26 +95,26 @@ export default async function AdminDashboard() {
 
       <div className="p-8 space-y-8">
         {dbError && (
-          <div className="bg-red-50 border border-red-200 rounded-2xl px-6 py-4 text-sm font-bold text-red-600">
+          <div className="bg-black/[0.04] border border-black/10 rounded-2xl px-6 py-4 text-sm font-bold text-black">
             База данных недоступна. Данные не загружены — попробуйте обновить страницу через несколько минут.
           </div>
         )}
         {/* Stats */}
         <div className="grid grid-cols-2 xl:grid-cols-4 gap-5">
           {[
-            { label: "Товаров", value: productsCount, icon: Package, color: "text-blue-500", bg: "bg-blue-50" },
-            { label: "Заказов", value: ordersCount, icon: ShoppingBag, color: "text-orange-500", bg: "bg-orange-50" },
-            { label: "Статей в блоге", value: postsCount, icon: FileText, color: "text-purple-500", bg: "bg-purple-50" },
-            { label: "Выручка (оплачено)", value: formatPrice(monthRevenue), icon: TrendingUp, color: "text-green-500", bg: "bg-green-50" },
+            { label: "Товаров", value: productsCount, icon: Package, color: "text-black", bg: "bg-black/[0.04]" },
+            { label: "Заказов", value: ordersCount, icon: ShoppingBag, color: "text-black", bg: "bg-black/[0.04]" },
+            { label: "Статей в блоге", value: postsCount, icon: FileText, color: "text-black", bg: "bg-black/[0.04]" },
+            { label: "Выручка (оплачено)", value: formatPrice(monthRevenue), icon: TrendingUp, color: "text-black", bg: "bg-black/[0.04]" },
           ].map((stat) => (
             <div key={stat.label} className="bg-white rounded-2xl border border-neutral-100 shadow-sm p-6">
               <div className="flex items-center justify-between mb-4">
-                <p className="text-[10px] font-black uppercase tracking-widest text-neutral-400">{stat.label}</p>
+                <p className="text-[10px] font-semibold uppercase tracking-widest text-neutral-400">{stat.label}</p>
                 <div className={`w-9 h-9 rounded-xl ${stat.bg} flex items-center justify-center`}>
                   <stat.icon size={16} className={stat.color} />
                 </div>
               </div>
-              <p className="text-2xl font-black text-[#111827]">{stat.value}</p>
+              <p className="text-2xl font-semibold text-[#111111]">{stat.value}</p>
             </div>
           ))}
         </div>
@@ -122,11 +122,11 @@ export default async function AdminDashboard() {
         {/* Cart events stats */}
         <div className="bg-white rounded-2xl border border-neutral-100 shadow-sm overflow-hidden">
           <div className="px-6 py-4 border-b border-neutral-100 flex items-center gap-3">
-            <div className="w-8 h-8 rounded-xl bg-orange-50 flex items-center justify-center">
-              <ShoppingCart size={15} className="text-orange-500" />
+            <div className="w-8 h-8 rounded-xl bg-black/[0.04] flex items-center justify-center">
+              <ShoppingCart size={15} className="text-black" />
             </div>
             <div>
-              <h2 className="text-sm font-black text-[#111827]">Положили в корзину</h2>
+              <h2 className="text-sm font-semibold text-[#111111]">Положили в корзину</h2>
               <p className="text-[10px] text-neutral-400 font-bold">Собственная статистика сайта</p>
             </div>
           </div>
@@ -134,34 +134,34 @@ export default async function AdminDashboard() {
           <div className="p-6">
             <div className="grid grid-cols-3 gap-4 mb-6">
               <div className="bg-neutral-50 rounded-xl p-4 text-center">
-                <p className="text-[10px] font-black uppercase tracking-widest text-neutral-400 mb-1">Всего</p>
-                <p className="text-2xl font-black text-[#111827]">{cartTotal}</p>
+                <p className="text-[10px] font-semibold uppercase tracking-widest text-neutral-400 mb-1">Всего</p>
+                <p className="text-2xl font-semibold text-[#111111]">{cartTotal}</p>
               </div>
-              <div className="bg-orange-50 rounded-xl p-4 text-center">
+              <div className="bg-black/[0.04] rounded-xl p-4 text-center">
                 <div className="flex items-center justify-center gap-1 mb-1">
                   <LayoutGrid size={11} className="text-orange-400" />
-                  <p className="text-[10px] font-black uppercase tracking-widest text-orange-400">Из сетки</p>
+                  <p className="text-[10px] font-semibold uppercase tracking-widest text-orange-400">Из сетки</p>
                 </div>
-                <p className="text-2xl font-black text-orange-600">{cartGrid}</p>
+                <p className="text-2xl font-semibold text-black">{cartGrid}</p>
               </div>
-              <div className="bg-blue-50 rounded-xl p-4 text-center">
+              <div className="bg-black/[0.04] rounded-xl p-4 text-center">
                 <div className="flex items-center justify-center gap-1 mb-1">
                   <ShoppingCart size={11} className="text-blue-400" />
-                  <p className="text-[10px] font-black uppercase tracking-widest text-blue-400">Из карточки</p>
+                  <p className="text-[10px] font-semibold uppercase tracking-widest text-blue-400">Из карточки</p>
                 </div>
-                <p className="text-2xl font-black text-blue-600">{cartPage}</p>
+                <p className="text-2xl font-semibold text-black">{cartPage}</p>
               </div>
             </div>
 
             {cartByDate.length > 0 && (
               <div className="mb-6">
-                <p className="text-[10px] font-black uppercase tracking-widest text-neutral-400 mb-3">По датам добавления</p>
+                <p className="text-[10px] font-semibold uppercase tracking-widest text-neutral-400 mb-3">По датам добавления</p>
                 <div className="overflow-hidden rounded-xl border border-neutral-100">
                   <table className="w-full text-left">
                     <thead className="bg-neutral-50">
                       <tr>
                         {["Дата", "Всего", "Из сетки", "Из карточки"].map((h) => (
-                          <th key={h} className="px-4 py-3 text-[9px] font-black uppercase tracking-widest text-neutral-400">
+                          <th key={h} className="px-4 py-3 text-[9px] font-semibold uppercase tracking-widest text-neutral-400">
                             {h}
                           </th>
                         ))}
@@ -170,10 +170,10 @@ export default async function AdminDashboard() {
                     <tbody>
                       {cartByDate.map((item) => (
                         <tr key={item.dateKey} className="border-t border-neutral-100 first:border-t-0">
-                          <td className="px-4 py-3 text-xs font-black text-[#111827]">{item.dateLabel}</td>
-                          <td className="px-4 py-3 text-xs font-black text-[#111827]">{item.total}</td>
-                          <td className="px-4 py-3 text-xs font-bold text-orange-600">{item.grid}</td>
-                          <td className="px-4 py-3 text-xs font-bold text-blue-600">{item.page}</td>
+                          <td className="px-4 py-3 text-xs font-semibold text-[#111111]">{item.dateLabel}</td>
+                          <td className="px-4 py-3 text-xs font-semibold text-[#111111]">{item.total}</td>
+                          <td className="px-4 py-3 text-xs font-bold text-black">{item.grid}</td>
+                          <td className="px-4 py-3 text-xs font-bold text-black">{item.page}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -184,13 +184,13 @@ export default async function AdminDashboard() {
 
             {topCartProducts.length > 0 && (
               <div>
-                <p className="text-[10px] font-black uppercase tracking-widest text-neutral-400 mb-3">Топ товаров по кликам</p>
+                <p className="text-[10px] font-semibold uppercase tracking-widest text-neutral-400 mb-3">Топ товаров по кликам</p>
                 <div className="space-y-2">
                   {topCartProducts.map((item, i) => (
                     <div key={item.productId} className="flex items-center gap-3">
-                      <span className="w-5 h-5 rounded-full bg-neutral-100 text-[10px] font-black text-neutral-400 flex items-center justify-center shrink-0">{i + 1}</span>
-                      <p className="flex-1 text-xs font-bold text-[#111827] truncate">{item.name ?? `Товар #${item.productId}`}</p>
-                      <span className="text-xs font-black text-orange-600 shrink-0">{item._count.id} раз</span>
+                      <span className="w-5 h-5 rounded-full bg-neutral-100 text-[10px] font-semibold text-neutral-400 flex items-center justify-center shrink-0">{i + 1}</span>
+                      <p className="flex-1 text-xs font-bold text-[#111111] truncate">{item.name ?? `Товар #${item.productId}`}</p>
+                      <span className="text-xs font-semibold text-black shrink-0">{item._count.id} раз</span>
                     </div>
                   ))}
                 </div>
@@ -208,11 +208,11 @@ export default async function AdminDashboard() {
         {/* Top blog articles */}
         <div className="bg-white rounded-2xl border border-neutral-100 shadow-sm overflow-hidden">
           <div className="px-6 py-4 border-b border-neutral-100 flex items-center gap-3">
-            <div className="w-8 h-8 rounded-xl bg-purple-50 flex items-center justify-center">
-              <Eye size={15} className="text-purple-500" />
+            <div className="w-8 h-8 rounded-xl bg-black/[0.04] flex items-center justify-center">
+              <Eye size={15} className="text-black" />
             </div>
             <div>
-              <h2 className="text-sm font-black text-[#111827]">Топ-5 статей по переходам</h2>
+              <h2 className="text-sm font-semibold text-[#111111]">Топ-5 статей по переходам</h2>
               <p className="text-[10px] text-neutral-400 font-bold">За всё время · собственная статистика сайта</p>
             </div>
           </div>
@@ -225,19 +225,19 @@ export default async function AdminDashboard() {
               <div className="space-y-3">
                 {topArticleViews.map((item, index) => (
                   <div key={item.path} className="flex items-center gap-3">
-                    <span className="w-7 h-7 rounded-full bg-neutral-100 text-xs font-black text-neutral-500 flex items-center justify-center shrink-0">
+                    <span className="w-7 h-7 rounded-full bg-neutral-100 text-xs font-semibold text-neutral-500 flex items-center justify-center shrink-0">
                       {index + 1}
                     </span>
                     <a
                       href={item.path}
                       target="_blank"
                       rel="noreferrer"
-                      className="flex-1 text-sm font-bold text-[#111827] truncate hover:text-primary transition-colors"
+                      className="flex-1 text-sm font-bold text-[#111111] truncate hover:text-primary transition-colors"
                       title={item.title}
                     >
                       {item.title}
                     </a>
-                    <span className="text-sm font-black text-primary shrink-0">{item._count.id} переходов</span>
+                    <span className="text-sm font-semibold text-primary shrink-0">{item._count.id} переходов</span>
                   </div>
                 ))}
               </div>
@@ -254,7 +254,7 @@ export default async function AdminDashboard() {
           ].map((l) => (
             <Link key={l.href} href={l.href} className="bg-white border border-neutral-100 rounded-2xl shadow-sm p-5 flex items-center justify-between group hover:border-primary/20 hover:shadow-md transition-all">
               <div>
-                <p className="text-sm font-black text-[#111827]">{l.label}</p>
+                <p className="text-sm font-semibold text-[#111111]">{l.label}</p>
                 <p className="text-[11px] text-neutral-400 font-bold mt-0.5">{l.desc}</p>
               </div>
               <ArrowRight size={16} className="text-neutral-300 group-hover:text-primary transition-colors" />
@@ -265,8 +265,8 @@ export default async function AdminDashboard() {
         {/* Recent orders */}
         <div className="bg-white rounded-2xl border border-neutral-100 shadow-sm overflow-hidden">
           <div className="px-6 py-4 border-b border-neutral-100 flex items-center justify-between">
-            <h2 className="text-sm font-black text-[#111827]">Последние заказы</h2>
-            <Link href="/admin/orders" className="text-xs font-black text-primary hover:text-red-700 flex items-center gap-1">
+            <h2 className="text-sm font-semibold text-[#111111]">Последние заказы</h2>
+            <Link href="/admin/orders" className="text-xs font-semibold text-primary hover:text-black flex items-center gap-1">
               Все заказы <ArrowRight size={12} />
             </Link>
           </div>
@@ -275,7 +275,7 @@ export default async function AdminDashboard() {
               <thead>
                 <tr className="border-b border-neutral-50">
                   {["ID", "Клиент", "Телефон", "Сумма", "Статус", "Дата"].map((h) => (
-                    <th key={h} className="px-6 py-3 text-[9px] font-black uppercase tracking-widest text-neutral-400">{h}</th>
+                    <th key={h} className="px-6 py-3 text-[9px] font-semibold uppercase tracking-widest text-neutral-400">{h}</th>
                   ))}
                 </tr>
               </thead>
@@ -292,12 +292,12 @@ export default async function AdminDashboard() {
                     const s = statusLabel[order.status] ?? { label: order.status, cls: "bg-neutral-100 text-neutral-500" };
                     return (
                       <tr key={order.id} className="border-b border-neutral-50 last:border-0 hover:bg-neutral-50/50 transition-colors">
-                        <td className="px-6 py-4 text-xs font-black text-[#111827]">#{order.id}</td>
+                        <td className="px-6 py-4 text-xs font-semibold text-[#111111]">#{order.id}</td>
                         <td className="px-6 py-4 text-xs font-bold text-neutral-600">{order.name}</td>
                         <td className="px-6 py-4 text-xs font-bold text-neutral-400">{order.phone}</td>
-                        <td className="px-6 py-4 text-xs font-black text-[#111827]">{formatPrice(order.totalAmount)}</td>
+                        <td className="px-6 py-4 text-xs font-semibold text-[#111111]">{formatPrice(order.totalAmount)}</td>
                         <td className="px-6 py-4">
-                          <span className={`px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-widest ${s.cls}`}>{s.label}</span>
+                          <span className={`px-2.5 py-1 rounded-full text-[9px] font-semibold uppercase tracking-widest ${s.cls}`}>{s.label}</span>
                         </td>
                         <td className="px-6 py-4 text-xs font-bold text-neutral-400">
                           {new Date(order.createdAt).toLocaleDateString("ru-RU")}

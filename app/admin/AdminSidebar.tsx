@@ -12,7 +12,8 @@ import {
   LogOut,
   ExternalLink,
   Layers,
-  ChevronRight,
+  Menu,
+  X,
   Scale,
   MessageSquare,
   Palette,
@@ -22,19 +23,46 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const navItems = [
-  { label: "Дашборд", href: "/admin", icon: LayoutDashboard, exact: true },
-  { label: "Товары", href: "/admin/products", icon: Package },
-  { label: "Заказы", href: "/admin/orders", icon: ShoppingBag, badge: true, badgeType: "orders" },
-  { label: "Заказы в 1 клик", href: "/admin/quick-orders", icon: PhoneCall },
-  { label: "Аналитика", href: "/admin/analytics", icon: Eye },
-  { label: "Сравнение цен", href: "/admin/price-compare", icon: BarChart3 },
-  { label: "Цвета", href: "/admin/colors", icon: Palette },
-  { label: "Блог", href: "/admin/posts", icon: FileText },
-  { label: "FAQ", href: "/admin/faq", icon: HelpCircle },
-  { label: "Поддержка", href: "/admin/chat", icon: MessageSquare, badge: true, badgeType: "chat" },
-  { label: "Страницы", href: "/admin/pages", icon: Layers },
-  { label: "Правовые", href: "/admin/legal", icon: Scale },
+type NavItem = {
+  label: string;
+  href: string;
+  icon: typeof LayoutDashboard;
+  exact?: boolean;
+  badge?: boolean;
+  badgeType?: "orders" | "chat";
+};
+
+const navGroups: Array<{ title: string; items: NavItem[] }> = [
+  {
+    title: "Продажи",
+    items: [
+      { label: "Дашборд", href: "/admin", icon: LayoutDashboard, exact: true },
+      { label: "Заказы", href: "/admin/orders", icon: ShoppingBag, badge: true, badgeType: "orders" },
+      { label: "Заказы в 1 клик", href: "/admin/quick-orders", icon: PhoneCall },
+      { label: "Аналитика", href: "/admin/analytics", icon: Eye },
+    ],
+  },
+  {
+    title: "Каталог",
+    items: [
+      { label: "Товары", href: "/admin/products", icon: Package },
+      { label: "Цвета", href: "/admin/colors", icon: Palette },
+      { label: "Сравнение цен", href: "/admin/price-compare", icon: BarChart3 },
+    ],
+  },
+  {
+    title: "Контент",
+    items: [
+      { label: "Блог", href: "/admin/posts", icon: FileText },
+      { label: "FAQ", href: "/admin/faq", icon: HelpCircle },
+      { label: "Страницы", href: "/admin/pages", icon: Layers },
+      { label: "Правовые", href: "/admin/legal", icon: Scale },
+    ],
+  },
+  {
+    title: "Клиенты",
+    items: [{ label: "Поддержка", href: "/admin/chat", icon: MessageSquare, badge: true, badgeType: "chat" }],
+  },
 ];
 
 export const AdminSidebar = () => {
@@ -43,6 +71,9 @@ export const AdminSidebar = () => {
   const [unreadChatCount, setUnreadChatCount] = useState(0);
   const [pendingOrdersCount, setPendingOrdersCount] = useState(0);
   const [mounted, setMounted] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  useEffect(() => { setMobileOpen(false); }, [pathname]);
 
   const isActive = (item: { href: string; exact?: boolean }) =>
     item.exact ? pathname === item.href : pathname.startsWith(item.href);
@@ -92,78 +123,102 @@ export const AdminSidebar = () => {
     return () => clearInterval(interval);
   }, [unreadChatCount, pendingOrdersCount, mounted]);
 
-  return (
-    <aside className="w-[240px] min-h-screen bg-[#111827] flex flex-col flex-shrink-0">
-      {/* Logo */}
-      <div className="px-6 py-7 border-b border-white/5">
-        <Link href="/admin" className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center shadow-lg shadow-primary/30">
-            <span className="text-white font-black text-sm italic">N</span>
-          </div>
-          <div>
-            <p className="text-white font-black text-sm tracking-tight leading-none">Switch OLED</p>
-            <p className="text-neutral-500 text-[10px] font-bold uppercase tracking-widest mt-0.5">Admin Panel</p>
-          </div>
+  const nav = (
+    <>
+      <div className="px-5 h-16 flex items-center justify-between">
+        <Link href="/admin" className="flex items-center gap-2.5">
+          <span className="w-[18px] h-[18px] rounded-full border-[4.5px] border-black" />
+          <span className="text-[16px] font-semibold tracking-[-0.01em] text-black">Switch OLED</span>
+          <span className="rounded-md bg-black/[0.06] px-1.5 py-0.5 text-[11px] text-black/55">admin</span>
         </Link>
+        <button type="button" onClick={() => setMobileOpen(false)} className="lg:hidden text-black/60" aria-label="Закрыть меню">
+          <X size={20} />
+        </button>
       </div>
 
-      {/* Nav */}
-      <nav className="flex-1 px-3 py-5 space-y-1">
-        <p className="text-[9px] font-black uppercase tracking-[0.2em] text-neutral-600 px-3 mb-3">Управление</p>
-        {navItems.map((item) => {
-          const count = item.badgeType === "chat" ? unreadChatCount : pendingOrdersCount;
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={cn(
-                "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold transition-all group",
-                isActive(item)
-                  ? "bg-white/10 text-white"
-                  : "text-neutral-400 hover:text-white hover:bg-white/5"
-              )}
-            >
-              <item.icon
-                size={16}
-                className={cn(
-                  "flex-shrink-0 transition-colors",
-                  isActive(item) ? "text-primary" : "text-neutral-500 group-hover:text-neutral-300"
-                )}
-              />
-              <span className="flex-1">{item.label}</span>
-              {mounted && item.badge && count > 0 && (
-                <span className={cn(
-                  "w-5 h-5 rounded-full text-[9px] font-black flex items-center justify-center",
-                  item.badgeType === "orders" ? "bg-orange-500 text-white" : "bg-primary text-white"
-                )}>
-                  {count > 99 ? "99+" : count}
-                </span>
-              )}
-              {isActive(item) && !(item.badge && count > 0) && <ChevronRight size={12} className="text-neutral-500" />}
-            </Link>
-          );
-        })}
+      <nav className="flex-1 overflow-y-auto px-3 pb-4 space-y-5">
+        {navGroups.map((group) => (
+          <div key={group.title}>
+            <p className="px-3 mb-1.5 text-[12px] text-black/40">{group.title}</p>
+            <div className="space-y-0.5">
+              {group.items.map((item) => {
+                const count = item.badgeType === "chat" ? unreadChatCount : pendingOrdersCount;
+                const active = isActive(item);
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={cn(
+                      "flex items-center gap-3 h-10 px-3 rounded-xl text-[14px] transition-colors",
+                      active ? "bg-black text-white" : "text-black/70 hover:text-black hover:bg-black/[0.05]"
+                    )}
+                  >
+                    <item.icon size={17} strokeWidth={1.8} className="shrink-0" />
+                    <span className="flex-1">{item.label}</span>
+                    {mounted && item.badge && count > 0 && (
+                      <span
+                        className={cn(
+                          "min-w-5 h-5 px-1.5 rounded-full text-[11px] font-semibold flex items-center justify-center",
+                          active ? "bg-white text-black" : "bg-black text-white"
+                        )}
+                      >
+                        {count > 99 ? "99+" : count}
+                      </span>
+                    )}
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        ))}
       </nav>
 
-
-      {/* Bottom */}
-      <div className="px-3 pb-5 space-y-1 border-t border-white/5 pt-4">
+      <div className="px-3 py-4 border-t border-black/[0.07] space-y-0.5">
         <Link
           href="/"
           target="_blank"
-          className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-neutral-500 hover:text-white hover:bg-white/5 transition-all"
+          className="flex items-center gap-3 h-10 px-3 rounded-xl text-[14px] text-black/70 hover:text-black hover:bg-black/[0.05] transition-colors"
         >
-          <ExternalLink size={16} />
+          <ExternalLink size={17} strokeWidth={1.8} />
           <span>Открыть сайт</span>
         </Link>
         <button
           onClick={handleLogout}
-          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-neutral-500 hover:text-red-400 hover:bg-red-500/5 transition-all"
+          className="w-full flex items-center gap-3 h-10 px-3 rounded-xl text-[14px] text-black/70 hover:text-red-600 hover:bg-red-50 transition-colors"
         >
-          <LogOut size={16} />
+          <LogOut size={17} strokeWidth={1.8} />
           <span>Выйти</span>
         </button>
       </div>
-    </aside>
+    </>
+  );
+
+  const total = (mounted ? pendingOrdersCount + unreadChatCount : 0);
+
+  return (
+    <>
+      {/* Mobile top bar */}
+      <div className="lg:hidden fixed top-0 inset-x-0 z-40 h-14 bg-white/95 backdrop-blur border-b border-black/[0.07] flex items-center justify-between px-4">
+        <button type="button" onClick={() => setMobileOpen(true)} className="inline-flex items-center gap-2 text-[15px] font-medium text-black" aria-label="Открыть меню">
+          <Menu size={20} /> Меню
+          {total > 0 && <span className="min-w-5 h-5 px-1.5 rounded-full bg-black text-white text-[11px] flex items-center justify-center">{total}</span>}
+        </button>
+        <span className="text-[15px] font-semibold text-black">Switch OLED</span>
+      </div>
+      <div className="lg:hidden h-14 shrink-0" />
+
+      {/* Mobile drawer */}
+      {mobileOpen && (
+        <div className="lg:hidden fixed inset-0 z-50">
+          <div className="absolute inset-0 bg-black/30" onClick={() => setMobileOpen(false)} />
+          <aside className="absolute left-0 top-0 bottom-0 w-[280px] bg-white flex flex-col shadow-2xl">{nav}</aside>
+        </div>
+      )}
+
+      {/* Desktop sidebar */}
+      <aside className="hidden lg:flex w-[248px] h-screen sticky top-0 bg-white flex-col flex-shrink-0 border-r border-black/[0.06]">
+        {nav}
+      </aside>
+    </>
   );
 };

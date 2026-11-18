@@ -197,12 +197,12 @@ export default function GamesDictionaryPage() {
           <ArrowLeft size={18} className="text-neutral-500" />
         </Link>
         <div className="flex-1">
-          <h1 className="text-xl font-black text-[#111827]">Справочник игр</h1>
+          <h1 className="text-xl font-semibold text-[#111111]">Справочник игр</h1>
           <p className="text-xs text-neutral-400 font-bold mt-0.5">Канонические названия игр, к которым сопоставляются строки прайсов</p>
         </div>
         <button
           onClick={() => setShowAddForm((v) => !v)}
-          className="flex items-center gap-2 px-4 py-2.5 bg-primary text-white rounded-xl text-sm font-black hover:opacity-90 transition-opacity"
+          className="flex items-center gap-2 px-4 py-2.5 bg-primary text-white rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity"
         >
           <Plus size={15} />
           Добавить игру
@@ -214,7 +214,7 @@ export default function GamesDictionaryPage() {
           {showAddForm && (
             <div className="bg-white rounded-2xl border border-neutral-100 shadow-sm p-4 flex items-end gap-3 flex-wrap">
               <div className="space-y-1.5 flex-1 min-w-[220px]">
-                <label className="text-[10px] font-black uppercase tracking-widest text-neutral-400 px-1">Название</label>
+                <label className="text-[10px] font-semibold uppercase tracking-widest text-neutral-400 px-1">Название</label>
                 <input
                   value={newName}
                   onChange={(e) => setNewName(e.target.value)}
@@ -223,7 +223,7 @@ export default function GamesDictionaryPage() {
                 />
               </div>
               <div className="space-y-1.5">
-                <label className="text-[10px] font-black uppercase tracking-widest text-neutral-400 px-1">Платформа</label>
+                <label className="text-[10px] font-semibold uppercase tracking-widest text-neutral-400 px-1">Платформа</label>
                 <select
                   value={newPlatform}
                   onChange={(e) => setNewPlatform(e.target.value)}
@@ -235,7 +235,7 @@ export default function GamesDictionaryPage() {
                 </select>
               </div>
               <div className="space-y-1.5 w-40">
-                <label className="text-[10px] font-black uppercase tracking-widest text-neutral-400 px-1">Регион</label>
+                <label className="text-[10px] font-semibold uppercase tracking-widest text-neutral-400 px-1">Регион</label>
                 <input
                   value={newRegion}
                   onChange={(e) => setNewRegion(e.target.value)}
@@ -246,7 +246,7 @@ export default function GamesDictionaryPage() {
               <button
                 onClick={createGame}
                 disabled={creating || !newName.trim()}
-                className="flex items-center gap-2 px-4 py-2.5 bg-primary text-white rounded-xl text-xs font-black hover:opacity-90 transition-opacity disabled:opacity-50"
+                className="flex items-center gap-2 px-4 py-2.5 bg-primary text-white rounded-xl text-xs font-semibold hover:opacity-90 transition-opacity disabled:opacity-50"
               >
                 {creating ? <Loader2 size={13} className="animate-spin" /> : <Save size={13} />}
                 Создать
@@ -275,7 +275,7 @@ export default function GamesDictionaryPage() {
                 <button
                   key={p}
                   onClick={() => setPlatform(p)}
-                  className={`px-3 py-2 rounded-xl text-xs font-black transition-colors ${
+                  className={`px-3 py-2 rounded-xl text-xs font-semibold transition-colors ${
                     platform === p ? "bg-primary text-white" : "bg-white border border-neutral-200 text-neutral-500 hover:bg-neutral-50"
                   }`}
                 >
@@ -290,7 +290,7 @@ export default function GamesDictionaryPage() {
               <button
                 key={opt.label}
                 onClick={() => setSupplierCount(opt.value)}
-                className={`px-3 py-2 rounded-xl text-xs font-black transition-colors ${
+                className={`px-3 py-2 rounded-xl text-xs font-semibold transition-colors ${
                   supplierCount === opt.value ? "bg-primary text-white" : "bg-white border border-neutral-200 text-neutral-500 hover:bg-neutral-50"
                 }`}
               >
@@ -310,12 +310,12 @@ export default function GamesDictionaryPage() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="bg-neutral-50/50 border-b border-neutral-100">
-                    <th className="text-right px-4 py-3 font-black text-[10px] uppercase tracking-widest text-neutral-400 w-12">№</th>
-                    <th className="text-left px-6 py-3 font-black text-[10px] uppercase tracking-widest text-neutral-400">Игра</th>
-                    <th className="text-left px-4 py-3 font-black text-[10px] uppercase tracking-widest text-neutral-400">Платформа</th>
-                    <th className="text-right px-4 py-3 font-black text-[10px] uppercase tracking-widest text-neutral-400">Поставщиков</th>
-                    <th className="text-right px-4 py-3 font-black text-[10px] uppercase tracking-widest text-neutral-400">Алиасов</th>
-                    <th className="text-right px-4 py-3 font-black text-[10px] uppercase tracking-widest text-neutral-400">Строк цен</th>
+                    <th className="text-right px-4 py-3 font-semibold text-[10px] uppercase tracking-widest text-neutral-400 w-12">№</th>
+                    <th className="text-left px-6 py-3 font-semibold text-[10px] uppercase tracking-widest text-neutral-400">Игра</th>
+                    <th className="text-left px-4 py-3 font-semibold text-[10px] uppercase tracking-widest text-neutral-400">Платформа</th>
+                    <th className="text-right px-4 py-3 font-semibold text-[10px] uppercase tracking-widest text-neutral-400">Поставщиков</th>
+                    <th className="text-right px-4 py-3 font-semibold text-[10px] uppercase tracking-widest text-neutral-400">Алиасов</th>
+                    <th className="text-right px-4 py-3 font-semibold text-[10px] uppercase tracking-widest text-neutral-400">Строк цен</th>
                     <th className="w-10"></th>
                   </tr>
                 </thead>
@@ -327,7 +327,7 @@ export default function GamesDictionaryPage() {
                       className={`cursor-pointer hover:bg-neutral-50/50 ${selected?.id === g.id ? "bg-primary/5" : ""}`}
                     >
                       <td className="px-4 py-3 text-right text-neutral-400 font-bold">{(page - 1) * pageSize + index + 1}</td>
-                      <td className="px-6 py-3 font-bold text-[#111827]">{g.canonicalName}</td>
+                      <td className="px-6 py-3 font-bold text-[#111111]">{g.canonicalName}</td>
                       <td className="px-4 py-3 text-neutral-500 font-bold">{g.platform}</td>
                       <td className="px-4 py-3 text-right font-bold">
                         <span
@@ -367,7 +367,7 @@ export default function GamesDictionaryPage() {
                 >
                   <ChevronLeft size={15} className="text-neutral-500" />
                 </button>
-                <span className="text-xs font-black text-neutral-500 px-2">
+                <span className="text-xs font-semibold text-neutral-500 px-2">
                   {page} / {Math.max(1, Math.ceil(total / pageSize))}
                 </span>
                 <button
@@ -385,7 +385,7 @@ export default function GamesDictionaryPage() {
         {selected && (
           <div className="w-96 shrink-0 bg-white rounded-2xl border border-neutral-100 shadow-sm h-fit sticky top-8">
             <div className="p-5 border-b border-neutral-50 flex items-center justify-between">
-              <h2 className="text-sm font-black text-[#111827]">Редактирование</h2>
+              <h2 className="text-sm font-semibold text-[#111111]">Редактирование</h2>
               <button onClick={() => setSelected(null)} className="p-1 hover:bg-neutral-50 rounded-lg transition-colors">
                 <X size={16} className="text-neutral-400" />
               </button>
@@ -398,7 +398,7 @@ export default function GamesDictionaryPage() {
             ) : (
               <div className="p-5 space-y-4">
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-neutral-400 px-1">Название</label>
+                  <label className="text-[10px] font-semibold uppercase tracking-widest text-neutral-400 px-1">Название</label>
                   <input
                     value={editName}
                     onChange={(e) => setEditName(e.target.value)}
@@ -407,7 +407,7 @@ export default function GamesDictionaryPage() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-neutral-400 px-1">Платформа</label>
+                  <label className="text-[10px] font-semibold uppercase tracking-widest text-neutral-400 px-1">Платформа</label>
                   <select
                     value={editPlatform}
                     onChange={(e) => setEditPlatform(e.target.value)}
@@ -420,7 +420,7 @@ export default function GamesDictionaryPage() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-neutral-400 px-1">Регион (необязательно)</label>
+                  <label className="text-[10px] font-semibold uppercase tracking-widest text-neutral-400 px-1">Регион (необязательно)</label>
                   <input
                     value={editRegion}
                     onChange={(e) => setEditRegion(e.target.value)}
@@ -433,7 +433,7 @@ export default function GamesDictionaryPage() {
                   <button
                     onClick={saveGame}
                     disabled={saving}
-                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-primary text-white rounded-xl text-xs font-black hover:opacity-90 transition-opacity disabled:opacity-50"
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-primary text-white rounded-xl text-xs font-semibold hover:opacity-90 transition-opacity disabled:opacity-50"
                   >
                     {saving ? <Loader2 size={13} className="animate-spin" /> : <Save size={13} />}
                     Сохранить
@@ -449,14 +449,14 @@ export default function GamesDictionaryPage() {
 
                 {selected.aliases.length > 0 && (
                   <div className="pt-3 border-t border-neutral-50 space-y-2">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-neutral-400 px-1">
+                    <p className="text-[10px] font-semibold uppercase tracking-widest text-neutral-400 px-1">
                       Алиасы ({selected.aliases.length})
                     </p>
                     <div className="max-h-64 overflow-y-auto space-y-1.5">
                       {selected.aliases.map((a) => (
                         <div key={a.id} className="flex items-center justify-between gap-2 px-3 py-2 bg-neutral-50 rounded-lg">
                           <div className="min-w-0">
-                            <p className="text-xs font-bold text-[#111827] truncate">{a.rawText}</p>
+                            <p className="text-xs font-bold text-[#111111] truncate">{a.rawText}</p>
                             <p className="text-[10px] text-neutral-400 font-bold">{a.source === "ai" ? "ИИ" : a.source === "manual" ? "вручную" : "точное совпадение"}</p>
                           </div>
                           <button
@@ -474,13 +474,13 @@ export default function GamesDictionaryPage() {
 
                 {selected.entries.length > 0 && (
                   <div className="pt-3 border-t border-neutral-50 space-y-2">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-neutral-400 px-1">
+                    <p className="text-[10px] font-semibold uppercase tracking-widest text-neutral-400 px-1">
                       Цены у поставщиков
                     </p>
                     <div className="max-h-64 overflow-y-auto space-y-1.5">
                       {selected.entries.map((e) => (
                         <div key={e.id} className="px-3 py-2 bg-neutral-50 rounded-lg">
-                          <p className="text-xs font-bold text-[#111827]">{e.upload.supplier.name}</p>
+                          <p className="text-xs font-bold text-[#111111]">{e.upload.supplier.name}</p>
                           <p className="text-[10px] text-neutral-400 font-bold">
                             {e.priceWholesale ?? e.priceRetail ?? "—"} ₽ · {e.rawName}
                           </p>

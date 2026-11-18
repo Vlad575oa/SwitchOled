@@ -33,7 +33,7 @@ export function YandexConversionButton({ orderId, status, sentAt, hasAttribution
   };
 
   if (sent) {
-    return <span title="Конверсия передана в Яндекс Метрику" className="inline-flex items-center gap-1 rounded-lg bg-green-50 px-2 py-1 text-[9px] font-black uppercase tracking-wider text-green-700"><Check size={12} /> Передано</span>;
+    return <span title="Конверсия передана в Яндекс Метрику" className="inline-flex items-center gap-1 rounded-lg bg-green-50 px-2 py-1 text-[9px] font-semibold uppercase tracking-wider text-green-700"><Check size={12} /> Передано</span>;
   }
 
   return (
@@ -43,7 +43,7 @@ export function YandexConversionButton({ orderId, status, sentAt, hasAttribution
         onClick={handleSend}
         disabled={!canSend || !hasAttribution || loading}
         title={!canSend ? "Доступно после оплаты или завершения заказа" : !hasAttribution ? "У заказа нет ClientID или yclid" : "Передать оплаченный заказ в Яндекс Метрику"}
-        className="inline-flex items-center gap-1 rounded-lg border border-[#3158f5]/20 bg-[#3158f5]/5 px-2 py-1 text-[9px] font-black uppercase tracking-wider text-[#3158f5] transition-colors hover:bg-[#3158f5] hover:text-white disabled:cursor-not-allowed disabled:opacity-35"
+        className="inline-flex items-center gap-1 rounded-lg border border-[#3158f5]/20 bg-[#3158f5]/5 px-2 py-1 text-[9px] font-semibold uppercase tracking-wider text-[#3158f5] transition-colors hover:bg-[#3158f5] hover:text-white disabled:cursor-not-allowed disabled:opacity-35"
       >
         {loading ? <Loader2 size={12} className="animate-spin" /> : <Send size={12} />}
         Передать

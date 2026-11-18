@@ -20,7 +20,7 @@ export function ClearCartEventsButton() {
     <button
       onClick={handleClear}
       disabled={loading}
-      className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-neutral-400 hover:text-red-500 transition-colors disabled:opacity-50"
+      className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-widest text-neutral-400 hover:text-red-500 transition-colors disabled:opacity-50"
     >
       <Trash2 size={12} />
       {loading ? "Очистка..." : "Очистить"}
