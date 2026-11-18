@@ -11,6 +11,7 @@ interface Props {
   activeFilterCount: number;
   availableColors: Array<{ name: string; hex: string }>;
   availableMemories: string[];
+  availableGames: string[];
 }
 
 export const MobileFilterDrawer = ({
@@ -20,6 +21,7 @@ export const MobileFilterDrawer = ({
   activeFilterCount,
   availableColors,
   availableMemories,
+  availableGames,
 }: Props) => {
   const [open, setOpen] = useState(false);
 
@@ -65,6 +67,7 @@ export const MobileFilterDrawer = ({
                 categoryTree={categoryTree}
                 availableColors={availableColors}
                 availableMemories={availableMemories}
+                availableGames={availableGames}
                 onApply={() => setOpen(false)}
                 inDrawer
               />

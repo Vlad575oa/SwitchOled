@@ -41,7 +41,7 @@ export async function Catalog({
   headingLevel = "h1",
 }: CatalogProps) {
   const Heading = headingLevel;
-  const { q, priceMin, priceMax, color, memory, status, sort, page = "1" } = searchParams;
+  const { q, priceMin, priceMax, color, memory, games, status, sort, page = "1" } = searchParams;
   const skip = (parseInt(page) - 1) * pageSize;
   let categorySlugs =
     category !== "all" ? await getCategoryDescendantSlugsBySlug(category) : [];
@@ -93,6 +93,15 @@ export async function Catalog({
     }
   }
 
+  if (games) {
+    const gamesValues = games.split(",").filter(Boolean);
+    if (gamesValues.length) {
+      andConditions.push({
+        OR: gamesValues.map((value) => ({ attributes: { path: ["Игр в комплекте"], equals: value } })),
+      });
+    }
+  }
+
   if (status) {
     const statusValues = status.split(",").filter(Boolean);
     const wantsInStock = statusValues.includes("inStock");
@@ -137,14 +146,14 @@ export async function Catalog({
   let totalCount = 0;
   let categoryData: { name: string } | null = { name: "Весь каталог" };
   let categoryTree: Awaited<ReturnType<typeof getCategoryTree>> = [];
-  let availableVariantFilters: { colors: Array<{ name: string; hex: string }>; memories: string[] } = { colors: [], memories: [] };
+  let availableVariantFilters: { colors: Array<{ name: string; hex: string }>; memories: string[]; games: string[] } = { colors: [], memories: [], games: [] };
   let dbError = false;
 
   let errorMsg = "";
   try {
     // On the "all" tab with default sort, prioritize Nintendo products
     const hasNonSearchFilters = Boolean(
-      priceMin || priceMax || color || memory || status || hasAttributeFilters
+      priceMin || priceMax || color || memory || games || status || hasAttributeFilters
     );
     const useNintendoPriority = category === "all" && !sort && !q && !hasNonSearchFilters;
     products = useNintendoPriority
@@ -196,6 +205,7 @@ export async function Catalog({
             categoryTree={categoryTree}
             availableColors={availableVariantFilters.colors}
             availableMemories={availableVariantFilters.memories}
+            availableGames={availableVariantFilters.games}
           />
         </Suspense>
       </aside>
@@ -225,6 +235,7 @@ export async function Catalog({
                   activeFilterCount={activeFilterCount}
                   availableColors={availableVariantFilters.colors}
                   availableMemories={availableVariantFilters.memories}
+                  availableGames={availableVariantFilters.games}
                 />
               </Suspense>
             </div>

@@ -274,6 +274,7 @@ export const getProductsCount = async (where: Prisma.ProductWhereInput) => {
 export interface CatalogVariantFilters {
   colors: Array<{ name: string; hex: string }>;
   memories: string[];
+  games: string[];
 }
 
 export const getCatalogVariantFilters = async (categorySlugs: string[]) => {
@@ -284,7 +285,7 @@ export const getCatalogVariantFilters = async (categorySlugs: string[]) => {
 
     const allVisibleRows = await prisma.product.findMany({
       where: { AND: [VISIBLE, categoryFilter] },
-      select: { attributes: true },
+      select: { attributes: true, color: true },
     });
 
     const inStockRows = await prisma.product.findMany({
@@ -301,6 +302,20 @@ export const getCatalogVariantFilters = async (categorySlugs: string[]) => {
       if (memoryValue) memorySet.add(memoryValue);
     }
 
+    // Games bundled with the console ("Игр в комплекте")
+    const gamesSet = new Set<string>();
+    for (const row of allVisibleRows) {
+      const gamesValue = readAttribute(row.attributes, ATTRIBUTE_GAMES_KEYS);
+      if (gamesValue) gamesSet.add(gamesValue);
+    }
+
+    // Colors present among visible products of the category
+    const presentColorSet = new Set<string>();
+    for (const row of allVisibleRows) {
+      const colorValue = normalizeColor(readAttribute(row.attributes, ATTRIBUTE_COLOR_KEYS) ?? row.color ?? null);
+      if (colorValue) presentColorSet.add(colorValue);
+    }
+
     // Collect colors that have in-stock products (for sort ordering)
     const categoryColorSet = new Set<string>();
     for (const row of inStockRows) {
@@ -310,9 +325,9 @@ export const getCatalogVariantFilters = async (categorySlugs: string[]) => {
       if (colorValue) categoryColorSet.add(colorValue);
     }
 
-    // Return ALL colors from the Color table.
-    // Colors that have in-stock products in current category come first, rest follow alphabetically.
+    // Only colors that exist in the category; in-stock ones first, rest alphabetically.
     const colors = allColors
+      .filter((c) => presentColorSet.has(c.name))
       .sort((a, b) => {
         const aHasProducts = categoryColorSet.has(a.name) ? 0 : 1;
         const bHasProducts = categoryColorSet.has(b.name) ? 0 : 1;
@@ -328,11 +343,14 @@ export const getCatalogVariantFilters = async (categorySlugs: string[]) => {
       return (parseInt(a) || 0) - (parseInt(b) || 0);
     });
 
+    const gamesSorted = Array.from(gamesSet).sort((a, b) => (parseInt(a) || 0) - (parseInt(b) || 0));
+
     return {
       colors,
       memories: memorySorted,
+      games: gamesSorted,
     } as CatalogVariantFilters;
-  }, { colors: [], memories: [] } as CatalogVariantFilters);
+  }, { colors: [], memories: [], games: [] } as CatalogVariantFilters);
 };
 
 export const getOrdersCount = cache(async () => {
@@ -364,6 +382,7 @@ export interface ProductVariantOption {
 
 const ATTRIBUTE_MEMORY_KEYS = ["Накопитель", "Объём", "Объем"] as const;
 const ATTRIBUTE_COLOR_KEYS = ["Цвет"] as const;
+const ATTRIBUTE_GAMES_KEYS = ["Игр в комплекте"] as const;
 
 const COLOR_NORMALIZE: Record<string, string> = {
   white: "Белый",

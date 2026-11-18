@@ -2,7 +2,7 @@
 
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useCallback, useState, useEffect } from "react";
-import { ChevronDown, Plus, Loader2 } from "lucide-react";
+import { ChevronDown, Loader2, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PriceRangeSlider } from "./PriceRangeSlider";
 import { motion, AnimatePresence } from "framer-motion";
@@ -32,37 +32,74 @@ interface FilterSectionProps {
   onToggle: () => void;
 }
 
-const FilterSection = ({ title, children, isOpen, onToggle }: FilterSectionProps) => (
-  <div className="border-b border-black/[0.07] last:border-0">
-    <button
-      onClick={onToggle}
-      aria-expanded={isOpen}
-      className="flex items-center justify-between w-full py-4 text-left"
-    >
-      <h3 className="text-[15px] font-medium text-black">{title}</h3>
-      <Plus
-        size={18}
-        strokeWidth={1.5}
-        className={cn("text-black transition-transform duration-300", isOpen && "rotate-45")}
-      />
-    </button>
-
-    <AnimatePresence initial={false}>
-      {isOpen && (
-        <motion.div
-          key="content"
-          initial={{ height: 0, opacity: 0 }}
-          animate={{ height: "auto", opacity: 1 }}
-          exit={{ height: 0, opacity: 0 }}
-          transition={{ duration: 0.3, ease: [0.04, 0.62, 0.23, 0.98] }}
-          className="overflow-hidden"
-        >
-          <div className="pb-5">{children}</div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+const FilterSection = ({ title, children }: FilterSectionProps) => (
+  <div className="py-5 border-b border-black/[0.07] last:border-0">
+    <h3 className="text-[16px] font-semibold text-black mb-3">{title}</h3>
+    {children}
   </div>
 );
+
+interface CheckItem {
+  value: string;
+  label: string;
+  colorHex?: string;
+}
+
+const VISIBLE_LIMIT = 5;
+
+// Soft square checkboxes; long lists collapse behind «Посмотреть все».
+const CheckList = ({
+  items,
+  selected,
+  onToggle,
+}: {
+  items: CheckItem[];
+  selected: string[];
+  onToggle: (value: string) => void;
+}) => {
+  const [expanded, setExpanded] = useState(false);
+  const shown = expanded ? items : items.slice(0, VISIBLE_LIMIT);
+  return (
+    <div>
+      <ul className="space-y-1">
+        {shown.map((item) => {
+          const checked = selected.includes(item.value);
+          return (
+            <li key={item.value}>
+              <label className="flex items-center gap-3 py-1.5 cursor-pointer group">
+                <input type="checkbox" className="sr-only" checked={checked} onChange={() => onToggle(item.value)} />
+                <span
+                  className={cn(
+                    "w-6 h-6 shrink-0 rounded-md border flex items-center justify-center transition-colors",
+                    checked ? "bg-black border-black" : "bg-[#f4f6fa] border-[#dfe3ea] group-hover:border-black/30"
+                  )}
+                  aria-hidden
+                >
+                  {checked && <Check size={15} strokeWidth={2.5} className="text-white" />}
+                </span>
+                {item.colorHex && (
+                  <span className="w-4 h-4 shrink-0 rounded-full border border-black/10" style={{ backgroundColor: item.colorHex }} />
+                )}
+                <span className="text-[15px] text-black">{item.label}</span>
+              </label>
+            </li>
+          );
+        })}
+      </ul>
+      {items.length > VISIBLE_LIMIT && (
+        <button
+          type="button"
+          onClick={() => setExpanded((v) => !v)}
+          className="mt-2 text-[15px] font-medium text-black underline underline-offset-4 decoration-black/30 hover:decoration-black"
+        >
+          {expanded ? "Свернуть" : "Посмотреть все"}
+        </button>
+      )}
+    </div>
+  );
+};
+
+const memoryLabel = (value: string) => (/^0\s*ГБ$/i.test(value.trim()) ? "Без карты памяти" : `Карта ${value}`);
 
 interface ChipProps {
   label: string;
@@ -108,6 +145,7 @@ interface FilterSidebarProps {
   categoryTree: any[];
   availableColors: Array<{ name: string; hex: string }>;
   availableMemories: string[];
+  availableGames?: string[];
   onApply?: () => void;
   inDrawer?: boolean;
 }
@@ -118,6 +156,7 @@ export const FilterSidebar = ({
   categoryTree,
   availableColors,
   availableMemories,
+  availableGames = [],
   onApply,
   inDrawer = false,
 }: FilterSidebarProps) => {
@@ -135,6 +174,9 @@ export const FilterSidebar = ({
   );
   const [memories, setMemories] = useState<string[]>(
     searchParams.get("memory")?.split(",").filter(Boolean) ?? []
+  );
+  const [games, setGames] = useState<string[]>(
+    searchParams.get("games")?.split(",").filter(Boolean) ?? []
   );
   const [statuses, setStatuses] = useState<string[]>(
     searchParams.get("status")?.split(",").filter(Boolean) ?? []
@@ -172,6 +214,7 @@ export const FilterSidebar = ({
         priceMax,
         colors,
         memories,
+        games,
         statuses,
       });
       if (res.success && typeof res.count === 'number') {
@@ -182,13 +225,14 @@ export const FilterSidebar = ({
 
     const timer = setTimeout(updateCount, 600);
     return () => clearTimeout(timer);
-  }, [currentCategory, priceMin, priceMax, colors, memories, statuses]);
+  }, [currentCategory, priceMin, priceMax, colors, memories, games, statuses]);
 
   const hasActiveFilters =
     priceMin > 0 ||
     priceMax < MAX_PRICE ||
     colors.length > 0 ||
     memories.length > 0 ||
+    games.length > 0 ||
     statuses.length > 0;
 
   const createQueryString = useCallback(
@@ -209,6 +253,7 @@ export const FilterSidebar = ({
       priceMax: priceMax < MAX_PRICE ? String(priceMax) : null,
       color: colors.length ? colors.join(",") : null,
       memory: memories.length ? memories.join(",") : null,
+      games: games.length ? games.join(",") : null,
       status: statuses.length ? statuses.join(",") : null,
     };
     router.push(`${pathname}?${createQueryString(params)}`);
@@ -220,6 +265,7 @@ export const FilterSidebar = ({
     setPriceMax(MAX_PRICE);
     setColors([]);
     setMemories([]);
+    setGames([]);
     setStatuses([]);
     router.push(pathname);
   };
@@ -284,7 +330,7 @@ export const FilterSidebar = ({
   // ─── Render ─────────────────────────────────────────────────────────────────
 
   const activeCount =
-    (priceMin > 0 || priceMax < MAX_PRICE ? 1 : 0) + colors.length + memories.length + statuses.length;
+    (priceMin > 0 || priceMax < MAX_PRICE ? 1 : 0) + colors.length + memories.length + games.length + statuses.length;
 
   const plural = (n: number) =>
     n % 10 === 1 && n % 100 !== 11 ? "товар" : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? "товара" : "товаров";
@@ -408,63 +454,41 @@ export const FilterSidebar = ({
       </FilterSection>
 
       {availableMemories.length > 0 && (
-        <FilterSection
-          title="Память MicroSD"
-          id="memory"
-          isOpen={openSections.memory ?? false}
-          onToggle={() => toggleSection("memory")}
-        >
-          <div className="flex flex-wrap gap-2">
-            {availableMemories.map((memoryValue) => (
-              <Chip
-                key={memoryValue}
-                label={memoryValue}
-                active={memories.includes(memoryValue)}
-                onClick={() => toggleValue(memories, setMemories, memoryValue)}
-              />
-            ))}
-          </div>
+        <FilterSection title="Память" id="memory" isOpen onToggle={() => {}}>
+          <CheckList
+            items={availableMemories.map((m) => ({ value: m, label: memoryLabel(m) }))}
+            selected={memories}
+            onToggle={(v) => toggleValue(memories, setMemories, v)}
+          />
+        </FilterSection>
+      )}
+
+      {availableGames.length > 0 && (
+        <FilterSection title="Игр в комплекте" id="games" isOpen onToggle={() => {}}>
+          <CheckList
+            items={availableGames.map((g) => ({ value: g, label: `${g} игр` }))}
+            selected={games}
+            onToggle={(v) => toggleValue(games, setGames, v)}
+          />
         </FilterSection>
       )}
 
       {availableColors.length > 0 && (
-        <FilterSection
-          title="Цвет"
-          id="color"
-          isOpen={openSections.color}
-          onToggle={() => toggleSection("color")}
-        >
-          <div className="flex flex-wrap gap-2">
-            {availableColors.map((c) => (
-              <Chip
-                key={c.name}
-                label={c.name}
-                colorHex={c.hex}
-                active={colors.includes(c.name)}
-                onClick={() => toggleValue(colors, setColors, c.name)}
-              />
-            ))}
-          </div>
+        <FilterSection title="Цвет" id="color" isOpen onToggle={() => {}}>
+          <CheckList
+            items={availableColors.map((c) => ({ value: c.name, label: c.name, colorHex: c.hex }))}
+            selected={colors}
+            onToggle={(v) => toggleValue(colors, setColors, v)}
+          />
         </FilterSection>
       )}
 
-      {/* ── Наличие ── */}
-      <FilterSection
-        title="Наличие"
-        id="status"
-        isOpen={openSections.status}
-        onToggle={() => toggleSection("status")}
-      >
-        <div className="flex flex-wrap gap-2">
-          {STATUS_OPTIONS.map(({ label, value }) => (
-            <Chip
-              key={value}
-              label={label}
-              active={statuses.includes(value)}
-              onClick={() => toggleValue(statuses, setStatuses, value)}
-            />
-          ))}
-        </div>
+      <FilterSection title="Наличие" id="status" isOpen onToggle={() => {}}>
+        <CheckList
+          items={STATUS_OPTIONS.map(({ label, value }) => ({ value, label }))}
+          selected={statuses}
+          onToggle={(v) => toggleValue(statuses, setStatuses, v)}
+        />
       </FilterSection>
 
       <button

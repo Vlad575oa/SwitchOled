@@ -9,11 +9,12 @@ interface FilterParams {
   priceMax?: number;
   colors?: string[];
   memories?: string[];
+  games?: string[];
   statuses?: string[];
 }
 
 export async function getFilteredProductsCountAction(params: FilterParams) {
-  const { category, priceMin, priceMax, colors, memories, statuses } = params;
+  const { category, priceMin, priceMax, colors, memories, games, statuses } = params;
 
   try {
     const andConditions: Prisma.ProductWhereInput[] = [];
@@ -49,6 +50,12 @@ export async function getFilteredProductsCountAction(params: FilterParams) {
           { attributes: { path: ["Объём"], string_contains: value } },
           { attributes: { path: ["Объем"], string_contains: value } },
         ])),
+      });
+    }
+
+    if (games && games.length > 0) {
+      andConditions.push({
+        OR: games.map((value) => ({ attributes: { path: ["Игр в комплекте"], equals: value } })),
       });
     }
 
