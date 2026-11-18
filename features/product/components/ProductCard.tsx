@@ -1,6 +1,6 @@
 import Link from "next/link";
 import dynamic from "next/dynamic";
-import { formatPrice } from "@/lib/utils";
+import { cn, formatPrice } from "@/lib/utils";
 import { ProductCardMedia } from "./ProductCardMedia";
 import { QuickOrderModal } from "./QuickOrderModal";
 
@@ -35,11 +35,10 @@ const renderProductName = (name: string) => {
   return parts.map((part, index) => (
     <span
       key={`${part}-${index}`}
-      className={
-        index === 0
-          ? "block whitespace-normal break-words"
-          : "block mt-1 text-[13px] sm:text-[14px] font-black text-secondary leading-tight whitespace-normal break-words"
-      }
+      className={cn(
+        "block text-[13px] sm:text-[14px] font-black text-secondary leading-tight whitespace-normal break-words",
+        index > 0 && "mt-1"
+      )}
     >
       {index === 0 ? part : `+ ${part}`}
     </span>

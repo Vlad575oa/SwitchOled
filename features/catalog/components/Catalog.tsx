@@ -20,7 +20,6 @@ const FilterSidebar = dynamic(
 import { SortingSelect } from "@/features/catalog/components/SortingSelect";
 import { ActiveFiltersBar } from "@/features/catalog/components/ActiveFiltersBar";
 import { CATEGORY_FILTERS } from "@/features/catalog/config/categoryFilters";
-import { Pagination } from "./Pagination";
 import { LoadMoreButton } from "./LoadMoreButton";
 import { Prisma } from "@prisma/client";
 import { buildProductSearchWhere } from "@/lib/search";
@@ -178,7 +177,6 @@ export async function Catalog({
     console.error("CATALOG FETCH ERROR:", err);
   }
 
-  const totalPages = Math.ceil(totalCount / pageSize);
 
   const hasFilters = Object.keys(searchParams).some(
     (k) => k !== "sort" && k !== "page" && searchParams[k]
@@ -270,7 +268,6 @@ export async function Catalog({
               {skip + take < totalCount && (
                 <LoadMoreButton nextCount={Math.min(pageSize, totalCount - skip - take)} />
               )}
-              <Pagination totalPages={totalPages} />
             </Suspense>
           </>
         ) : (
