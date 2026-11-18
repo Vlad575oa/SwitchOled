@@ -1,5 +1,6 @@
 import { Truck, ShieldCheck, Gamepad2, Store } from "lucide-react";
-import { getAllProducts } from "@/lib/queries";
+import { getAllProducts, getProductsByIds } from "@/lib/queries";
+import { getPageContent } from "@/lib/getPageContent";
 import { FavoritesRail, type FavoriteItem } from "./FavoritesRail";
 
 const FEATURES = [
@@ -46,7 +47,13 @@ export function SectionTitle({ children }: { children: React.ReactNode }) {
 }
 
 export async function Favorites() {
-  const products = await getAllProducts(10);
+  // Products picked in admin (Страницы → Главная → «Популярное»), otherwise the newest ones
+  const home = (await getPageContent("home")) as Record<string, unknown>;
+  const pickedIds = Array.isArray(home.popular_product_ids)
+    ? (home.popular_product_ids as unknown[]).map(Number).filter(Number.isFinite)
+    : [];
+  const picked = pickedIds.length ? await getProductsByIds(pickedIds) : [];
+  const products = picked.length ? picked : await getAllProducts(10);
   if (!products.length) return null;
 
   const items: FavoriteItem[] = products.map((p) => ({

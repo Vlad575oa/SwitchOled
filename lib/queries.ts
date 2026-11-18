@@ -264,6 +264,23 @@ export const getAllProducts = cache(async (take: number = 48) => {
   );
 });
 
+// Visible products by id, in the order the ids were given (home «Популярное»).
+export const getProductsByIds = async (ids: number[]) => {
+  return safeQuery(
+    async () => {
+      const products = await prisma.product.findMany({
+        where: { AND: [VISIBLE, { id: { in: ids } }] },
+        include: { category: true },
+      });
+      const order = new Map(ids.map((id, i) => [id, i]));
+      return products
+        .sort((a, b) => (order.get(a.id) ?? 0) - (order.get(b.id) ?? 0))
+        .map(normalizeProductImages);
+    },
+    []
+  );
+};
+
 export const getProductsCount = async (where: Prisma.ProductWhereInput) => {
   return safeQuery(
     () => prisma.product.count({ where: { AND: [VISIBLE, where] } }),

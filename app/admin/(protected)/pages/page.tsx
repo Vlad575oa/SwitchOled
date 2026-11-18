@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { PopularPicker } from "./PopularPicker";
 import { Save, Layers, Phone, Truck, ShieldCheck, Info, ChevronDown, Home } from "lucide-react";
 import { ALL_QUICK_LINKS } from "@/lib/constants/quickLinks";
 
@@ -457,7 +458,7 @@ export default function PagesPage() {
                 <button
                   onClick={() => saveSection(section.key)}
                   disabled={saving === section.key}
-                  className={`flex items-center gap-2 px-5 py-2 text-white text-xs font-semibold rounded-xl transition-all shadow-lg disabled:opacity-60 ${saveError ? "bg-red-500 shadow-red-200" : "bg-primary hover:bg-red-700 shadow-primary/20"}`}
+                  className={`flex items-center gap-2 px-5 py-2 text-white text-xs font-semibold rounded-xl transition-all shadow-lg disabled:opacity-60 ${saveError ? "bg-red-500 shadow-red-200" : "bg-primary hover:bg-primary-pressed shadow-primary/20"}`}
                 >
                   <Save size={13} />
                   {saving === section.key ? "Сохранение..." : saved === section.key ? "Сохранено ✓" : "Сохранить"}
@@ -468,9 +469,14 @@ export default function PagesPage() {
               </div>
             </div>
 
-            {/* Главная: быстрые фильтры */}
+            {/* Главная: популярное + быстрые фильтры */}
             {(section as any).isHome ? (
               <div className="p-6 space-y-5">
+                <PopularPicker
+                  value={Array.isArray(data?.home?.popular_product_ids) ? data.home.popular_product_ids : []}
+                  onChange={(ids) => setData((p: any) => ({ ...p, home: { ...(p.home ?? {}), popular_product_ids: ids } }))}
+                />
+                <div className="h-px bg-neutral-100" />
                 <div>
                   <p className="text-sm font-semibold text-[#111111] mb-1">Быстрые фильтры (строка под поиском)</p>
                   <p className="text-xs text-neutral-400 font-medium mb-4">Выберите категории, которые отображаются в строке быстрых фильтров. Снимите галочку — категория исчезнет.</p>
