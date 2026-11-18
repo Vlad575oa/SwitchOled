@@ -11,8 +11,7 @@ interface FooterProps {
 
 export const Footer = ({ workingHours = "09:00 — 21:00", currentYear }: FooterProps) => {
     return (
-        <footer className="bg-[#2c2c30] text-white pt-12 pb-28 lg:pb-6 border-t border-white/[0.06] relative overflow-hidden">
-            <div className="absolute top-0 left-1/4 w-80 h-80 bg-primary/5 blur-[120px] rounded-full -translate-y-1/2 pointer-events-none" />
+        <footer className="bg-primary text-white pt-12 pb-28 lg:pb-6 relative overflow-hidden">
 
             <div className="w-full max-w-[1920px] mx-auto relative z-10 px-4 lg:px-6 2xl:px-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12 mb-10">
@@ -20,14 +19,14 @@ export const Footer = ({ workingHours = "09:00 — 21:00", currentYear }: Footer
                     {/* Brand */}
                     <div className="order-2 md:order-none flex flex-col gap-4">
                         <Link href="/" className="flex items-center gap-2.5 group">
-                            <div className="w-9 h-9 bg-primary rounded-xl flex items-center justify-center shadow-[0_6px_16px_var(--primary-glow)] transition-all group-hover:scale-105">
-                                <span className="text-white font-black text-xl italic leading-none">G</span>
+                            <div className="w-9 h-9 bg-white rounded-full flex items-center justify-center transition-all group-hover:scale-105">
+                                <span className="text-primary font-bold text-xl leading-none">G</span>
                             </div>
-                            <span className="text-xl xl:text-2xl font-black tracking-tighter uppercase italic">
-                                Gameshop<span className="text-primary">24</span>
+                            <span className="font-display text-2xl xl:text-3xl font-light tracking-[0.02em]">
+                                Gameshop24
                             </span>
                         </Link>
-                        <p className="text-neutral-500 text-[12px] xl:text-[14px] font-medium leading-relaxed max-w-xs">
+                        <p className="text-white/80 text-[13px] xl:text-[14px] leading-relaxed max-w-xs">
                             Премиальный магазин игровых консолей и аксессуаров. Только оригинальные товары с гарантией.
                         </p>
                         <div className="flex items-center gap-5">
@@ -49,7 +48,7 @@ export const Footer = ({ workingHours = "09:00 — 21:00", currentYear }: Footer
 
                     {/* Nav */}
                     <div className="order-3 md:order-none">
-                        <h4 className="text-[10px] xl:text-[12px] font-black uppercase tracking-[0.2em] text-primary mb-4">Каталог</h4>
+                        <h4 className="text-[10px] xl:text-[12px] font-semibold uppercase tracking-[0.2em] text-white mb-4">Каталог</h4>
                         <ul className="space-y-2">
                             {[
                                 { name: "Nintendo Switch", href: "/catalog/nintendo" },
@@ -59,7 +58,7 @@ export const Footer = ({ workingHours = "09:00 — 21:00", currentYear }: Footer
                                 { name: "Все товары", href: "/catalog/all" },
                             ].map((item) => (
                                 <li key={item.name}>
-                                    <Link href={item.href} className="text-[13px] xl:text-[14px] font-bold text-neutral-400 hover:text-white hover:translate-x-1 transition-all inline-block">
+                                    <Link href={item.href} className="text-[13px] xl:text-[14px] text-white/80 hover:text-white hover:underline transition-all inline-block">
                                         {item.name}
                                     </Link>
                                 </li>
@@ -69,7 +68,7 @@ export const Footer = ({ workingHours = "09:00 — 21:00", currentYear }: Footer
 
                     {/* Info */}
                     <div className="order-4 md:order-none">
-                        <h4 className="text-[10px] xl:text-[12px] font-black uppercase tracking-[0.2em] text-primary mb-4">Информация</h4>
+                        <h4 className="text-[10px] xl:text-[12px] font-semibold uppercase tracking-[0.2em] text-white mb-4">Информация</h4>
                         <ul className="space-y-2">
                             {[
                                 { name: "О компании", href: "/about" },
@@ -81,7 +80,7 @@ export const Footer = ({ workingHours = "09:00 — 21:00", currentYear }: Footer
                                 { name: "🔧 Сервисный центр", href: "/service" },
                             ].map((item) => (
                                 <li key={item.name}>
-                                    <Link href={item.href} className="text-[13px] xl:text-[14px] font-bold text-neutral-400 hover:text-white hover:translate-x-1 transition-all inline-block">
+                                    <Link href={item.href} className="text-[13px] xl:text-[14px] text-white/80 hover:text-white hover:underline transition-all inline-block">
                                         {item.name}
                                     </Link>
                                 </li>
@@ -91,42 +90,42 @@ export const Footer = ({ workingHours = "09:00 — 21:00", currentYear }: Footer
 
                     {/* Contacts */}
                     <div className="order-1 md:order-none">
-                        <h4 className="text-[10px] xl:text-[12px] font-black uppercase tracking-[0.2em] text-primary mb-4">Контакты</h4>
+                        <h4 className="text-[10px] xl:text-[12px] font-semibold uppercase tracking-[0.2em] text-white mb-4">Контакты</h4>
                         <div className="space-y-3">
                             <Link href={`tel:${CONTACTS.phoneHref}`} className="flex items-center gap-3 group/item">
-                                <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center shrink-0 group-hover/item:bg-primary/20 transition-colors">
-                                    <Phone size={13} className="text-neutral-400 group-hover/item:text-primary transition-colors" />
+                                <div className="w-8 h-8 rounded-lg bg-white/15 flex items-center justify-center shrink-0 group-hover/item:bg-white/25 transition-colors">
+                                    <Phone size={13} className="text-white group-hover/item:text-white transition-colors" />
                                 </div>
                                 <div>
                                     <p className="text-[16px] xl:text-[18px] font-black text-white">{CONTACTS.phoneDisplay}</p>
-                                    <p className="text-[10px] xl:text-[11px] font-bold text-neutral-400 uppercase tracking-widest">{workingHours}</p>
+                                    <p className="text-[10px] xl:text-[11px] text-white/70 uppercase tracking-widest">{workingHours}</p>
                                 </div>
                             </Link>
                             <Link href={`mailto:${CONTACTS.email}`} className="flex items-center gap-3 group/item">
-                                <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center shrink-0 group-hover/item:bg-primary/20 transition-colors">
-                                    <Mail size={13} className="text-neutral-400 group-hover/item:text-primary transition-colors" />
+                                <div className="w-8 h-8 rounded-lg bg-white/15 flex items-center justify-center shrink-0 group-hover/item:bg-white/25 transition-colors">
+                                    <Mail size={13} className="text-white group-hover/item:text-white transition-colors" />
                                 </div>
                                 <div>
                                     <p className="text-[13px] xl:text-[14px] font-black text-white">{CONTACTS.email}</p>
-                                    <p className="text-[10px] xl:text-[11px] font-bold text-neutral-400 uppercase tracking-widest">Email</p>
+                                    <p className="text-[10px] xl:text-[11px] text-white/70 uppercase tracking-widest">Email</p>
                                 </div>
                             </Link>
                             <Link href="/contacts#support-chat" className="flex items-center gap-3 group/item">
-                                <div className="w-8 h-8 rounded-lg bg-primary/15 flex items-center justify-center shrink-0 group-hover/item:bg-primary/25 transition-colors">
-                                    <MessageCircle size={13} className="text-primary" />
+                                <div className="w-8 h-8 rounded-lg bg-white/15 flex items-center justify-center shrink-0 group-hover/item:bg-white/25 transition-colors">
+                                    <MessageCircle size={13} className="text-white" />
                                 </div>
                                 <div>
-                                    <p className="text-[13px] xl:text-[14px] font-black text-white group-hover/item:text-primary transition-colors">Чат с поддержкой</p>
-                                    <p className="text-[10px] xl:text-[11px] font-bold text-neutral-400 uppercase tracking-widest">Заказ или вопрос</p>
+                                    <p className="text-[13px] xl:text-[14px] font-black text-white group-hover/item:underline transition-colors">Чат с поддержкой</p>
+                                    <p className="text-[10px] xl:text-[11px] text-white/70 uppercase tracking-widest">Заказ или вопрос</p>
                                 </div>
                             </Link>
                             <div className="flex items-center gap-3">
-                                <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center shrink-0">
-                                    <MapPin size={13} className="text-neutral-400" />
+                                <div className="w-8 h-8 rounded-lg bg-white/15 flex items-center justify-center shrink-0">
+                                    <MapPin size={13} className="text-white" />
                                 </div>
                                 <div>
                                     <p className="text-[13px] xl:text-[14px] font-black text-white">{CONTACTS.address}</p>
-                                    <p className="text-[10px] xl:text-[11px] font-bold text-neutral-400 uppercase tracking-widest">Шоурум</p>
+                                    <p className="text-[10px] xl:text-[11px] text-white/70 uppercase tracking-widest">Шоурум</p>
                                 </div>
                             </div>
                         </div>
@@ -134,7 +133,7 @@ export const Footer = ({ workingHours = "09:00 — 21:00", currentYear }: Footer
                 </div>
 
                 {/* Bottom */}
-                <div className="pt-6 border-t border-white/5">
+                <div className="pt-6 border-t border-white/20">
                     <div className="flex flex-wrap gap-x-6 gap-y-2 mb-4">
                         {[
                             { name: "Публичная оферта", href: "/legal/offer" },
@@ -145,14 +144,14 @@ export const Footer = ({ workingHours = "09:00 — 21:00", currentYear }: Footer
                             { name: "Согласие на обработку ПД", href: "/legal/personal-data" },
                             { name: "Контакты", href: "/contacts" },
                         ].map((link) => (
-                            <Link key={link.name} href={link.href} className="text-[11px] xl:text-[12px] font-bold text-neutral-400 hover:text-neutral-200 transition-colors uppercase tracking-widest">
+                            <Link key={link.name} href={link.href} className="text-[11px] xl:text-[12px] text-white/80 hover:text-white transition-colors uppercase tracking-widest">
                                 {link.name}
                             </Link>
                         ))}
                     </div>
 
                     <div className="flex items-center justify-between gap-3">
-                        <p className="text-[11px] xl:text-[12px] font-black text-neutral-400 uppercase tracking-widest">
+                        <p className="text-[11px] xl:text-[12px] font-medium text-white/80 uppercase tracking-widest">
                             © {currentYear} Gameshop24
                         </p>
                         <PWAInstallButton />

@@ -67,7 +67,7 @@ export default function ServicePage() {
           <div className="flex flex-wrap gap-3">
             <a
               href={`tel:${CONTACTS.phoneHref}`}
-              className="inline-flex items-center gap-2 px-5 py-3 bg-primary text-white rounded-2xl font-black text-sm hover:bg-red-700 transition-colors"
+              className="inline-flex items-center gap-2 px-5 py-3 bg-primary text-white rounded-full font-black text-sm hover:bg-primary-pressed transition-colors"
             >
               Позвонить: {CONTACTS.phoneDisplay}
             </a>
@@ -167,7 +167,7 @@ export default function ServicePage() {
           <div className="flex flex-wrap gap-3 justify-center">
             <a
               href={`tel:${CONTACTS.phoneHref}`}
-              className="px-6 py-3 bg-primary text-white rounded-2xl font-black text-sm hover:bg-red-700 transition-colors"
+              className="px-6 py-3 bg-primary text-white rounded-full font-black text-sm hover:bg-primary-pressed transition-colors"
             >
               {CONTACTS.phoneDisplay}
             </a>

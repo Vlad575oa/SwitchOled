@@ -78,23 +78,22 @@ export const Header = () => {
     router.refresh();
   };
 
-  const iconBtn = "flex flex-col items-center justify-center w-[68px] xl:w-[76px] h-[52px] xl:h-[58px] rounded-xl hover:bg-white/[0.07] transition-all group relative";
-  const iconLabel = "text-[10px] xl:text-[11px] font-black text-white uppercase tracking-wide mt-1 transition-colors text-center";
+  const iconBtn = "flex flex-col items-center justify-center w-[68px] xl:w-[76px] h-[52px] xl:h-[58px] rounded-lg hover:bg-white/[0.08] transition-all group relative";
+  const iconLabel = "text-[10px] xl:text-[11px] font-semibold text-white uppercase tracking-wide mt-1 transition-colors text-center";
 
   return (
-    <header className="relative z-50 h-[76px] xl:h-[88px] flex items-center bg-[#2c2c30] border-b border-white/[0.07] lg:sticky lg:top-[80px]" style={{ boxShadow: "0 2px 12px rgba(0,0,0,0.25)" }}>
+    <header className="relative z-50 h-[76px] xl:h-[88px] flex items-center bg-black lg:sticky lg:top-[80px]">
       <div className="relative w-full max-w-[1920px] mx-auto px-4 lg:pl-6 lg:pr-4 2xl:pl-4 2xl:pr-4 flex items-center gap-2 xl:gap-6">
 
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2.5 group shrink-0">
-          <div className="hidden lg:flex w-9 h-9 xl:w-11 xl:h-11 bg-primary rounded-xl items-center justify-center shadow-[0_4px_14px_rgba(230,0,18,0.35)] transition-all group-hover:scale-105 active:scale-95 overflow-hidden relative">
-            <span className="text-white font-black text-lg xl:text-xl italic leading-none z-10 select-none">G</span>
-            <div className="absolute inset-0 bg-gradient-to-tr from-black/25 to-white/10" />
+          <div className="hidden lg:flex w-9 h-9 xl:w-11 xl:h-11 bg-primary rounded-full items-center justify-center transition-colors group-hover:bg-primary-pressed overflow-hidden relative">
+            <span className="text-white font-bold text-lg xl:text-xl leading-none z-10 select-none">G</span>
           </div>
           <div className="hidden lg:flex flex-col leading-none">
             <span className="text-[9px] xl:text-[10px] font-black text-white/30 uppercase tracking-[0.2em]">Premium Store</span>
-            <span className="text-[17px] xl:text-[20px] font-black text-white tracking-tighter uppercase leading-tight">
-              Gameshop<span className="text-primary italic">24</span>
+            <span className="font-display text-[19px] xl:text-[22px] font-light text-white tracking-[0.02em] leading-tight">
+              Gameshop<span className="text-[#53b1ff]">24</span>
             </span>
           </div>
         </Link>
@@ -103,7 +102,7 @@ export const Header = () => {
         <button
           onClick={() => setMegaMenuOpen((v) => !v)}
           className={cn(
-            "hidden lg:flex items-center gap-2 px-5 xl:px-6 h-10 xl:h-12 border rounded-xl font-black text-[13px] xl:text-[14px] uppercase tracking-tight transition-all group shrink-0",
+            "hidden lg:flex items-center gap-2 px-5 xl:px-6 h-10 xl:h-12 border rounded-full font-bold text-[13px] xl:text-[14px] uppercase tracking-[0.03em] transition-all group shrink-0",
             megaMenuOpen
               ? "bg-white/15 border-white/20 text-white"
               : "bg-white/[0.06] border-white/[0.08] text-white/70 hover:bg-white/10 hover:text-white hover:border-white/15"
@@ -160,11 +159,11 @@ export const Header = () => {
               <button onClick={() => setUserMenuOpen(!userMenuOpen)} className={iconBtn}>
                 <div className="relative">
                   <User size={18} className="text-white transition-colors" />
-                  <div className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-green-400 rounded-full ring-2 ring-[#2c2c30]" />
+                  <div className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-green-400 rounded-full ring-2 ring-black" />
                 </div>
                 <span className={iconLabel}>{user.name?.split(" ")[0] ?? "Профиль"}</span>
                 {userMenuOpen && (
-                  <div className="absolute top-[calc(100%+6px)] right-0 w-56 rounded-2xl shadow-2xl p-1.5 z-[60] animate-in fade-in slide-in-from-top-2 bg-[#242428] border border-white/[0.08]">
+                  <div className="absolute top-[calc(100%+6px)] right-0 w-56 rounded-2xl shadow-2xl p-1.5 z-[60] animate-in fade-in slide-in-from-top-2 bg-[#121314] border border-white/[0.08]">
                     <div className="px-4 py-3 mb-1 rounded-xl bg-white/[0.04]">
                       <p className="text-[9px] font-bold text-white/30 uppercase tracking-widest">Личный кабинет</p>
                       <p className="text-sm font-black text-white mt-1 truncate">{user.name ?? user.email}</p>
@@ -199,7 +198,7 @@ export const Header = () => {
             <div className="relative">
               <Heart size={18} className={cn("transition-colors", mounted && wishlistCount > 0 ? "text-red-400 fill-red-400" : "text-white")} />
               {mounted && wishlistCount > 0 && (
-                <span className="absolute -top-1.5 -right-2 bg-red-500 text-white text-[8px] font-black min-w-[14px] h-[14px] px-1 rounded-full ring-2 ring-[#2c2c30] flex items-center justify-center">
+                <span className="absolute -top-1.5 -right-2 bg-red-500 text-white text-[8px] font-black min-w-[14px] h-[14px] px-1 rounded-full ring-2 ring-black flex items-center justify-center">
                   {wishlistCount}
                 </span>
               )}
@@ -212,7 +211,7 @@ export const Header = () => {
             <div className="relative">
               <Scale size={18} className={cn("transition-colors", mounted && compareCount > 0 ? "text-blue-400" : "text-white")} />
               {mounted && compareCount > 0 && (
-                <span className="absolute -top-1.5 -right-2 bg-blue-500 text-white text-[8px] font-black min-w-[14px] h-[14px] px-1 rounded-full ring-2 ring-[#2c2c30] flex items-center justify-center">
+                <span className="absolute -top-1.5 -right-2 bg-blue-500 text-white text-[8px] font-black min-w-[14px] h-[14px] px-1 rounded-full ring-2 ring-black flex items-center justify-center">
                   {compareCount}
                 </span>
               )}
@@ -225,7 +224,7 @@ export const Header = () => {
             <div className="relative">
               <ShoppingCart size={18} className={cn("transition-colors", mounted && totalItems > 0 ? "text-primary" : "text-white")} />
               {mounted && totalItems > 0 && (
-                <span className="absolute -top-1.5 -right-2 bg-primary text-white text-[8px] font-black min-w-[14px] h-[14px] px-1 rounded-full ring-2 ring-[#2c2c30] shadow-lg shadow-primary/30 flex items-center justify-center">
+                <span className="absolute -top-1.5 -right-2 bg-primary text-white text-[8px] font-black min-w-[14px] h-[14px] px-1 rounded-full ring-2 ring-black shadow-lg shadow-primary/30 flex items-center justify-center">
                   {totalItems}
                 </span>
               )}

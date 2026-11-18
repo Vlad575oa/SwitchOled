@@ -29,12 +29,12 @@ export function ProductCardMedia({ images, name, eagerImage = false }: ProductCa
     <div className="mb-1.5">
       <div className="sm:hidden">
         <div
-          className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth no-scrollbar rounded-[24px]"
+          className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth no-scrollbar rounded-lg"
           onScroll={handleScroll}
         >
           {safeImages.map((img, index) => (
             <div key={`${img}-${index}`} className="relative flex-none w-full snap-start">
-              <div className="relative aspect-[5/4] w-full overflow-hidden rounded-[24px] bg-neutral-50">
+              <div className="relative aspect-[5/4] w-full overflow-hidden rounded-lg bg-neutral-50">
                 <Image
                   src={img}
                   alt={`${name} — Фото ${index + 1}`}
@@ -71,7 +71,7 @@ export function ProductCardMedia({ images, name, eagerImage = false }: ProductCa
         className="hidden sm:block"
         onMouseLeave={() => setActiveIndex(0)}
       >
-        <div className="relative aspect-[16/12] overflow-hidden rounded-[24px] bg-neutral-50">
+        <div className="relative aspect-[16/12] overflow-hidden rounded-lg bg-neutral-50">
           {safeImages.map((img, index) => (
             <Image
               key={`${img}-desktop-${index}`}

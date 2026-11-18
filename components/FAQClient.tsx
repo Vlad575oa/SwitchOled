@@ -114,7 +114,7 @@ export default function FAQClient({ faqs }: { faqs: FAQ[] }) {
             <button
               key={slug}
               onClick={() => setActive(isActive ? "all" : slug)}
-              className={`group p-8 rounded-[32px] border text-left transition-all duration-300 cursor-pointer ${
+              className={`group p-8 rounded-lg border text-left transition-all duration-300 cursor-pointer ${
                 isActive
                   ? "bg-secondary border-secondary shadow-2xl shadow-secondary/20"
                   : "bg-neutral-50 border-transparent hover:bg-white hover:border-neutral-100 hover:shadow-xl hover:shadow-neutral-200/50"
@@ -146,7 +146,7 @@ export default function FAQClient({ faqs }: { faqs: FAQ[] }) {
       </div>
 
       {/* FAQ Accordion */}
-      <div className="bg-neutral-50/50 rounded-[48px] p-6 md:p-14">
+      <div className="bg-neutral-50/50 rounded-lg p-6 md:p-14">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-xl font-black text-secondary uppercase tracking-tighter">
@@ -169,7 +169,7 @@ export default function FAQClient({ faqs }: { faqs: FAQ[] }) {
             )}
           </div>
 
-          <div className="bg-white rounded-[32px] px-6 md:px-12 shadow-xl shadow-neutral-200/20 border border-neutral-100">
+          <div className="bg-white rounded-lg px-6 md:px-12 shadow-xl shadow-neutral-200/20 border border-neutral-100">
             {filtered.length === 0 ? (
               <div className="py-16 text-center">
                 <p className="text-neutral-300 text-5xl mb-4">🔍</p>

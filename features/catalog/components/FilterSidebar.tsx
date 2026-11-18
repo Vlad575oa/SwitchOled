@@ -438,7 +438,7 @@ export const FilterSidebar = ({
   // ─── Render ─────────────────────────────────────────────────────────────────
 
   return (
-    <div className="bg-white rounded-[32px] border border-neutral-100 p-6 shadow-sm sticky top-[132px]">
+    <div className="bg-white rounded-lg border border-neutral-100 p-6 shadow-sm sticky top-[132px]">
       {/* ── Категории ── */}
       <FilterSection
         title="Категория"
@@ -566,7 +566,7 @@ export const FilterSidebar = ({
         <button
           onClick={handleApply}
           disabled={isCounting && liveCount === 0}
-          className="w-full py-4 bg-primary text-white font-black rounded-2xl hover:bg-red-700 hover:shadow-lg hover:shadow-primary/20 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm uppercase tracking-wide flex items-center justify-center gap-2"
+          className="w-full py-4 bg-primary text-white font-black rounded-full hover:bg-primary-pressed hover:shadow-lg hover:shadow-primary/20 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm uppercase tracking-wide flex items-center justify-center gap-2"
         >
           {isCounting ? (
             <Loader2 className="w-4 h-4 animate-spin" />

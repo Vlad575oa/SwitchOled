@@ -45,7 +45,7 @@ export const QualityBadges = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: idx * 0.1 }}
-            className={`relative overflow-hidden group p-8 rounded-[32px] bg-white border border-neutral-100 hover:border-primary/20 transition-all duration-500 shadow-sm hover:shadow-xl hover:shadow-primary/5`}
+            className={`relative overflow-hidden group p-8 rounded-lg bg-white border border-neutral-100 hover:border-primary/20 transition-all duration-500 shadow-sm hover:shadow-xl hover:shadow-primary/5`}
           >
             {/* Background Glow */}
             <div className={`absolute inset-0 bg-gradient-to-br ${badge.color} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />

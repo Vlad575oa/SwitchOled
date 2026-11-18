@@ -182,11 +182,11 @@ export function PurchaseBlock({ product, variants = [], categorySlug }: Purchase
           <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
             <AddToCartButton
               product={selectedVariant}
-              className="w-full h-14 rounded-2xl px-2.5 sm:px-3 text-sm font-black bg-[#FF6B00] hover:bg-[#e65a00] border-none shadow-lg shadow-orange-500/20 whitespace-nowrap"
+              className="w-full h-14 rounded-full px-2.5 sm:px-3 text-sm font-bold bg-commerce hover:bg-commerce-pressed border-none whitespace-nowrap"
             />
             <QuickOrderModal
               product={selectedVariant}
-              buttonClassName="w-full h-14 rounded-2xl border border-primary/25 bg-primary/5 px-2 text-sm font-black text-primary hover:bg-primary hover:text-white transition-colors whitespace-nowrap"
+              buttonClassName="w-full h-14 rounded-full border border-primary bg-transparent px-2 text-sm font-bold text-primary hover:bg-primary hover:text-white transition-colors whitespace-nowrap"
             />
           </div>
           {avitoUrl && (
@@ -194,7 +194,7 @@ export function PurchaseBlock({ product, variants = [], categorySlug }: Purchase
               href={avitoUrl}
               target="_blank"
               rel="noopener noreferrer nofollow"
-              className="flex h-12 w-full items-center justify-center gap-2 rounded-2xl border border-[#00a86b]/25 bg-[#00a86b]/5 px-4 text-sm font-black text-[#008f5b] transition-colors hover:bg-[#00a86b] hover:text-white"
+              className="flex h-12 w-full items-center justify-center gap-2 rounded-full border border-[#00a86b]/25 bg-[#00a86b]/5 px-4 text-sm font-black text-[#008f5b] transition-colors hover:bg-[#00a86b] hover:text-white"
             >
               <ExternalLink size={17} />
               Заказать через Авито

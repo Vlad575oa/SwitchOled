@@ -4,7 +4,7 @@ import Image from "next/image";
 
 export const Hero = () => {
   return (
-    <section className="relative w-full h-[600px] flex items-center overflow-hidden bg-secondary rounded-[40px] mt-6">
+    <section className="relative w-full h-[600px] flex items-center overflow-hidden bg-secondary rounded-lg mt-6">
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 bg-gradient-to-r from-secondary via-secondary/80 to-transparent z-10" />
         <Image

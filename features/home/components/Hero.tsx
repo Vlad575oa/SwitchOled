@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 
 export const Hero = () => {
   return (
-    <section className="relative w-full h-[600px] md:h-[720px] rounded-[40px] overflow-hidden bg-neutral-900 group mb-12">
+    <section className="relative w-full h-[600px] md:h-[720px] rounded-lg overflow-hidden bg-neutral-900 group mb-12">
       {/* Background with subtle animation */}
       <div 
         className="absolute inset-0 bg-cover bg-center scale-105 transition-transform duration-1000 group-hover:scale-100 opacity-60"
@@ -27,7 +27,7 @@ export const Hero = () => {
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
           <div className="flex items-center gap-3 mb-6">
-            <span className="px-4 py-2 bg-primary text-white rounded-xl text-[10px] font-black uppercase tracking-[0.2em] shadow-lg shadow-primary/30">
+            <span className="px-4 py-2 bg-primary text-white rounded-full text-[10px] font-black uppercase tracking-[0.2em] shadow-lg shadow-primary/30">
               New Era 2026
             </span>
             <div className="h-[1px] w-12 bg-white/20" />
@@ -49,7 +49,7 @@ export const Hero = () => {
           <div className="flex flex-wrap items-center gap-4">
             <Link 
               href="/catalog/consoles" 
-              className="px-8 h-16 bg-white text-black rounded-2xl flex items-center gap-3 font-black text-xs uppercase tracking-widest hover:bg-primary hover:text-white transition-all duration-300 group/btn"
+              className="px-8 h-16 bg-white text-black rounded-full flex items-center gap-3 font-black text-xs uppercase tracking-widest hover:bg-primary hover:text-white transition-all duration-300 group/btn"
             >
               Оформить предзаказ 
               <ArrowRight size={18} className="transition-transform group-hover/btn:translate-x-1" />

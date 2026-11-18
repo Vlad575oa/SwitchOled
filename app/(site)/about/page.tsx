@@ -93,7 +93,7 @@ export default async function AboutPage() {
 
             {/* Right: Image */}
             <div className="lg:col-span-5 pt-8">
-              <div className="relative aspect-[4/5] rounded-[48px] overflow-hidden shadow-2xl shadow-neutral-200">
+              <div className="relative aspect-[4/5] rounded-lg overflow-hidden shadow-2xl shadow-neutral-200">
                 <Image
                   src="/about_hero_cinematic.png"
                   alt="Gameshop24 Heritage"
@@ -159,7 +159,7 @@ export default async function AboutPage() {
                       <span className="text-[11px] font-black text-secondary group-hover:text-primary transition-colors">{item.year}</span>
                     </div>
 
-                    <div className="bg-white rounded-[32px] p-8 border border-neutral-100/60 hover:border-primary/20 hover:shadow-2xl hover:shadow-neutral-200/50 transition-all duration-500">
+                    <div className="bg-white rounded-lg p-8 border border-neutral-100/60 hover:border-primary/20 hover:shadow-2xl hover:shadow-neutral-200/50 transition-all duration-500">
                       <div className="flex flex-wrap items-center gap-3 mb-3">
                         <span className="md:hidden text-[10px] font-black text-primary bg-primary/5 px-3 py-1 rounded-full">{item.year}</span>
                         <h3 className="text-xl font-black text-secondary uppercase tracking-tight">{item.title}</h3>
@@ -183,7 +183,7 @@ export default async function AboutPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {values.map((v) => (
-                <div key={v.title} className="group p-10 rounded-[40px] bg-white border border-neutral-100 hover:border-primary/20 hover:shadow-2xl hover:shadow-neutral-200/40 transition-all duration-500 relative overflow-hidden">
+                <div key={v.title} className="group p-10 rounded-lg bg-white border border-neutral-100 hover:border-primary/20 hover:shadow-2xl hover:shadow-neutral-200/40 transition-all duration-500 relative overflow-hidden">
                   <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity" />
 
                   <div className="w-14 h-14 rounded-2xl bg-neutral-50 flex items-center justify-center mb-8 group-hover:bg-primary group-hover:scale-110 transition-all duration-500">
@@ -210,7 +210,7 @@ export default async function AboutPage() {
           <div className="flex flex-col sm:flex-row gap-4 shrink-0 w-full lg:w-auto">
             <Link
               href="/catalog/all"
-              className="flex-1 lg:flex-none flex items-center justify-center gap-3 px-10 h-16 bg-primary text-white rounded-2xl font-black uppercase tracking-widest text-xs hover:scale-105 active:scale-95 transition-all shadow-xl shadow-primary/30"
+              className="flex-1 lg:flex-none flex items-center justify-center gap-3 px-10 h-16 bg-primary text-white rounded-full font-black uppercase tracking-widest text-xs hover:scale-105 active:scale-95 transition-all shadow-xl shadow-primary/30"
             >
               В каталог
               <ArrowRight size={18} />

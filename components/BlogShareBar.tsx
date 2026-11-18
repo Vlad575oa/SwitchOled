@@ -32,7 +32,7 @@ export const BlogShareBar = ({ title, url }: BlogShareBarProps) => {
   };
 
   return (
-    <div className="bg-white p-8 rounded-[32px] border border-neutral-100 flex flex-col md:flex-row items-center justify-between gap-6 shadow-sm">
+    <div className="bg-white p-8 rounded-lg border border-neutral-100 flex flex-col md:flex-row items-center justify-between gap-6 shadow-sm">
       <div>
         <p className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em] mb-2 text-center md:text-left">
           Было полезно?

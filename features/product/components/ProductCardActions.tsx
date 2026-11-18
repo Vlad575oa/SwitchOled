@@ -45,12 +45,12 @@ export function ProductCardActions({ product }: ProductCardActionsProps) {
           onClick={() => toggleCompare(product.id)}
           title={hydratedInCompare ? "Убрать из сравнения" : hydratedCompareFull ? "Список сравнения заполнен (макс. 4)" : "Добавить к сравнению"}
           className={cn(
-            "w-10 h-10 rounded-2xl flex items-center justify-center border transition-colors active:scale-90",
+            "w-10 h-10 rounded-full flex items-center justify-center border transition-colors active:scale-90",
             hydratedInCompare
-              ? "bg-blue-500 text-white border-blue-500 shadow-md shadow-blue-500/20"
+              ? "bg-primary text-white border-primary"
               : hydratedCompareFull
               ? "bg-neutral-100 text-neutral-300 border-transparent cursor-not-allowed"
-              : "bg-neutral-50 text-neutral-400 hover:text-blue-500 hover:bg-blue-50 hover:border-blue-100 border-transparent"
+              : "bg-surface-card text-neutral-500 hover:text-primary hover:border-primary/30 border-transparent"
           )}
         >
           <Scale size={16} />
@@ -60,10 +60,10 @@ export function ProductCardActions({ product }: ProductCardActionsProps) {
           onClick={() => toggleWishlist(product.id)}
           title={hydratedInWishlist ? "Убрать из избранного" : "Добавить в избранное"}
           className={cn(
-            "w-10 h-10 rounded-2xl flex items-center justify-center border transition-colors active:scale-90",
+            "w-10 h-10 rounded-full flex items-center justify-center border transition-colors active:scale-90",
             hydratedInWishlist
-              ? "bg-red-500 text-white border-red-500 shadow-md shadow-red-500/20"
-              : "bg-neutral-50 text-neutral-400 hover:text-red-500 hover:bg-red-50 hover:border-red-100 border-transparent"
+              ? "bg-ink text-white border-ink"
+              : "bg-surface-card text-neutral-500 hover:text-ink hover:border-neutral-300 border-transparent"
           )}
         >
           <Heart size={16} />
@@ -91,7 +91,7 @@ export function ProductCardActions({ product }: ProductCardActionsProps) {
             }).catch(() => {});
             void notifyAddedToCart();
           }}
-          className="flex-1 h-10 bg-orange-50 border border-orange-100 text-orange-600 rounded-2xl flex items-center justify-center hover:bg-orange-600 hover:text-white transition-colors active:scale-95"
+          className="flex-1 h-10 bg-commerce text-white rounded-full flex items-center justify-center hover:bg-commerce-pressed transition-colors active:scale-95"
         >
           <ShoppingCart size={18} strokeWidth={2.5} />
         </button>
@@ -99,7 +99,7 @@ export function ProductCardActions({ product }: ProductCardActionsProps) {
 
       <QuickOrderModal
         product={{ id: product.id, name: product.name }}
-        buttonClassName="w-full h-10 rounded-2xl border border-primary/25 bg-primary/5 px-2 text-[10px] sm:text-[11px] font-black uppercase tracking-tight text-primary hover:bg-primary hover:text-white transition-colors"
+        buttonClassName="w-full h-10 rounded-full border border-primary bg-transparent px-2 text-[11px] sm:text-[12px] font-bold uppercase tracking-[0.03em] text-primary hover:bg-primary hover:text-white transition-colors"
       />
     </div>
   );

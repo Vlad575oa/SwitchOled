@@ -137,7 +137,7 @@ export default async function DeliveryPage() {
               return (
                 <div
                   key={m.label}
-                  className={`rounded-[40px] p-10 flex flex-col gap-6 ${
+                  className={`rounded-lg p-10 flex flex-col gap-6 ${
                     m.accent
                       ? "bg-secondary text-white"
                       : "bg-neutral-50 border border-neutral-100"
@@ -178,7 +178,7 @@ export default async function DeliveryPage() {
         )}
 
         {/* Other cities */}
-        <div className="bg-secondary rounded-[32px] p-10 flex items-start gap-8 mb-20 md:mb-32">
+        <div className="bg-secondary rounded-lg p-10 flex items-start gap-8 mb-20 md:mb-32">
           <div className="w-14 h-14 rounded-2xl bg-white/15 flex items-center justify-center shrink-0">
             <Truck size={28} className="text-white" />
           </div>
@@ -189,7 +189,7 @@ export default async function DeliveryPage() {
             </p>
             <a
               href="tel:79266763488"
-              className="inline-block mt-6 px-8 py-4 bg-primary text-white font-black text-sm uppercase tracking-widest rounded-2xl hover:bg-primary/90 transition-colors"
+              className="inline-block mt-6 px-8 py-4 bg-primary text-white font-black text-sm uppercase tracking-widest rounded-full hover:bg-primary/90 transition-colors"
             >
               Позвонить: 7(926)676-34-88
             </a>
@@ -198,7 +198,7 @@ export default async function DeliveryPage() {
 
         {/* Packaging note */}
         {isEnabled(d.show_packaging) && (
-          <div className="bg-primary/5 border border-primary/10 rounded-[32px] p-10 flex items-start gap-8 mb-20 md:mb-32">
+          <div className="bg-primary/5 border border-primary/10 rounded-lg p-10 flex items-start gap-8 mb-20 md:mb-32">
             <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0">
               <Package size={28} className="text-primary" />
             </div>
@@ -221,7 +221,7 @@ export default async function DeliveryPage() {
               {paymentMethods.map((p) => {
                 const Icon = p.icon;
                 return (
-                  <div key={p.label} className="bg-neutral-50 rounded-[32px] p-10 flex gap-6 items-start hover:bg-white hover:shadow-xl hover:shadow-neutral-200/50 border border-transparent hover:border-neutral-100 transition-all duration-300">
+                  <div key={p.label} className="bg-neutral-50 rounded-lg p-10 flex gap-6 items-start hover:bg-white hover:shadow-xl hover:shadow-neutral-200/50 border border-transparent hover:border-neutral-100 transition-all duration-300">
                     <div className="w-14 h-14 rounded-2xl bg-white shadow-sm flex items-center justify-center shrink-0">
                       <Icon size={24} className="text-primary" />
                     </div>
@@ -234,7 +234,7 @@ export default async function DeliveryPage() {
               })}
             </div>
             {(d.payments_conditions_title || d.payments_conditions_text) && (
-              <div className="mt-8 rounded-[32px] border border-neutral-200 bg-white p-10">
+              <div className="mt-8 rounded-lg border border-neutral-200 bg-white p-10">
                 <h3 className="text-base font-black uppercase tracking-wider text-secondary mb-4">
                   {d.payments_conditions_title ?? "Условия оплаты"}
                 </h3>
@@ -248,7 +248,7 @@ export default async function DeliveryPage() {
 
         {/* Bottom guarantee strip */}
         {isEnabled(d.show_guarantees) && (
-          <div className="bg-secondary rounded-[48px] p-12 md:p-16 grid grid-cols-1 sm:grid-cols-3 gap-10 text-center">
+          <div className="bg-secondary rounded-lg p-12 md:p-16 grid grid-cols-1 sm:grid-cols-3 gap-10 text-center">
             {[
               { icon: ShieldCheck, text: "Официальный чек с каждым заказом" },
               { icon: CheckCircle2, text: "Проверка целостности при курьере" },

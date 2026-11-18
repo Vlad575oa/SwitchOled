@@ -74,14 +74,14 @@ export const Slider = React.forwardRef<
         {...props}
       >
         <SliderPrimitive.Track className="relative h-2 w-full grow overflow-hidden rounded-full bg-neutral-100 border border-neutral-200/50">
-          <SliderPrimitive.Range className="absolute h-full bg-gradient-to-r from-primary to-orange-600 shadow-[0_0_15px_rgba(230,0,18,0.3)] transition-all duration-300 group-active:duration-0" />
+          <SliderPrimitive.Range className="absolute h-full bg-primary transition-all duration-300 group-active:duration-0" />
         </SliderPrimitive.Track>
         
         {/* Render as many thumbs as there are values */}
         {internalValues.map((_, i) => (
           <SliderPrimitive.Thumb 
             key={i} 
-            className="block h-6 w-6 rounded-full border-[5px] border-white bg-primary shadow-[0_4px_12px_rgba(230,0,18,0.4)] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 transition-all cursor-grab active:cursor-grabbing hover:scale-115 active:scale-90" 
+            className="block h-6 w-6 rounded-full border-[5px] border-white bg-primary shadow-[0_4px_12px_rgba(0,112,209,0.4)] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 transition-all cursor-grab active:cursor-grabbing hover:scale-115 active:scale-90" 
           />
         ))}
       </SliderPrimitive.Root>

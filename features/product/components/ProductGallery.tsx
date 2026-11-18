@@ -61,7 +61,7 @@ export function ProductGallery({ images: initialImages, name }: ProductGalleryPr
 
       {/* Main Image */}
       <div
-        className="order-1 md:order-2 relative bg-neutral-50 border border-neutral-100 rounded-[24px] md:rounded-[40px] overflow-hidden group h-[320px] sm:h-[380px] md:flex-1 md:h-full"
+        className="order-1 md:order-2 relative bg-neutral-50 border border-neutral-100 rounded-lg md:rounded-lg overflow-hidden group h-[320px] sm:h-[380px] md:flex-1 md:h-full"
         onTouchStart={onTouchStart}
         onTouchEnd={onTouchEnd}
       >

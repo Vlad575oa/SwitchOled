@@ -47,7 +47,7 @@ export function MobileStickyCart({ product }: MobileStickyCartProps) {
         className={`flex items-center gap-2 px-6 py-3.5 rounded-2xl font-black text-sm whitespace-nowrap transition-all active:scale-95 shrink-0 ${
           added
             ? "bg-green-500 text-white"
-            : "bg-primary text-white shadow-lg shadow-primary/30 hover:bg-red-700"
+            : "bg-primary text-white shadow-lg shadow-primary/30 hover:bg-primary-pressed"
         }`}
       >
         {added ? <Check size={18} /> : <ShoppingCart size={18} />}

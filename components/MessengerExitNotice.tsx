@@ -103,7 +103,7 @@ export default function MessengerExitNotice() {
           <button
             type="button"
             onClick={continueToMessenger}
-            className="px-4 py-2 rounded-xl text-sm font-black text-white bg-primary hover:bg-red-700 transition-colors"
+            className="px-4 py-2 rounded-full text-sm font-black text-white bg-primary hover:bg-primary-pressed transition-colors"
           >
             Перейти
           </button>

@@ -106,7 +106,7 @@ export default function CheckoutPage() {
         </div>
         <h1 className="text-2xl font-black text-secondary mb-2">Корзина пуста</h1>
         <p className="text-neutral-400 font-medium mb-8">Добавьте товары перед оформлением заказа</p>
-        <Link href="/catalog/all" className="inline-flex items-center gap-2 px-8 py-4 bg-primary text-white rounded-2xl font-black hover:scale-[1.02] active:scale-95 transition-all shadow-lg shadow-primary/20">
+        <Link href="/catalog/all" className="inline-flex items-center gap-2 px-8 py-4 bg-primary text-white rounded-full font-black hover:scale-[1.02] active:scale-95 transition-all shadow-lg shadow-primary/20">
           Перейти в каталог
         </Link>
       </main>
@@ -225,7 +225,7 @@ export default function CheckoutPage() {
         </div>
 
         <div className="space-y-8">
-          <div className="bg-secondary p-8 rounded-[40px] text-white">
+          <div className="bg-secondary p-8 rounded-lg text-white">
             <h2 className="text-2xl font-black mb-8">Заказ</h2>
             <div className="space-y-4 mb-8">
               {items.map((item) => (

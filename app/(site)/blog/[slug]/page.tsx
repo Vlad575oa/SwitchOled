@@ -243,7 +243,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
 
         {/* Cinematic Main Image - even wider */}
         <div className="max-w-6xl mx-auto mb-12 px-0 md:px-4">
-          <div className="blog-hero relative aspect-video md:aspect-[21/9] md:rounded-[40px] overflow-hidden bg-neutral-900 shadow-2xl group transition-transform duration-700 hover:scale-[1.01]">
+          <div className="blog-hero relative aspect-video md:aspect-[21/9] md:rounded-lg overflow-hidden bg-neutral-900 shadow-2xl group transition-transform duration-700 hover:scale-[1.01]">
             <Image
               src={postImage}
               fill
@@ -309,7 +309,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
 
             prose-hr:border-neutral-100 prose-hr:my-12
 
-            prose-img:rounded-[32px] prose-img:shadow-2xl prose-img:my-10
+            prose-img:rounded-lg prose-img:shadow-2xl prose-img:my-10
 
             prose-code:text-primary prose-code:bg-neutral-100
             prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded-md

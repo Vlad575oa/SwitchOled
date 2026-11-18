@@ -105,7 +105,7 @@ export default function RegisterPage() {
   if (successEmail) {
     return (
       <div className="min-h-[80vh] flex items-center justify-center py-16 px-4">
-        <div className="w-full max-w-md bg-white rounded-[32px] border border-neutral-100 p-8 shadow-sm">
+        <div className="w-full max-w-md bg-white rounded-lg border border-neutral-100 p-8 shadow-sm">
           <h1 className="text-2xl font-black text-secondary mb-3">Проверьте вашу почту</h1>
           <p className="text-sm text-neutral-500 font-medium leading-relaxed mb-6">
             Мы отправили письмо с подтверждением на <span className="font-black text-secondary">{successEmail}</span>.
@@ -113,7 +113,7 @@ export default function RegisterPage() {
           </p>
           <Link
             href="/auth/login"
-            className="inline-flex items-center justify-center w-full py-4 bg-primary text-white font-black rounded-2xl hover:bg-red-700 transition-colors"
+            className="inline-flex items-center justify-center w-full py-4 bg-primary text-white font-black rounded-full hover:bg-primary-pressed transition-colors"
           >
             Перейти ко входу
           </Link>
@@ -133,7 +133,7 @@ export default function RegisterPage() {
           </Link>
         </div>
 
-        <div className="bg-white rounded-[32px] border border-neutral-100 p-8 shadow-sm">
+        <div className="bg-white rounded-lg border border-neutral-100 p-8 shadow-sm">
           <h1 className="text-2xl font-black text-secondary mb-1">Создать аккаунт</h1>
           <p className="text-sm text-neutral-400 font-medium mb-8">
             Уже есть аккаунт?{" "}
@@ -227,7 +227,7 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={loading || !form.password || !form.confirm || !consent}
-              className="w-full py-4 bg-primary text-white font-black rounded-2xl flex items-center justify-center gap-2 hover:bg-red-700 hover:shadow-lg hover:shadow-primary/20 active:scale-[0.98] transition-all disabled:opacity-50 disabled:scale-100 mt-2"
+              className="w-full py-4 bg-primary text-white font-black rounded-full flex items-center justify-center gap-2 hover:bg-primary-pressed hover:shadow-lg hover:shadow-primary/20 active:scale-[0.98] transition-all disabled:opacity-50 disabled:scale-100 mt-2"
             >
               {loading ? (
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />

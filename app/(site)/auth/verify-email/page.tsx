@@ -56,14 +56,14 @@ function VerifyEmailContent() {
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center py-16 px-4">
-      <div className="w-full max-w-md bg-white rounded-[32px] border border-neutral-100 p-8 shadow-sm">
+      <div className="w-full max-w-md bg-white rounded-lg border border-neutral-100 p-8 shadow-sm">
         <h1 className="text-2xl font-black text-secondary mb-3">Подтверждение email</h1>
         <p className="text-sm text-neutral-500 font-medium leading-relaxed mb-6">{message}</p>
 
         {status !== "loading" && (
           <Link
             href="/auth/login"
-            className="inline-flex items-center justify-center w-full py-4 bg-primary text-white font-black rounded-2xl hover:bg-red-700 transition-colors"
+            className="inline-flex items-center justify-center w-full py-4 bg-primary text-white font-black rounded-full hover:bg-primary-pressed transition-colors"
           >
             Перейти ко входу
           </Link>
@@ -78,7 +78,7 @@ export default function VerifyEmailPage() {
     <Suspense
       fallback={
         <div className="min-h-[80vh] flex items-center justify-center py-16 px-4">
-          <div className="w-full max-w-md bg-white rounded-[32px] border border-neutral-100 p-8 shadow-sm">
+          <div className="w-full max-w-md bg-white rounded-lg border border-neutral-100 p-8 shadow-sm">
             <h1 className="text-2xl font-black text-secondary mb-3">Подтверждение email</h1>
             <p className="text-sm text-neutral-500 font-medium leading-relaxed mb-6">
               Загружаем страницу подтверждения...

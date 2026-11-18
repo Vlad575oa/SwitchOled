@@ -93,7 +93,7 @@ export default function WishlistPage() {
             </p>
             <Link
               href="/"
-              className="px-8 py-3 bg-primary text-white font-black rounded-2xl hover:bg-red-700 transition-all shadow-lg shadow-primary/20"
+              className="px-8 py-3 bg-primary text-white font-black rounded-full hover:bg-primary-pressed transition-all shadow-lg shadow-primary/20"
             >
               Перейти в каталог
             </Link>

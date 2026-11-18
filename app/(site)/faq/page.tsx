@@ -61,7 +61,7 @@ export default async function FAQPage() {
               </p>
             </div>
             <div className="flex flex-wrap justify-center lg:justify-end gap-6">
-              <button className="px-12 py-6 bg-primary text-white rounded-2xl font-black uppercase tracking-widest text-sm md:text-base hover:scale-105 active:scale-95 transition-all shadow-xl shadow-primary/30">
+              <button className="px-12 py-6 bg-primary text-white rounded-full font-black uppercase tracking-widest text-sm md:text-base hover:scale-105 active:scale-95 transition-all shadow-xl shadow-primary/30">
                 Открыть Чат
               </button>
               <button className="px-12 py-6 bg-white/10 text-white rounded-2xl font-black uppercase tracking-widest text-sm md:text-base hover:bg-white/20 transition-all border border-white/10">

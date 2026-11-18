@@ -34,10 +34,10 @@ export function ProductCardClient({ product, eagerImage = false }: ProductCardCl
   const paymentMethodsPrice = product.priceOld ?? Math.round(product.price * 1.13);
 
   return (
-    <article className="group bg-white rounded-[32px] p-2 sm:p-2.5 transition-colors duration-300 hover:shadow-xl border border-transparent hover:border-neutral-100 flex flex-col relative overflow-hidden h-full select-none">
-      <div className="absolute top-4 left-4 z-10 flex gap-1 font-black text-[8px] uppercase tracking-tighter pointer-events-none">
-        {product.isNew && <span className="bg-orange-500 text-white px-2 py-0.5 rounded-full shadow-sm">New</span>}
-        {product.isSale && <span className="bg-red-600 text-white px-2 py-0.5 rounded-full shadow-sm">Sale</span>}
+    <article className="group bg-white rounded-lg p-2 sm:p-2.5 transition-[border-color,box-shadow] duration-200 border border-transparent hover:border-neutral-200 active:shadow-[0_4px_12px_rgba(0,0,0,0.16)] flex flex-col relative overflow-hidden h-full select-none">
+      <div className="absolute top-4 left-4 z-10 flex gap-1 font-medium text-[10px] uppercase tracking-normal pointer-events-none">
+        {product.isNew && <span className="bg-primary text-white px-2.5 py-0.5 rounded-full">New</span>}
+        {product.isSale && <span className="bg-commerce text-white px-2.5 py-0.5 rounded-full">Sale</span>}
       </div>
 
       <Link href={productUrl} className="block">
@@ -46,7 +46,7 @@ export function ProductCardClient({ product, eagerImage = false }: ProductCardCl
         <div className="flex flex-col flex-1">
           <div className="mb-2">
             <p className="text-[10px] sm:text-xs text-neutral-400 font-bold uppercase leading-tight tracking-wide">При оплате наличными</p>
-            <p className="text-xl font-black text-secondary leading-none my-1">
+            <p className="text-xl font-bold text-secondary leading-none my-1">
               {formatPrice(product.price)}
             </p>
             {product.showOtherPaymentPrice && (
@@ -64,13 +64,13 @@ export function ProductCardClient({ product, eagerImage = false }: ProductCardCl
 
           <div className="flex items-center mb-0.5">
             {product.inStock !== false ? (
-              <span className="text-[12px] font-black uppercase tracking-[0.18em] leading-none text-green-500">● В наличии</span>
+              <span className="text-[12px] font-semibold uppercase tracking-[0.12em] leading-none text-green-600">● В наличии</span>
             ) : (
               <span className="text-[12px] font-black uppercase tracking-[0.18em] leading-none text-neutral-400">● Под заказ</span>
             )}
           </div>
 
-          <div className="text-[12px] font-bold text-secondary leading-[1.28] mb-0 flex-none">
+          <div className="text-[14px] font-normal text-secondary leading-[1.35] mb-0 flex-none">
             {renderProductName(product.name)}
           </div>
         </div>

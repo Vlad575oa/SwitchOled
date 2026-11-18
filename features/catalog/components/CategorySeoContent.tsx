@@ -3,7 +3,7 @@ import type { CategorySeoContent } from "@/lib/categorySeoContent";
 
 export function CategorySeoIntro({ content }: { content: CategorySeoContent }) {
   return (
-    <section className="mb-8 rounded-[32px] border border-neutral-100 bg-white p-6 md:p-8">
+    <section className="mb-8 rounded-lg border border-neutral-100 bg-white p-6 md:p-8">
       {content.intro.eyebrow ? (
         <p className="mb-3 text-[10px] font-black uppercase tracking-[0.22em] text-primary">
           {content.intro.eyebrow}
@@ -36,7 +36,7 @@ export function CategorySeoDetails({ content }: { content: CategorySeoContent })
         {content.audience.items.map((item) => (
           <article
             key={item.title}
-            className="rounded-[28px] border border-neutral-100 bg-white p-6"
+            className="rounded-lg border border-neutral-100 bg-white p-6"
           >
             <p className="mb-3 text-[10px] font-black uppercase tracking-[0.2em] text-neutral-400">
               Кому подойдет
@@ -49,11 +49,11 @@ export function CategorySeoDetails({ content }: { content: CategorySeoContent })
         ))}
       </div>
 
-      <div className="rounded-[32px] border border-neutral-100 bg-white p-6 md:p-8">
+      <div className="rounded-lg border border-neutral-100 bg-white p-6 md:p-8">
         <h3 className="text-2xl font-black text-secondary">{content.memory.title}</h3>
         <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           {content.memory.items.map((item) => (
-            <article key={item.label} className="rounded-[24px] bg-neutral-50 p-5">
+            <article key={item.label} className="rounded-lg bg-neutral-50 p-5">
               <p className="text-xl font-black text-secondary">{item.label}</p>
               <p className="mt-3 text-sm font-medium leading-relaxed text-neutral-500">
                 {item.description}
@@ -64,7 +64,7 @@ export function CategorySeoDetails({ content }: { content: CategorySeoContent })
       </div>
 
       <div className="grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
-        <div className="rounded-[32px] border border-neutral-100 bg-white p-6 md:p-8">
+        <div className="rounded-lg border border-neutral-100 bg-white p-6 md:p-8">
           <h3 className="text-2xl font-black text-secondary">{content.firmware.title}</h3>
           <div className="mt-5 space-y-4">
             {content.firmware.paragraphs.map((paragraph) => (
@@ -85,7 +85,7 @@ export function CategorySeoDetails({ content }: { content: CategorySeoContent })
           </div>
         </div>
 
-        <div className="rounded-[32px] border border-neutral-100 bg-white p-6 md:p-8">
+        <div className="rounded-lg border border-neutral-100 bg-white p-6 md:p-8">
           <h3 className="text-2xl font-black text-secondary">{content.compare.title}</h3>
           <div className="mt-5 space-y-4">
             {content.compare.items.map((item) => (
@@ -102,11 +102,11 @@ export function CategorySeoDetails({ content }: { content: CategorySeoContent })
         </div>
       </div>
 
-      <div className="rounded-[32px] border border-neutral-100 bg-white p-6 md:p-8">
+      <div className="rounded-lg border border-neutral-100 bg-white p-6 md:p-8">
         <h3 className="text-2xl font-black text-secondary">Частые вопросы</h3>
         <div className="mt-6 space-y-4">
           {content.faqs.map((faq) => (
-            <article key={faq.question} className="rounded-[24px] bg-neutral-50 p-5">
+            <article key={faq.question} className="rounded-lg bg-neutral-50 p-5">
               <h4 className="text-base font-black text-secondary md:text-lg">{faq.question}</h4>
               <p className="mt-3 text-sm font-medium leading-relaxed text-neutral-500 md:text-base">
                 {faq.answer}
@@ -116,7 +116,7 @@ export function CategorySeoDetails({ content }: { content: CategorySeoContent })
         </div>
       </div>
 
-      <div className="rounded-[32px] border border-neutral-100 bg-white p-6 md:p-8">
+      <div className="rounded-lg border border-neutral-100 bg-white p-6 md:p-8">
         <p className="mb-4 text-[10px] font-black uppercase tracking-[0.2em] text-primary">
           Полезно перед покупкой
         </p>

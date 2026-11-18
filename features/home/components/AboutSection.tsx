@@ -44,7 +44,7 @@ const timeline = [
 export const AboutSection = () => {
   return (
     <section id="why-us" className="mb-20 scroll-mt-24">
-      <div className="bg-white rounded-[48px] p-8 md:p-16 border border-neutral-100 shadow-2xl shadow-neutral-200/40 overflow-hidden relative">
+      <div className="bg-white rounded-lg p-8 md:p-16 border border-neutral-100 shadow-2xl shadow-neutral-200/40 overflow-hidden relative">
         <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-[100px] translate-x-1/2 -translate-y-1/2 pointer-events-none" />
         
         {/* Top Ribbon */}

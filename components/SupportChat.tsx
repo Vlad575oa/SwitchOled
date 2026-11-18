@@ -166,7 +166,7 @@ export function SupportChat({ className }: { className?: string }) {
   };
 
   return (
-    <section id="support-chat" className={cn("rounded-[32px] bg-secondary p-6 text-white md:p-10", className)}>
+    <section id="support-chat" className={cn("rounded-lg bg-secondary p-6 text-white md:p-10", className)}>
       <div className="flex flex-col gap-8 lg:flex-row lg:items-start lg:justify-between">
         <div className="max-w-md">
           <div className="mb-5 flex items-center gap-3">
@@ -187,7 +187,7 @@ export function SupportChat({ className }: { className?: string }) {
           </div>
         </div>
 
-        <div className="w-full max-w-xl rounded-[28px] bg-white p-5 text-secondary md:p-6">
+        <div className="w-full max-w-xl rounded-lg bg-white p-5 text-secondary md:p-6">
           {loadingMessages ? (
             <div className="flex min-h-[260px] items-center justify-center text-neutral-400">
               <Loader2 className="animate-spin" size={24} />
@@ -224,7 +224,7 @@ export function SupportChat({ className }: { className?: string }) {
                   maxLength={3000}
                   className="min-w-0 flex-1 rounded-2xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-sm font-bold outline-none transition-colors focus:border-primary/40"
                 />
-                <button type="submit" disabled={!reply.trim() || loading} className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-primary text-white shadow-lg shadow-primary/20 transition-all hover:bg-red-700 disabled:opacity-40">
+                <button type="submit" disabled={!reply.trim() || loading} className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-primary text-white shadow-lg shadow-primary/20 transition-all hover:bg-primary-pressed disabled:opacity-40">
                   {loading ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
                 </button>
               </form>
@@ -292,7 +292,7 @@ export function SupportChat({ className }: { className?: string }) {
                 />
               </label>
               {error && <p className="text-xs font-bold text-red-500">{error}</p>}
-              <button type="submit" disabled={loading} className="flex w-full items-center justify-center gap-2 rounded-2xl bg-primary px-5 py-3.5 text-sm font-black uppercase tracking-wider text-white shadow-lg shadow-primary/20 transition-all hover:bg-red-700 disabled:opacity-50">
+              <button type="submit" disabled={loading} className="flex w-full items-center justify-center gap-2 rounded-full bg-primary px-5 py-3.5 text-sm font-black uppercase tracking-wider text-white shadow-lg shadow-primary/20 transition-all hover:bg-primary-pressed disabled:opacity-50">
                 {loading ? <Loader2 size={17} className="animate-spin" /> : <UserRound size={17} />}
                 {loading ? "Отправляем..." : "Написать в поддержку"}
               </button>

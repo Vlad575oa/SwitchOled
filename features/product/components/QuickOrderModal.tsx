@@ -64,14 +64,14 @@ export function QuickOrderModal({ product, buttonClassName }: Props) {
       <button
         type="button"
         onClick={() => { setOpen(true); setSent(false); setError(""); setConsent(false); }}
-        className={buttonClassName ?? "flex-1 h-10 rounded-2xl border border-primary/25 bg-primary/5 px-2 text-[10px] sm:text-[11px] font-black uppercase tracking-tight text-primary hover:bg-primary hover:text-white transition-colors"}
+        className={buttonClassName ?? "flex-1 h-10 rounded-full border border-primary/25 bg-primary/5 px-2 text-[10px] sm:text-[11px] font-black uppercase tracking-tight text-primary hover:bg-primary hover:text-white transition-colors"}
       >
         Купить в 1 клик
       </button>
 
       {open && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4" onMouseDown={(e) => e.target === e.currentTarget && setOpen(false)}>
-          <div className="w-full max-w-md rounded-[28px] bg-white p-6 shadow-2xl">
+          <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-2xl">
             <div className="mb-5 flex items-start justify-between gap-4">
               <div><p className="text-lg font-black text-secondary">Купить в 1 клик</p><p className="mt-1 text-xs font-medium text-neutral-400">Менеджер перезвонит и уточнит детали заказа</p></div>
               <button type="button" aria-label="Закрыть" onClick={() => setOpen(false)} className="rounded-xl p-2 text-neutral-400 hover:bg-neutral-100"><X size={18} /></button>
@@ -109,7 +109,7 @@ export function QuickOrderModal({ product, buttonClassName }: Props) {
                   </span>
                 </label>
                 {error && <p className="text-xs font-bold text-red-500">{error}</p>}
-                <button disabled={loading} className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-black text-white hover:bg-red-700 disabled:opacity-60"><PhoneCall size={16} />{loading ? "Отправляем…" : "Отправить заявку"}</button>
+                <button disabled={loading} className="flex w-full items-center justify-center gap-2 rounded-full bg-primary px-4 py-3 text-sm font-black text-white hover:bg-primary-pressed disabled:opacity-60"><PhoneCall size={16} />{loading ? "Отправляем…" : "Отправить заявку"}</button>
                 <p className="text-center text-[10px] font-medium text-neutral-400">Оплата только наличными после подтверждения заказа</p>
               </form>
             )}

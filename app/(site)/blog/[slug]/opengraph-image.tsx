@@ -96,14 +96,14 @@ export default async function OGImage({
             <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
               <div
                 style={{
-                  background: "#e60012",
+                  background: "#0070d1",
                   borderRadius: 10,
                   width: 44,
                   height: 44,
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  boxShadow: "0 0 20px rgba(230, 0, 18, 0.3)",
+                  boxShadow: "0 0 20px rgba(0, 112, 209, 0.3)",
                 }}
               >
                 <div
@@ -121,11 +121,11 @@ export default async function OGImage({
             </div>
             <div
               style={{
-                background: "rgba(230, 0, 18, 0.1)",
-                border: "1px solid rgba(230, 0, 18, 0.3)",
+                background: "rgba(0, 112, 209, 0.1)",
+                border: "1px solid rgba(0, 112, 209, 0.3)",
                 padding: "8px 20px",
                 borderRadius: 100,
-                color: "#e60012",
+                color: "#0070d1",
                 fontSize: 16,
                 fontWeight: 900,
                 textTransform: "uppercase",
@@ -163,7 +163,7 @@ export default async function OGImage({
                   justifyContent: "center",
                 }}
               >
-                <div style={{ width: 16, height: 16, background: "#e60012", borderRadius: "50%" }} />
+                <div style={{ width: 16, height: 16, background: "#0070d1", borderRadius: "50%" }} />
               </div>
               <div style={{ display: "flex", flexDirection: "column" }}>
                 <span style={{ color: "#9ca3af", fontSize: 14, fontWeight: 700, textTransform: "uppercase", letterSpacing: 1.5 }}>
@@ -185,7 +185,7 @@ export default async function OGImage({
             left: 0,
             width: 1200,
             height: 6,
-            background: "linear-gradient(to right, #e60012, #ff4d4d)",
+            background: "linear-gradient(to right, #0070d1, #53b1ff)",
           }}
         />
       </div>

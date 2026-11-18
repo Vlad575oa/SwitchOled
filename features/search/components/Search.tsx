@@ -99,7 +99,7 @@ export const Search = () => {
       {/* Ozon-style Search Bar */}
       <div className={cn(
         "flex items-center h-11 bg-white border-2 rounded-[14px] transition-all duration-300 overflow-hidden",
-        isOpen ? "border-primary shadow-[0_0_0_4px_rgba(230,0,18,0.1)]" : "border-neutral-200"
+        isOpen ? "border-primary shadow-[0_0_0_4px_rgba(0,112,209,0.1)]" : "border-neutral-200"
       )}>
         {/* Input Area */}
         <div className="flex-1 relative flex items-center px-3 h-full">
@@ -131,7 +131,7 @@ export const Search = () => {
               setIsOpen(true);
             }
           }}
-          className="flex items-center justify-center w-14 h-full bg-primary hover:bg-red-700 transition-all group shrink-0"
+          className="flex items-center justify-center w-14 h-full bg-primary hover:bg-primary-pressed transition-all group shrink-0"
         >
           {isLoading ? (
             <Loader2 size={20} className="text-white animate-spin" />
@@ -143,7 +143,7 @@ export const Search = () => {
 
       {/* Ozon-style Dropdown */}
       {isOpen && (
-        <div className="absolute top-[calc(100%+8px)] left-1/2 w-screen -translate-x-1/2 bg-white border border-neutral-100 p-5 animate-in fade-in slide-in-from-top-2 duration-200 overflow-hidden rounded-none shadow-[0_20px_50px_rgba(0,0,0,0.15)] sm:left-0 sm:right-0 sm:w-auto sm:translate-x-0 sm:rounded-[24px]">
+        <div className="absolute top-[calc(100%+8px)] left-1/2 w-screen -translate-x-1/2 bg-white border border-neutral-100 p-5 animate-in fade-in slide-in-from-top-2 duration-200 overflow-hidden rounded-none shadow-[0_20px_50px_rgba(0,0,0,0.15)] sm:left-0 sm:right-0 sm:w-auto sm:translate-x-0 sm:rounded-lg">
           
           {/* Quick Tags */}
           {quickTags.length > 0 && (

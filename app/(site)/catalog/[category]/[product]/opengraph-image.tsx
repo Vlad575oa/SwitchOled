@@ -41,7 +41,7 @@ export default async function OGImage({
             top: 0,
             width: 8,
             height: 630,
-            background: "#e60012",
+            background: "#0070d1",
           }}
         />
 
@@ -60,7 +60,7 @@ export default async function OGImage({
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
             <div
               style={{
-                background: "#e60012",
+                background: "#0070d1",
                 borderRadius: 8,
                 width: 36,
                 height: 36,
@@ -90,7 +90,7 @@ export default async function OGImage({
                 style={{
                   fontSize: 16,
                   fontWeight: 700,
-                  color: "#e60012",
+                  color: "#0070d1",
                   textTransform: "uppercase",
                   letterSpacing: 2,
                 }}
@@ -118,7 +118,7 @@ export default async function OGImage({
                   style={{
                     fontSize: 42,
                     fontWeight: 900,
-                    color: "#e60012",
+                    color: "#0070d1",
                   }}
                 >
                   {price}
@@ -211,7 +211,7 @@ export default async function OGImage({
             left: 0,
             width: 1200,
             height: 4,
-            background: "#e60012",
+            background: "#0070d1",
           }}
         />
       </div>

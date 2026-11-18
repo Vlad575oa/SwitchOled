@@ -111,7 +111,7 @@ export default async function WarrantyPage() {
             return (
               <div
                 key={g.label}
-                className={`rounded-[32px] p-8 flex flex-col gap-4 ${
+                className={`rounded-lg p-8 flex flex-col gap-4 ${
                   g.accent ? "bg-secondary" : "bg-neutral-50 border border-neutral-100"
                 }`}
               >
@@ -132,7 +132,7 @@ export default async function WarrantyPage() {
 
         {/* Covered / Not covered */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-16">
-          <div className="bg-green-50 border border-green-100 rounded-[28px] p-8">
+          <div className="bg-green-50 border border-green-100 rounded-lg p-8">
             <div className="flex items-center gap-3 mb-6">
               <CheckCircle2 size={22} className="text-green-600" />
               <h3 className="text-lg font-black text-secondary">Покрывается гарантией</h3>
@@ -146,7 +146,7 @@ export default async function WarrantyPage() {
               ))}
             </ul>
           </div>
-          <div className="bg-red-50 border border-red-100 rounded-[28px] p-8">
+          <div className="bg-red-50 border border-red-100 rounded-lg p-8">
             <div className="flex items-center gap-3 mb-6">
               <XCircle size={22} className="text-red-500" />
               <h3 className="text-lg font-black text-secondary">Не покрывается гарантией</h3>
@@ -169,7 +169,7 @@ export default async function WarrantyPage() {
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {returnSteps.map((step) => (
-              <div key={step.num} className="bg-neutral-50 rounded-[24px] p-7">
+              <div key={step.num} className="bg-neutral-50 rounded-lg p-7">
                 <p className="text-5xl font-black text-neutral-100 mb-4 leading-none">{step.num}</p>
                 <h3 className="font-black text-secondary mb-2">{step.title}</h3>
                 <p className="text-sm text-neutral-500 font-medium leading-relaxed">{step.desc}</p>
@@ -179,7 +179,7 @@ export default async function WarrantyPage() {
         </div>
 
         {/* Return terms note */}
-        <div className="bg-amber-50 border border-amber-100 rounded-[28px] p-8 flex items-start gap-6 mb-16">
+        <div className="bg-amber-50 border border-amber-100 rounded-lg p-8 flex items-start gap-6 mb-16">
           <div className="w-12 h-12 rounded-2xl bg-amber-100 flex items-center justify-center shrink-0">
             <AlertTriangle size={20} className="text-amber-600" />
           </div>
@@ -192,7 +192,7 @@ export default async function WarrantyPage() {
         </div>
 
         {/* CTA */}
-        <div className="bg-secondary rounded-[32px] p-10 flex flex-col md:flex-row items-center justify-between gap-8">
+        <div className="bg-secondary rounded-lg p-10 flex flex-col md:flex-row items-center justify-between gap-8">
           <div className="space-y-2">
             <h3 className="text-2xl font-black text-white">Есть вопрос по гарантии?</h3>
             <p className="text-neutral-400 font-bold">Ответим в MAX за 5 минут, ежедневно 24/7.</p>
@@ -200,7 +200,7 @@ export default async function WarrantyPage() {
           <div className="flex gap-4 shrink-0">
             <a
               href={maxHref}
-              className="px-8 py-4 bg-primary text-white rounded-2xl font-black uppercase tracking-widest text-sm hover:scale-105 active:scale-95 transition-all shadow-xl shadow-primary/20"
+              className="px-8 py-4 bg-primary text-white rounded-full font-black uppercase tracking-widest text-sm hover:scale-105 active:scale-95 transition-all shadow-xl shadow-primary/20"
             >
               MAX
             </a>

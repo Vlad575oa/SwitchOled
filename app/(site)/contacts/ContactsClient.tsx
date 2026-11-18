@@ -107,7 +107,7 @@ export default function ContactsClient({ data }: { data: ContactsData }) {
               <a
                 key={ch.label}
                 href={ch.href}
-                className={`group rounded-[28px] p-7 flex flex-col gap-4 transition-all duration-300 ${
+                className={`group rounded-lg p-7 flex flex-col gap-4 transition-all duration-300 ${
                   ch.accent
                     ? "bg-secondary hover:bg-secondary/90"
                     : "bg-neutral-50 border border-transparent hover:bg-white hover:border-neutral-100 hover:shadow-xl hover:shadow-neutral-200/40"
@@ -152,7 +152,7 @@ export default function ContactsClient({ data }: { data: ContactsData }) {
 
         <a
           href="#support-chat"
-          className="mb-16 flex flex-col gap-5 rounded-[28px] border border-primary/15 bg-primary/[0.04] p-6 transition-all hover:border-primary/30 hover:bg-primary/[0.07] sm:flex-row sm:items-center sm:justify-between sm:p-8"
+          className="mb-16 flex flex-col gap-5 rounded-lg border border-primary/15 bg-primary/[0.04] p-6 transition-all hover:border-primary/30 hover:bg-primary/[0.07] sm:flex-row sm:items-center sm:justify-between sm:p-8"
         >
           <div className="flex items-center gap-4">
             <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary text-white shadow-lg shadow-primary/20">
@@ -172,7 +172,7 @@ export default function ContactsClient({ data }: { data: ContactsData }) {
 
         {/* Hours + details */}
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 mb-16">
-            <div className="bg-neutral-50 rounded-[28px] p-8">
+            <div className="bg-neutral-50 rounded-lg p-8">
               <div className="flex items-center gap-3 mb-6">
                 <Clock size={18} className="text-primary" />
                 <h3 className="font-black text-secondary">Режим работы</h3>
@@ -190,7 +190,7 @@ export default function ContactsClient({ data }: { data: ContactsData }) {
               </div>
             </div>
 
-            <div className="bg-neutral-50 rounded-[28px] p-8">
+            <div className="bg-neutral-50 rounded-lg p-8">
               <div className="flex items-center gap-3 mb-6">
                 <Building2 size={18} className="text-primary" />
                 <h3 className="font-black text-secondary">Реквизиты</h3>
@@ -205,7 +205,7 @@ export default function ContactsClient({ data }: { data: ContactsData }) {
               </div>
             </div>
 
-            <div className="bg-neutral-50 rounded-[28px] p-8">
+            <div className="bg-neutral-50 rounded-lg p-8">
               <h3 className="font-black text-secondary mb-4">По вопросам сотрудничества</h3>
               <div className="space-y-3">
                 <a href={`tel:+${partnerPhone.replace(/\D/g, "")}`} className="block text-sm font-bold text-secondary hover:text-primary transition-colors">

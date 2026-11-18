@@ -268,7 +268,7 @@ export function ChatWidget() {
             <button
               onClick={handleSend}
               disabled={!input.trim() || loading}
-              className="w-10 h-10 rounded-2xl bg-primary text-white flex items-center justify-center hover:bg-red-700 transition-all disabled:opacity-40 shadow-lg shadow-primary/20 flex-shrink-0"
+              className="w-10 h-10 rounded-2xl bg-primary text-white flex items-center justify-center hover:bg-primary-pressed transition-all disabled:opacity-40 shadow-lg shadow-primary/20 flex-shrink-0"
             >
               <Send size={14} />
             </button>
@@ -291,7 +291,7 @@ export function ChatWidget() {
           className={cn(
             "w-12 h-12 rounded-full shadow-xl hover:scale-110 active:scale-95 transition-all flex items-center justify-center overflow-hidden",
             isOpen
-              ? "bg-primary text-white shadow-primary/40 hover:bg-red-700"
+              ? "bg-primary text-white shadow-primary/40 hover:bg-primary-pressed"
               : "bg-white shadow-black/20 ring-2 ring-primary/20"
           )}
         >

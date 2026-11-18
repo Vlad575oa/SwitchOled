@@ -1,8 +1,23 @@
 import type { Metadata, Viewport } from "next";
+import { Inter, Roboto } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
 import { CONTACTS } from "@/lib/constants/contacts";
 import dynamic from "next/dynamic";
+
+const fontSans = Inter({
+  subsets: ["latin", "cyrillic"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-sans",
+  display: "swap",
+});
+
+const fontDisplay = Roboto({
+  subsets: ["latin", "cyrillic"],
+  weight: ["300", "400"],
+  variable: "--font-display",
+  display: "swap",
+});
 
 const YandexMetrika = dynamic(() => import("@/components/YandexMetrika"), {
   ssr: false,
@@ -157,7 +172,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ru">
+    <html lang="ru" className={`${fontSans.variable} ${fontDisplay.variable}`}>
       <head>
         <link rel="dns-prefetch" href="//mc.yandex.ru" />
         <link rel="preconnect" href="https://s3.twcstorage.ru" />
@@ -176,7 +191,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
         />
       </head>
-      <body className="bg-[var(--bg-base)] text-[var(--text-primary)] antialiased min-h-screen">
+      <body className="bg-[var(--bg-base)] text-[var(--text-primary)] font-sans antialiased min-h-screen">
         {children}
         <MessengerExitNotice />
         <YandexMetrika />

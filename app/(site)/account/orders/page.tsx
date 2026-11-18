@@ -64,7 +64,7 @@ export default function OrdersPage() {
       </div>
 
       {orders.length === 0 ? (
-        <div className="bg-white rounded-[32px] border border-neutral-100 p-16 text-center">
+        <div className="bg-white rounded-lg border border-neutral-100 p-16 text-center">
           <div className="w-16 h-16 rounded-full bg-neutral-100 flex items-center justify-center mx-auto mb-4">
             <Package size={28} className="text-neutral-300" />
           </div>
@@ -72,7 +72,7 @@ export default function OrdersPage() {
           <p className="text-neutral-400 font-bold text-sm mb-6">Оформите первый заказ и он появится здесь</p>
           <Link
             href="/"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-2xl font-black text-sm hover:scale-[1.02] active:scale-95 transition-all"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-full font-black text-sm hover:scale-[1.02] active:scale-95 transition-all"
           >
             Перейти в каталог
             <ChevronRight size={16} />
@@ -84,7 +84,7 @@ export default function OrdersPage() {
             const statusInfo = STATUS_LABEL[order.status] ?? STATUS_LABEL.pending;
             const StatusIcon = statusInfo.icon;
             return (
-              <div key={order.id} className="bg-white rounded-[28px] border border-neutral-100 p-6">
+              <div key={order.id} className="bg-white rounded-lg border border-neutral-100 p-6">
                 <div className="flex items-center justify-between mb-4">
                   <div>
                     <p className="text-xs font-black text-neutral-400 uppercase tracking-widest mb-0.5">Заказ #{order.id}</p>

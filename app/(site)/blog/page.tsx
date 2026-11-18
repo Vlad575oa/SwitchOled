@@ -153,7 +153,7 @@ export default async function BlogPage({
 
         {/* Post grid */}
         {posts.length === 0 ? (
-          <div className="bg-white rounded-[32px] py-24 text-center border border-neutral-100">
+          <div className="bg-white rounded-lg py-24 text-center border border-neutral-100">
             <p className="text-2xl font-black text-neutral-200 mb-2">Пусто</p>
             <p className="text-neutral-400 font-bold text-sm">В этой категории пока нет статей</p>
             <Link href="/blog" className="mt-4 inline-block text-primary font-black text-sm hover:underline">
@@ -173,7 +173,7 @@ export default async function BlogPage({
                   <Link
                     key={post.slug}
                     href={`/blog/${post.slug}`}
-                    className="group col-span-1 md:col-span-2 lg:col-span-3 relative rounded-[32px] overflow-hidden bg-neutral-900 min-h-[420px] flex items-end hover:shadow-2xl hover:shadow-neutral-300/60 transition-all duration-500"
+                    className="group col-span-1 md:col-span-2 lg:col-span-3 relative rounded-lg overflow-hidden bg-neutral-900 min-h-[420px] flex items-end hover:shadow-2xl hover:shadow-neutral-300/60 transition-all duration-500"
                   >
                     {/* Full-bleed image */}
                     <Image
@@ -219,7 +219,7 @@ export default async function BlogPage({
                 <Link
                   key={post.slug}
                   href={`/blog/${post.slug}`}
-                  className="group flex flex-col bg-white border border-neutral-100 rounded-[24px] overflow-hidden hover:border-primary/20 hover:shadow-xl hover:shadow-neutral-200/70 hover:-translate-y-0.5 transition-all duration-300"
+                  className="group flex flex-col bg-white border border-neutral-100 rounded-lg overflow-hidden hover:border-primary/20 hover:shadow-xl hover:shadow-neutral-200/70 hover:-translate-y-0.5 transition-all duration-300"
                 >
                   {/* Image */}
                   <div className="relative overflow-hidden bg-neutral-100 aspect-[16/9]">

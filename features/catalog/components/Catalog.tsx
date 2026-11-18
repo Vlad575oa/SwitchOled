@@ -256,7 +256,7 @@ export async function Catalog({
             </Suspense>
           </>
         ) : (
-          <div className="bg-neutral-50 rounded-[32px] py-32 text-center">
+          <div className="bg-neutral-50 rounded-lg py-32 text-center">
             <p className="text-xl text-neutral-400 font-bold">Ничего не найдено</p>
             <p className="text-neutral-500 mt-2 text-sm">
               {hasFilters

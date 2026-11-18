@@ -24,7 +24,7 @@ export default function ForgotPasswordPage() {
           Назад к входу
         </Link>
 
-        <div className="bg-white rounded-[32px] border border-neutral-100 p-8 md:p-10">
+        <div className="bg-white rounded-lg border border-neutral-100 p-8 md:p-10">
           {sent ? (
             <div className="text-center py-6">
               <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
@@ -67,7 +67,7 @@ export default function ForgotPasswordPage() {
                 </div>
                 <button
                   type="submit"
-                  className="w-full h-12 bg-primary text-white rounded-2xl font-black text-sm uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all shadow-lg shadow-primary/20"
+                  className="w-full h-12 bg-primary text-white rounded-full font-black text-sm uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all shadow-lg shadow-primary/20"
                 >
                   Отправить ссылку
                 </button>

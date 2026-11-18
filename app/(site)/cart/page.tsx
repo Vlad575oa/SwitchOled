@@ -99,7 +99,7 @@ export default function CartPage() {
 
         {/* Summary */}
         <div className="space-y-6">
-          <div className="bg-neutral-50 p-5 sm:p-8 rounded-3xl sm:rounded-[40px] border border-neutral-100">
+          <div className="bg-neutral-50 p-5 sm:p-8 rounded-3xl sm:rounded-lg border border-neutral-100">
             <h2 className="text-2xl font-black text-secondary mb-5 sm:mb-8">Итого</h2>
             
             <div className="space-y-4 mb-6 sm:mb-10">

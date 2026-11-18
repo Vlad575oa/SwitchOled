@@ -82,7 +82,7 @@ export default function LoginPage() {
           </Link>
         </div>
 
-        <div className="bg-white rounded-[32px] border border-neutral-100 p-8 shadow-sm">
+        <div className="bg-white rounded-lg border border-neutral-100 p-8 shadow-sm">
           <h1 className="text-2xl font-black text-secondary mb-1">Вход в аккаунт</h1>
           <p className="text-sm text-neutral-400 font-medium mb-8">
             Нет аккаунта?{" "}
@@ -161,7 +161,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading || !email || !password}
-              className="w-full py-4 bg-primary text-white font-black rounded-2xl flex items-center justify-center gap-2 hover:bg-red-700 hover:shadow-lg hover:shadow-primary/20 active:scale-[0.98] transition-all disabled:opacity-50 disabled:scale-100 mt-2"
+              className="w-full py-4 bg-primary text-white font-black rounded-full flex items-center justify-center gap-2 hover:bg-primary-pressed hover:shadow-lg hover:shadow-primary/20 active:scale-[0.98] transition-all disabled:opacity-50 disabled:scale-100 mt-2"
             >
               {loading ? (
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />

@@ -46,7 +46,7 @@ const EMPTY_GP: GPState = {
 
 function GamepadSVG({ btns }: { btns: { pressed: boolean; value: number }[] }) {
   const pressed = (i: number) => btns[i]?.pressed ?? false;
-  const c = (i: number) => pressed(i) ? "#e60012" : "#d1d5db";
+  const c = (i: number) => pressed(i) ? "#0070d1" : "#d1d5db";
   const ct = (i: number) => pressed(i) ? "white" : "#9ca3af";
 
   return (
@@ -129,11 +129,11 @@ function StickCircle({ x, y, label, ax, ay, points, showWorkArea }: {
         {fillPath && (
           <path d={fillPath} fill="#bfdbfe" fillOpacity="0.45" />
         )}
-        <circle cx={C} cy={C} r={R} stroke={drift?"#e60012":"#e5e7eb"} strokeWidth="1.5" fill="none"/>
+        <circle cx={C} cy={C} r={R} stroke={drift?"#0070d1":"#e5e7eb"} strokeWidth="1.5" fill="none"/>
         <circle cx={C} cy={C} r={R*DRIFT_THRESHOLD} stroke="#d1d5db" strokeWidth="1" strokeDasharray="2 2" fill="none"/>
         <line x1={C} y1={7} x2={C} y2={S-7} stroke="#f3f4f6" strokeWidth="1"/>
         <line x1={7} y1={C} x2={S-7} y2={C} stroke="#f3f4f6" strokeWidth="1"/>
-        <circle cx={dx} cy={dy} r={7} fill={drift?"#e60012":"#1a1a1c"}/>
+        <circle cx={dx} cy={dy} r={7} fill={drift?"#0070d1":"#1a1a1c"}/>
       </svg>
       <p className="text-[10px] font-black uppercase tracking-widest text-neutral-500">{label}</p>
       <div className="text-[10px] tabular-nums text-neutral-500 space-y-0.5 text-center">
@@ -201,7 +201,7 @@ function DriftCanvas({
     // Trail
     for (let i = 1; i < points.length; i++) {
       const a = points[i-1]; const b = points[i];
-      ctx.strokeStyle = b.jump ? "#e60012" : "#6366f1";
+      ctx.strokeStyle = b.jump ? "#0070d1" : "#6366f1";
       ctx.lineWidth = b.jump ? 1.5 : 0.8;
       ctx.globalAlpha = 0.3 + (i/points.length)*0.7;
       ctx.beginPath();
@@ -214,7 +214,7 @@ function DriftCanvas({
     // Current dot
     if (points.length > 0) {
       const p = points[points.length-1];
-      ctx.fillStyle = Math.hypot(p.x,p.y) > DRIFT_THRESHOLD ? "#e60012" : "#1a1a1c";
+      ctx.fillStyle = Math.hypot(p.x,p.y) > DRIFT_THRESHOLD ? "#0070d1" : "#1a1a1c";
       ctx.beginPath(); ctx.arc(cx + p.x*(W/2), cy + p.y*(H/2), 5, 0, Math.PI*2); ctx.fill();
     }
   }, [points, showWorkArea]);
@@ -255,7 +255,7 @@ function RadialKeyboard({ axX, axY, onChar }: {
             <g key={i} onClick={()=>onChar(ch)} style={{cursor:"pointer"}}>
               <path
                 d={`M${ix1},${iy1} L${x1},${y1} A${R},${R} 0 0,1 ${x2},${y2} L${ix2},${iy2} A${iR},${iR} 0 0,0 ${ix1},${iy1}Z`}
-                fill={isActive?"#e60012":"#f9fafb"} stroke={isActive?"#e60012":"#e5e7eb"} strokeWidth="0.5"
+                fill={isActive?"#0070d1":"#f9fafb"} stroke={isActive?"#0070d1":"#e5e7eb"} strokeWidth="0.5"
               />
               <text
                 x={CX+mr*Math.cos(mid)} y={CY+mr*Math.sin(mid)+4}
@@ -267,7 +267,7 @@ function RadialKeyboard({ axX, axY, onChar }: {
         })}
         {/* Center */}
         <circle cx={CX} cy={CY} r={iR*0.45} fill="#f3f4f6" stroke="#e5e7eb" strokeWidth="1"/>
-        {dist > 0.3 && <circle cx={CX} cy={CY} r={4} fill="#e60012"/>}
+        {dist > 0.3 && <circle cx={CX} cy={CY} r={4} fill="#0070d1"/>}
       </svg>
       <p className="text-[9px] text-neutral-400 font-medium text-center">
         Наклоняйте стик для выбора символа, нажмите L3 для ввода
@@ -289,7 +289,7 @@ function TriggerBar({ value, label }: { value: number; label: string }) {
       </div>
       <div className="h-2 bg-neutral-100 rounded-full overflow-hidden">
         <div className="h-full rounded-full transition-none"
-          style={{width:`${p}%`, backgroundColor: p>0?"#e60012":"transparent"}}/>
+          style={{width:`${p}%`, backgroundColor: p>0?"#0070d1":"transparent"}}/>
       </div>
     </div>
   );
@@ -621,7 +621,7 @@ export function GamepadTestClient() {
         </div>
 
         {/* Content */}
-        <div className="bg-white border border-neutral-200 rounded-[32px] p-4 md:p-6 shadow-lg shadow-neutral-200/40">
+        <div className="bg-white border border-neutral-200 rounded-lg p-4 md:p-6 shadow-lg shadow-neutral-200/40">
           <GamepadPanel gp={activeGP} onVibrate={() => handleVibrate(activeTab)} />
         </div>
 
