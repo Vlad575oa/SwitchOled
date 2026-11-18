@@ -1,7 +1,9 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import { ChevronDown, Package, Truck, CreditCard, ShieldCheck, Search, X } from "lucide-react";
+import { useMemo, useState } from "react";
+import { Search, X } from "lucide-react";
+import { Accordion } from "@/components/info/Accordion";
+import { cn } from "@/lib/utils";
 
 type FAQ = {
   id: number;
@@ -10,191 +12,88 @@ type FAQ = {
   category: string;
 };
 
-const CAT_ICONS: Record<string, React.ElementType> = {
-  "Заказы": Package,
-  "Доставка": Truck,
-  "Оплата": CreditCard,
-  "Гарантия": ShieldCheck,
-};
-
-function highlight(text: string, query: string) {
-  if (!query.trim()) return <>{text}</>;
-  const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`, "gi");
-  const parts = text.split(regex);
-  return (
-    <>
-      {parts.map((part, i) =>
-        regex.test(part) ? (
-          <mark key={i} className="bg-primary/15 text-primary rounded px-0.5 not-italic">
-            {part}
-          </mark>
-        ) : (
-          part
-        )
-      )}
-    </>
-  );
-}
-
-function FAQItem({
-  question,
-  answer,
-  query,
-  forceOpen,
-}: {
-  question: string;
-  answer: string;
-  query: string;
-  forceOpen: boolean;
-}) {
-  const [open, setOpen] = useState(false);
-  const isOpen = forceOpen || open;
-
-  return (
-    <div className="border-b border-neutral-100 last:border-0" onClick={() => setOpen(!open)}>
-      <div className="flex items-center justify-between cursor-pointer py-8 gap-4">
-        <span className="text-lg md:text-xl font-bold text-secondary leading-snug pr-4">
-          {highlight(question, query)}
-        </span>
-        <div
-          className={`w-11 h-11 shrink-0 rounded-2xl flex items-center justify-center transition-all duration-300 ${
-            isOpen
-              ? "bg-primary text-white shadow-xl shadow-primary/30 rotate-180"
-              : "bg-neutral-50 text-neutral-400"
-          }`}
-        >
-          <ChevronDown size={20} />
-        </div>
-      </div>
-      {isOpen && (
-        <div className="text-neutral-500 text-base md:text-lg leading-relaxed font-medium pb-8 max-w-4xl animate-in fade-in slide-in-from-top-2 duration-300">
-          {highlight(answer, query)}
-        </div>
-      )}
-    </div>
-  );
-}
-
+// Search + category chips over the smooth accordion.
 export default function FAQClient({ faqs }: { faqs: FAQ[] }) {
-  const [active, setActive] = useState("all");
   const [query, setQuery] = useState("");
+  const [category, setCategory] = useState<string>("Все");
 
-  const counts = useMemo(
-    () =>
-      faqs.reduce<Record<string, number>>((acc, f) => {
-        acc[f.category] = (acc[f.category] ?? 0) + 1;
-        return acc;
-      }, {}),
+  const categories = useMemo(
+    () => ["Все", ...Array.from(new Set(faqs.map((f) => f.category)))],
     [faqs]
   );
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return faqs.filter((f) => {
-      const matchCat = active === "all" || f.category === active;
-      if (!q) return matchCat;
-      return matchCat && (
-        f.question.toLowerCase().includes(q) ||
-        f.answer.toLowerCase().includes(q)
-      );
-    });
-  }, [faqs, active, query]);
+    return faqs.filter(
+      (f) =>
+        (category === "Все" || f.category === category) &&
+        (!q || f.question.toLowerCase().includes(q) || f.answer.toLowerCase().includes(q))
+    );
+  }, [faqs, query, category]);
 
-  const isSearching = query.trim().length > 0;
+  const groups = useMemo(() => {
+    const map = new Map<string, FAQ[]>();
+    filtered.forEach((f) => map.set(f.category, [...(map.get(f.category) ?? []), f]));
+    return Array.from(map.entries());
+  }, [filtered]);
 
   return (
-    <>
-
-      {/* Category Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-16 mt-8">
-        {Object.keys(CAT_ICONS).map((slug) => {
-          const Icon = CAT_ICONS[slug];
-          const isActive = active === slug;
-          return (
+    <div>
+      <div className="flex flex-col lg:flex-row lg:items-center gap-4">
+        <label className="relative w-full lg:max-w-[420px]">
+          <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-black/40" />
+          <input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Найти ответ, например «игры» или «доставка»"
+            className="w-full h-12 pl-11 pr-10 rounded-full bg-surface-soft text-[15px] text-black placeholder:text-black/40 outline-none border border-transparent focus:border-black/20"
+          />
+          {query && (
             <button
-              key={slug}
-              onClick={() => setActive(isActive ? "all" : slug)}
-              className={`group p-8 rounded-lg border text-left transition-all duration-300 cursor-pointer ${
-                isActive
-                  ? "bg-secondary border-secondary shadow-2xl shadow-secondary/20"
-                  : "bg-neutral-50 border-transparent hover:bg-white hover:border-neutral-100 hover:shadow-xl hover:shadow-neutral-200/50"
-              }`}
+              type="button"
+              onClick={() => setQuery("")}
+              aria-label="Очистить"
+              className="absolute right-3 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full hover:bg-white flex items-center justify-center text-black/50"
             >
-              <div
-                className={`w-14 h-14 rounded-[20px] flex items-center justify-center mb-6 transition-all duration-300 ${
-                  isActive
-                    ? "bg-white/20"
-                    : "bg-white shadow-sm group-hover:bg-primary group-hover:shadow-xl group-hover:shadow-primary/30"
-                }`}
-              >
-                <Icon
-                  size={26}
-                  className={`transition-colors ${
-                    isActive ? "text-white" : "text-neutral-300 group-hover:text-white"
-                  }`}
-                />
-              </div>
-              <h3 className={`text-xl font-black mb-1.5 ${isActive ? "text-white" : "text-secondary"}`}>
-                {slug}
-              </h3>
-              <p className={`text-[12px] font-bold uppercase tracking-widest ${isActive ? "text-white/50" : "text-neutral-400"}`}>
-                {counts[slug] ?? 0} вопросов
-              </p>
+              <X size={15} />
             </button>
-          );
-        })}
-      </div>
-
-      {/* FAQ Accordion */}
-      <div className="bg-neutral-50/50 rounded-lg p-6 md:p-14">
-        <div className="max-w-4xl mx-auto">
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-xl font-black text-secondary uppercase tracking-tighter">
-              {isSearching
-                ? `Результаты поиска`
-                : active === "all"
-                ? "Все вопросы"
-                : active}
-              <span className="ml-3 text-base font-bold text-neutral-400">
-                ({filtered.length})
-              </span>
-            </h2>
-            {(active !== "all" || isSearching) && (
-              <button
-                onClick={() => { setActive("all"); setQuery(""); }}
-                className="text-xs font-black text-primary uppercase tracking-widest hover:underline"
-              >
-                Сбросить
-              </button>
-            )}
-          </div>
-
-          <div className="bg-white rounded-lg px-6 md:px-12 shadow-xl shadow-neutral-200/20 border border-neutral-100">
-            {filtered.length === 0 ? (
-              <div className="py-16 text-center">
-                <p className="text-neutral-300 text-5xl mb-4">🔍</p>
-                <p className="font-black text-secondary mb-2">Ничего не найдено</p>
-                <p className="text-sm text-neutral-400 font-bold">
-                  Попробуйте другой запрос или{" "}
-                  <button onClick={() => setQuery("")} className="text-primary hover:underline">
-                    сбросьте поиск
-                  </button>
-                </p>
-              </div>
-            ) : (
-              filtered.map((faq) => (
-                <FAQItem
-                  key={faq.id}
-                  question={faq.question}
-                  answer={faq.answer}
-                  query={query}
-                  forceOpen={isSearching}
-                />
-              ))
-            )}
-          </div>
+          )}
+        </label>
+        <div className="flex flex-wrap gap-2">
+          {categories.map((c) => (
+            <button
+              key={c}
+              type="button"
+              onClick={() => setCategory(c)}
+              className={cn(
+                "h-10 px-4 rounded-full text-[14px] border transition-colors",
+                category === c ? "bg-black border-black text-white" : "border-black/15 text-black hover:border-black"
+              )}
+            >
+              {c}
+            </button>
+          ))}
         </div>
       </div>
-    </>
+
+      <div className="mt-10 space-y-12">
+        {groups.length === 0 && (
+          <p className="text-[16px] text-black/55">
+            Ничего не нашли. Попробуйте другое слово или напишите нам в чат — ответим.
+          </p>
+        )}
+        {groups.map(([group, items]) => (
+          <div key={group}>
+            <h2 className="text-[22px] font-semibold tracking-[-0.01em] text-black mb-4">{group}</h2>
+            <Accordion
+              items={items.map((f) => ({
+                title: f.question,
+                content: f.answer.split(/\n+/).map((line, i) => <p key={i}>{line}</p>),
+              }))}
+            />
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }

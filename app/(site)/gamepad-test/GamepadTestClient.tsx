@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback } from "react";
-import { Gamepad2, WifiOff, Vibrate, Info, Trash2 } from "lucide-react";
-import Link from "next/link";
+import { WifiOff, Vibrate, Trash2 } from "lucide-react";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -552,42 +551,30 @@ export function GamepadTestClient() {
   const activeGP = gamepads[activeTab] ?? { ...EMPTY_GP, index: activeTab };
 
   return (
-    <div className="bg-gradient-to-b from-[#f8fafc] to-[#f5f7fb] min-h-screen pt-6 pb-28">
-      <div className="container max-w-6xl px-4">
-
+    <div className="w-full max-w-[1280px] mx-auto px-3 lg:px-6 pt-4 pb-28 space-y-3">
         {/* Hero */}
-        <div className="mb-6 space-y-3 rounded-3xl border border-neutral-200 bg-white/90 p-5 shadow-sm">
-          <Link href="/" className="inline-flex items-center gap-1.5 text-[10px] font-black text-neutral-400 uppercase tracking-widest hover:text-primary transition-colors">
-            ← Главная
-          </Link>
-          <div className="flex items-center justify-between flex-wrap gap-3">
-            <div>
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-primary/10 rounded-full text-primary text-[10px] font-black uppercase tracking-[0.2em] mb-2">
-                <Gamepad2 size={12}/> Диагностика контроллера
-              </div>
-              <h1 className="text-4xl font-black tracking-tighter text-secondary uppercase leading-none">
-                Тест геймпада
-              </h1>
-            </div>
-          </div>
-          <p className="text-sm text-neutral-500 font-medium max-w-3xl leading-relaxed">
-            Подключите геймпад через USB/Bluetooth и нажмите любую кнопку на нём. Поддерживаются китайские геймпады (установите Motionjoy, драйвер, выберите Xbox 360 Emulator и нажмите Enable).
+        <section className="rounded-3xl bg-surface-soft px-6 sm:px-10 lg:px-16 py-10 sm:py-14">
+          <p className="text-[14px] text-black/50">Бесплатная проверка</p>
+          <h1 className="mt-2 text-[34px] sm:text-[44px] lg:text-[56px] font-semibold leading-[1.05] tracking-[-0.03em] text-black">
+            Тест геймпада
+          </h1>
+          <p className="mt-5 max-w-[640px] text-[17px] sm:text-[19px] leading-[1.55] text-black/60">
+            Проверьте кнопки, стики, триггеры и дрейф прямо в браузере. Ничего не нужно устанавливать.
           </p>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-1">
-            <div className="rounded-xl border border-neutral-200 bg-neutral-50 px-3 py-2 text-xs font-semibold text-neutral-600">1. Подключите геймпад по USB или Bluetooth</div>
-            <div className="rounded-xl border border-neutral-200 bg-neutral-50 px-3 py-2 text-xs font-semibold text-neutral-600">2. Нажмите любую кнопку для активации в браузере</div>
-            <div className="rounded-xl border border-neutral-200 bg-neutral-50 px-3 py-2 text-xs font-semibold text-neutral-600">3. Проверьте стики, триггеры, кнопки и дрейф</div>
-          </div>
-        </div>
-
-        {/* Info */}
-        <div className="bg-blue-50/70 border border-blue-100/70 rounded-2xl px-5 py-3 flex items-start gap-3 mb-5">
-          <Info size={14} className="text-blue-500 shrink-0 mt-0.5"/>
-          <p className="text-xs text-blue-700 font-medium leading-relaxed">
-            После подключения нажмите <strong>любую кнопку</strong> на геймпаде — браузер активирует его только после первого нажатия. До 4 контроллеров одновременно.
+          <ol className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-3">
+            {["Подключите геймпад по USB или Bluetooth", "Нажмите на нём любую кнопку", "Подвигайте стики и понажимайте кнопки"].map((t, i) => (
+              <li key={t} className="rounded-2xl bg-white p-5 flex items-start gap-3">
+                <span className="w-7 h-7 shrink-0 rounded-full bg-black text-white text-[13px] font-semibold flex items-center justify-center">{i + 1}</span>
+                <span className="text-[15px] leading-[1.5] text-black">{t}</span>
+              </li>
+            ))}
+          </ol>
+          <p className="mt-5 text-[13px] text-black/45">
+            Браузер видит геймпад только после первого нажатия кнопки. Можно подключить до 4 контроллеров. Китайские геймпады: установите Motionjoy, выберите Xbox 360 Emulator и нажмите Enable.
           </p>
-        </div>
+        </section>
 
+        <div className="rounded-3xl bg-white px-0 sm:px-2 pt-6">
         {/* 4 Gamepad Tabs */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 mb-6">
           {slots.map(i => {
@@ -595,19 +582,19 @@ export function GamepadTestClient() {
             const isActive = i === activeTab;
             return (
               <button key={i} onClick={() => setActiveTab(i)}
-                className={`rounded-2xl px-3 py-3 text-left transition-all border ${
+                className={`rounded-2xl px-4 py-3 text-left transition-colors border ${
                   isActive
-                    ? "bg-secondary text-white border-secondary shadow-lg shadow-secondary/20"
+                    ? "bg-black text-white border-black"
                     : gp?.connected
-                    ? "bg-white border-green-200 text-secondary hover:border-green-400"
-                    : "bg-white border-neutral-100 text-neutral-400 hover:border-neutral-200"
+                    ? "bg-white border-green-300 text-black hover:border-green-500"
+                    : "bg-surface-soft border-transparent text-black/45 hover:border-black/15"
                 }`}>
                 <div className="flex items-center gap-2 mb-1.5">
                   {gp?.connected
                     ? <div className="w-1.5 h-1.5 rounded-full bg-green-400"/>
                     : <div className="w-1.5 h-1.5 rounded-full bg-neutral-300"/>
                   }
-                  <span className="text-xs font-black uppercase tracking-wider">Геймпад {i+1}</span>
+                  <span className="text-[14px] font-semibold">Геймпад {i+1}</span>
                 </div>
                 <p className={`text-[10px] font-medium truncate ${isActive ? "text-white/60" : "text-neutral-400"}`}>
                   {gp?.connected ? gp.id.split("(")[0].trim().slice(0,28) : "не определён"}
@@ -621,14 +608,14 @@ export function GamepadTestClient() {
         </div>
 
         {/* Content */}
-        <div className="bg-white border border-neutral-200 rounded-lg p-4 md:p-6 shadow-lg shadow-neutral-200/40">
+        <div className="rounded-3xl border border-black/10 p-4 md:p-6">
           <GamepadPanel gp={activeGP} onVibrate={() => handleVibrate(activeTab)} />
         </div>
 
-        <p className="text-[10px] text-neutral-300 font-bold text-center mt-8 uppercase tracking-widest">
-          Gamepad API · Данные не передаются на сервер
+        <p className="text-[13px] text-black/40 text-center mt-6">
+          Проверка работает в браузере — данные никуда не отправляются.
         </p>
-      </div>
+        </div>
     </div>
   );
 }

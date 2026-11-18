@@ -1,54 +1,30 @@
-import {
-  ShieldCheck, RotateCcw, Wrench, XCircle, CheckCircle2,
-  Package, Clock, MessageSquare, AlertTriangle
-} from "lucide-react";
+import { ShieldCheck, Package, RotateCcw } from "lucide-react";
 import { Metadata } from "next";
 import { getPageContent } from "@/lib/getPageContent";
-import { HomePageLink } from "@/components/HomePageLink";
+import { InfoPageShell, InfoHero, Section, FactGrid, Steps, HelpBand } from "@/components/info/InfoKit";
+import { Accordion } from "@/components/info/Accordion";
+import { CONTACTS } from "@/lib/constants/contacts";
 
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Гарантия и возврат",
-  description: "Гарантия 12 месяцев на консоли. Возврат в течение 14 дней. Бесплатный сервис при заводском браке.",
+  description: "Гарантия магазина 1 год на консоли. Возврат в течение 14 дней. Бесплатный ремонт при заводском браке.",
   alternates: { canonical: "/warranty" },
 };
 
-const returnSteps = [
-  {
-    num: "01",
-    title: "Свяжитесь с нами",
-    desc: "Напишите в MAX или на email. Укажите номер заказа и опишите ситуацию.",
-  },
-  {
-    num: "02",
-    title: "Пришлите фото / видео",
-    desc: "Сделайте фото дефекта или короткое видео. Это ускорит проверку и избавит от лишних вопросов.",
-  },
-  {
-    num: "03",
-    title: "Курьер заберёт товар",
-    desc: "Мы организуем бесплатный вызов курьера. Упакуйте товар в оригинальную коробку.",
-  },
-  {
-    num: "04",
-    title: "Ремонт или возврат",
-    desc: "Диагностика — 3–5 рабочих дней. Ремонт или замена — до 14 дней. Деньги возвращаем за 3–10 дней.",
-  },
-];
-
-const coveredItems = [
+const covered = [
   "Заводские дефекты экрана, кнопок и разъёмов",
-  "Неисправности батареи при нормальной эксплуатации",
-  "Проблемы с программным обеспечением консоли",
-  "Дефекты Joy-Con (дрейф стиков) — по отдельному соглашению",
+  "Неисправности батареи при обычном использовании",
+  "Проблемы с прошивкой и программным обеспечением",
+  "Дрейф стиков Joy-Con — по отдельной договорённости",
 ];
 
-const notCoveredItems = [
-  "Механические повреждения (падения, сколы, трещины)",
+const notCovered = [
+  "Падения, сколы, трещины и другие механические повреждения",
   "Попадание жидкости внутрь корпуса",
   "Самостоятельный ремонт или вскрытие корпуса",
-  "Блокировки аккаунта за нарушение правил платформы",
+  "Блокировки аккаунта за нарушение правил Nintendo",
 ];
 
 export default async function WarrantyPage() {
@@ -57,163 +33,91 @@ export default async function WarrantyPage() {
   const warrantyPeriod = d.warranty_period ?? "12 месяцев";
   const accessoriesPeriod = d.accessories_period ?? "6 месяцев";
   const returnPeriod = d.return_period ?? "14 дней";
-  const maxHref = d.telegram ?? "https://max.ru/u/f9LHodD0cOJQaSenuFWGazoHqG8RNEoO3xSyNKPTXj1s3tyqlHkFoF5UzUo";
-  const emailHref = `mailto:${d.email ?? "info@switcholed.ru"}`;
-
-  const guarantees = [
-    {
-      icon: ShieldCheck,
-      label: "Консоли",
-      period: warrantyPeriod,
-      desc: d.warranty_desc ?? "Официальная сервисная гарантия от нашего авторизованного центра. Заводской брак — бесплатный ремонт или замена.",
-      accent: true,
-    },
-    {
-      icon: Package,
-      label: "Аксессуары",
-      period: accessoriesPeriod,
-      desc: d.accessories_desc ?? "Контроллеры, зарядные станции, чехлы. При производственном дефекте — замена в течение 7 рабочих дней.",
-      accent: false,
-    },
-    {
-      icon: CheckCircle2,
-      label: "Игры (диски)",
-      period: "Проверка при получении",
-      desc: "Все диски проверяются перед отправкой. Если повреждение выявлено при получении — меняем сразу.",
-      accent: false,
-    },
-  ];
+  const email = d.email ?? CONTACTS.email;
 
   return (
-    <div className="bg-white min-h-screen pt-6 pb-24">
-      <div className="container max-w-5xl">
+    <InfoPageShell>
+      <InfoHero
+        eyebrow={d.title ?? "Гарантия и возврат"}
+        title="Год гарантии на каждую консоль"
+        lead={d.warranty_text ?? "Если с консолью что-то не так — починим или заменим бесплатно. Без лишних бумаг и долгих разбирательств."}
+      />
 
-        {/* Hero */}
-        <div className="mb-10 space-y-3">
-          <HomePageLink />
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-primary/10 rounded-full text-primary text-[10px] font-black uppercase tracking-[0.2em]">
-            <ShieldCheck size={13} />
-            {d.title ?? "Гарантия и возврат"}
-          </div>
-          <h1 className="text-4xl md:text-5xl font-black tracking-tighter text-secondary leading-[0.95] uppercase">
-            Ваша защита —<br />
-            <span className="text-primary">наш приоритет</span>
-          </h1>
-          <p className="text-base text-neutral-400 font-bold max-w-xl leading-relaxed">
-            {d.warranty_text ?? "Продаём только оригинальную технику и стоим за неё горой. Проблема с заказом? Решим без бюрократии."}
-          </p>
-        </div>
+      <Section>
+        <FactGrid
+          items={[
+            {
+              icon: ShieldCheck,
+              title: `Консоли — ${warrantyPeriod}`,
+              text: d.warranty_desc ?? "Гарантия магазина. Заводской брак — бесплатный ремонт или замена в нашем сервисе в Москве.",
+              dark: true,
+            },
+            {
+              icon: Package,
+              title: `Аксессуары — ${accessoriesPeriod}`,
+              text: d.accessories_desc ?? "Контроллеры, зарядки, чехлы. Если обнаружится брак — заменим за 7 рабочих дней.",
+            },
+            {
+              icon: RotateCcw,
+              title: `Возврат — ${returnPeriod}`,
+              text: "Можно вернуть товар, если он не использовался и сохранена упаковка.",
+            },
+          ]}
+        />
+      </Section>
 
-        {/* Guarantee cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-16">
-          {guarantees.map((g) => {
-            const Icon = g.icon;
-            return (
-              <div
-                key={g.label}
-                className={`rounded-lg p-8 flex flex-col gap-4 ${
-                  g.accent ? "bg-secondary" : "bg-neutral-50 border border-neutral-100"
-                }`}
-              >
-                <div className={`w-14 h-14 rounded-[18px] flex items-center justify-center ${g.accent ? "bg-white/15" : "bg-white shadow-sm"}`}>
-                  <Icon size={24} className={g.accent ? "text-white" : "text-primary"} />
-                </div>
-                <div>
-                  <h3 className={`text-xl font-black ${g.accent ? "text-white" : "text-secondary"}`}>{g.label}</h3>
-                  <p className={`text-3xl font-black mt-1 ${g.accent ? "text-primary" : "text-secondary"}`}>{g.period}</p>
-                </div>
-                <p className={`text-sm font-medium leading-relaxed ${g.accent ? "text-white/70" : "text-neutral-500"}`}>
-                  {g.desc}
+      <Section title="Что делать, если консоль сломалась">
+        <Steps
+          items={[
+            { title: "Напишите нам", text: `В чат на сайте, по телефону или на ${email}. Укажите номер заказа.` },
+            { title: "Покажите проблему", text: "Пришлите фото или короткое видео — так мы быстрее поймём, в чём дело." },
+            { title: "Передайте консоль", text: "Привезите в шоурум или отправьте нам — подскажем, как удобнее." },
+            { title: "Починим или заменим", text: "Диагностика — 3–5 рабочих дней, ремонт или замена — до 14 дней." },
+          ]}
+        />
+      </Section>
+
+      <Section title="Подробнее об условиях">
+        <Accordion
+          items={[
+            {
+              title: "Что покрывает гарантия",
+              content: (
+                <ul className="space-y-2">
+                  {covered.map((item) => <li key={item}>— {item}</li>)}
+                </ul>
+              ),
+            },
+            {
+              title: "Что не покрывает гарантия",
+              content: (
+                <ul className="space-y-2">
+                  {notCovered.map((item) => <li key={item}>— {item}</li>)}
+                </ul>
+              ),
+            },
+            {
+              title: "Как вернуть товар",
+              content: (
+                <p>
+                  {d.return_text ??
+                    `Товар надлежащего качества можно вернуть в течение ${returnPeriod}, если он не использовался и сохранены товарный вид и упаковка (Закон «О защите прав потребителей»). Консоли надлежащего качества после активации относятся к технически сложным товарам и возврату не подлежат — но мы всегда ищем решение вместе с вами.`}
                 </p>
-              </div>
-            );
-          })}
-        </div>
+              ),
+            },
+            {
+              title: "Слетит ли гарантия из-за прошивки?",
+              content: <p>Нет. Мы продаём уже прошитые консоли и сами отвечаем за них целый год — гарантия магазина действует с прошивкой.</p>,
+            },
+            {
+              title: "Какие документы нужны",
+              content: <p>Товарный чек, который мы выдаём при покупке, или номер заказа.</p>,
+            },
+          ]}
+        />
+      </Section>
 
-        {/* Covered / Not covered */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-16">
-          <div className="bg-green-50 border border-green-100 rounded-lg p-8">
-            <div className="flex items-center gap-3 mb-6">
-              <CheckCircle2 size={22} className="text-green-600" />
-              <h3 className="text-lg font-black text-secondary">Покрывается гарантией</h3>
-            </div>
-            <ul className="space-y-3">
-              {coveredItems.map((item) => (
-                <li key={item} className="flex items-start gap-3 text-sm text-neutral-600 font-medium">
-                  <span className="w-1.5 h-1.5 rounded-full bg-green-500 mt-2 shrink-0" />
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div className="bg-red-50 border border-red-100 rounded-lg p-8">
-            <div className="flex items-center gap-3 mb-6">
-              <XCircle size={22} className="text-red-500" />
-              <h3 className="text-lg font-black text-secondary">Не покрывается гарантией</h3>
-            </div>
-            <ul className="space-y-3">
-              {notCoveredItems.map((item) => (
-                <li key={item} className="flex items-start gap-3 text-sm text-neutral-600 font-medium">
-                  <span className="w-1.5 h-1.5 rounded-full bg-red-400 mt-2 shrink-0" />
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-
-        {/* Return process */}
-        <div className="mb-16">
-          <h2 className="text-3xl font-black text-secondary uppercase tracking-tighter mb-8">
-            Как оформить возврат
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {returnSteps.map((step) => (
-              <div key={step.num} className="bg-neutral-50 rounded-lg p-7">
-                <p className="text-5xl font-black text-neutral-100 mb-4 leading-none">{step.num}</p>
-                <h3 className="font-black text-secondary mb-2">{step.title}</h3>
-                <p className="text-sm text-neutral-500 font-medium leading-relaxed">{step.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Return terms note */}
-        <div className="bg-amber-50 border border-amber-100 rounded-lg p-8 flex items-start gap-6 mb-16">
-          <div className="w-12 h-12 rounded-2xl bg-amber-100 flex items-center justify-center shrink-0">
-            <AlertTriangle size={20} className="text-amber-600" />
-          </div>
-          <div>
-            <h3 className="font-black text-secondary text-lg mb-2">Условия возврата по закону</h3>
-            <p className="text-neutral-600 font-medium leading-relaxed text-sm">
-              {d.return_text ?? `Товар надлежащего качества принимается к возврату в течение ${returnPeriod} при сохранении товарного вида и оригинальной упаковки (ФЗ «О защите прав потребителей»). Технически сложные товары (консоли) надлежащего качества после активации возврату не подлежат — но мы всегда идём навстречу и найдём решение.`}
-            </p>
-          </div>
-        </div>
-
-        {/* CTA */}
-        <div className="bg-secondary rounded-lg p-10 flex flex-col md:flex-row items-center justify-between gap-8">
-          <div className="space-y-2">
-            <h3 className="text-2xl font-black text-white">Есть вопрос по гарантии?</h3>
-            <p className="text-neutral-400 font-bold">Ответим в MAX за 5 минут, ежедневно 24/7.</p>
-          </div>
-          <div className="flex gap-4 shrink-0">
-            <a
-              href={maxHref}
-              className="px-8 py-4 bg-primary text-white rounded-full font-black uppercase tracking-widest text-sm hover:scale-105 active:scale-95 transition-all shadow-xl shadow-primary/20"
-            >
-              MAX
-            </a>
-            <a
-              href={emailHref}
-              className="px-8 py-4 bg-white/10 text-white rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-white/20 transition-all border border-white/10"
-            >
-              Email
-            </a>
-          </div>
-        </div>
-
-      </div>
-    </div>
+      <HelpBand title="Есть вопрос по гарантии?" text="Опишите проблему в чате или позвоните — подскажем, что делать дальше." />
+    </InfoPageShell>
   );
 }

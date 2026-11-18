@@ -97,7 +97,7 @@ const organizationSchema = {
         "@type": "ContactPoint",
         "telephone": CONTACTS.phoneDisplay,
         "contactType": "customer service",
-        "hoursAvailable": "Mo-Su 10:00-21:00",
+        "hoursAvailable": "Mo-Su 09:00-20:00",
         "areaServed": "RU",
         "availableLanguage": "Russian",
       },

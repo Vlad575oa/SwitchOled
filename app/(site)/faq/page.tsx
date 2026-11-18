@@ -1,77 +1,63 @@
 import prisma from "@/lib/prisma";
 import FAQClient from "@/components/FAQClient";
 import { Metadata } from "next";
-import { HomePageLink } from "@/components/HomePageLink";
+import { InfoPageShell, InfoHero, Section, HelpBand } from "@/components/info/InfoKit";
 
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Вопросы и ответы (FAQ) | Поддержка",
-  description: "Всё о доставке, гарантии и оплате игровых консолей. Ответы на частые вопросы.",
+  description: "Ответы на частые вопросы о прошитых Nintendo Switch: игры, прошивка, оплата, доставка и гарантия.",
   alternates: { canonical: "/faq" },
 };
 
+// Shown until FAQs are added in the admin panel.
+const DEFAULT_FAQS = [
+  { category: "Прошивка", question: "Что значит «прошитая» консоль?", answer: "На консоль установлена дополнительная система. Она позволяет бесплатно устанавливать игры, ставить русификаторы и запускать эмуляторы классических приставок." },
+  { category: "Прошивка", question: "Могут ли забанить консоль?", answer: "Прошивка работает в «безопасном режиме»: при риске бана она выдаёт ошибку и не даёт выйти в сеть. Это сводит риск к минимуму." },
+  { category: "Прошивка", question: "Можно ли играть онлайн?", answer: "Да, через вторую систему EmuNand. Понадобится зарубежный аккаунт Nintendo и активная подписка." },
+  { category: "Прошивка", question: "Нужно ли обновлять консоль?", answer: "Автообновления лучше отключить в настройках — иначе прошивка может перестать работать. Мы отключаем их перед выдачей." },
+  { category: "Прошивка", question: "Прошиваете консоли покупателей?", answer: "Да: Switch Lite, Rev 1 и Rev 2. Стоимость — 4500 ₽, занимает около 30 минут." },
+  { category: "Игры и память", question: "Сколько игр уже установлено?", answer: "Зависит от карты памяти: 64 ГБ — около 15 игр, 128 ГБ — около 30, 256 ГБ — около 50, 512 ГБ — около 100." },
+  { category: "Игры и память", question: "Можно установить игры, которые я хочу?", answer: "Да, поставим любые игры по вашему списку — для Switch их больше 10 000." },
+  { category: "Игры и память", question: "Как добавить игры самому?", answer: "Через приложения NotUltraNX или Tinfoil прямо на консоли, либо с компьютера по проводу. Покажем, как это делать." },
+  { category: "Игры и память", question: "Какую карту памяти выбрать?", answer: "Для игры без интернета хватит 256 ГБ. Если нужна вторая система для онлайна — берите 512 ГБ. Поддерживаются карты до 1 ТБ." },
+  { category: "Оплата и доставка", question: "Как оплатить заказ?", answer: "Только наличными: курьеру при получении или в шоуруме при самовывозе. Онлайн-оплату и карты не принимаем." },
+  { category: "Оплата и доставка", question: "Как быстро привезёте?", answer: "По Москве — в день заказа. В другие города отправляем СДЭК, Яндекс Доставкой, Почтой России или через Авито." },
+  { category: "Оплата и доставка", question: "Как проходит заказ?", answer: "Вы оформляете заказ, менеджер перезванивает и уточняет детали, затем мы быстро отправляем консоль." },
+  { category: "Гарантия и обмен", question: "Какая гарантия?", answer: "1 год от нашего магазина на консоль и выполненные работы." },
+  { category: "Гарантия и обмен", question: "Можно вернуть товар?", answer: "В течение 14 дней, если товар не использовался и упаковка цела." },
+  { category: "Гарантия и обмен", question: "Принимаете старые консоли?", answer: "Да, по trade-in — зачтём стоимость старой консоли в счёт новой." },
+].map((f, i) => ({ id: -(i + 1), ...f }));
+
 export default async function FAQPage() {
-  const faqs = await prisma.fAQ.findMany({
-    orderBy: [{ category: "asc" }, { order: "asc" }],
-  });
+  const dbFaqs = await prisma.fAQ
+    .findMany({ orderBy: [{ category: "asc" }, { order: "asc" }] })
+    .catch(() => []);
+  const faqs = dbFaqs.length > 0 ? dbFaqs : DEFAULT_FAQS;
 
   const faqSchema = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    "mainEntity": faqs.map((faq) => ({
+    mainEntity: faqs.map((faq) => ({
       "@type": "Question",
-      "name": faq.question,
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": faq.answer,
-      },
+      name: faq.question,
+      acceptedAnswer: { "@type": "Answer", text: faq.answer },
     })),
   };
 
   return (
-    <div className="bg-white min-h-screen pt-6 pb-24">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+    <InfoPageShell>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+      <InfoHero
+        eyebrow="Вопросы и ответы"
+        title="Отвечаем на частые вопросы"
+        lead="Про прошивку, игры, оплату и гарантию — коротко и по делу. Не нашли ответ? Напишите нам."
       />
-      <div className="container max-w-[1400px] px-4 lg:px-12">
-        <div className="mb-10">
-          <HomePageLink />
-        </div>
-
-        <h1 className="text-4xl md:text-5xl font-black text-secondary tracking-tight mb-10">
-          Вопросы и ответы
-        </h1>
-
-
-        {/* Categories + Accordion (client) */}
+      <Section>
         <FAQClient faqs={faqs} />
-
-        {/* Support CTA */}
-        <div className="mt-24 md:mt-40 p-12 md:p-24 bg-secondary rounded-[64px] relative overflow-hidden text-center md:text-left shadow-2xl">
-          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/20 rounded-full blur-[120px] translate-x-1/3 -translate-y-1/3" />
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative z-10">
-            <div className="space-y-6">
-              <h3 className="text-4xl md:text-6xl font-black text-white leading-[1.05] uppercase italic">
-                Всё ещё нужна помощь? <br /><span className="text-primary">Мы на связи 24/7.</span>
-              </h3>
-              <p className="text-neutral-400 font-bold text-lg md:text-2xl max-w-xl">
-                Наши специалисты ответят в течение 5 минут в MAX или WhatsApp.
-              </p>
-            </div>
-            <div className="flex flex-wrap justify-center lg:justify-end gap-6">
-              <button className="px-12 py-6 bg-primary text-white rounded-full font-black uppercase tracking-widest text-sm md:text-base hover:scale-105 active:scale-95 transition-all shadow-xl shadow-primary/30">
-                Открыть Чат
-              </button>
-              <button className="px-12 py-6 bg-white/10 text-white rounded-2xl font-black uppercase tracking-widest text-sm md:text-base hover:bg-white/20 transition-all border border-white/10">
-                Позвонить
-              </button>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </div>
+      </Section>
+      <HelpBand />
+    </InfoPageShell>
   );
 }
