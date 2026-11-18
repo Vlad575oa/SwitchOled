@@ -3,11 +3,11 @@ services:
     image: postgres:16-alpine
     restart: always
     environment:
-      POSTGRES_USER: nintendo
-      POSTGRES_PASSWORD: nintendo_pass
-      POSTGRES_DB: nintendo_db
+      POSTGRES_USER: switcholed
+      POSTGRES_PASSWORD: switcholed_pass
+      POSTGRES_DB: switcholed_db
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - switcholed_postgres_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
 
@@ -17,11 +17,11 @@ services:
     ports:
       - "3000:3000"
     environment:
-      DATABASE_URL: postgresql://nintendo:nintendo_pass@db:5432/nintendo_db
+      DATABASE_URL: postgresql://switcholed:switcholed_pass@db:5432/switcholed_db
     depends_on:
       - db
     command: >
       sh -c "npx prisma migrate deploy && node server.js"
 
 volumes:
-  postgres_data:
+  switcholed_postgres_data:
