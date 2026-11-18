@@ -56,9 +56,9 @@ export const metadata: Metadata = {
     images: [`${baseUrl}/og-default.jpg`],
   },
   icons: {
-    icon: "/favicon.svg?v=20260505",
-    shortcut: "/favicon.svg?v=20260505",
-    apple: "/favicon.svg?v=20260505",
+    icon: "/favicon.svg?v=20261118",
+    shortcut: "/favicon.svg?v=20261118",
+    apple: "/favicon.svg?v=20261118",
   },
   robots: {
     index: true,
@@ -89,7 +89,7 @@ const organizationSchema = {
       "url": baseUrl,
       "logo": {
         "@type": "ImageObject",
-        "url": `${baseUrl}/favicon.svg?v=20260505`,
+        "url": `${baseUrl}/favicon.svg?v=20261118`,
         "width": 512,
         "height": 512,
       },
@@ -137,7 +137,7 @@ const organizationSchema = {
       "url": baseUrl,
       "telephone": CONTACTS.phoneDisplay,
       "priceRange": "₽₽₽",
-      "image": `${baseUrl}/favicon.svg?v=20260505`,
+      "image": `${baseUrl}/favicon.svg?v=20261118`,
       "address": {
         "@type": "PostalAddress",
         "streetAddress": CONTACTS.address,
@@ -170,8 +170,8 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="//mc.yandex.ru" />
         <link rel="preconnect" href="https://s3.twcstorage.ru" />
         <link rel="preconnect" href="https://mc.yandex.ru" crossOrigin="anonymous" />
-        <link rel="icon" href="/favicon.svg?v=20260505" type="image/svg+xml" sizes="any" />
-        <link rel="shortcut icon" href="/favicon.svg?v=20260505" type="image/svg+xml" />
+        <link rel="icon" href="/favicon.svg?v=20261118" type="image/svg+xml" sizes="any" />
+        <link rel="shortcut icon" href="/favicon.svg?v=20261118" type="image/svg+xml" />
         <link rel="manifest" href="/manifest.json" />
         <link rel="apple-touch-icon" href="/apple-icon.png" />
         <meta name="apple-mobile-web-app-capable" content="yes" />

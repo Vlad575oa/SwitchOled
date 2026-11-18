@@ -163,15 +163,15 @@ export function ChatWidget() {
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-xl overflow-hidden shadow-lg shadow-primary/30 flex-shrink-0">
                 <Image
-                  src="/kira_avatar.png"
-                  alt="Ира AI"
+                  src="/maria_avatar.png"
+                  alt="Мария AI"
                   width={36}
                   height={36}
                   className="object-cover scale-125 w-full h-full"
                 />
               </div>
               <div>
-                <p className="text-white font-black text-sm">Ира AI · ИИ-консультант</p>
+                <p className="text-white font-black text-sm">Мария AI · ИИ-консультант</p>
                 <p className="text-neutral-400 text-[10px] font-bold">Switch OLED · Всегда онлайн</p>
               </div>
             </div>
@@ -199,7 +199,7 @@ export function ChatWidget() {
             {messages.length === 0 && (
               <div className="flex flex-col items-center justify-center h-full gap-3 text-center pb-4">
                 <div>
-                  <p className="text-sm font-black text-[#111827]">Привет! Я Ира AI — ваш проводник в мире Nintendo. 🎮✨</p>
+                  <p className="text-sm font-black text-[#111827]">Привет! Я Мария AI — ваш проводник в мире Nintendo. 🎮✨</p>
                   <p className="text-xs text-neutral-400 font-bold mt-1 leading-relaxed">
                     Помогу выбрать идеальную консоль, посоветую лучшие игры для детей и взрослых. Подберу комплект, который подарит максимум удовольствия от игры.
                   </p>
@@ -282,7 +282,7 @@ export function ChatWidget() {
           <span className="max-w-[92px] text-[11px] leading-[1.05] text-center font-black text-white bg-black/50 backdrop-blur-sm px-2.5 py-1.5 rounded-2xl tracking-wide shadow">
             <span className="inline-flex items-center justify-center gap-1">
               <Sparkles size={10} className="shrink-0 text-yellow-400 animate-sparkle" />
-              <span>Ира AI</span>
+              <span>Мария AI</span>
             </span>
           </span>
         )}
@@ -299,8 +299,8 @@ export function ChatWidget() {
             <X size={18} />
           ) : (
             <Image
-              src="/kira_avatar.png"
-              alt="Ира AI"
+              src="/maria_avatar.png"
+              alt="Мария AI"
               width={48}
               height={48}
               className="w-full h-full object-cover"
