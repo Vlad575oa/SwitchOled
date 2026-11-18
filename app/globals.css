@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-  --bg-base: #f3f3f3;
+  --bg-base: #ffffff;
   --bg-surface: #FFFFFF;
   --bg-elevated: #EDEEF1;
   --bg-inset: #EDEEF1;

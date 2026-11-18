@@ -274,7 +274,7 @@ export default function ComparePage() {
                                 trackEcommerceAddToCart({ id: p.id, name: p.name, price: p.price }, "catalog_grid");
                                 toast.success("Добавлено в корзину", { description: p.name, duration: 2000 });
                               }}
-                              className="flex-1 h-7 bg-orange-500 text-white rounded-xl text-[8px] font-black hover:bg-orange-600 transition-all flex items-center justify-center gap-0.5"
+                              className="flex-1 h-7 bg-primary text-white rounded-full text-[8px] font-bold hover:bg-primary-pressed transition-all flex items-center justify-center gap-0.5"
                             >
                               <ShoppingCart size={10} />
                               В корзину
@@ -373,7 +373,7 @@ export default function ComparePage() {
                                 trackEcommerceAddToCart({ id: p.id, name: p.name, price: p.price }, "catalog_grid");
                                 toast.success("Добавлено в корзину", { description: p.name, duration: 2000 });
                               }}
-                              className="flex-1 h-9 bg-orange-500 text-white rounded-xl text-[10px] font-black hover:bg-orange-600 transition-all flex items-center justify-center gap-1.5"
+                              className="flex-1 h-9 bg-primary text-white rounded-full text-[10px] font-bold hover:bg-primary-pressed transition-all flex items-center justify-center gap-1.5"
                             >
                               <ShoppingCart size={14} />
                               В корзину

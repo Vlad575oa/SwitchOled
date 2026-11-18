@@ -50,7 +50,7 @@ export function ProductCardActions({ product }: ProductCardActionsProps) {
               ? "bg-primary text-white border-primary"
               : hydratedCompareFull
               ? "bg-neutral-100 text-neutral-300 border-transparent cursor-not-allowed"
-              : "bg-surface-card text-neutral-500 hover:text-primary hover:border-primary/30 border-transparent"
+              : "bg-white text-neutral-500 hover:text-primary hover:border-primary/30 border-transparent"
           )}
         >
           <Scale size={16} />
@@ -63,7 +63,7 @@ export function ProductCardActions({ product }: ProductCardActionsProps) {
             "w-10 h-10 rounded-full flex items-center justify-center border transition-colors active:scale-90",
             hydratedInWishlist
               ? "bg-ink text-white border-ink"
-              : "bg-surface-card text-neutral-500 hover:text-ink hover:border-neutral-300 border-transparent"
+              : "bg-white text-neutral-500 hover:text-ink hover:border-neutral-300 border-transparent"
           )}
         >
           <Heart size={16} />
@@ -91,7 +91,7 @@ export function ProductCardActions({ product }: ProductCardActionsProps) {
             }).catch(() => {});
             void notifyAddedToCart();
           }}
-          className="flex-1 h-10 bg-commerce text-white rounded-full flex items-center justify-center hover:bg-commerce-pressed transition-colors active:scale-95"
+          className="flex-1 h-10 bg-primary text-white rounded-full flex items-center justify-center hover:bg-primary-pressed transition-colors active:scale-95"
         >
           <ShoppingCart size={18} strokeWidth={2.5} />
         </button>

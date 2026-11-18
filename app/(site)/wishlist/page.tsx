@@ -115,7 +115,7 @@ export default function WishlistPage() {
                 {/* Badges */}
                 <div className="relative p-4 pb-0">
                   <div className="absolute top-4 left-4 z-10 flex gap-1 text-[8px] font-black uppercase">
-                    {p.isNew && <span className="bg-orange-500 text-white px-2 py-0.5 rounded-full">New</span>}
+                    {p.isNew && <span className="bg-primary text-white px-2 py-0.5 rounded-full">New</span>}
                     {p.isSale && <span className="bg-red-600 text-white px-2 py-0.5 rounded-full">Sale</span>}
                   </div>
 
@@ -172,7 +172,7 @@ export default function WishlistPage() {
                   <div className="flex gap-2 mt-auto">
                     <button
                       onClick={() => { addToCart({ id: p.id, name: p.name, slug: p.slug, price: p.price, image: p.images[0] || "/images/placeholder.webp", quantity: 1 }); trackEcommerceAddToCart({ id: p.id, name: p.name, price: p.price }, "catalog_grid"); toast.success("Добавлено в корзину", { description: p.name, duration: 2000 }); }}
-                      className="flex-1 h-10 bg-orange-500 text-white rounded-xl text-[11px] font-black hover:bg-orange-600 transition-all flex items-center justify-center gap-1.5"
+                      className="flex-1 h-10 bg-primary text-white rounded-full text-[11px] font-bold hover:bg-primary-pressed transition-all flex items-center justify-center gap-1.5"
                     >
                       <ShoppingCart size={14} />
                       В корзину

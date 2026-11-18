@@ -182,7 +182,7 @@ export function PurchaseBlock({ product, variants = [], categorySlug }: Purchase
           <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
             <AddToCartButton
               product={selectedVariant}
-              className="w-full h-14 rounded-full px-2.5 sm:px-3 text-sm font-bold bg-commerce hover:bg-commerce-pressed border-none whitespace-nowrap"
+              className="w-full h-14 rounded-full px-2.5 sm:px-3 text-sm font-bold bg-primary hover:bg-primary-pressed border-none whitespace-nowrap"
             />
             <QuickOrderModal
               product={selectedVariant}

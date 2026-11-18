@@ -25,20 +25,20 @@ export const TopBar = ({ workingHours = "09:00 — 21:00" }: { workingHours?: st
     .replace(/\s*—\s*/g, "-");
 
   return (
-    <div className="sticky top-0 left-0 right-0 z-[60] bg-[var(--bg-surface)] border-b border-[var(--bg-elevated)] transition-colors">
+    <div className="sticky top-0 left-0 right-0 z-[60] bg-black text-white border-b border-white/10 transition-colors">
       <div className="w-full max-w-[1920px] mx-auto px-4 lg:pl-6 lg:pr-4 2xl:pl-4 2xl:pr-4">
         {/* Mobile row 1: truck + phone + rating + messengers */}
         <div className="sm:hidden relative flex items-center justify-between gap-2 py-2 min-h-[48px]">
           <div className="flex items-center gap-1.5 shrink-0">
             <Link
               href="/reviews"
-              className="flex items-center gap-1 px-2 py-1 rounded-full border border-black/20 text-black text-[10px] font-black whitespace-nowrap"
+              className="flex items-center gap-1 px-2 py-1 rounded-full border border-white/25 text-white text-[10px] font-black whitespace-nowrap"
             >
               <span className="animate-sparkle">⭐</span> 5.0
             </Link>
             <Link
               href="/delivery"
-              className="flex items-center justify-center w-6 h-6 rounded-full border border-emerald-300 bg-emerald-50 text-emerald-700 shrink-0"
+              className="flex items-center justify-center w-6 h-6 rounded-full border border-white/25 text-white shrink-0"
               aria-label="Быстрая доставка"
             >
               <Truck size={11} className="shrink-0" />
@@ -47,7 +47,7 @@ export const TopBar = ({ workingHours = "09:00 — 21:00" }: { workingHours?: st
 
           <a
             href={`tel:${CONTACTS.phoneHref}`}
-            className="absolute left-1/2 -translate-x-1/2 inline-flex items-center px-2 py-1.5 rounded-full border border-primary/25 text-black hover:text-neutral-700 hover:border-primary/40 transition-colors"
+            className="absolute left-1/2 -translate-x-1/2 inline-flex items-center px-2 py-1.5 rounded-full border border-white/25 text-white hover:text-white/80 hover:border-white/50 transition-colors"
           >
             <span className="text-[15px] font-black tracking-tight leading-none whitespace-nowrap">{CONTACTS.phoneDisplay}</span>
           </a>
@@ -81,8 +81,8 @@ export const TopBar = ({ workingHours = "09:00 — 21:00" }: { workingHours?: st
         </div>
 
         {/* Mobile row 2: marquee */}
-        <div className="sm:hidden overflow-hidden border-t border-[var(--bg-elevated)] py-1.5">
-          <div className="flex animate-marquee-fast whitespace-nowrap gap-6 text-[10px] font-bold text-black/70 tracking-tight will-change-transform">
+        <div className="sm:hidden overflow-hidden border-t border-white/10 py-1.5">
+          <div className="flex animate-marquee-fast whitespace-nowrap gap-6 text-[10px] font-bold text-white/70 tracking-tight will-change-transform">
             {[
               "📍 Москва шоурум",
               "🕒 09:00–20:00",
@@ -122,17 +122,17 @@ export const TopBar = ({ workingHours = "09:00 — 21:00" }: { workingHours?: st
           </div>
         </div>
 
-        <div className="hidden sm:grid grid-cols-[auto_1fr_auto] items-center gap-3 h-10 border-b border-[var(--bg-elevated)]">
+        <div className="hidden sm:grid grid-cols-[auto_1fr_auto] items-center gap-3 h-10 border-b border-white/10">
           <Link 
             href="/about" 
-            className="group flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-900 border border-emerald-300 hover:border-emerald-400 hover:bg-emerald-100 transition-all active:scale-95 justify-self-start"
+            className="group flex items-center gap-1.5 px-2.5 py-1 rounded-full text-white border border-white/25 hover:border-white/50 hover:bg-white/10 transition-all active:scale-95 justify-self-start"
           >
-            <Award size={13} className="shrink-0 text-emerald-600 group-hover:rotate-12 transition-transform" />
+            <Award size={13} className="shrink-0 text-white/80 group-hover:rotate-12 transition-transform" />
             <span className="text-[12px] xl:text-[13px] font-bold uppercase tracking-tight whitespace-nowrap">Почему нам доверяют</span>
           </Link>
 
           <div className="overflow-hidden justify-self-center w-full min-w-0">
-            <div className="flex animate-marquee whitespace-nowrap gap-8 text-[12px] xl:text-[13px] font-bold text-black/80 tracking-tight">
+            <div className="flex animate-marquee whitespace-nowrap gap-8 text-[12px] xl:text-[13px] font-bold text-white/80 tracking-tight">
               {[
                 "📍 Москва шоурум",
                 "🕒 09:00–20:00",
@@ -187,20 +187,20 @@ export const TopBar = ({ workingHours = "09:00 — 21:00" }: { workingHours?: st
 
         <div className="hidden lg:flex items-center justify-between gap-2 sm:gap-4 h-10 relative">
           {/* Left: Showroom + Reviews */}
-          <div className="flex items-center gap-2 sm:border-r sm:border-[var(--bg-elevated)] sm:pr-6 shrink-0">
+          <div className="flex items-center gap-2 sm:border-r sm:border-white/10 sm:pr-6 shrink-0">
             <a
               href={CONTACTS.yandexMapsUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-black border border-black/20 hover:border-black/35 hover:bg-black/[0.03] transition-colors"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-white border border-white/25 hover:border-white/50 hover:bg-white/10 transition-colors"
               title={CONTACTS.address}
             >
-              <MapPin size={13} className="text-secondary shrink-0" />
+              <MapPin size={13} className="text-white shrink-0" />
               <span className="text-[12px] xl:text-[13px] font-bold uppercase tracking-tight whitespace-nowrap">Москва шоурум</span>
             </a>
             <Link
               href="/reviews"
-              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-black border border-black/20 hover:border-black/35 hover:bg-black/[0.03] transition-colors"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-white border border-white/25 hover:border-white/50 hover:bg-white/10 transition-colors"
             >
               <span className="animate-sparkle">⭐</span>
               <span className="text-[12px] xl:text-[13px] font-bold uppercase tracking-tight whitespace-nowrap">5.0 Отзывы</span>
@@ -210,31 +210,31 @@ export const TopBar = ({ workingHours = "09:00 — 21:00" }: { workingHours?: st
           {/* Center: Phone CTA */}
           <a
             href={`tel:${CONTACTS.phoneHref}`}
-            className="absolute left-1/2 top-1/2 inline-flex -translate-x-1/2 -translate-y-1/2 items-center gap-3 whitespace-nowrap text-black hover:text-neutral-700 transition-colors"
+            className="absolute left-1/2 top-1/2 inline-flex -translate-x-1/2 -translate-y-1/2 items-center gap-3 whitespace-nowrap text-white hover:text-white/80 transition-colors"
           >
-            <span className="text-[12px] xl:text-[13px] font-normal uppercase tracking-tight text-black/70">Подобрать консоль</span>
-            <span className="text-[18px] xl:text-[20px] font-black tracking-tight leading-none text-black">{CONTACTS.phoneDisplay}</span>
+            <span className="text-[12px] xl:text-[13px] font-normal uppercase tracking-tight text-white/70">Подобрать консоль</span>
+            <span className="text-[18px] xl:text-[20px] font-black tracking-tight leading-none text-white">{CONTACTS.phoneDisplay}</span>
           </a>
 
           {/* Right: Action Buttons */}
           <div className="hidden lg:flex items-center gap-3 shrink-0">
             <Link
               href="/contacts#support-chat"
-              className="flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/5 px-2.5 py-1 text-primary transition-all hover:border-primary/50 hover:bg-primary/10 active:scale-95"
+              className="flex items-center gap-1.5 rounded-full border border-primary bg-primary px-2.5 py-1 text-white transition-all hover:bg-primary-pressed active:scale-95"
             >
               <MessageCircle size={13} className="shrink-0" />
               <span className="text-[12px] xl:text-[13px] font-bold uppercase tracking-tight">Чат поддержки</span>
             </Link>
             <Link
               href="/delivery"
-              className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-900 border border-emerald-300 hover:bg-emerald-100 hover:border-emerald-400 transition-all active:scale-95"
+              className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-white border border-white/25 hover:bg-white/10 hover:border-white/50 transition-all active:scale-95"
             >
-              <Truck size={13} className="shrink-0 text-emerald-600" />
-              <span className="text-[12px] xl:text-[13px] font-bold uppercase tracking-tight text-emerald-800">Доставка</span>
+              <Truck size={13} className="shrink-0 text-white/80" />
+              <span className="text-[12px] xl:text-[13px] font-bold uppercase tracking-tight">Доставка</span>
             </Link>
             <Link
               href="/gamepad-test"
-              className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-black border border-black/30 hover:border-black/45 hover:bg-black/[0.03] transition-all active:scale-95"
+              className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-white border border-white/25 hover:border-white/50 hover:bg-white/10 transition-all active:scale-95"
             >
               <span className="text-[12px] xl:text-[13px] font-bold uppercase tracking-tight">Тест геймпада</span>
             </Link>

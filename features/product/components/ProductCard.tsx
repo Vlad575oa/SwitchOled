@@ -51,7 +51,7 @@ export function ProductCard({ product, eagerImage = false }: ProductCardProps) {
   const paymentMethodsPrice = product.priceOld ?? Math.round(product.price * 1.13);
 
   return (
-    <article className="group bg-white rounded-lg p-2 sm:p-2.5 transition-[border-color,box-shadow] duration-200 border border-transparent hover:border-neutral-200 active:shadow-[0_4px_12px_rgba(0,0,0,0.16)] flex flex-col relative overflow-hidden h-full select-none">
+    <article className="group bg-surface-card rounded-lg p-2 sm:p-2.5 transition-[border-color,box-shadow] duration-200 border border-transparent hover:border-neutral-200 active:shadow-[0_4px_12px_rgba(0,0,0,0.16)] flex flex-col relative overflow-hidden h-full select-none">
       <div className="absolute top-4 left-4 z-10 flex gap-1 font-medium text-[10px] uppercase tracking-normal pointer-events-none">
         {product.isNew && <span className="bg-primary text-white px-2.5 py-0.5 rounded-full">New</span>}
         {product.isSale && <span className="bg-commerce text-white px-2.5 py-0.5 rounded-full">Sale</span>}

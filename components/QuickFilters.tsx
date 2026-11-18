@@ -68,10 +68,10 @@ export const QuickFilters = ({ enabledSlugs }: QuickFiltersProps) => {
   const fadeCls = "absolute top-0 bottom-0 z-10 w-16 pointer-events-none flex items-center";
 
   return (
-    <div className="relative z-40 bg-[var(--bg-base)] border-b border-[var(--border)] lg:sticky lg:top-[156px]">
+    <div className="relative z-40 bg-white border-b border-surface-soft lg:sticky lg:top-[156px]">
       <div className="relative">
         {canScrollLeft && (
-          <div className={cn(fadeCls, "left-0 bg-gradient-to-r from-[var(--bg-base)] to-transparent")}>
+          <div className={cn(fadeCls, "left-0 bg-gradient-to-r from-white to-transparent")}>
             <button onClick={() => scroll("left")} className="pointer-events-auto ml-2 w-7 h-7 rounded-full bg-white border border-neutral-200 shadow-sm flex items-center justify-center hover:shadow-md transition-all">
               <ChevronLeft size={13} className="text-neutral-500" />
             </button>
@@ -84,7 +84,7 @@ export const QuickFilters = ({ enabledSlugs }: QuickFiltersProps) => {
           onMouseLeave={() => setIsDragging(false)}
           onMouseUp={() => setIsDragging(false)}
           onMouseMove={onMouseMove}
-          className={cn("w-full max-w-[1920px] mx-auto flex items-center justify-center gap-1 overflow-x-auto no-scrollbar py-2 px-4 lg:px-6 2xl:px-4 scroll-smooth", isDragging ? "cursor-grabbing select-none" : "cursor-default")}
+          className={cn("w-full max-w-[1920px] mx-auto flex items-center justify-center gap-2 overflow-x-auto no-scrollbar py-3 px-4 lg:px-6 2xl:px-4 scroll-smooth", isDragging ? "cursor-grabbing select-none" : "cursor-default")}
         >
           {links.map((item) => {
             const active = isLinkActive(item);
@@ -93,24 +93,21 @@ export const QuickFilters = ({ enabledSlugs }: QuickFiltersProps) => {
                 key={item.slug}
                 href={item.href}
                 className={cn(
-                  "relative text-[15px] xl:text-[16px] whitespace-nowrap px-3.5 py-2.5 rounded-lg transition-all shrink-0 active:scale-95",
+                  "relative text-[14px] xl:text-[15px] whitespace-nowrap px-4 py-2 rounded-full border transition-all shrink-0 active:scale-95",
                   active
-                    ? "font-black text-[var(--text-primary)]"
-                    : "font-bold text-neutral-400 hover:text-[var(--text-secondary)] hover:bg-neutral-100"
+                    ? "font-semibold bg-black border-black text-white"
+                    : "font-medium border-[#cccccc] text-black hover:border-black"
                 )}
               >
                 <span className="sm:hidden">{getLabel(item).mobile}</span>
                 <span className="hidden sm:inline">{getLabel(item).desktop}</span>
-                {active && (
-                  <span className="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-primary" />
-                )}
               </Link>
             );
           })}
         </div>
 
         {canScrollRight && (
-          <div className={cn(fadeCls, "right-0 bg-gradient-to-l from-[var(--bg-base)] to-transparent justify-end")}>
+          <div className={cn(fadeCls, "right-0 bg-gradient-to-l from-white to-transparent justify-end")}>
             <button onClick={() => scroll("right")} className="pointer-events-auto mr-2 w-7 h-7 rounded-full bg-white border border-neutral-200 shadow-sm flex items-center justify-center hover:shadow-md transition-all">
               <ChevronRight size={13} className="text-neutral-500" />
             </button>

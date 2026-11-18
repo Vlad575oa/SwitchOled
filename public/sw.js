@@ -1,4 +1,4 @@
-const CACHE_NAME = 'gameshop24-v1';
+const CACHE_NAME = 'switcholed-v2';
 const STATIC_ASSETS = [
   '/',
   '/favicon.svg',

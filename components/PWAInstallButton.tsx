@@ -36,9 +36,14 @@ export function PWAInstallButton() {
     setIsMobile(mobile);
     setInstalled(isInStandaloneMode());
 
-    // Register service worker
+    // Register service worker (prod only: in dev chunk URLs are unhashed and cache-first serves stale code)
     if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("/sw.js").catch(() => {});
+      if (process.env.NODE_ENV === "production") {
+        navigator.serviceWorker.register("/sw.js").catch(() => {});
+      } else {
+        navigator.serviceWorker.getRegistrations().then((regs) => regs.forEach((r) => r.unregister())).catch(() => {});
+        if ("caches" in window) caches.keys().then((keys) => keys.forEach((k) => caches.delete(k))).catch(() => {});
+      }
     }
 
     const handler = (e: Event) => {
