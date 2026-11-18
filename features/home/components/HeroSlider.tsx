@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 const SLIDES = [
   {
     image: "/images/blog/nintendo-switch-chipped-guide.webp",
+    imageMobile: "/images/hero/mobile-1.webp",
     title: "Прошитые Switch OLED, готовые к игре",
     text: "Настроены, проверены и укомплектованы играми. Гарантия 1 год.",
     cta: "Смотреть каталог",
@@ -16,6 +17,7 @@ const SLIDES = [
   },
   {
     image: "/images/blog/nintendo-switch-oled-vs-lite-guide.webp",
+    imageMobile: "/images/hero/mobile-2.webp",
     title: "OLED или Lite — поможем выбрать",
     text: "Подскажем модель под ваш бюджет и любимые игры.",
     cta: "Сравнить модели",
@@ -23,6 +25,7 @@ const SLIDES = [
   },
   {
     image: "/images/blog/nintendo-switch-2026-guide.webp",
+    imageMobile: "/images/hero/mobile-3.webp",
     title: "100+ игр уже в комплекте",
     text: "Установим любые игры и подготовим консоль к первому запуску.",
     cta: "Выбрать консоль",
@@ -53,18 +56,11 @@ export function HeroSlider() {
     >
       <div className="relative h-[520px] sm:h-[600px] lg:h-[calc(100svh-140px)] lg:min-h-[620px] lg:max-h-[860px] rounded-3xl overflow-hidden bg-neutral-900">
         {SLIDES.map((s, i) => (
-          <Image
-            key={s.image}
-            src={s.image}
-            alt=""
-            fill
-            priority={i === 0}
-            sizes="100vw"
-            className={cn(
-              "object-cover transition-opacity duration-700",
-              i === index ? "opacity-100" : "opacity-0"
-            )}
-          />
+          <div key={s.image} className={cn("absolute inset-0 transition-opacity duration-700", i === index ? "opacity-100" : "opacity-0")}>
+            {/* Wide photo on tablets/desktop, vertical 9:16 photo on phones */}
+            <Image src={s.image} alt="" fill priority={i === 0} sizes="100vw" className="hidden sm:block object-cover" />
+            <Image src={s.imageMobile} alt="" fill priority={i === 0} sizes="100vw" className="sm:hidden object-cover" />
+          </div>
         ))}
         <div className="absolute inset-0 bg-black/15" />
 
