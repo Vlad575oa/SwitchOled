@@ -66,6 +66,7 @@ export const MobileFilterDrawer = ({
                 availableColors={availableColors}
                 availableMemories={availableMemories}
                 onApply={() => setOpen(false)}
+                inDrawer
               />
             </div>
           </div>

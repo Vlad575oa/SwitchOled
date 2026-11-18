@@ -1,8 +1,8 @@
 "use client";
 
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { useCallback, useState, useEffect, useMemo, useRef } from "react";
-import { ChevronDown, ChevronLeft, ChevronRight, X, Loader2 } from "lucide-react";
+import { useCallback, useState, useEffect } from "react";
+import { ChevronDown, Plus, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PriceRangeSlider } from "./PriceRangeSlider";
 import { motion, AnimatePresence } from "framer-motion";
@@ -22,143 +22,6 @@ interface Category {
   children?: Category[];
 }
 
-// ─── ColorScrollRow ─────────────────────────────────────────────────────────
-
-interface ColorScrollRowProps {
-  availableColors: Array<{ name: string; hex: string }>;
-  selectedColors: string[];
-  onToggle: (name: string) => void;
-}
-
-const ColorScrollRow = ({ availableColors, selectedColors, onToggle }: ColorScrollRowProps) => {
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(false);
-
-  const checkScroll = () => {
-    const el = scrollRef.current;
-    if (!el) return;
-    setCanScrollLeft(el.scrollLeft > 4);
-    setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 4);
-  };
-
-  useEffect(() => {
-    checkScroll();
-    const el = scrollRef.current;
-    if (!el) return;
-    el.addEventListener("scroll", checkScroll, { passive: true });
-    const ro = new ResizeObserver(checkScroll);
-    ro.observe(el);
-    return () => {
-      el.removeEventListener("scroll", checkScroll);
-      ro.disconnect();
-    };
-  }, [availableColors]);
-
-  const scroll = (dir: "left" | "right") => {
-    const el = scrollRef.current;
-    if (!el) return;
-    el.scrollBy({ left: dir === "left" ? -120 : 120, behavior: "smooth" });
-  };
-
-  // Split colors into rows of 6
-  const ROW_SIZE = 6;
-  const rows: Array<typeof availableColors> = [];
-  for (let i = 0; i < availableColors.length; i += ROW_SIZE) {
-    rows.push(availableColors.slice(i, i + ROW_SIZE));
-  }
-
-  return (
-    <div className="relative -mx-1">
-      {/* Left fade + arrow */}
-      <div
-        className={cn(
-          "absolute left-0 top-0 bottom-0 z-10 flex items-center transition-opacity duration-200",
-          canScrollLeft ? "opacity-100" : "opacity-0 pointer-events-none"
-        )}
-      >
-        <div className="w-8 h-full bg-gradient-to-r from-white to-transparent" />
-        <button
-          onClick={() => scroll("left")}
-          className="absolute left-0 w-7 h-7 rounded-full bg-white border border-neutral-200 shadow-sm flex items-center justify-center text-neutral-400 hover:text-secondary hover:border-neutral-300 transition-all active:scale-90"
-        >
-          <ChevronLeft size={13} />
-        </button>
-      </div>
-
-      {/* Scrollable container */}
-      <div
-        ref={scrollRef}
-        className="overflow-x-auto scrollbar-hide px-1 pt-2 pb-1"
-        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-      >
-        <div className="flex flex-col gap-2" style={{ width: "max-content" }}>
-          {rows.map((row, rowIdx) => (
-            <div key={rowIdx} className="flex gap-2">
-              {row.map((colorObj) => {
-                const isSelected = selectedColors.includes(colorObj.name);
-                const isLight =
-                  colorObj.name === "Белый" ||
-                  colorObj.name === "Жёлтый" ||
-                  colorObj.name === "White" ||
-                  colorObj.name === "Серебристый" ||
-                  colorObj.hex.toLowerCase() === "#ffffff" ||
-                  colorObj.hex.toLowerCase() === "#f5f5f5" ||
-                  colorObj.hex.toLowerCase() === "#fafafa" ||
-                  colorObj.hex.toLowerCase() === "#f0f0f0" ||
-                  colorObj.hex.toLowerCase() === "#e8e8e8";
-                return (
-                  <button
-                    key={colorObj.name}
-                    title={colorObj.name}
-                    onClick={() => onToggle(colorObj.name)}
-                    className={cn(
-                      "w-7 h-7 rounded-full border-2 transition-all hover:scale-110 active:scale-95 relative flex-shrink-0",
-                      isSelected
-                        ? "border-primary ring-2 ring-primary/30 scale-110"
-                        : isLight
-                        ? "border-neutral-300 shadow-sm hover:border-neutral-400"
-                        : "border-white shadow-sm hover:border-neutral-300"
-                    )}
-                    style={{ backgroundColor: colorObj.hex }}
-                  >
-                    {isSelected && (
-                      <span className="absolute inset-0 flex items-center justify-center">
-                        <span
-                          className={cn(
-                            "w-2 h-2 rounded-full",
-                            isLight ? "bg-neutral-600" : "bg-white"
-                          )}
-                        />
-                      </span>
-                    )}
-                  </button>
-                );
-              })}
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Right fade + arrow */}
-      <div
-        className={cn(
-          "absolute right-0 top-0 bottom-0 z-10 flex items-center transition-opacity duration-200",
-          canScrollRight ? "opacity-100" : "opacity-0 pointer-events-none"
-        )}
-      >
-        <div className="w-8 h-full bg-gradient-to-l from-white to-transparent" />
-        <button
-          onClick={() => scroll("right")}
-          className="absolute right-0 w-7 h-7 rounded-full bg-white border border-neutral-200 shadow-sm flex items-center justify-center text-neutral-400 hover:text-secondary hover:border-neutral-300 transition-all active:scale-90"
-        >
-          <ChevronRight size={13} />
-        </button>
-      </div>
-    </div>
-  );
-};
-
 // ─── Sub-components defined OUTSIDE FilterSidebar to prevent remount on state change ──
 
 interface FilterSectionProps {
@@ -170,30 +33,18 @@ interface FilterSectionProps {
 }
 
 const FilterSection = ({ title, children, isOpen, onToggle }: FilterSectionProps) => (
-  <div className="border-b border-neutral-100 last:border-0">
+  <div className="border-b border-black/[0.07] last:border-0">
     <button
       onClick={onToggle}
-      className="flex items-center justify-between w-full py-5 text-left group"
+      aria-expanded={isOpen}
+      className="flex items-center justify-between w-full py-4 text-left"
     >
-      <h3 className="text-[15px] lg:text-[16px] font-black text-secondary group-hover:text-primary transition-colors duration-200">
-        {title}
-      </h3>
-      <motion.div
-        animate={{ rotate: isOpen ? 180 : 0 }}
-        transition={{ type: "spring", stiffness: 300, damping: 20 }}
-        className={cn(
-          "w-6 h-6 rounded-full flex items-center justify-center transition-colors duration-300",
-          isOpen ? "bg-primary/8" : "bg-neutral-50"
-        )}
-      >
-        <ChevronDown
-          size={14}
-          className={cn(
-            "transition-colors duration-300",
-            isOpen ? "text-primary" : "text-neutral-300"
-          )}
-        />
-      </motion.div>
+      <h3 className="text-[15px] font-medium text-black">{title}</h3>
+      <Plus
+        size={18}
+        strokeWidth={1.5}
+        className={cn("text-black transition-transform duration-300", isOpen && "rotate-45")}
+      />
     </button>
 
     <AnimatePresence initial={false}>
@@ -204,60 +55,50 @@ const FilterSection = ({ title, children, isOpen, onToggle }: FilterSectionProps
           animate={{ height: "auto", opacity: 1 }}
           exit={{ height: 0, opacity: 0 }}
           transition={{ duration: 0.3, ease: [0.04, 0.62, 0.23, 0.98] }}
+          className="overflow-hidden"
         >
-          <div className="pb-5 space-y-3">{children}</div>
+          <div className="pb-5">{children}</div>
         </motion.div>
       )}
     </AnimatePresence>
   </div>
 );
 
-interface CheckboxOptionProps {
+interface ChipProps {
   label: string;
-  checked: boolean;
-  onChange: () => void;
+  active: boolean;
+  onClick: () => void;
   colorHex?: string;
 }
 
-const CheckboxOption = ({ label, checked, onChange, colorHex }: CheckboxOptionProps) => (
-  <label className="flex items-center gap-3 cursor-pointer group px-1">
-    <div
-      className={cn(
-        "w-5 h-5 rounded-lg border-2 transition-all flex items-center justify-center flex-shrink-0",
-        checked
-          ? "bg-primary border-primary"
-          : "border-neutral-200 group-hover:border-primary/40"
-      )}
-      onClick={onChange}
-    >
-      {checked && (
-        <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
-          <path
-            d="M1 4L3.5 6.5L9 1"
-            stroke="white"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      )}
-    </div>
+// Toggle chip: white when idle, black when selected.
+const Chip = ({ label, active, onClick, colorHex }: ChipProps) => (
+  <button
+    type="button"
+    onClick={onClick}
+    aria-pressed={active}
+    className={cn(
+      "inline-flex items-center gap-2 h-9 px-3.5 rounded-lg text-[14px] border transition-colors",
+      active
+        ? "bg-black border-black text-white"
+        : "bg-white border-black/10 text-black hover:border-black/30"
+    )}
+  >
     {colorHex && (
-      <div
-        className="w-4 h-4 rounded-full flex-shrink-0 border border-neutral-200 shadow-sm"
+      <span
+        className={cn("w-3.5 h-3.5 rounded-full border", active ? "border-white/40" : "border-black/10")}
         style={{ backgroundColor: colorHex }}
       />
     )}
-    <span
-      className={cn(
-        "text-[14px] lg:text-[15px] font-bold transition-colors",
-        checked ? "text-secondary" : "text-neutral-400 group-hover:text-secondary"
-      )}
-    >
-      {label}
-    </span>
-  </label>
+    {label}
+  </button>
 );
+
+const PRICE_PRESETS = [
+  { label: "до 30 000", min: 0, max: 30000 },
+  { label: "30–40 000", min: 30000, max: 40000 },
+  { label: "от 40 000", min: 40000, max: MAX_PRICE },
+];
 
 // ─── Main component ───────────────────────────────────────────────────────────
 
@@ -268,6 +109,7 @@ interface FilterSidebarProps {
   availableColors: Array<{ name: string; hex: string }>;
   availableMemories: string[];
   onApply?: () => void;
+  inDrawer?: boolean;
 }
 
 export const FilterSidebar = ({
@@ -277,6 +119,7 @@ export const FilterSidebar = ({
   availableColors,
   availableMemories,
   onApply,
+  inDrawer = false,
 }: FilterSidebarProps) => {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -389,21 +232,24 @@ export const FilterSidebar = ({
     const isCollapsed = isRoot && !!collapsedRootCategories[item.id];
     
     return (
-      <div className="space-y-1">
+      <div>
         <div
           className={cn(
-            "text-[15px] lg:text-[16px] font-bold transition-all w-full text-left py-2.5 px-3 rounded-xl flex items-center justify-between group/cat",
+            "text-[14px] transition-colors w-full text-left py-2 pr-1 rounded-lg flex items-center justify-between",
             isActive
-              ? "text-primary bg-primary/5 shadow-sm shadow-primary/5"
-              : "text-neutral-400 hover:text-secondary hover:bg-neutral-50"
+              ? "text-black font-semibold"
+              : "text-black/60 hover:text-black"
           )}
-          style={{ paddingLeft: `${depth * 12 + 12}px` }}
+          style={{ paddingLeft: `${depth * 14}px` }}
         >
           <button
             onClick={() => router.push(`/catalog/${item.slug}`)}
             className="flex-1 text-left"
           >
-            <span>{item.name}</span>
+            <span className="inline-flex items-center gap-2">
+              {isActive && <span className="w-1.5 h-1.5 rounded-full bg-black" />}
+              {item.name}
+            </span>
           </button>
           {hasChildren && (
             <button
@@ -411,7 +257,7 @@ export const FilterSidebar = ({
                 e.stopPropagation();
                 if (isRoot) toggleRootCategory(item.id);
               }}
-              className="w-6 h-6 rounded-full hover:bg-neutral-100 flex items-center justify-center transition-colors"
+              className="w-6 h-6 rounded-full hover:bg-white flex items-center justify-center transition-colors"
               aria-label={isCollapsed ? "Развернуть категорию" : "Свернуть категорию"}
             >
               <ChevronDown
@@ -437,8 +283,40 @@ export const FilterSidebar = ({
 
   // ─── Render ─────────────────────────────────────────────────────────────────
 
+  const activeCount =
+    (priceMin > 0 || priceMax < MAX_PRICE ? 1 : 0) + colors.length + memories.length + statuses.length;
+
+  const plural = (n: number) =>
+    n % 10 === 1 && n % 100 !== 11 ? "товар" : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? "товара" : "товаров";
+
+  const setPrice = (min: number, max: number) => {
+    setPriceMin(min);
+    setPriceMax(max);
+    setPriceMinInput(min === 0 ? "" : String(min));
+    setPriceMaxInput(max === MAX_PRICE ? "" : String(max));
+  };
+
+  const priceInput =
+    "w-full h-11 pl-9 pr-3 bg-white border border-black/10 focus:border-black/40 outline-none rounded-lg text-[14px] transition-colors placeholder:text-black/30 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none";
+
   return (
-    <div className="bg-white rounded-lg border border-neutral-100 p-6 shadow-sm sticky top-[132px]">
+    <div className={inDrawer ? "px-3" : "bg-surface-soft rounded-2xl px-5 pt-4 pb-5 lg:sticky lg:top-6"}>
+      <div className={cn("flex items-center justify-between pb-2", inDrawer && !hasActiveFilters && "hidden")}>
+        <p className={cn("text-[17px] font-semibold text-black", inDrawer && "invisible")}>
+          Фильтры
+          {activeCount > 0 && (
+            <span className="ml-2 inline-flex items-center justify-center min-w-5 h-5 px-1.5 rounded-full bg-black text-white text-[11px] align-middle">
+              {activeCount}
+            </span>
+          )}
+        </p>
+        {hasActiveFilters && (
+          <button onClick={handleClear} className="text-[13px] text-black/55 underline underline-offset-4 hover:text-black">
+            Сбросить
+          </button>
+        )}
+      </div>
+
       {/* ── Категории ── */}
       <FilterSection
         title="Категория"
@@ -446,7 +324,17 @@ export const FilterSidebar = ({
         isOpen={openSections.category}
         onToggle={() => toggleSection("category")}
       >
-        <div className="space-y-1 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+        <div className="max-h-[300px] overflow-y-auto pr-1 custom-scrollbar">
+          <button
+            onClick={() => router.push("/catalog/all")}
+            className={cn(
+              "w-full text-left py-2 text-[14px] transition-colors inline-flex items-center gap-2",
+              currentCategory === "all" ? "text-black font-semibold" : "text-black/60 hover:text-black"
+            )}
+          >
+            {currentCategory === "all" && <span className="w-1.5 h-1.5 rounded-full bg-black" />}
+            Все товары
+          </button>
           {categoryTree.map((item) => (
             <CategoryItem key={item.id} item={item} />
           ))}
@@ -455,16 +343,18 @@ export const FilterSidebar = ({
 
       {/* ── Цена ── */}
       <FilterSection
-        title="Цена"
+        title="Цена, ₽"
         id="price"
         isOpen={openSections.price}
         onToggle={() => toggleSection("price")}
       >
         <div className="space-y-4">
           <div className="flex items-center gap-2">
-            <div className="flex-1 relative">
+            <label className="flex-1 relative">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[13px] text-black/40 pointer-events-none">от</span>
               <input
                 type="number"
+                inputMode="numeric"
                 placeholder="0"
                 value={priceMinInput}
                 onChange={(e) => setPriceMinInput(e.target.value)}
@@ -473,14 +363,14 @@ export const FilterSidebar = ({
                   setPriceMin(v);
                   setPriceMinInput(v === 0 ? "" : String(v));
                 }}
-                className="w-full pl-4 pr-7 py-3 bg-neutral-50 border border-neutral-100 focus:border-primary/30 focus:bg-white rounded-2xl text-[14px] font-black transition-all placeholder:text-neutral-300 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                className={priceInput}
               />
-              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[11px] text-neutral-300 font-bold pointer-events-none">₽</span>
-            </div>
-            <span className="text-neutral-200 font-bold text-base">—</span>
-            <div className="flex-1 relative">
+            </label>
+            <label className="flex-1 relative">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[13px] text-black/40 pointer-events-none">до</span>
               <input
                 type="number"
+                inputMode="numeric"
                 placeholder={MAX_PRICE.toLocaleString("ru-RU")}
                 value={priceMaxInput}
                 onChange={(e) => setPriceMaxInput(e.target.value)}
@@ -490,10 +380,9 @@ export const FilterSidebar = ({
                   setPriceMax(v);
                   setPriceMaxInput(v === MAX_PRICE ? "" : String(v));
                 }}
-                className="w-full pl-4 pr-7 py-3 bg-neutral-50 border border-neutral-100 focus:border-primary/30 focus:bg-white rounded-2xl text-[14px] font-black transition-all placeholder:text-neutral-300 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                className={priceInput}
               />
-              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[11px] text-neutral-300 font-bold pointer-events-none">₽</span>
-            </div>
+            </label>
           </div>
           <PriceRangeSlider
             min={0}
@@ -503,86 +392,89 @@ export const FilterSidebar = ({
             onChangeMin={(v) => { setPriceMin(v); setPriceMinInput(v === 0 ? "" : String(v)); }}
             onChangeMax={(v) => { setPriceMax(v); setPriceMaxInput(v === MAX_PRICE ? "" : String(v)); }}
           />
+          <div className="flex flex-wrap gap-2">
+            {PRICE_PRESETS.map((p) => (
+              <Chip
+                key={p.label}
+                label={p.label}
+                active={priceMin === p.min && priceMax === p.max}
+                onClick={() =>
+                  priceMin === p.min && priceMax === p.max ? setPrice(0, MAX_PRICE) : setPrice(p.min, p.max)
+                }
+              />
+            ))}
+          </div>
         </div>
       </FilterSection>
 
-      <FilterSection
-        title="Память MicroSD"
-        id="memory"
-        isOpen={openSections.memory ?? false}
-        onToggle={() => toggleSection("memory")}
-      >
-        {availableMemories.length > 0 ? (
-          availableMemories.map((memoryValue) => (
-            <CheckboxOption
-              key={memoryValue}
-              label={memoryValue}
-              checked={memories.includes(memoryValue)}
-              onChange={() => toggleValue(memories, setMemories, memoryValue)}
-            />
-          ))
-        ) : (
-          <p className="px-1 text-xs font-bold text-neutral-300">Варианты памяти скоро появятся</p>
-        )}
-      </FilterSection>
+      {availableMemories.length > 0 && (
+        <FilterSection
+          title="Память MicroSD"
+          id="memory"
+          isOpen={openSections.memory ?? false}
+          onToggle={() => toggleSection("memory")}
+        >
+          <div className="flex flex-wrap gap-2">
+            {availableMemories.map((memoryValue) => (
+              <Chip
+                key={memoryValue}
+                label={memoryValue}
+                active={memories.includes(memoryValue)}
+                onClick={() => toggleValue(memories, setMemories, memoryValue)}
+              />
+            ))}
+          </div>
+        </FilterSection>
+      )}
 
-      {/* ── Цвет ── */}
-      <FilterSection
-        title="Цвет"
-        id="color"
-        isOpen={openSections.color}
-        onToggle={() => toggleSection("color")}
-      >
-        {availableColors.length > 0 ? (
-          <ColorScrollRow
-            availableColors={availableColors}
-            selectedColors={colors}
-            onToggle={(name) => toggleValue(colors, setColors, name)}
-          />
-        ) : (
-          <p className="px-1 text-xs font-bold text-neutral-300">Цвета скоро появятся</p>
-        )}
-      </FilterSection>
+      {availableColors.length > 0 && (
+        <FilterSection
+          title="Цвет"
+          id="color"
+          isOpen={openSections.color}
+          onToggle={() => toggleSection("color")}
+        >
+          <div className="flex flex-wrap gap-2">
+            {availableColors.map((c) => (
+              <Chip
+                key={c.name}
+                label={c.name}
+                colorHex={c.hex}
+                active={colors.includes(c.name)}
+                onClick={() => toggleValue(colors, setColors, c.name)}
+              />
+            ))}
+          </div>
+        </FilterSection>
+      )}
 
-      {/* ── Статус ── */}
+      {/* ── Наличие ── */}
       <FilterSection
-        title="Статус товара"
+        title="Наличие"
         id="status"
         isOpen={openSections.status}
         onToggle={() => toggleSection("status")}
       >
-        {STATUS_OPTIONS.map(({ label, value }) => (
-          <CheckboxOption
-            key={value}
-            label={label}
-            checked={statuses.includes(value)}
-            onChange={() => toggleValue(statuses, setStatuses, value)}
-          />
-        ))}
+        <div className="flex flex-wrap gap-2">
+          {STATUS_OPTIONS.map(({ label, value }) => (
+            <Chip
+              key={value}
+              label={label}
+              active={statuses.includes(value)}
+              onClick={() => toggleValue(statuses, setStatuses, value)}
+            />
+          ))}
+        </div>
       </FilterSection>
 
-      {/* ── Кнопки ── */}
-      <div className="pt-6 space-y-3">
-        <button
-          onClick={handleApply}
-          disabled={isCounting && liveCount === 0}
-          className="w-full py-4 bg-primary text-white font-black rounded-full hover:bg-primary-pressed hover:shadow-lg hover:shadow-primary/20 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm uppercase tracking-wide flex items-center justify-center gap-2"
-        >
-          {isCounting ? (
-            <Loader2 className="w-4 h-4 animate-spin" />
-          ) : null}
-          Показать {liveCount} {liveCount === 1 ? 'товар' : liveCount > 1 && liveCount < 5 ? 'товара' : 'товаров'}
-        </button>
-        {hasActiveFilters && (
-          <button
-            onClick={handleClear}
-            className="w-full py-4 bg-neutral-50 text-neutral-400 font-bold rounded-2xl hover:bg-neutral-100 hover:text-secondary transition-all text-sm flex items-center justify-center gap-2 active:scale-[0.98]"
-          >
-            <X size={15} />
-            Очистить фильтры
-          </button>
-        )}
-      </div>
+      <button
+        onClick={handleApply}
+        disabled={isCounting && liveCount === 0}
+        className="mt-4 w-full h-12 bg-black text-white text-[15px] font-semibold rounded-full hover:bg-[#2b2b2b] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
+      >
+        {isCounting && <Loader2 className="w-4 h-4 animate-spin" />}
+        Показать {liveCount} {plural(liveCount)}
+      </button>
     </div>
   );
 };

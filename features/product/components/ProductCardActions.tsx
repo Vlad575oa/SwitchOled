@@ -40,6 +40,11 @@ export function ProductCardActions({ product }: ProductCardActionsProps) {
 
   return (
     <div className="pt-3 mt-auto space-y-2">
+      <QuickOrderModal
+        product={{ id: product.id, name: product.name }}
+        buttonClassName="w-full h-10 rounded-full border border-primary bg-transparent px-2 text-[11px] sm:text-[12px] font-bold uppercase tracking-[0.03em] text-primary hover:bg-primary hover:text-white transition-colors"
+      />
+
       <div className="flex items-center gap-2">
         <button
           onClick={() => toggleCompare(product.id)}
@@ -54,19 +59,6 @@ export function ProductCardActions({ product }: ProductCardActionsProps) {
           )}
         >
           <Scale size={16} />
-        </button>
-
-        <button
-          onClick={() => toggleWishlist(product.id)}
-          title={hydratedInWishlist ? "Убрать из избранного" : "Добавить в избранное"}
-          className={cn(
-            "w-10 h-10 rounded-full flex items-center justify-center border transition-colors active:scale-90",
-            hydratedInWishlist
-              ? "bg-ink text-white border-ink"
-              : "bg-white text-neutral-500 hover:text-ink hover:border-neutral-300 border-transparent"
-          )}
-        >
-          <Heart size={16} />
         </button>
 
         <button
@@ -91,16 +83,25 @@ export function ProductCardActions({ product }: ProductCardActionsProps) {
             }).catch(() => {});
             void notifyAddedToCart();
           }}
+          aria-label="В корзину"
           className="flex-1 h-10 bg-primary text-white rounded-full flex items-center justify-center hover:bg-primary-pressed transition-colors active:scale-95"
         >
           <ShoppingCart size={18} strokeWidth={2.5} />
         </button>
-      </div>
+        <button
+          onClick={() => toggleWishlist(product.id)}
+          title={hydratedInWishlist ? "Убрать из избранного" : "Добавить в избранное"}
+          className={cn(
+            "w-10 h-10 rounded-full flex items-center justify-center border transition-colors active:scale-90",
+            hydratedInWishlist
+              ? "bg-ink text-white border-ink"
+              : "bg-white text-neutral-500 hover:text-ink hover:border-neutral-300 border-transparent"
+          )}
+        >
+          <Heart size={16} />
+        </button>
 
-      <QuickOrderModal
-        product={{ id: product.id, name: product.name }}
-        buttonClassName="w-full h-10 rounded-full border border-primary bg-transparent px-2 text-[11px] sm:text-[12px] font-bold uppercase tracking-[0.03em] text-primary hover:bg-primary hover:text-white transition-colors"
-      />
+      </div>
     </div>
   );
 }
