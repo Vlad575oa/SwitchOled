@@ -20,10 +20,9 @@ interface PlatformGroup {
 
 // Static class names so Tailwind generates them (dynamic `grid-cols-${n}` is purged).
 const GRID_COLS: Record<number, string> = {
-  1: "grid gap-6 grid-cols-1",
-  2: "grid gap-6 grid-cols-2",
-  3: "grid gap-6 grid-cols-3",
-  4: "grid gap-6 grid-cols-2 md:grid-cols-4",
+  1: "grid gap-x-10 gap-y-4 grid-cols-1",
+  2: "grid gap-x-10 gap-y-4 grid-cols-2",
+  3: "grid gap-x-10 gap-y-4 grid-cols-3",
 };
 
 // Extract category slug from href (ignores query params)
@@ -182,23 +181,29 @@ export function CatalogMegaMenu({ onClose }: CatalogMegaMenuProps) {
     return () => document.removeEventListener("keydown", handler);
   }, [onClose]);
 
-  // Filter a group's sub-links to only those whose category has products
+  // Query links (e.g. /catalog/accessories?q=ps5) point into a shared category, so they
+  // can't prove a platform has products — they only show inside an otherwise visible group.
+  const isQueryLink = (href: string) => href.includes("?");
+
   const filterLinks = (links: SubLink[]): SubLink[] => {
     if (!availableSlugs) return links;
     return links.filter((l) => availableSlugs.has(hrefToSlug(l.href)));
   };
 
-  // A group is visible if it has at least one visible sub-link OR its own slug has products
   const isGroupVisible = (group: PlatformGroup): boolean => {
     if (!availableSlugs) return true;
-    const ownSlug = hrefToSlug(group.href);
-    if (availableSlugs.has(ownSlug)) return true;
-    return filterLinks(group.links).length > 0;
+    if (availableSlugs.has(hrefToSlug(group.href))) return true;
+    return group.links.some((l) => !isQueryLink(l.href) && availableSlugs.has(hrefToSlug(l.href)));
   };
 
   // Filter columns to only those with at least one visible group
-  const visibleColumns = PLATFORMS.map((col) => col.filter(isGroupVisible)).filter((col) => col.length > 0);
-  const finalColumns = visibleColumns.length > 0 ? visibleColumns : PLATFORMS;
+  // Flatten visible groups and repack into at most 3 compact columns.
+  const visibleGroups = PLATFORMS.flat().filter(isGroupVisible);
+  const groups = visibleGroups.length > 0 ? visibleGroups : PLATFORMS.flat();
+  const colCount = Math.min(3, groups.length);
+  const finalColumns: PlatformGroup[][] = Array.from({ length: colCount }, (_, i) =>
+    groups.filter((_, gi) => gi % colCount === i)
+  );
 
   return (
     <>
@@ -208,7 +213,7 @@ export function CatalogMegaMenu({ onClose }: CatalogMegaMenuProps) {
       {/* Panel: compact dropdown card under the "Каталог" button */}
       <div
         ref={ref}
-        className="absolute left-0 top-2 z-50 w-[min(860px,calc(100vw-24px))] rounded-2xl bg-white border border-neutral-200 shadow-xl p-6 animate-in fade-in slide-in-from-top-1 duration-150"
+        className="absolute left-0 top-2 z-50 w-max max-w-[calc(100vw-24px)] rounded-2xl bg-white border border-neutral-200 shadow-xl py-5 pl-5 pr-12 animate-in fade-in slide-in-from-top-1 duration-150"
       >
         <button
           onClick={onClose}
@@ -218,9 +223,9 @@ export function CatalogMegaMenu({ onClose }: CatalogMegaMenuProps) {
           <X size={14} />
         </button>
 
-        <div className={GRID_COLS[Math.min(finalColumns.length, 4)] ?? GRID_COLS[4]}>
+        <div className={GRID_COLS[finalColumns.length] ?? GRID_COLS[3]}>
           {finalColumns.map((column, colIdx) => (
-            <div key={colIdx} className="space-y-5">
+            <div key={colIdx} className="space-y-4 min-w-[170px]">
               {column.map((group) => {
                 const visibleLinks = filterLinks(group.links);
                 return (
@@ -228,7 +233,7 @@ export function CatalogMegaMenu({ onClose }: CatalogMegaMenuProps) {
                     <Link
                       href={group.href}
                       onClick={onClose}
-                      className="flex items-center gap-2 mb-2 group"
+                      className="flex items-center gap-2 mb-1.5 group"
                     >
                       <span className={`w-7 h-7 rounded-lg flex items-center justify-center text-[13px] ${group.color}`}>
                         {group.emoji}
@@ -237,7 +242,7 @@ export function CatalogMegaMenu({ onClose }: CatalogMegaMenuProps) {
                         {group.title}
                       </span>
                     </Link>
-                    <ul className="space-y-1.5 pl-9">
+                    <ul className="space-y-1 pl-9">
                       {visibleLinks.map((link) => (
                         <li key={link.label}>
                           <Link

@@ -7,7 +7,6 @@ import { useCompareStore } from "@/features/product/store/useCompareStore";
 import { useCartStore } from "@/features/cart/store/useCartStore";
 import { trackEcommerceAddToCart } from "@/lib/analytics/metrikaEcommerce";
 import { cn } from "@/lib/utils";
-import { QuickOrderModal } from "./QuickOrderModal";
 
 interface ProductCardActionsProps {
   product: {
@@ -40,11 +39,6 @@ export function ProductCardActions({ product }: ProductCardActionsProps) {
 
   return (
     <div className="pt-3 mt-auto space-y-2">
-      <QuickOrderModal
-        product={{ id: product.id, name: product.name }}
-        buttonClassName="w-full h-10 rounded-full border border-primary bg-transparent px-2 text-[11px] sm:text-[12px] font-bold uppercase tracking-[0.03em] text-primary hover:bg-primary hover:text-white transition-colors"
-      />
-
       <div className="flex items-center gap-2">
         <button
           onClick={() => toggleCompare(product.id)}

@@ -118,7 +118,7 @@ export const Header = () => {
   const cartLabel = `(${mounted ? totalItems : 0})`;
 
   return (
-    <header className="relative z-40 px-3 pt-3">
+    <header className="relative z-50 px-3 pt-3">
       <div className="relative flex items-start justify-between h-12">
         {/* Left tab */}
         <div className="notch-tl flex items-center gap-6 lg:gap-7 h-12 pr-5 lg:pr-8 pl-2 sm:pl-4">

@@ -3,6 +3,7 @@ import dynamic from "next/dynamic";
 import { Info } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
 import { ProductCardMedia } from "./ProductCardMedia";
+import { QuickOrderModal } from "./QuickOrderModal";
 
 const ProductCardActions = dynamic(
   () => import("./ProductCardActions").then((m) => m.ProductCardActions),
@@ -52,7 +53,12 @@ export function ProductCard({ product, eagerImage = false }: ProductCardProps) {
 
   return (
     <article className="group bg-surface-card rounded-lg p-2 sm:p-2.5 transition-[border-color,box-shadow] duration-200 border border-transparent hover:border-neutral-200 active:shadow-[0_4px_12px_rgba(0,0,0,0.16)] flex flex-col relative overflow-hidden h-full select-none">
-      <div className="absolute top-4 left-4 z-10 flex gap-1 font-medium text-[10px] uppercase tracking-normal pointer-events-none">
+      <QuickOrderModal
+        product={{ id: product.id, name: product.name }}
+        buttonClassName="w-full h-10 mb-2 rounded-full border border-primary bg-transparent px-2 text-[11px] sm:text-[12px] font-bold uppercase tracking-[0.03em] text-primary hover:bg-primary hover:text-white transition-colors"
+      />
+
+      <div className="absolute top-[60px] left-4 z-10 flex gap-1 font-medium text-[10px] uppercase tracking-normal pointer-events-none">
         {product.isNew && <span className="bg-primary text-white px-2.5 py-0.5 rounded-full">New</span>}
         {product.isSale && <span className="bg-white text-black border border-black px-2.5 py-0.5 rounded-full">Sale</span>}
       </div>
