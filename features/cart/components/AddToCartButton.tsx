@@ -19,9 +19,10 @@ interface AddToCartButtonProps {
     inStock?: boolean;
   };
   className?: string;
+  label?: string;
 }
 
-export const AddToCartButton = ({ product, className }: AddToCartButtonProps) => {
+export const AddToCartButton = ({ product, className, label = "В корзину" }: AddToCartButtonProps) => {
   const addItem = useCartStore((state) => state.addItem);
   const [isAdded, setIsAdded] = useState(false);
 
@@ -69,7 +70,7 @@ export const AddToCartButton = ({ product, className }: AddToCartButtonProps) =>
       ) : (
         <ShoppingCart size={18} className="shrink-0" />
       )}
-      <span className="whitespace-nowrap">{isAdded ? "В корзине" : "В корзину"}</span>
+      <span className="whitespace-nowrap">{isAdded ? "В корзине" : label}</span>
     </Button>
   );
 };

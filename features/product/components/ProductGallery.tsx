@@ -35,17 +35,18 @@ export function ProductGallery({ images: initialImages, name }: ProductGalleryPr
   if (!images.length) return null;
 
   return (
-    <div className="flex flex-col md:flex-row gap-3 md:gap-4 h-auto md:h-[540px] lg:h-[600px]">
+    <div className="flex flex-col md:flex-row gap-3 md:gap-6 h-auto md:h-[560px] lg:h-[calc(100svh-120px)] lg:min-h-[600px] lg:max-h-[860px]">
 
-      {/* Thumbnails — horizontal under image on mobile, vertical on desktop */}
-      <div className="order-2 md:order-1 flex md:flex-col gap-2 overflow-x-auto md:overflow-x-hidden md:overflow-y-auto py-1 md:w-20 shrink-0 snap-x snap-mandatory">
+      {/* Thumbnails — horizontal under image on mobile, vertical column on desktop */}
+      <div className="order-2 md:order-1 flex md:flex-col gap-3 overflow-x-auto md:overflow-x-hidden md:overflow-y-auto no-scrollbar py-1 md:w-[72px] shrink-0 snap-x snap-mandatory">
         {images.map((img, i) => (
           <button
             key={i}
             onClick={() => setActiveIndex(i)}
+            aria-label={`Фото ${i + 1}`}
             className={cn(
-              "relative aspect-square w-16 h-16 md:w-full md:h-auto md:aspect-square rounded-xl overflow-hidden border-2 transition-all p-1 bg-white flex-shrink-0 snap-start",
-              activeIndex === i ? "border-primary shadow-md" : "border-neutral-100 hover:border-neutral-300"
+              "relative w-16 h-16 md:w-full md:h-auto md:aspect-square rounded-lg overflow-hidden border-2 bg-surface-soft flex-shrink-0 snap-start transition-colors",
+              activeIndex === i ? "border-black" : "border-transparent hover:border-neutral-300"
             )}
           >
             <Image
@@ -53,7 +54,7 @@ export function ProductGallery({ images: initialImages, name }: ProductGalleryPr
               alt={`${name} — Фото ${i + 1}`}
               title={`${name} — Ракурс ${i + 1}`}
               fill
-              className="object-contain p-1"
+              className="object-contain p-1.5 mix-blend-multiply"
             />
           </button>
         ))}
@@ -61,7 +62,7 @@ export function ProductGallery({ images: initialImages, name }: ProductGalleryPr
 
       {/* Main Image */}
       <div
-        className="order-1 md:order-2 relative bg-neutral-50 border border-neutral-100 rounded-lg md:rounded-lg overflow-hidden group h-[320px] sm:h-[380px] md:flex-1 md:h-full"
+        className="order-1 md:order-2 relative bg-surface-soft rounded-3xl overflow-hidden group h-[360px] sm:h-[440px] md:flex-1 md:h-full"
         onTouchStart={onTouchStart}
         onTouchEnd={onTouchEnd}
       >
@@ -70,30 +71,29 @@ export function ProductGallery({ images: initialImages, name }: ProductGalleryPr
           alt={`${name} — Оригинальное фото в Switch OLED`}
           title={`${name} — Купить с гарантией 1 год`}
           fill
-          className="object-contain p-6 md:p-10"
+          sizes="(min-width: 1024px) 55vw, 100vw"
+          className="object-contain p-8 md:p-16 mix-blend-multiply"
           priority
         />
 
-        {/* Navigation Arrows — always visible on mobile, hover on desktop */}
         {images.length > 1 && (
           <>
             <button
               onClick={prevImage}
-              className="absolute left-3 md:left-6 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 rounded-full bg-white/90 border border-neutral-100 flex items-center justify-center md:opacity-0 md:group-hover:opacity-100 transition-all shadow-sm active:scale-95"
+              className="absolute left-3 md:left-6 top-1/2 -translate-y-1/2 w-10 h-10 md:w-11 md:h-11 rounded-full bg-white flex items-center justify-center md:opacity-0 md:group-hover:opacity-100 transition-opacity active:scale-95"
               aria-label="Предыдущее фото"
             >
               <ChevronLeft size={20} />
             </button>
             <button
               onClick={nextImage}
-              className="absolute right-3 md:right-6 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 rounded-full bg-white/90 border border-neutral-100 flex items-center justify-center md:opacity-0 md:group-hover:opacity-100 transition-all shadow-sm active:scale-95"
+              className="absolute right-3 md:right-6 top-1/2 -translate-y-1/2 w-10 h-10 md:w-11 md:h-11 rounded-full bg-white flex items-center justify-center md:opacity-0 md:group-hover:opacity-100 transition-opacity active:scale-95"
               aria-label="Следующее фото"
             >
               <ChevronRight size={20} />
             </button>
           </>
         )}
-
       </div>
     </div>
   );

@@ -89,28 +89,25 @@ export function ProductTabs({ description, attributes, productName }: ProductTab
   const totalAttrs = Object.values(groups).flat().length;
 
   return (
-    <div className="product-mobile-gutter mt-12">
+    <div className="product-mobile-gutter mt-16 lg:mt-24">
       {/* Tab Navigation */}
-      <div className="flex gap-1 mb-8 bg-neutral-100 p-1 rounded-2xl w-fit">
+      <div className="flex gap-6 mb-8 border-b border-neutral-200">
         {TABS.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
             className={cn(
-              "flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold transition-all",
+              "flex items-center gap-2 pb-3 -mb-px border-b-2 text-[17px] font-medium transition-colors",
               activeTab === tab.id
-                ? "bg-white text-secondary shadow-sm"
-                : "text-neutral-400 hover:text-secondary"
+                ? "border-black text-black"
+                : "border-transparent text-black/40 hover:text-black"
             )}
           >
-            <span className={activeTab === tab.id ? "text-primary" : "text-neutral-300"}>
-              {tab.icon}
-            </span>
-            {tab.label}
+                        {tab.label}
             {tab.id === "specs" && totalAttrs > 0 && (
               <span className={cn(
                 "text-[9px] font-black px-1.5 py-0.5 rounded-full",
-                activeTab === tab.id ? "bg-primary/10 text-primary" : "bg-neutral-200 text-neutral-400"
+                activeTab === tab.id ? "bg-black text-white" : "bg-neutral-100 text-black/40"
               )}>
                 {totalAttrs}
               </span>
@@ -134,9 +131,9 @@ export function ProductTabs({ description, attributes, productName }: ProductTab
               dangerouslySetInnerHTML={{ __html: description }}
             />
           ) : (
-            <div className="bg-neutral-50 rounded-3xl p-10 text-center">
-              <FileText size={32} className="text-neutral-200 mx-auto mb-3" />
-              <p className="text-neutral-400 font-bold">Описание товара пока не добавлено</p>
+            <div className="bg-surface-soft rounded-2xl p-8 text-center">
+              
+              <p className="text-black/45">Описание товара пока не добавлено</p>
             </div>
           )}
         </div>
@@ -179,9 +176,9 @@ export function ProductTabs({ description, attributes, productName }: ProductTab
               ))}
             </div>
           ) : (
-            <div className="bg-neutral-50 rounded-3xl p-10 text-center">
-              <ListChecks size={32} className="text-neutral-200 mx-auto mb-3" />
-              <p className="text-neutral-400 font-bold">Характеристики не указаны</p>
+            <div className="bg-surface-soft rounded-2xl p-8 text-center">
+              
+              <p className="text-black/45">Характеристики не указаны</p>
             </div>
           )}
         </div>

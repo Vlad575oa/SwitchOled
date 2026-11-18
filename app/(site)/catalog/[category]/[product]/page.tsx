@@ -13,7 +13,7 @@ import { MobileStickyCart } from "@/features/product/components/MobileStickyCart
 import { RelatedProducts } from "@/features/product/components/RelatedProducts";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
-import { brandedTitle, buildProductMetaDescription, resolveProductMetaTitle } from "@/lib/seo";
+import { brandedTitle, buildProductMetaDescription, resolveProductMetaTitle, stripHtml, truncateByWords } from "@/lib/seo";
 import { getCatalogSmartFilter } from "@/lib/catalogSmartFilters";
 import { sanitizeRichHtml } from "@/lib/sanitizeHtml";
 import { PageViewTracker } from "@/components/PageViewTracker";
@@ -152,9 +152,14 @@ export default async function ProductPage({
     ],
   };
 
+  const plainDescription = stripHtml(product.description);
+  const excerpt = plainDescription
+    ? `${truncateByWords(plainDescription, 220)}${plainDescription.length > 220 ? "…" : ""}`
+    : undefined;
+
   return (
-    <div className="bg-[#fcfcfc] min-h-screen">
-      <main className="container py-8 lg:py-12">
+    <div className="bg-white min-h-screen">
+      <main className="w-full max-w-[1600px] mx-auto px-3 lg:px-6 pt-6 lg:pt-8 pb-12">
         <PageViewTracker productId={product.id} />
         <script
           type="application/ld+json"
@@ -164,86 +169,60 @@ export default async function ProductPage({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
         />
-        {/* Breadcrumbs */}
-        <nav className="product-mobile-gutter flex items-center gap-2 text-[10px] font-bold text-neutral-300 uppercase tracking-widest mb-6 overflow-x-auto no-scrollbar whitespace-nowrap">
-          <Link href="/" className="hover:text-primary transition-colors">
-            Главная
-          </Link>
-          <ChevronRight size={10} className="text-neutral-200" />
-          <Link href="/catalog/all" className="hover:text-primary transition-colors">
-            Каталог
-          </Link>
-          <ChevronRight size={10} className="text-neutral-200" />
-          <Link
-            href={`/catalog/${product.category.slug}`}
-            className="hover:text-primary transition-colors"
-          >
-            {product.category.name}
-          </Link>
-          <ChevronRight size={10} className="text-neutral-200" />
-          <span className="text-neutral-400 truncate max-w-[200px]">{product.name}</span>
-        </nav>
 
         {/* Track recently viewed */}
         <TrackView productId={product.id} />
 
-        {/* Product name */}
-        <div className="product-mobile-gutter mb-4">
-          <h1 className="text-xl sm:text-2xl lg:text-4xl font-black text-secondary leading-tight mb-3 max-w-4xl">
-            {product.name}
-          </h1>
-          <ProductMeta productId={product.id} fallbackHref={`/catalog/${product.category.slug}`} />
-        </div>
-
-        {/* Main grid: Gallery + Tabs | Purchase */}
-        <div className="flex flex-col lg:flex-row gap-6 mb-12">
-          {/* Left */}
-          <div className="flex-1 min-w-0">
+        {/* Main grid: Gallery | Purchase */}
+        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(380px,460px)] gap-8 lg:gap-14 xl:gap-20">
+          <div className="min-w-0">
             <ProductGallery images={product.images} name={product.name} />
-
-            {/* Description & Specs tabs */}
-            <ProductTabs
-              description={product.description ? sanitizeRichHtml(product.description) : null}
-              attributes={product.attributes as Record<string, string> | null}
-              productName={product.name}
-            />
           </div>
 
-          {/* Right — Sticky purchase block */}
-          <aside className="w-full lg:w-[380px] flex-shrink-0">
-            <div className="lg:sticky lg:top-24">
-              <PurchaseBlock product={product} variants={variants} categorySlug={product.category.slug} />
+          <aside className="product-mobile-gutter min-w-0">
+            <div className="lg:sticky lg:top-6">
+              {/* Breadcrumbs */}
+              <nav className="flex items-center gap-2 text-[13px] text-black/45 overflow-x-auto no-scrollbar whitespace-nowrap">
+                <Link href="/catalog/all" className="hover:text-black transition-colors">Каталог</Link>
+                <span aria-hidden>•</span>
+                <Link href={`/catalog/${product.category.slug}`} className="hover:text-black transition-colors">
+                  {product.category.name}
+                </Link>
+              </nav>
+
+              <h1 className="mt-3 text-[30px] sm:text-[36px] lg:text-[42px] font-semibold leading-[1.1] tracking-[-0.025em] text-black">
+                {product.name}
+              </h1>
+
+              <div className="mt-3">
+                <PurchaseBlock
+                  product={product}
+                  variants={variants}
+                  categorySlug={product.category.slug}
+                  excerpt={excerpt}
+                />
+              </div>
+
+              <div className="mt-6">
+                <ProductMeta productId={product.id} fallbackHref={`/catalog/${product.category.slug}`} />
+              </div>
             </div>
           </aside>
         </div>
-        <section className="mb-10 rounded-2xl border border-neutral-100 bg-white p-6">
-          <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em] mb-2">Полезно перед покупкой</p>
-          <div className="flex flex-wrap gap-2">
-            {[
-              { href: "/delivery", label: "Доставка" },
-              { href: "/payment", label: "Оплата" },
-              { href: "/refund", label: "Возврат" },
-              { href: "/warranty", label: "Гарантия" },
-            ].map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="px-3 py-2 rounded-lg bg-neutral-100 text-secondary text-xs font-black uppercase tracking-wide hover:bg-neutral-200 transition-colors"
-              >
-                {item.label}
-              </Link>
-            ))}
-            <Link
-              href="/reviews"
-              className="px-3 py-2 rounded-lg bg-yellow-50 border border-yellow-200 text-yellow-700 text-xs font-black uppercase tracking-wide hover:bg-yellow-100 transition-colors flex items-center gap-1"
-            >
-              ⭐ 5.0 Рейтинг
-            </Link>
-          </div>
-        </section>
+
+        {/* Full description & specs */}
+        <div id="description" className="scroll-mt-6 max-w-[1100px]">
+          <ProductTabs
+            description={product.description ? sanitizeRichHtml(product.description) : null}
+            attributes={product.attributes as Record<string, string> | null}
+            productName={product.name}
+          />
+        </div>
 
         {/* Related products */}
-        <RelatedProducts categorySlug={product.category.slug} excludeId={product.id} limit={6} />
+        <div className="mt-16">
+          <RelatedProducts categorySlug={product.category.slug} excludeId={product.id} limit={6} />
+        </div>
 
         {/* Sticky mobile add-to-cart */}
         <MobileStickyCart product={product} />

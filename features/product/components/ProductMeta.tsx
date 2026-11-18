@@ -58,13 +58,13 @@ export function ProductMeta({ productId, fallbackHref = "/catalog/all" }: Produc
   };
 
   return (
-    <div className="flex flex-wrap items-center gap-3 text-[11px] font-bold text-neutral-400 mb-8 pb-6 border-b border-neutral-100">
+    <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-[13px] text-black/55">
       <button
         onClick={() => {
           if (window.history.length > 1) router.back();
           else router.push(fallbackHref);
         }}
-        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-neutral-50 text-secondary hover:bg-neutral-100 transition-all"
+        className="flex items-center gap-1.5 hover:text-black transition-colors"
       >
         <ArrowLeft size={14} />
         <span>Назад</span>
@@ -73,13 +73,11 @@ export function ProductMeta({ productId, fallbackHref = "/catalog/all" }: Produc
       <button
         onClick={() => toggleWishlist(productId)}
         className={cn(
-          "flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-all",
-          inWishlist
-            ? "bg-red-50 text-red-500"
-            : "bg-neutral-50 hover:bg-red-50 hover:text-red-500"
+          "flex items-center gap-1.5 transition-colors",
+          inWishlist ? "text-black" : "hover:text-black"
         )}
       >
-        <Heart size={14} />
+        <Heart size={14} className={inWishlist ? "fill-black" : ""} />
         <span>В избранное</span>
       </button>
 
@@ -87,12 +85,12 @@ export function ProductMeta({ productId, fallbackHref = "/catalog/all" }: Produc
         onClick={() => toggleCompare(productId)}
         disabled={!inCompare && compareFull}
         className={cn(
-          "flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-all",
+          "flex items-center gap-1.5 transition-colors",
           inCompare
-            ? "bg-blue-50 text-blue-500"
+            ? "text-black"
             : compareFull
-            ? "bg-neutral-50 text-neutral-300 cursor-not-allowed"
-            : "bg-neutral-50 hover:bg-blue-50 hover:text-blue-500"
+            ? "text-black/25 cursor-not-allowed"
+            : "hover:text-black"
         )}
       >
         <GitCompare size={14} />
@@ -102,7 +100,7 @@ export function ProductMeta({ productId, fallbackHref = "/catalog/all" }: Produc
       <div className="relative" ref={shareRef}>
         <button
           onClick={() => setShareOpen((v) => !v)}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-neutral-50 hover:bg-neutral-100 transition-all"
+          className="flex items-center gap-1.5 hover:text-black transition-colors"
         >
           <Share2 size={14} />
           <span>Поделиться</span>
