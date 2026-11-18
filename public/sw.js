@@ -1,4 +1,4 @@
-const CACHE_NAME = 'switcholed-v2';
+const CACHE_NAME = 'switcholed-v3';
 const STATIC_ASSETS = [
   '/',
   '/favicon.svg',
@@ -15,32 +15,42 @@ self.addEventListener('install', (event) => {
 
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k)))
-    )
+    caches.keys()
+      .then((keys) => Promise.all(keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k))))
+      .then(() => self.clients.claim())
+      // Reload open tabs once so they stop running code served by the previous worker.
+      .then(() => self.clients.matchAll({ type: 'window' }))
+      .then((clients) => clients.forEach((client) => client.navigate(client.url).catch(() => {})))
   );
-  self.clients.claim();
 });
+
+const networkFirst = (request) =>
+  fetch(request)
+    .then((res) => {
+      if (res.ok) {
+        const clone = res.clone();
+        caches.open(CACHE_NAME).then((c) => c.put(request, clone));
+      }
+      return res;
+    })
+    .catch(() => caches.match(request));
 
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
   const url = new URL(event.request.url);
   if (url.origin !== location.origin) return;
 
-  // Network-first for pages, cache-first for static assets
-  if (event.request.destination === 'document') {
+  const dest = event.request.destination;
+  if (dest === 'document') {
+    // Pages: always fresh, offline fallback to the home page
+    event.respondWith(fetch(event.request).catch(() => caches.match('/')));
+  } else if (dest === 'script' || dest === 'style') {
+    // Code: network-first so a deploy is picked up immediately
+    event.respondWith(networkFirst(event.request));
+  } else if (dest === 'image' || dest === 'font') {
+    // Media: cache-first
     event.respondWith(
-      fetch(event.request).catch(() => caches.match('/'))
-    );
-  } else if (['image', 'script', 'style', 'font'].includes(event.request.destination)) {
-    event.respondWith(
-      caches.match(event.request).then((cached) =>
-        cached || fetch(event.request).then((res) => {
-          const clone = res.clone();
-          caches.open(CACHE_NAME).then((c) => c.put(event.request, clone));
-          return res;
-        })
-      )
+      caches.match(event.request).then((cached) => cached || networkFirst(event.request))
     );
   }
 });
