@@ -6,7 +6,7 @@ import { format } from "date-fns";
 
 export const revalidate = 3600;
 import { ru } from "date-fns/locale";
-import { ArrowLeft, Clock, User, Share2, Bookmark, MessageCircle, ChevronRight } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import { Metadata } from "next";
 import { marked } from "marked";
@@ -16,55 +16,6 @@ import { PageViewTracker } from "@/components/PageViewTracker";
 import { getBlogImage } from "@/lib/blogImages";
 
 const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || "https://switcholed.ru").replace("://www.", "://");
-
-const heroActions = [
-  { label: "Купить", href: "/" },
-  { label: "Заказать", href: "/contacts" },
-  { label: "Прошить", href: "/service" },
-  { label: "Доставка", href: "/delivery" },
-];
-const rightHeroActions = [
-  { label: "Доставка", href: "/delivery" },
-  { label: "Прошивка", href: "/service" },
-  { label: "Switch OLED", href: "/catalog/nintendo-switch-oled" },
-  { label: "Switch Lite", href: "/catalog/nintendo-switch-lite" },
-];
-
-function BlogHeroSide({ image, side }: { image: string; side: "left" | "right" }) {
-  return (
-    <div className={`blog-hero-side ${side === "right" ? "blog-hero-side-right" : ""}`}>
-      <Image
-        src={image}
-        alt=""
-        fill
-        sizes="180px"
-        aria-hidden="true"
-        className="blog-hero-side-bg"
-      />
-      <div className="blog-hero-side-content">
-        {side === "left" ? (
-          <div className="blog-hero-actions" aria-label="Навигация по магазину">
-            {heroActions.map(({ label, href }) => (
-              <Link key={label} href={href} className="blog-hero-action">
-                <span className="blog-hero-action-led" />
-                {label}
-              </Link>
-            ))}
-          </div>
-        ) : (
-          <div className="blog-hero-actions" aria-label="Разделы магазина">
-            {rightHeroActions.map(({ label, href }) => (
-              <Link key={label} href={href} className="blog-hero-action">
-                <span className="blog-hero-action-led" />
-                {label}
-              </Link>
-            ))}
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const slug = decodeURIComponent(params.slug);
@@ -180,8 +131,39 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
     console.error("BLOG related data query error:", error);
   }
 
+  // Article HTML with anchor ids on h2 so the sidebar table of contents can link to them.
+  const toc: Array<{ id: string; title: string }> = [];
+  const html = sanitizeRichHtml(marked(post.content) as string).replace(
+    /<h2>([\s\S]*?)<\/h2>/g,
+    (_m, inner: string) => {
+      const id = `section-${toc.length + 1}`;
+      toc.push({ id, title: inner.replace(/<[^>]*>/g, "").trim() });
+      return `<h2 id="${id}">${inner}</h2>`;
+    }
+  );
+  const readTime = Math.max(1, Math.ceil(post.content.split(/\s+/).length / 200));
+  const published = format(new Date(post.createdAt), "d MMMM yyyy", { locale: ru });
+
+  const meta = (
+    <div className="space-y-6">
+      <div>
+        <p className="text-[15px] font-medium text-black">{post.category || "Статья"}</p>
+        <p className="text-[15px] text-black/45">{published} · {readTime} мин</p>
+      </div>
+      <div className="flex items-center gap-3 lg:block">
+        <span className="w-12 h-12 lg:w-14 lg:h-14 rounded-full bg-black flex items-center justify-center shrink-0">
+          <span className="w-5 h-5 rounded-full border-[5px] border-white" />
+        </span>
+        <div className="lg:mt-3">
+          <p className="text-[15px] font-medium text-black">Команда Switch OLED</p>
+          <p className="text-[15px] text-black/45">Магазин прошитых Switch</p>
+        </div>
+      </div>
+    </div>
+  );
+
   return (
-    <article className="bg-[#fcfcfd] min-h-screen pt-6 pb-20">
+    <article className="bg-white min-h-screen">
       <PageViewTracker pageType="article" />
       <script
         type="application/ld+json"
@@ -191,182 +173,132 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
-      <div className="container">
-        {/* Header Container - expanded width */}
-        <div className="max-w-5xl lg:max-w-6xl mx-auto px-4 sm:px-0">
-          {/* Minimal Breadcrumbs */}
-          <div className="flex items-center gap-2 mb-8 text-[10px] font-black uppercase tracking-widest text-neutral-400">
-             <Link href="/" className="hover:text-primary transition-colors">Главная</Link>
-             <ChevronRight size={10} />
-             <Link href="/blog" className="hover:text-primary transition-colors">Блог</Link>
-             <ChevronRight size={10} />
-             <span className="text-neutral-500 truncate max-w-[200px]">{post.category || "Материал"}</span>
-          </div>
 
-          {/* Premium Refined Header */}
-          <header className="space-y-4 mb-0">
-            <div className="flex items-center gap-3">
-               <span className="px-3 py-1 bg-primary text-white rounded-md text-[9px] font-black uppercase tracking-widest">
-                 {post.category || "Материал"}
-               </span>
-               <div className="flex items-center gap-1.5 text-neutral-400 text-[10px] font-bold uppercase tracking-widest">
-                  <Clock size={12} className="text-primary" />
-                  ~6 мин чтения
-               </div>
-            </div>
-            <h1 className="text-2xl md:text-5xl font-black text-secondary tracking-tight leading-[1.1] uppercase italic">
-              {post.title}
-            </h1>
-            
-            <div className="flex flex-wrap items-center gap-8 py-6 border-y border-neutral-100">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-neutral-900 flex items-center justify-center overflow-hidden">
-                   <Image src="/icon-192.png" alt="Switch OLED" width={40} height={40} className="w-full h-full object-cover" />
-                </div>
-                <div className="flex flex-col">
-                  <span className="text-secondary text-xs font-black uppercase tracking-widest">Switch OLED Team</span>
-                  <span className="text-[9px] text-neutral-400 font-bold uppercase tracking-[0.2em]">{format(new Date(post.createdAt), 'dd MMMM yyyy', { locale: ru })}</span>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2 ml-auto">
-                 <button className="p-2.5 rounded-xl border border-neutral-100 bg-white hover:bg-neutral-50 transition-colors text-neutral-400">
-                    <Share2 size={16} />
-                 </button>
-                 <button className="p-2.5 rounded-xl border border-neutral-100 bg-white hover:bg-neutral-50 transition-colors text-neutral-400">
-                    <Bookmark size={16} />
-                 </button>
-              </div>
-            </div>
-          </header>
+      <div className="w-full max-w-[1440px] mx-auto px-4 lg:px-8 pt-6 lg:pt-10 pb-20 grid grid-cols-1 lg:grid-cols-[160px_minmax(0,1fr)] xl:grid-cols-[220px_minmax(0,1fr)] gap-x-10 xl:gap-x-14">
+        {/* Left rail */}
+        <div className="hidden lg:block pt-3">
+          <Link href="/blog" className="text-[13px] uppercase tracking-[0.12em] text-black/45 hover:text-black">Блог</Link>
         </div>
 
-        {/* Cinematic Main Image - even wider */}
-        <div className="max-w-6xl mx-auto mb-12 px-0 md:px-4">
-          <div className="blog-hero relative aspect-video md:aspect-[21/9] md:rounded-lg overflow-hidden bg-neutral-900 shadow-2xl group transition-transform duration-700 hover:scale-[1.01]">
+        {/* Main column */}
+        <div className="min-w-0">
+          <Link href="/blog" className="lg:hidden text-[13px] uppercase tracking-[0.12em] text-black/45">Блог</Link>
+          <h1 className="mt-3 lg:mt-0 text-[32px] sm:text-[42px] lg:text-[52px] font-semibold leading-[1.08] tracking-[-0.03em] text-black">
+            {post.title}
+          </h1>
+          {post.excerpt && (
+            <p className="mt-5 max-w-[760px] text-[18px] sm:text-[21px] leading-[1.5] text-black/50">{post.excerpt}</p>
+          )}
+
+          <div className="lg:hidden mt-8">{meta}</div>
+
+          <div className="mt-8 lg:mt-10 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_260px] xl:grid-cols-[minmax(0,1fr)_300px] gap-x-10 xl:gap-x-14">
+          <div className="min-w-0">
+          <div className="relative aspect-[2/1] rounded-2xl overflow-hidden bg-neutral-900">
             <Image
               src={postImage}
               fill
               priority
-              sizes="(max-width: 768px) 100vw, 1200px"
+              sizes="(max-width: 1024px) 100vw, 900px"
               quality={88}
-              className="blog-hero-backdrop"
-              alt=""
-              aria-hidden="true"
+              className="object-cover"
+              alt={post.title}
             />
-            <div className="blog-hero-layout">
-              <BlogHeroSide image={postImage} side="left" />
-              <div className="blog-hero-main">
-                <Image
-                  src={postImage}
-                  fill
-                  priority
-                  sizes="(max-width: 768px) 100vw, 900px"
-                  quality={88}
-                  className="w-full h-full object-cover"
-                  alt={post.title}
-                />
-              </div>
-              <BlogHeroSide image={postImage} side="right" />
-            </div>
           </div>
-        </div>
 
-        {/* Content Container - expanded width and larger text */}
-        <div className="max-w-5xl lg:max-w-6xl mx-auto px-4 sm:px-0">
-          {/* Content with Custom Prose */}
-          <div className="
-            article-prose
-            prose prose-neutral max-w-none text-base md:text-lg lg:text-xl leading-relaxed
-
-            prose-h2:text-2xl md:prose-h2:text-3xl lg:prose-h2:text-4xl prose-h2:font-black prose-h2:text-secondary
-            prose-h2:tracking-tight prose-h2:mt-12 prose-h2:mb-6
-            prose-h2:pb-4 prose-h2:border-b prose-h2:border-neutral-100
-
-            prose-h3:text-xl md:prose-h3:text-2xl lg:prose-h3:text-3xl prose-h3:font-black prose-h3:text-secondary
-            prose-h3:mt-10 prose-h3:mb-4
-
-            prose-p:text-neutral-600 prose-p:leading-[1.8] prose-p:mb-6
-
-            prose-a:text-primary prose-a:font-bold prose-a:no-underline
-            hover:prose-a:underline
-
-            prose-strong:text-secondary prose-strong:font-black
-
-            prose-ul:my-6 prose-ul:space-y-2
-            prose-ol:my-6 prose-ol:space-y-2
-            prose-li:text-neutral-600 prose-li:leading-relaxed
-
-            prose-table:w-full prose-table:text-sm md:prose-table:text-base
-            prose-thead:bg-neutral-50
-            prose-th:font-black prose-th:text-secondary prose-th:py-4 prose-th:px-6 prose-th:text-left
-            prose-td:py-4 prose-td:px-6 prose-td:border-b prose-td:border-neutral-100 prose-td:text-neutral-600
-
-            prose-blockquote:not-italic prose-blockquote:border-l-4
-            prose-blockquote:border-primary prose-blockquote:bg-primary/5
-            prose-blockquote:px-8 prose-blockquote:py-6 prose-blockquote:rounded-r-2xl
-            prose-blockquote:text-secondary prose-blockquote:font-semibold lg:prose-blockquote:text-2xl
-
-            prose-hr:border-neutral-100 prose-hr:my-12
-
-            prose-img:rounded-lg prose-img:shadow-2xl prose-img:my-10
-
-            prose-code:text-primary prose-code:bg-neutral-100
-            prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded-md
-            prose-code:text-sm prose-code:font-mono prose-code:before:content-none prose-code:after:content-none
-            
-            [&_>_div_>_*:first-child]:mt-0
-          ">
-            <div dangerouslySetInnerHTML={{ __html: sanitizeRichHtml(marked(post.content) as string) }} />
+          <div
+            className="
+              mt-10 max-w-[760px]
+              prose prose-neutral max-w-none text-[17px] sm:text-[18px]
+              prose-headings:text-black prose-headings:tracking-[-0.02em]
+              prose-h2:text-[26px] sm:prose-h2:text-[32px] prose-h2:font-semibold prose-h2:mt-14 prose-h2:mb-5 prose-h2:scroll-mt-6
+              prose-h3:text-[21px] prose-h3:font-semibold prose-h3:mt-10 prose-h3:mb-3
+              prose-p:text-black/80 prose-p:leading-[1.75]
+              prose-a:text-black prose-a:underline prose-a:underline-offset-4 prose-a:decoration-black/30 hover:prose-a:decoration-black
+              prose-strong:text-black prose-strong:font-semibold
+              prose-li:text-black/80
+              prose-blockquote:not-italic prose-blockquote:border-l-2 prose-blockquote:border-black prose-blockquote:text-black prose-blockquote:font-normal
+              prose-img:rounded-2xl
+              prose-th:text-black prose-td:text-black/75
+              prose-code:before:content-none prose-code:after:content-none
+              [&_>_div_>_*:first-child]:mt-0
+            "
+          >
+            <div dangerouslySetInnerHTML={{ __html: html }} />
           </div>
 
           {relatedProducts.length > 0 && (
-            <div className="mt-20 space-y-8">
-              <h4 className="text-xl font-black text-secondary uppercase tracking-tight">Рекомендуемые товары по теме</h4>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div className="mt-16 max-w-[760px]">
+              <p className="text-[13px] uppercase tracking-[0.12em] text-black/45">Товары по теме</p>
+              <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {relatedProducts.map((product) => (
                   <Link
                     key={product.id}
                     href={`/catalog/${product.category.slug}/${product.slug}`}
-                    className="border border-neutral-100 rounded-2xl p-6 hover:border-neutral-300 hover:shadow-lg transition-all"
+                    className="group rounded-2xl bg-surface-soft p-5 flex items-start justify-between gap-4 hover:bg-[#ececec] transition-colors"
                   >
-                    <p className="text-base font-black text-secondary line-clamp-2">{product.name}</p>
-                    <p className="text-xs text-neutral-400 mt-2 font-bold uppercase tracking-widest">{product.category.name}</p>
+                    <span>
+                      <span className="block text-[16px] font-medium text-black line-clamp-2">{product.name}</span>
+                      <span className="block mt-1 text-[14px] text-black/45">{product.category.name}</span>
+                    </span>
+                    <ArrowUpRight size={18} className="shrink-0 text-black/40 group-hover:text-black" />
                   </Link>
                 ))}
               </div>
             </div>
           )}
+          </div>
 
-          {/* Related Material */}
-          {relatedPosts.length > 0 && (
-            <div className="mt-32 space-y-12">
-               <div className="flex items-center justify-between">
-                  <h4 className="text-2xl font-black text-secondary uppercase tracking-tight italic">Вам может понравиться</h4>
-                  <Link href="/blog" className="text-xs font-black text-primary uppercase tracking-widest hover:underline">Все статьи</Link>
-               </div>
-               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                 {relatedPosts.map(rel => (
-                   <Link key={rel.slug} href={`/blog/${rel.slug}`} className="group flex flex-col">
-                      <div className="relative aspect-video rounded-3xl overflow-hidden shadow-sm border border-neutral-100 mb-6">
-                        <Image
-                          src={getBlogImage(rel)}
-                          alt={rel.title}
-                          fill
-                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 400px"
-                          quality={72}
-                          loading="lazy"
-                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                        />
-                      </div>
-                      <h5 className="text-lg font-black text-secondary group-hover:text-primary transition-colors leading-tight line-clamp-2">{rel.title}</h5>
-                   </Link>
-                 ))}
-               </div>
-            </div>
-          )}
+        {/* Right rail: meta + table of contents */}
+        <aside className="hidden lg:block">
+          <div className="sticky top-6">
+            {meta}
+            {toc.length > 1 && (
+              <nav className="mt-14" aria-label="Содержание">
+                <p className="text-[13px] uppercase tracking-[0.12em] text-black/45">Содержание</p>
+                <ul className="mt-4 space-y-3">
+                  {toc.map((item) => (
+                    <li key={item.id}>
+                      <a href={`#${item.id}`} className="block text-[15px] leading-[1.4] text-black/75 hover:text-black">
+                        {item.title}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            )}
+          </div>
+        </aside>
+          </div>
         </div>
+
       </div>
+
+      {relatedPosts.length > 0 && (
+        <div className="w-full max-w-[1440px] mx-auto px-4 lg:px-8 pb-20">
+          <div className="h-16 lg:h-[72px] rounded-2xl bg-surface-soft flex items-center justify-center">
+            <h2 className="text-[17px] lg:text-[19px] font-medium text-black">Читайте также</h2>
+          </div>
+          <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-x-3 gap-y-8">
+            {relatedPosts.map((rel) => (
+              <Link key={rel.slug} href={`/blog/${rel.slug}`} className="group flex flex-col">
+                <div className="relative aspect-[16/10] rounded-2xl overflow-hidden bg-surface-soft">
+                  <Image
+                    src={getBlogImage(rel)}
+                    alt={rel.title}
+                    fill
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                    quality={72}
+                    loading="lazy"
+                    className="object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+                  />
+                </div>
+                <p className="mt-4 text-[19px] font-semibold leading-[1.3] tracking-[-0.01em] text-black group-hover:text-black/70">{rel.title}</p>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
     </article>
   );
 }
