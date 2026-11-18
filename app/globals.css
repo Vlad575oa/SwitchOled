@@ -43,16 +43,16 @@ h1.font-black, h1.font-extrabold, h2.font-black, h2.font-extrabold {
 
 /* Notch tabs: a white tab cut into the corner of a rounded media block,
    with concave fillets so the cut flows into the media edge. */
-.notch-tl, .notch-tr { position: relative; background: var(--bg-base); }
-.notch-tl { border-bottom-right-radius: 20px; }
-.notch-tr { border-bottom-left-radius: 20px; }
+.notch-tl, .notch-tr { --notch-r: 24px; position: relative; background: var(--bg-base); }
+.notch-tl { border-bottom-right-radius: var(--notch-r); }
+.notch-tr { border-bottom-left-radius: var(--notch-r); }
 .notch-tl::before, .notch-tl::after, .notch-tr::before, .notch-tr::after {
-  content: ""; position: absolute; width: 20px; height: 20px; pointer-events: none;
+  content: ""; position: absolute; width: var(--notch-r); height: var(--notch-r); pointer-events: none;
 }
-.notch-tl::after { top: 0; right: -20px; background: radial-gradient(circle at 100% 100%, transparent 19.5px, var(--bg-base) 20px); }
-.notch-tl::before { left: 0; bottom: -20px; background: radial-gradient(circle at 100% 100%, transparent 19.5px, var(--bg-base) 20px); }
-.notch-tr::after { top: 0; left: -20px; background: radial-gradient(circle at 0 100%, transparent 19.5px, var(--bg-base) 20px); }
-.notch-tr::before { right: 0; bottom: -20px; background: radial-gradient(circle at 0 100%, transparent 19.5px, var(--bg-base) 20px); }
+.notch-tl::after { top: 0; right: calc(-1 * var(--notch-r)); background: radial-gradient(circle at 100% 100%, transparent calc(var(--notch-r) - 0.5px), var(--bg-base) var(--notch-r)); }
+.notch-tl::before { left: 0; bottom: calc(-1 * var(--notch-r)); background: radial-gradient(circle at 100% 100%, transparent calc(var(--notch-r) - 0.5px), var(--bg-base) var(--notch-r)); }
+.notch-tr::after { top: 0; left: calc(-1 * var(--notch-r)); background: radial-gradient(circle at 0 100%, transparent calc(var(--notch-r) - 0.5px), var(--bg-base) var(--notch-r)); }
+.notch-tr::before { right: 0; bottom: calc(-1 * var(--notch-r)); background: radial-gradient(circle at 0 100%, transparent calc(var(--notch-r) - 0.5px), var(--bg-base) var(--notch-r)); }
 
 body {
   color: var(--text-primary);

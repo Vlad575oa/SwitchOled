@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRef } from "react";
-import { ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
 
 export interface FavoriteItem {
@@ -20,14 +20,20 @@ export interface FavoriteItem {
 export function FavoritesRail({ items }: { items: FavoriteItem[] }) {
   const ref = useRef<HTMLDivElement>(null);
 
-  const scrollNext = () => {
+  const scrollBy = (dir: 1 | -1) => {
     const el = ref.current;
     if (!el) return;
     const tile = el.firstElementChild as HTMLElement | null;
     const step = tile ? tile.offsetWidth + 12 : el.clientWidth / 2;
     const atEnd = el.scrollLeft + el.clientWidth >= el.scrollWidth - 4;
-    el.scrollTo({ left: atEnd ? 0 : el.scrollLeft + step, behavior: "smooth" });
+    const atStart = el.scrollLeft <= 4;
+    const left = dir === 1
+      ? (atEnd ? 0 : el.scrollLeft + step)
+      : (atStart ? el.scrollWidth : el.scrollLeft - step);
+    el.scrollTo({ left, behavior: "smooth" });
   };
+
+  const arrow = "hidden lg:flex absolute top-1/2 -translate-y-1/2 w-12 h-12 rounded-lg bg-black/10 hover:bg-black/20 backdrop-blur items-center justify-center text-white transition-colors";
 
   return (
     <div className="relative mt-3">
@@ -65,14 +71,14 @@ export function FavoritesRail({ items }: { items: FavoriteItem[] }) {
       </div>
 
       {items.length > 4 && (
-        <button
-          type="button"
-          onClick={scrollNext}
-          aria-label="Ещё товары"
-          className="hidden lg:flex absolute right-6 top-1/2 -translate-y-1/2 w-12 h-12 rounded-lg bg-black/10 hover:bg-black/20 backdrop-blur items-center justify-center text-white transition-colors"
-        >
-          <ChevronRight size={22} />
-        </button>
+        <>
+          <button type="button" onClick={() => scrollBy(-1)} aria-label="Предыдущие товары" className={`${arrow} left-6`}>
+            <ChevronLeft size={22} />
+          </button>
+          <button type="button" onClick={() => scrollBy(1)} aria-label="Ещё товары" className={`${arrow} right-6`}>
+            <ChevronRight size={22} />
+          </button>
+        </>
       )}
     </div>
   );

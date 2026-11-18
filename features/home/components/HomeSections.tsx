@@ -11,10 +11,10 @@ const FEATURES = [
 
 export function FeatureBar() {
   return (
-    <div className="hidden md:block px-3 pt-3">
-      <div className="h-[72px] lg:h-20 rounded-2xl bg-black text-white flex items-center justify-center gap-10 lg:gap-20 px-6">
+    <div className="px-3 pt-3">
+      <div className="h-14 md:h-[72px] lg:h-20 rounded-2xl bg-black text-white flex items-center justify-start md:justify-center gap-7 md:gap-10 lg:gap-20 px-5 md:px-6 overflow-x-auto no-scrollbar">
         {FEATURES.map(({ icon: Icon, label }) => (
-          <span key={label} className="inline-flex items-center gap-2.5 text-[15px] lg:text-[17px] font-medium whitespace-nowrap">
+          <span key={label} className="inline-flex items-center gap-2.5 text-[14px] md:text-[15px] lg:text-[17px] font-medium whitespace-nowrap shrink-0">
             <Icon size={20} strokeWidth={1.6} />
             {label}
           </span>

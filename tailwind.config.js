@@ -41,7 +41,7 @@ module.exports = {
         lg: "10px",
         xl: "12px",
         "2xl": "16px",
-        "3xl": "20px",
+        "3xl": "24px",
       },
       keyframes: {
         marquee: {
