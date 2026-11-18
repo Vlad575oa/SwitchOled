@@ -21,6 +21,7 @@ import { SortingSelect } from "@/features/catalog/components/SortingSelect";
 import { ActiveFiltersBar } from "@/features/catalog/components/ActiveFiltersBar";
 import { CATEGORY_FILTERS } from "@/features/catalog/config/categoryFilters";
 import { Pagination } from "./Pagination";
+import { LoadMoreButton } from "./LoadMoreButton";
 import { Prisma } from "@prisma/client";
 import { buildProductSearchWhere } from "@/lib/search";
 
@@ -43,6 +44,9 @@ export async function Catalog({
   const Heading = headingLevel;
   const { q, priceMin, priceMax, color, memory, games, status, sort, page = "1" } = searchParams;
   const skip = (parseInt(page) - 1) * pageSize;
+  // «Показать ещё» widens the current page by whole portions of pageSize
+  const show = Math.min(20, Math.max(1, parseInt(searchParams.show ?? "1") || 1));
+  const take = pageSize * show;
   let categorySlugs =
     category !== "all" ? await getCategoryDescendantSlugsBySlug(category) : [];
 
@@ -157,8 +161,8 @@ export async function Catalog({
     );
     const useNintendoPriority = category === "all" && !sort && !q && !hasNonSearchFilters;
     products = useNintendoPriority
-      ? await getProductsNintendoFirst(where, skip, pageSize)
-      : await getProducts(where, orderBy, skip, pageSize);
+      ? await getProductsNintendoFirst(where, skip, take)
+      : await getProducts(where, orderBy, skip, take);
     totalCount = await getProductsCount(where);
     categoryData =
       category !== "all"
@@ -181,7 +185,7 @@ export async function Catalog({
   );
 
   const activeFilterCount = Object.keys(searchParams).filter(
-    (k) => k !== "sort" && k !== "page" && k !== "q" && searchParams[k]
+    (k) => k !== "sort" && k !== "page" && k !== "show" && k !== "q" && searchParams[k]
   ).length;
 
   if (dbError) {
@@ -263,6 +267,9 @@ export async function Catalog({
               </div>
             </div>
             <Suspense fallback={null}>
+              {skip + take < totalCount && (
+                <LoadMoreButton nextCount={Math.min(pageSize, totalCount - skip - take)} />
+              )}
               <Pagination totalPages={totalPages} />
             </Suspense>
           </>

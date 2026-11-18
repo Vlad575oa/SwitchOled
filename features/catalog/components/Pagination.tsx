@@ -17,6 +17,7 @@ export function Pagination({ totalPages }: PaginationProps) {
   const createPageURL = (pageNumber: number | string) => {
     const params = new URLSearchParams(searchParams);
     params.set("page", pageNumber.toString());
+    params.delete("show");
     return `${pathname}?${params.toString()}`;
   };
 
