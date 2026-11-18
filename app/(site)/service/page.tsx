@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { Wrench, ShieldCheck, Clock, Star } from "lucide-react";
+import { Wrench, ShieldCheck, Clock, Star, Check } from "lucide-react";
 import { CONTACTS } from "@/lib/constants/contacts";
 import { InfoPageShell, InfoHero, Section, FactGrid, Steps, HelpBand } from "@/components/info/InfoKit";
 import { Accordion } from "@/components/info/Accordion";
@@ -10,11 +10,35 @@ export const metadata: Metadata = {
   alternates: { canonical: "/service" },
 };
 
-const prices = [
-  { name: "Прошивка Nintendo Switch", price: "4 500 ₽", note: "Lite, Rev 1, Rev 2 · около 30 минут" },
-  { name: "Прошивка + карта 128 ГБ с играми", price: "от 6 500 ₽", note: "около 30 игр в комплекте" },
-  { name: "Прошивка + карта 256 ГБ с играми", price: "от 8 500 ₽", note: "около 50 игр в комплекте" },
-  { name: "Диагностика и ремонт", price: "от 1 500 ₽", note: "цена зависит от неисправности" },
+const plans = [
+  {
+    name: "Прошивка",
+    subtitle: "Для вашей Switch",
+    price: "4 500 ₽",
+    priceNote: "разово · около 30 минут",
+    detail: "Lite, Rev 1, Rev 2",
+    includesTitle: "Что входит",
+    includes: ["Прошивка с безопасным режимом от бана", "Базовый разгон — выше FPS", "Отключение автообновлений", "Гарантия на работу"],
+  },
+  {
+    name: "Прошивка + 128 ГБ",
+    subtitle: "Сразу можно играть",
+    price: "от 6 500 ₽",
+    priceNote: "разово · около 30 минут",
+    detail: "около 30 игр в комплекте",
+    featured: true,
+    includesTitle: "Всё из «Прошивки», плюс",
+    includes: ["Карта памяти 128 ГБ", "Около 30 игр на ваш выбор", "Русификаторы", "Покажем, как ставить новые игры"],
+  },
+  {
+    name: "Прошивка + 256 ГБ",
+    subtitle: "Большая библиотека",
+    price: "от 8 500 ₽",
+    priceNote: "разово · около 30 минут",
+    detail: "около 50 игр в комплекте",
+    includesTitle: "Всё из «+128 ГБ», плюс",
+    includes: ["Карта памяти 256 ГБ", "Около 50 игр на ваш выбор", "Запас места для игры без интернета", "Эмуляторы классических консолей"],
+  },
 ];
 
 const repairs = [
@@ -43,16 +67,47 @@ export default function ServicePage() {
       </InfoHero>
 
       <Section title="Цены">
-        <div className="divide-y divide-black/10 border-y border-black/10">
-          {prices.map((p) => (
-            <div key={p.name} className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 py-5">
-              <div>
-                <p className="text-[17px] font-medium text-black">{p.name}</p>
-                <p className="text-[14px] text-black/50">{p.note}</p>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
+          {plans.map((p) => (
+            <div key={p.name} className="rounded-3xl bg-surface-soft flex flex-col">
+              <div className="rounded-3xl bg-white border border-black/[0.07] p-7 lg:p-8 flex flex-col">
+                <p className="text-[20px] font-medium text-black">{p.name}</p>
+                <p className="mt-1 text-[15px] text-black/45">{p.subtitle}</p>
+                <p className="mt-8 text-[40px] lg:text-[44px] font-medium leading-none tracking-[-0.03em] text-black">{p.price}</p>
+                <p className="mt-2 text-[15px] text-black/45">{p.priceNote}</p>
+                <p className="mt-6 text-[15px] text-black">{p.detail}</p>
+                <a
+                  href={`tel:${CONTACTS.phoneHref}`}
+                  className={`mt-4 h-12 rounded-xl flex items-center justify-center text-[15px] font-medium transition-colors ${
+                    p.featured ? "bg-black text-white hover:bg-[#2b2b2b]" : "bg-surface-soft text-black hover:bg-[#ececec]"
+                  }`}
+                >
+                  Записаться
+                </a>
               </div>
-              <p className="text-[19px] font-semibold text-black whitespace-nowrap">{p.price}</p>
+              <div className="px-7 lg:px-8 pt-6 pb-8">
+                <p className="text-[14px] text-black/45">{p.includesTitle}</p>
+                <ul className="mt-3 space-y-2.5">
+                  {p.includes.map((item) => (
+                    <li key={item} className="flex items-start gap-3 text-[15px] leading-[1.4] text-black">
+                      <span className="mt-[-1px] w-6 h-6 shrink-0 rounded-md bg-black/[0.06] flex items-center justify-center">
+                        <Check size={14} strokeWidth={2} className="text-black/60" />
+                      </span>
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
           ))}
+        </div>
+
+        <div className="mt-3 rounded-3xl border border-black/[0.07] px-7 lg:px-8 py-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <p className="text-[18px] font-medium text-black">Диагностика и ремонт</p>
+            <p className="text-[15px] text-black/45">Точную цену назовём после диагностики — до начала работ.</p>
+          </div>
+          <p className="text-[24px] font-medium tracking-[-0.02em] text-black whitespace-nowrap">от 1 500 ₽</p>
         </div>
       </Section>
 
