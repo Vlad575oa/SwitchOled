@@ -2,14 +2,14 @@
 
 import { getImageProps } from "next/image";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const SLIDES = [
   {
-    image: "/images/hero/desktop-1.webp",
-    video: "/videos/hero/hero-1",
+    image: "/images/hero/desktop-1-full.webp",
+    video: "/videos/hero/hero-1-full",
     // Where narrow screens crop the wide photo: keep the consoles in view
     imagePosition: "sm:object-[72%_50%] lg:object-center",
     imageMobile: "/images/hero/mobile-1.webp",
@@ -20,9 +20,9 @@ const SLIDES = [
     perks: ["🔧 Мы прошиваем консоли", "🏅 Гарантия 1 год", "100% Оригинал"],
   },
   {
-    image: "/images/hero/desktop-2-shelf.webp",
-    video: "/videos/hero/hero-2",
-    imagePosition: "sm:object-right xl:object-center",
+    image: "/images/hero/desktop-2-shelf-full.webp",
+    video: "/videos/hero/hero-2-full",
+    imagePosition: "",
     imageMobile: "/images/hero/mobile-2.webp",
     title: "OLED или Lite — поможем выбрать",
     text: "Подскажем модель под ваш бюджет и любимые игры.",
@@ -31,9 +31,9 @@ const SLIDES = [
     perks: ["⭐ 5.0 • 1000+ отзывов", "🚚 Быстрая доставка"],
   },
   {
-    image: "/images/hero/desktop-3-retro.webp",
-    video: "/videos/hero/hero-3",
-    imagePosition: "sm:object-right xl:object-center",
+    image: "/images/hero/desktop-3-retro-full.webp",
+    video: "/videos/hero/hero-3-full",
+    imagePosition: "",
     imageMobile: "/images/hero/mobile-3.webp",
     title: "100+ игр уже в комплекте",
     text: "Установим любые игры и подготовим консоль к первому запуску.",
@@ -42,6 +42,9 @@ const SLIDES = [
     perks: ["100% Оригинал", "🏅 Гарантия 1 год", "🚚 Быстрая доставка"],
   },
 ];
+
+// Fallback slide length when there is no clip (phones) or it has not started yet
+const PHOTO_SLIDE_MS = 7000;
 
 type Slide = (typeof SLIDES)[number];
 
@@ -67,28 +70,52 @@ function SlidePicture({ slide, priority, onLoad }: { slide: Slide; priority: boo
   );
 }
 
+const isFullyBuffered = (video: HTMLVideoElement) =>
+  video.buffered.length > 0 && video.duration > 0 && video.buffered.end(video.buffered.length - 1) >= video.duration - 0.1;
+
+type SlideVideoProps = {
+  slide: Slide;
+  active: boolean;
+  onBuffered: () => void;
+  onPlaying: () => void;
+  onEnded: (video: HTMLVideoElement) => void;
+};
+
 // Muted desktop clip that fades in over the slide photo once it actually plays.
-// Mounted only for slides that have been shown, then kept (paused) so going back is instant.
-function SlideVideo({ slide, active }: { slide: Slide; active: boolean }) {
+// The active clip restarts from the beginning; when it ends the slider moves on.
+function SlideVideo({ slide, active, onBuffered, onPlaying, onEnded }: SlideVideoProps) {
   const ref = useRef<HTMLVideoElement>(null);
   const [playing, setPlaying] = useState(false);
 
   useEffect(() => {
     const video = ref.current;
     if (!video) return;
-    if (active) video.play().catch(() => {});
-    else video.pause();
+    if (active) {
+      video.currentTime = 0;
+      video.play().catch(() => {});
+    } else {
+      video.pause();
+    }
   }, [active]);
+
+  const checkBuffered = (e: React.SyntheticEvent<HTMLVideoElement>) => {
+    if (isFullyBuffered(e.currentTarget)) onBuffered();
+  };
 
   return (
     <video
       ref={ref}
       muted
-      loop
       playsInline
       preload="auto"
       aria-hidden="true"
-      onPlaying={() => setPlaying(true)}
+      onProgress={checkBuffered}
+      onCanPlayThrough={checkBuffered}
+      onPlaying={() => {
+        setPlaying(true);
+        if (active) onPlaying();
+      }}
+      onEnded={(e) => onEnded(e.currentTarget)}
       className={cn(
         "absolute inset-0 h-full w-full object-cover transition-opacity duration-700",
         slide.imagePosition,
@@ -122,32 +149,46 @@ function useVideoAllowed() {
 }
 
 // Full-width rounded hero that slides under the header's notch tabs.
+// Loading order: all photos first (so manual swiping is instant), then the clips one by one.
 export function HeroSlider() {
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
-  // Slides whose photos may load: shown ones plus the next one, so autoplay never waits
-  const [loaded, setLoaded] = useState<number[]>([0, 1]);
-  // Slides whose photo has finished loading: their clip may start downloading
+  const pausedRef = useRef(paused);
+  pausedRef.current = paused;
+  // Slides whose photo has finished loading
   const [photoReady, setPhotoReady] = useState<number[]>([]);
-  // Slides that have been shown: only their clips are fetched, never ahead of time
-  const [shown, setShown] = useState<number[]>([0]);
+  // How many clips may download, in order: the next one starts once the previous is buffered
+  const [videoQueue, setVideoQueue] = useState(0);
+  // Slide whose clip is currently playing: it drives the slider instead of the timer
+  const [videoPlaying, setVideoPlaying] = useState<number | null>(null);
   const videoAllowed = useVideoAllowed();
   const markPhotoReady = useRef(
     SLIDES.map((_, i) => () => setPhotoReady((r) => (r.includes(i) ? r : [...r, i]))),
   ).current;
-  const go = (dir: number) => setIndex((i) => (i + dir + SLIDES.length) % SLIDES.length);
+  const go = useCallback((dir: number) => setIndex((i) => (i + dir + SLIDES.length) % SLIDES.length), []);
 
   useEffect(() => {
-    if (paused) return;
-    const t = setTimeout(() => go(1), 7000);
+    if (photoReady.length === SLIDES.length) setVideoQueue((q) => Math.max(q, 1));
+  }, [photoReady]);
+
+  useEffect(() => {
+    if (paused || videoPlaying === index) return;
+    const t = setTimeout(() => go(1), PHOTO_SLIDE_MS);
     return () => clearTimeout(t);
-  }, [index, paused]);
+  }, [index, paused, videoPlaying, go]);
 
-  useEffect(() => {
-    const next = (index + 1) % SLIDES.length;
-    setLoaded((l) => (l.includes(index) && l.includes(next) ? l : Array.from(new Set([...l, index, next]))));
-    setShown((v) => (v.includes(index) ? v : [...v, index]));
-  }, [index]);
+  const handleEnded = useCallback(
+    (video: HTMLVideoElement) => {
+      // While the pointer is over the hero, replay the clip instead of moving on
+      if (pausedRef.current) {
+        video.currentTime = 0;
+        video.play().catch(() => {});
+      } else {
+        go(1);
+      }
+    },
+    [go],
+  );
 
   const slide = SLIDES[index];
 
@@ -161,8 +202,16 @@ export function HeroSlider() {
       <div className="relative h-[520px] sm:h-[600px] lg:h-[calc(100svh-140px)] lg:min-h-[620px] lg:max-h-[860px] rounded-3xl overflow-hidden bg-neutral-900">
         {SLIDES.map((s, i) => (
           <div key={s.image} className={cn("absolute inset-0 transition-opacity duration-700", i === index ? "opacity-100" : "opacity-0")}>
-            {loaded.includes(i) && <SlidePicture slide={s} priority={i === 0} onLoad={markPhotoReady[i]} />}
-            {videoAllowed && shown.includes(i) && photoReady.includes(i) && <SlideVideo slide={s} active={i === index} />}
+            <SlidePicture slide={s} priority={i === 0} onLoad={markPhotoReady[i]} />
+            {videoAllowed && videoQueue > 0 && (i < videoQueue || i === index) && (
+              <SlideVideo
+                slide={s}
+                active={i === index}
+                onBuffered={() => setVideoQueue((q) => Math.max(q, i + 2))}
+                onPlaying={() => setVideoPlaying(i)}
+                onEnded={handleEnded}
+              />
+            )}
           </div>
         ))}
         <div className="absolute inset-0 bg-black/15" />
