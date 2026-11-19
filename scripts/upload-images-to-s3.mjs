@@ -15,9 +15,10 @@ const ENDPOINT = process.env.S3_ENDPOINT;
 const PUBLIC_URL = process.env.S3_PUBLIC_URL ?? ENDPOINT;
 const ACCESS_KEY = process.env.S3_ACCESS_KEY;
 const SECRET_KEY = process.env.S3_SECRET_KEY;
+const KEY_PREFIX = (process.env.S3_KEY_PREFIX ?? "").replace(/^\/+|\/+$/g, "");
 
-if (!BUCKET || !ENDPOINT || !ACCESS_KEY || !SECRET_KEY) {
-  console.error("❌ Не заданы S3_BUCKET, S3_ENDPOINT, S3_ACCESS_KEY или S3_SECRET_KEY в .env");
+if (!BUCKET || !ENDPOINT || !ACCESS_KEY || !SECRET_KEY || !KEY_PREFIX) {
+  console.error("❌ Не заданы S3_BUCKET, S3_ENDPOINT, S3_ACCESS_KEY, S3_SECRET_KEY или S3_KEY_PREFIX в .env");
   process.exit(1);
 }
 
@@ -71,8 +72,9 @@ for (const filePath of allFiles) {
   const contentType = MIME[ext];
   if (!contentType) { skipped++; continue; }
 
-  // Key = relative path from public/, e.g. "images/blog/foo.webp"
-  const key = relative(publicDir, filePath).replace(/\\/g, "/");
+  // Local path relative to public/, e.g. "images/blog/foo.webp"
+  const localPath = relative(publicDir, filePath).replace(/\\/g, "/");
+  const key = `${KEY_PREFIX}/${localPath}`;
   const buf = await readFile(filePath);
 
   try {
@@ -84,7 +86,7 @@ for (const filePath of allFiles) {
       ACL: "public-read",
     }));
     const s3Url = `${PUBLIC_URL}/${BUCKET}/${key}`;
-    urlMap.set(`/${key}`, s3Url);
+    urlMap.set(`/${localPath}`, s3Url);
     uploaded++;
     if (uploaded % 50 === 0) console.log(`  ✅ ${uploaded}/${allFiles.length}`);
   } catch (err) {

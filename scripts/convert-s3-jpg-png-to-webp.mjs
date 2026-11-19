@@ -18,8 +18,9 @@ const prisma = new PrismaClient();
 const BUCKET = process.env.S3_BUCKET;
 const ENDPOINT = process.env.S3_ENDPOINT;
 const PUBLIC_URL = process.env.S3_PUBLIC_URL ?? ENDPOINT;
+const KEY_PREFIX = (process.env.S3_KEY_PREFIX ?? "").replace(/^\/+|\/+$/g, "");
 
-if (!BUCKET || !ENDPOINT || !process.env.S3_ACCESS_KEY || !process.env.S3_SECRET_KEY) {
+if (!BUCKET || !ENDPOINT || !process.env.S3_ACCESS_KEY || !process.env.S3_SECRET_KEY || !KEY_PREFIX) {
   console.error("❌ Missing required S3 env vars");
   process.exit(1);
 }
@@ -62,7 +63,7 @@ async function listTargets() {
   const allKeys = new Set();
   let token;
   do {
-    const res = await s3.send(new ListObjectsV2Command({ Bucket: BUCKET, ContinuationToken: token }));
+    const res = await s3.send(new ListObjectsV2Command({ Bucket: BUCKET, Prefix: `${KEY_PREFIX}/`, ContinuationToken: token }));
     for (const obj of res.Contents ?? []) {
       const key = obj.Key ?? "";
       allKeys.add(key);

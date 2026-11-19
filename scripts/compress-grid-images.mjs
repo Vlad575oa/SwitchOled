@@ -1,19 +1,28 @@
+import "dotenv/config";
 import { S3Client, GetObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
 import sharp from "sharp";
 
+const BUCKET = process.env.S3_BUCKET;
+const KEY_PREFIX = (process.env.S3_KEY_PREFIX ?? "").replace(/^\/+|\/+$/g, "");
+
+if (!BUCKET || !process.env.S3_ENDPOINT || !process.env.S3_ACCESS_KEY || !process.env.S3_SECRET_KEY || !KEY_PREFIX) {
+  console.error("❌ Missing required S3 env vars (S3_BUCKET, S3_ENDPOINT, S3_ACCESS_KEY, S3_SECRET_KEY, S3_KEY_PREFIX)");
+  process.exit(1);
+}
+
 const S3 = new S3Client({
-  endpoint: "https://s3.ru1.storage.beget.cloud",
-  region: "ru1",
+  endpoint: process.env.S3_ENDPOINT,
+  region: process.env.S3_REGION ?? "ru1",
   credentials: {
-    accessKeyId: "273X7ZQ7KQNZ2E60OXDI",
-    secretAccessKey: "eBxOJMewHxXTG7DpvM9uEKiDj46XvS7SqvaGlPcW",
+    accessKeyId: process.env.S3_ACCESS_KEY,
+    secretAccessKey: process.env.S3_SECRET_KEY,
   },
   forcePathStyle: true,
 });
 
-const BUCKET = "5484d8765845-nintendo-s3-storage";
 const MAX_BYTES = 50 * 1024; // 50 KB
 
+// Keys are relative to the project prefix: "<S3_KEY_PREFIX>/products/..."
 const KEYS = [
   "products/1778246264597-27f8906d-7494-4a72-b746-94501f9bb59e.webp",
   "products/1778246265530-936dfb44-98dc-4df4-bcb3-e5ed1ac8d3fe.webp",
@@ -92,7 +101,7 @@ async function main() {
   let saved = 0;
 
   for (let i = 0; i < KEYS.length; i++) {
-    const key = KEYS[i];
+    const key = `${KEY_PREFIX}/${KEYS[i]}`;
     process.stdout.write(`[${i + 1}/${KEYS.length}] ${key.split("/").pop()} → `);
     try {
       const { Body, ContentLength } = await S3.send(new GetObjectCommand({ Bucket: BUCKET, Key: key }));

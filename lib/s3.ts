@@ -1,11 +1,12 @@
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import crypto from "crypto";
 import sharp from "sharp";
-import { buildS3ObjectUrl } from "./imageUrls";
+import { buildS3ObjectUrl, withS3KeyPrefix } from "./imageUrls";
 
 const BUCKET = process.env.S3_BUCKET!;
 const ENDPOINT = process.env.S3_ENDPOINT!;
 const PUBLIC_URL = process.env.S3_PUBLIC_URL ?? ENDPOINT;
+const KEY_PREFIX = process.env.S3_KEY_PREFIX ?? "";
 
 const s3 = new S3Client({
   region: process.env.S3_REGION ?? "ru1",
@@ -55,7 +56,7 @@ export async function uploadImagesToS3(
     }
 
     const ext = format === "png" ? "png" : format === "webp" ? "webp" : "jpg";
-    const key = `${folder}/${Date.now()}-${crypto.randomUUID()}.${ext}`;
+    const key = withS3KeyPrefix(KEY_PREFIX, `${folder}/${Date.now()}-${crypto.randomUUID()}.${ext}`);
 
     await s3.send(
       new PutObjectCommand({

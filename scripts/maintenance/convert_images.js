@@ -19,6 +19,12 @@ const s3 = new S3Client({
 });
 
 const BUCKET = process.env.S3_BUCKET;
+const KEY_PREFIX = (process.env.S3_KEY_PREFIX ?? '').replace(/^\/+|\/+$/g, '');
+
+if (!KEY_PREFIX) {
+  console.error('❌ Не задан S3_KEY_PREFIX в .env');
+  process.exit(1);
+}
 
 async function streamToBuffer(stream) {
   return new Promise((resolve, reject) => {
@@ -53,6 +59,12 @@ async function convertAndReplace() {
         // If pathname starts with bucket name (path-style), remove it
         if (key.startsWith(BUCKET + '/')) {
             key = key.replace(BUCKET + '/', '');
+        }
+        // Never touch (and especially never delete) another project's objects
+        if (!key.startsWith(KEY_PREFIX + '/')) {
+          console.log(`  Skipping foreign key: ${key}`);
+          updatedImages.push(imageUrl);
+          continue;
         }
 
         console.log(`  Downloading: ${key}`);

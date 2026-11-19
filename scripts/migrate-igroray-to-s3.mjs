@@ -9,6 +9,12 @@ config({ path: ".env" });
 const BUCKET = process.env.S3_BUCKET;
 const ENDPOINT = process.env.S3_ENDPOINT;
 const PUBLIC_URL = process.env.S3_PUBLIC_URL ?? ENDPOINT;
+const KEY_PREFIX = (process.env.S3_KEY_PREFIX ?? "").replace(/^\/+|\/+$/g, "");
+
+if (!KEY_PREFIX) {
+  console.error("❌ Не задан S3_KEY_PREFIX в .env");
+  process.exit(1);
+}
 
 const s3 = new S3Client({
   region: process.env.S3_REGION ?? "ru1",
@@ -35,7 +41,7 @@ async function fetchAndUpload(url) {
   const buf = Buffer.from(await res.arrayBuffer());
   const contentType = res.headers.get("content-type")?.split(";")[0] ?? "image/jpeg";
   const ext = contentType === "image/png" ? "png" : contentType === "image/webp" ? "webp" : "jpg";
-  const key = `products/${Date.now()}-${crypto.randomUUID()}.${ext}`;
+  const key = `${KEY_PREFIX}/products/${Date.now()}-${crypto.randomUUID()}.${ext}`;
 
   await s3.send(new PutObjectCommand({
     Bucket: BUCKET,

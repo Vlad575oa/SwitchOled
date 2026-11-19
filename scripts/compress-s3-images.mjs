@@ -1,17 +1,25 @@
+import "dotenv/config";
 import { S3Client, ListObjectsV2Command, GetObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
 import sharp from "sharp";
 
+const BUCKET = process.env.S3_BUCKET;
+const KEY_PREFIX = (process.env.S3_KEY_PREFIX ?? "").replace(/^\/+|\/+$/g, "");
+
+if (!BUCKET || !process.env.S3_ENDPOINT || !process.env.S3_ACCESS_KEY || !process.env.S3_SECRET_KEY || !KEY_PREFIX) {
+  console.error("❌ Missing required S3 env vars (S3_BUCKET, S3_ENDPOINT, S3_ACCESS_KEY, S3_SECRET_KEY, S3_KEY_PREFIX)");
+  process.exit(1);
+}
+
 const S3 = new S3Client({
-  endpoint: "https://s3.ru1.storage.beget.cloud",
-  region: "ru1",
+  endpoint: process.env.S3_ENDPOINT,
+  region: process.env.S3_REGION ?? "ru1",
   credentials: {
-    accessKeyId: "273X7ZQ7KQNZ2E60OXDI",
-    secretAccessKey: "eBxOJMewHxXTG7DpvM9uEKiDj46XvS7SqvaGlPcW",
+    accessKeyId: process.env.S3_ACCESS_KEY,
+    secretAccessKey: process.env.S3_SECRET_KEY,
   },
   forcePathStyle: true,
 });
 
-const BUCKET = "5484d8765845-nintendo-s3-storage";
 const MAX_BYTES = 70 * 1024; // 70 KB
 
 async function streamToBuffer(stream) {
@@ -61,6 +69,7 @@ async function listAllKeys() {
   do {
     const res = await S3.send(new ListObjectsV2Command({
       Bucket: BUCKET,
+      Prefix: `${KEY_PREFIX}/`,
       ContinuationToken: token,
     }));
     for (const obj of res.Contents ?? []) {

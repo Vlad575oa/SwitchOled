@@ -12,6 +12,12 @@ const ENDPOINT = process.env.S3_ENDPOINT;
 const PUBLIC_URL = process.env.S3_PUBLIC_URL ?? ENDPOINT;
 const ACCESS_KEY = process.env.S3_ACCESS_KEY;
 const SECRET_KEY = process.env.S3_SECRET_KEY;
+const KEY_PREFIX = (process.env.S3_KEY_PREFIX ?? "").replace(/^\/+|\/+$/g, "");
+
+if (!KEY_PREFIX) {
+  console.error("❌ Не задан S3_KEY_PREFIX в .env");
+  process.exit(1);
+}
 
 const s3 = new S3Client({
   region: process.env.S3_REGION ?? "ru1",
@@ -20,8 +26,9 @@ const s3 = new S3Client({
   forcePathStyle: true,
 });
 
-const key = "images/blog/gta5-switch-oled-nintendo-switch.webp";
-const filePath = "public/" + key;
+const file = "images/blog/gta5-switch-oled-nintendo-switch.webp";
+const key = `${KEY_PREFIX}/${file}`;
+const filePath = "public/" + file;
 const buf = await readFile(filePath);
 
 await s3.send(new PutObjectCommand({
