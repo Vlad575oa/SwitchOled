@@ -23,8 +23,9 @@ export async function generateMetadata({
     params.category !== "all" ? await getCategoryDescendantSlugsBySlug(params.category) : [];
   const visibleProductsCount =
     params.category === "all"
-      ? await getProductsCount({})
+      ? await getProductsCount({ inStock: true })
       : await getProductsCount({
+          inStock: true,
           category: {
             slug: categorySlugs.length ? { in: categorySlugs } : params.category,
           },
@@ -75,6 +76,7 @@ export default async function CategoryPage({ params, searchParams }: CatalogPage
   const topProducts = await prisma.product.findMany({
     where: {
       isVisible: { not: false },
+      inStock: true,
       ...(categorySlugs.length
         ? { category: { slug: { in: categorySlugs } } }
         : category !== "all"

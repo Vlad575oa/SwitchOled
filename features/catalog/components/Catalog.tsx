@@ -50,7 +50,7 @@ export async function Catalog({
     category !== "all" ? await getCategoryDescendantSlugsBySlug(category) : [];
 
   // ── Build Prisma filters ───────────────────────────────────────────────────
-  const andConditions: Prisma.ProductWhereInput[] = [];
+  const andConditions: Prisma.ProductWhereInput[] = [{ inStock: true }];
 
   if (category !== "all") {
     andConditions.push({
@@ -105,13 +105,7 @@ export async function Catalog({
     }
   }
 
-  if (status) {
-    const statusValues = status.split(",").filter(Boolean);
-    const wantsInStock = statusValues.includes("inStock");
-    const wantsOnOrder = statusValues.includes("onOrder");
-    if (wantsInStock && !wantsOnOrder) andConditions.push({ inStock: true });
-    if (wantsOnOrder && !wantsInStock) andConditions.push({ inStock: false });
-  }
+  // Catalog always displays only in-stock products (enforced in andConditions above).
 
   // ── Category-specific attribute filters ───────────────────────────────────
   const categoryFilterSections = CATEGORY_FILTERS[category] ?? [];

@@ -7,6 +7,7 @@ import { getCategorySlugsVisibleInCatalog } from "@/lib/categoryVisibility";
 import { normalizeS3ObjectUrl } from "@/lib/imageUrls";
 
 const VISIBLE: Prisma.ProductWhereInput = { isVisible: { not: false } };
+const IN_STOCK_VISIBLE: Prisma.ProductWhereInput = { isVisible: { not: false }, inStock: true };
 
 const normalizeProductImages = <T extends { images: string[] }>(product: T): T => ({
   ...product,
@@ -38,12 +39,12 @@ export const getCategoryTree = cache(async () => {
         children: {
           include: {
             children: {
-              include: { _count: { select: { products: { where: VISIBLE } } } },
+              include: { _count: { select: { products: { where: IN_STOCK_VISIBLE } } } },
             },
-            _count: { select: { products: { where: VISIBLE } } },
+            _count: { select: { products: { where: IN_STOCK_VISIBLE } } },
           },
         },
-        _count: { select: { products: { where: VISIBLE } } },
+        _count: { select: { products: { where: IN_STOCK_VISIBLE } } },
       },
       where: { parentId: null },
       orderBy: { name: "asc" },
@@ -74,9 +75,9 @@ export const getCategoryTree = cache(async () => {
 export const getCategorySlugsWithProducts = unstable_cache(
   async (): Promise<string[]> => {
     return safeQuery(async () => {
-      // Get all categories with their parentId and direct visible product count
+      // Get all categories with their parentId and direct in-stock visible product count
       const all = await prisma.category.findMany({
-        select: { id: true, slug: true, parentId: true, _count: { select: { products: { where: VISIBLE } } } },
+        select: { id: true, slug: true, parentId: true, _count: { select: { products: { where: IN_STOCK_VISIBLE } } } },
       });
 
       return getCategorySlugsVisibleInCatalog(
@@ -300,15 +301,12 @@ export const getCatalogVariantFilters = async (categorySlugs: string[]) => {
       ? { category: { slug: { in: categorySlugs } } }
       : {};
 
-    const allVisibleRows = await prisma.product.findMany({
-      where: { AND: [VISIBLE, categoryFilter] },
-      select: { attributes: true, color: true },
-    });
-
     const inStockRows = await prisma.product.findMany({
-      where: { AND: [VISIBLE, { inStock: true }, categoryFilter] },
+      where: { AND: [IN_STOCK_VISIBLE, categoryFilter] },
       select: { color: true, attributes: true },
     });
+
+    const allVisibleRows = inStockRows;
 
     const allColors = await prisma.color.findMany({ orderBy: { name: "asc" } });
 

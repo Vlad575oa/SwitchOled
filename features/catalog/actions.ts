@@ -17,7 +17,7 @@ export async function getFilteredProductsCountAction(params: FilterParams) {
   const { category, priceMin, priceMax, colors, memories, games, statuses } = params;
 
   try {
-    const andConditions: Prisma.ProductWhereInput[] = [];
+    const andConditions: Prisma.ProductWhereInput[] = [{ inStock: true }];
 
     if (category && category !== "all") {
       const cat = await prisma.category.findUnique({
@@ -59,12 +59,7 @@ export async function getFilteredProductsCountAction(params: FilterParams) {
       });
     }
 
-    if (statuses && statuses.length > 0) {
-      const wantsInStock = statuses.includes("inStock");
-      const wantsOnOrder = statuses.includes("onOrder");
-      if (wantsInStock && !wantsOnOrder) andConditions.push({ inStock: true });
-      if (wantsOnOrder && !wantsInStock) andConditions.push({ inStock: false });
-    }
+    // Catalog always displays only in-stock products (enforced in andConditions above).
 
     const where: Prisma.ProductWhereInput =
       andConditions.length > 0
