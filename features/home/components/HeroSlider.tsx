@@ -19,10 +19,9 @@ const SLIDES = [
     perks: ["🔧 Мы прошиваем консоли", "🏅 Гарантия 1 год", "100% Оригинал"],
   },
   {
-    image: "/images/hero/desktop-consoles.webp",
+    image: "/images/hero/desktop-showcase.webp",
     video: "/videos/hero/hero-2-full",
-    // Ultra-wide photo: on narrow screens crop from the left so the consoles stay in view
-    imagePosition: "sm:object-[72%_50%] lg:object-center",
+    imagePosition: "",
     imageMobile: "/images/hero/mobile-2.webp",
     title: "OLED или Lite — поможем выбрать",
     text: "Подскажем модель под ваш бюджет и любимые игры.",
