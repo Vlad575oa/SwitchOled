@@ -8,10 +8,9 @@ import { cn } from "@/lib/utils";
 
 const SLIDES = [
   {
-    image: "/images/hero/desktop-1-full.webp",
+    image: "/images/hero/desktop-retro.webp",
     video: "/videos/hero/hero-1-full",
-    // Where narrow screens crop the wide photo: keep the consoles in view
-    imagePosition: "sm:object-[72%_50%] lg:object-center",
+    imagePosition: "",
     imageMobile: "/images/hero/mobile-1.webp",
     title: "Прошитые Switch OLED, готовые к игре",
     text: "Настроены, проверены и укомплектованы играми. Гарантия 1 год.",
@@ -20,9 +19,10 @@ const SLIDES = [
     perks: ["🔧 Мы прошиваем консоли", "🏅 Гарантия 1 год", "100% Оригинал"],
   },
   {
-    image: "/images/hero/desktop-2-shelf-full.webp",
+    image: "/images/hero/desktop-consoles.webp",
     video: "/videos/hero/hero-2-full",
-    imagePosition: "",
+    // Ultra-wide photo: on narrow screens crop from the left so the consoles stay in view
+    imagePosition: "sm:object-[72%_50%] lg:object-center",
     imageMobile: "/images/hero/mobile-2.webp",
     title: "OLED или Lite — поможем выбрать",
     text: "Подскажем модель под ваш бюджет и любимые игры.",
@@ -31,7 +31,7 @@ const SLIDES = [
     perks: ["⭐ 5.0 • 1000+ отзывов", "🚚 Быстрая доставка"],
   },
   {
-    image: "/images/hero/desktop-3-retro-full.webp",
+    image: "/images/hero/desktop-shelf.webp",
     video: "/videos/hero/hero-3-full",
     imagePosition: "",
     imageMobile: "/images/hero/mobile-3.webp",
@@ -43,10 +43,15 @@ const SLIDES = [
   },
 ];
 
-// Fallback slide length when there is no clip (phones) or it has not started yet
+// Desktop: a slide shows its photo this long, then its clip plays once
+const IMAGE_MS = 5000;
+// Without clips (phones) a slide stays this long
 const PHOTO_SLIDE_MS = 7000;
+// If a clip has not started this long after its turn, move on to the next slide
+const VIDEO_START_TIMEOUT_MS = 8000;
 
 type Slide = (typeof SLIDES)[number];
+type SlideState = { index: number; phase: "image" | "video"; playing: boolean };
 
 // One <picture> per slide, so each device downloads only its own crop:
 // the wide photo from 640px up, the vertical 9:16 photo on phones.
@@ -75,28 +80,29 @@ const isFullyBuffered = (video: HTMLVideoElement) =>
 
 type SlideVideoProps = {
   slide: Slide;
-  active: boolean;
+  play: boolean;
   onBuffered: () => void;
   onPlaying: () => void;
-  onEnded: (video: HTMLVideoElement) => void;
+  onEnded: () => void;
 };
 
-// Muted desktop clip that fades in over the slide photo once it actually plays.
-// The active clip restarts from the beginning; when it ends the slider moves on.
-function SlideVideo({ slide, active, onBuffered, onPlaying, onEnded }: SlideVideoProps) {
+// Muted desktop clip. It sits hidden over the photo, starts from the beginning when its turn
+// comes (`play`), fades in once it actually plays and is hidden again as soon as the turn is over.
+function SlideVideo({ slide, play, onBuffered, onPlaying, onEnded }: SlideVideoProps) {
   const ref = useRef<HTMLVideoElement>(null);
-  const [playing, setPlaying] = useState(false);
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     const video = ref.current;
     if (!video) return;
-    if (active) {
+    if (play) {
       video.currentTime = 0;
       video.play().catch(() => {});
     } else {
       video.pause();
+      setVisible(false);
     }
-  }, [active]);
+  }, [play]);
 
   const checkBuffered = (e: React.SyntheticEvent<HTMLVideoElement>) => {
     if (isFullyBuffered(e.currentTarget)) onBuffered();
@@ -112,14 +118,14 @@ function SlideVideo({ slide, active, onBuffered, onPlaying, onEnded }: SlideVide
       onProgress={checkBuffered}
       onCanPlayThrough={checkBuffered}
       onPlaying={() => {
-        setPlaying(true);
-        if (active) onPlaying();
+        if (!play) return;
+        setVisible(true);
+        onPlaying();
       }}
-      onEnded={(e) => onEnded(e.currentTarget)}
+      onEnded={onEnded}
       className={cn(
         "absolute inset-0 h-full w-full object-cover transition-opacity duration-700",
-        slide.imagePosition,
-        playing ? "opacity-100" : "opacity-0",
+        visible ? "opacity-100" : "opacity-0",
       )}
     >
       <source src={`${slide.video}.webm`} type="video/webm" />
@@ -149,46 +155,71 @@ function useVideoAllowed() {
 }
 
 // Full-width rounded hero that slides under the header's notch tabs.
+// Every slide: photo for IMAGE_MS, then its clip once, then the next slide.
 // Loading order: all photos first (so manual swiping is instant), then the clips one by one.
 export function HeroSlider() {
-  const [index, setIndex] = useState(0);
+  const [{ index, phase, playing }, setState] = useState<SlideState>({ index: 0, phase: "image", playing: false });
   const [paused, setPaused] = useState(false);
   const pausedRef = useRef(paused);
   pausedRef.current = paused;
+  // A clip that ended under the pointer: the slider moves on once the pointer leaves
+  const endedWhilePaused = useRef(false);
   // Slides whose photo has finished loading
   const [photoReady, setPhotoReady] = useState<number[]>([]);
   // How many clips may download, in order: the next one starts once the previous is buffered
   const [videoQueue, setVideoQueue] = useState(0);
-  // Slide whose clip is currently playing: it drives the slider instead of the timer
-  const [videoPlaying, setVideoPlaying] = useState<number | null>(null);
   const videoAllowed = useVideoAllowed();
   const markPhotoReady = useRef(
     SLIDES.map((_, i) => () => setPhotoReady((r) => (r.includes(i) ? r : [...r, i]))),
   ).current;
-  const go = useCallback((dir: number) => setIndex((i) => (i + dir + SLIDES.length) % SLIDES.length), []);
+
+  // Any change of slide (auto, arrows, dots) starts again from its photo
+  const goTo = useCallback((next: number) => {
+    endedWhilePaused.current = false;
+    setState({ index: next, phase: "image", playing: false });
+  }, []);
+  const go = useCallback((dir: number) => {
+    endedWhilePaused.current = false;
+    setState((s) => ({ index: (s.index + dir + SLIDES.length) % SLIDES.length, phase: "image", playing: false }));
+  }, []);
+  const startVideo = useCallback(() => setState((s) => ({ ...s, phase: "video" })), []);
+  const markPlaying = useCallback(() => setState((s) => (s.phase === "video" ? { ...s, playing: true } : s)), []);
 
   useEffect(() => {
     if (photoReady.length === SLIDES.length) setVideoQueue((q) => Math.max(q, 1));
   }, [photoReady]);
 
   useEffect(() => {
-    if (paused || videoPlaying === index) return;
-    const t = setTimeout(() => go(1), PHOTO_SLIDE_MS);
+    if (paused) return;
+    let ms: number;
+    let action: () => void;
+    if (phase === "image") {
+      // Photo first; with clips it hands over to the clip, without them (phones) it just moves on
+      ms = videoAllowed ? IMAGE_MS : PHOTO_SLIDE_MS;
+      action = videoAllowed ? startVideo : () => go(1);
+    } else if (!playing) {
+      // The clip's turn came but it has not started (still loading or failed): do not get stuck
+      ms = VIDEO_START_TIMEOUT_MS;
+      action = () => go(1);
+    } else {
+      return; // the clip is playing: its end moves the slider on
+    }
+    const t = setTimeout(action, ms);
     return () => clearTimeout(t);
-  }, [index, paused, videoPlaying, go]);
+  }, [index, phase, playing, paused, videoAllowed, go, startVideo]);
 
-  const handleEnded = useCallback(
-    (video: HTMLVideoElement) => {
-      // While the pointer is over the hero, replay the clip instead of moving on
-      if (pausedRef.current) {
-        video.currentTime = 0;
-        video.play().catch(() => {});
-      } else {
-        go(1);
-      }
-    },
-    [go],
-  );
+  const handleEnded = useCallback(() => {
+    // Under the pointer the slide stays put (and the clip is not replayed)
+    if (pausedRef.current) endedWhilePaused.current = true;
+    else go(1);
+  }, [go]);
+
+  useEffect(() => {
+    if (!paused && endedWhilePaused.current) {
+      endedWhilePaused.current = false;
+      go(1);
+    }
+  }, [paused, go]);
 
   const slide = SLIDES[index];
 
@@ -206,9 +237,9 @@ export function HeroSlider() {
             {videoAllowed && videoQueue > 0 && (i < videoQueue || i === index) && (
               <SlideVideo
                 slide={s}
-                active={i === index}
+                play={i === index && phase === "video"}
                 onBuffered={() => setVideoQueue((q) => Math.max(q, i + 2))}
-                onPlaying={() => setVideoPlaying(i)}
+                onPlaying={markPlaying}
                 onEnded={handleEnded}
               />
             )}
@@ -266,7 +297,7 @@ export function HeroSlider() {
             <button
               key={s.image}
               type="button"
-              onClick={() => setIndex(i)}
+              onClick={() => goTo(i)}
               aria-label={`Слайд ${i + 1}`}
               className={cn("h-1.5 rounded-full transition-all", i === index ? "w-6 bg-white" : "w-1.5 bg-white/50")}
             />
