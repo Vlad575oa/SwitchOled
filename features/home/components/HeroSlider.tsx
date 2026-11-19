@@ -8,28 +8,31 @@ import { cn } from "@/lib/utils";
 
 const SLIDES = [
   {
-    image: "/images/blog/nintendo-switch-chipped-guide.webp",
+    image: "/images/hero/desktop-1.webp",
     imageMobile: "/images/hero/mobile-1.webp",
     title: "Прошитые Switch OLED, готовые к игре",
     text: "Настроены, проверены и укомплектованы играми. Гарантия 1 год.",
     cta: "Смотреть каталог",
     href: "#catalog",
+    perks: ["🔧 Мы прошиваем консоли", "🏅 Гарантия 1 год", "100% Оригинал"],
   },
   {
-    image: "/images/blog/nintendo-switch-oled-vs-lite-guide.webp",
+    image: "/images/hero/desktop-2.webp",
     imageMobile: "/images/hero/mobile-2.webp",
     title: "OLED или Lite — поможем выбрать",
     text: "Подскажем модель под ваш бюджет и любимые игры.",
     cta: "Сравнить модели",
     href: "/catalog/nintendo-switch-oled",
+    perks: ["⭐ 5.0 • 1000+ отзывов", "🚚 Быстрая доставка"],
   },
   {
-    image: "/images/blog/nintendo-switch-2026-guide.webp",
+    image: "/images/hero/desktop-3.webp",
     imageMobile: "/images/hero/mobile-3.webp",
     title: "100+ игр уже в комплекте",
     text: "Установим любые игры и подготовим консоль к первому запуску.",
     cta: "Выбрать консоль",
     href: "/catalog/nintendo-switch-oled",
+    perks: ["100% Оригинал", "🏅 Гарантия 1 год", "🚚 Быстрая доставка"],
   },
 ];
 
@@ -57,8 +60,9 @@ export function HeroSlider() {
       <div className="relative h-[520px] sm:h-[600px] lg:h-[calc(100svh-140px)] lg:min-h-[620px] lg:max-h-[860px] rounded-3xl overflow-hidden bg-neutral-900">
         {SLIDES.map((s, i) => (
           <div key={s.image} className={cn("absolute inset-0 transition-opacity duration-700", i === index ? "opacity-100" : "opacity-0")}>
-            {/* Wide photo on tablets/desktop, vertical 9:16 photo on phones */}
-            <Image src={s.image} alt="" fill priority={i === 0} sizes="100vw" className="hidden sm:block object-cover" />
+            {/* Wide photo on tablets/desktop, vertical 9:16 photo on phones.
+                Consoles sit right of center, so narrow tablets crop from the left. */}
+            <Image src={s.image} alt="" fill priority={i === 0} sizes="100vw" className="hidden sm:block object-cover object-[72%_50%] lg:object-center" />
             <Image src={s.imageMobile} alt="" fill priority={i === 0} sizes="100vw" className="sm:hidden object-cover" />
           </div>
         ))}
@@ -81,13 +85,22 @@ export function HeroSlider() {
           <ChevronRight size={30} strokeWidth={1.5} />
         </button>
 
+        {/* Desktop perks: top-right, over the empty wall of each photo (narrower screens crop it) */}
+        <ul key={`perks-${index}`} className="hidden xl:flex absolute right-14 top-28 flex-col items-end gap-2.5 animate-in fade-in duration-500">
+          {slide.perks.map((perk) => (
+            <li key={perk} className="rounded-full bg-white/90 backdrop-blur px-5 py-2.5 text-[16px] font-medium text-black shadow-sm">
+              {perk}
+            </li>
+          ))}
+        </ul>
+
         {/* Desktop card */}
-        <div className="hidden sm:block absolute left-8 lg:left-14 bottom-8 lg:bottom-14 w-[440px] lg:w-[480px] rounded-xl bg-white p-9 lg:p-12">
-          <p key={slide.title} className="text-[32px] lg:text-[38px] font-medium leading-[1.15] tracking-[-0.02em] text-black animate-in fade-in duration-500">
+        <div className="hidden sm:block absolute left-8 xl:left-14 bottom-8 xl:bottom-14 w-[400px] xl:w-[440px] rounded-xl bg-white p-7 xl:p-8">
+          <p key={slide.title} className="text-[28px] xl:text-[34px] font-medium leading-[1.1] tracking-[-0.02em] text-black animate-in fade-in duration-500">
             {slide.title}
           </p>
-          <p className="mt-4 text-[17px] leading-[1.6] text-black/50">{slide.text}</p>
-          <Link href={slide.href} className="inline-block mt-8 text-[16px] font-medium text-black underline underline-offset-4 decoration-1 hover:text-black/60">
+          <p className="mt-2.5 text-[16px] leading-[1.45] text-black/50">{slide.text}</p>
+          <Link href={slide.href} className="inline-block mt-5 text-[16px] font-medium text-black underline underline-offset-4 decoration-1 hover:text-black/60">
             {slide.cta}
           </Link>
         </div>
